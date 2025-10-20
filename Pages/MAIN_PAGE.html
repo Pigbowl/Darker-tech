@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAELO GOOD STUFF</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+
+
+<body class="bg-primary text-gray-100 font-inter min-h-screen flex flex-col bg-grid">
+    <div id="particles-js"></div>
+    <div class="content min-h-screen">
+            <!-- 导航栏容器 --> 
+        <div id="navbar-container"></div>
+
+            <!-- 页面特定内容 -->
+        <main class="content">
+            <div class="min-h-[8vh] flex flex-col justify-center items-center">
+                <div class="text-center mb-6 cyber-border p-1 mt-12">
+                    <h1 class="title-animate text-[clamp(2.5rem,6vw,5rem)] font-bold text-white neon-glow mb-4">
+                        VALEO ADAS GOOD STUFF
+                    </h1>
+                    <p class="text-[clamp(1rem,3vw,1.5rem)] text-gray-300 purple-glow">
+                        Helps you to understand the ADAS world and create your own solution
+                    </p>
+                </div>
+                <!--主页面卡片入口-->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full max-w-7xl">                     
+                    <!-- 配置工具页面 -->
+                    <div class="bg-dark-light/80 rounded-lg overflow-hidden border border-primary/30 card-hover cyber-border flex flex-col h-full">
+                        <div class="h-48 overflow-hidden">
+                            <img src="../PIC/Configurator.png" alt="配置工具" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                        </div>
+                        <div class="p-6 flex-grow flex flex-col">
+                            <h3 class="text-xl font-bold text-white mb-2 neon-glow">配置工具</h3>
+                            <p class="text-gray-400 mb-4 flex-grow">
+                                通过输入不同类型的数据得到需要的方案和配置
+                            </p>
+                            <button class="cyber-btn w-full bg-primary/20 hover:bg-primary/30 text-neon font-medium py-2 px-4 rounded transition-all mt-auto" onclick="window.location.href = 'Learning_Gallary.html'">
+                                进入配置工具
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 架构查看卡片 -->
+                    <div class="bg-dark-light/80 rounded-lg overflow-hidden border border-primary/30 card-hover cyber-border flex flex-col h-full">
+                        <div class="h-48 overflow-hidden">
+                            <img src="../PIC/ARCHI.png" alt="架构查看" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                        </div>
+                        <div class="p-6 flex-grow flex flex-col">
+                            <h3 class="text-xl font-bold text-white mb-2 neon-glow">架构查看</h3>
+                            <p class="text-gray-400 mb-4 flex-grow">
+                                认识架构，了解架构，学习如何开发一个功能。
+                            </p>
+                            <button class="cyber-btn w-full bg-primary/20 hover:bg-primary/30 text-neon font-medium py-2 px-4 rounded transition-all mt-auto" onclick="showPage('架构查看')">
+                                进入架构
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 架构树查看卡片 -->
+                    <div class="bg-dark-light/80 rounded-lg overflow-hidden border border-primary/30 card-hover cyber-border flex flex-col h-full">
+                        <div class="h-48 overflow-hidden">
+                            <img src="../PIC/ARCHI_NET.png" alt="架构网络查看" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                        </div>
+                        <div class="p-6 flex-grow flex flex-col">
+                            <h3 class="text-xl font-bold text-white mb-2 neon-glow">架构网络查看</h3>
+                            <p class="text-gray-400 mb-4 flex-grow">
+                                认识架构，了解架构，通过树状关系学习如何开发一个功能。
+                            </p>
+                            <button class="cyber-btn w-full bg-primary/20 hover:bg-primary/30 text-neon font-medium py-2 px-4 rounded transition-all mt-auto" onclick="showPage('架构网络查看')">
+                                进入架构网络
+                            </button>
+                        </div>
+                    </div>
+                    <!-- 功能搜索卡片 -->
+                    <div class="bg-dark-light/80 rounded-lg overflow-hidden border border-primary/30 card-hover cyber-border flex flex-col h-full">
+                        <div class="h-48 overflow-hidden">
+                            <img src="../PIC/ADAS_FUNC.png" alt="功能搜索" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                        </div>
+                        <div class="p-6 flex-grow flex flex-col">
+                            <h3 class="text-xl font-bold text-white mb-2 neon-glow">功能智库</h3>
+                            <p class="text-gray-400 mb-4 flex-grow">
+                                学习功能,了解功能
+                            </p>
+                            <button class="cyber-btn w-full bg-primary/20 hover:bg-primary/30 text-neon font-medium py-2 px-4 rounded transition-all mt-auto" onclick="showPage('功能搜索')">
+                                进入功能智库
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 硬件搜索卡片 -->
+                    <div class="bg-dark-light/80 rounded-lg overflow-hidden border border-primary/30 card-hover cyber-border flex flex-col h-full">
+                        <div class="h-48 overflow-hidden">
+                            <img src="../PIC/HW_G.png" alt="硬件搜索" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                        </div>
+                        <div class="p-6 flex-grow flex flex-col">
+                            <h3 class="text-xl font-bold text-white mb-2 neon-glow">硬件智库</h3>
+                            <p class="text-gray-400 mb-4 flex-grow">
+                                学习硬件，了解硬件。
+                            </p>
+                            <button class="cyber-btn w-full bg-primary/20 hover:bg-primary/30 text-neon font-medium py-2 px-4 rounded transition-all mt-auto" onclick="showPage('硬件搜索')">
+                                进入硬件智库
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 传感器搜索卡片 -->
+                    <!-- <div class="bg-dark-light/80 rounded-lg overflow-hidden border border-primary/30 card-hover cyber-border flex flex-col h-full">
+                        <div class="h-48 overflow-hidden">
+                            <img src="PIC/SENSOR.png" alt="传感器搜索" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                        </div>
+                        <div class="p-6 flex-grow flex flex-col">
+                            <h3 class="text-xl font-bold text-white mb-2 neon-glow">传感器智库</h3>
+                            <p class="text-gray-400 mb-4 flex-grow">
+                                学习传感器，了解传感器。
+                            </p>
+                            <button class="cyber-btn w-full bg-primary/20 hover:bg-primary/30 text-neon font-medium py-2 px-4 rounded transition-all mt-auto" onclick="showPage('传感器搜索')">
+                                进入传感器智库
+                            </button>
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+        </main>
+
+        <!-- 页脚容器 -->
+        <div id="footer-container"></div>   
+    </div>
+        <!-- 加载组件的脚本 -->
+    <script src="../js/load-components.js"></script>
+    
+</body>
+</html>

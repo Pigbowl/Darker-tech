@@ -1,0 +1,2388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAELO GOOD STUFF</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+
+
+<body class="bg-dark text-gray-100 font-inter min-h-screen flex flex-col bg-grid">
+    <div id="particles-js"></div>
+    <div class="content min-h-screen">
+
+        <!-- 导航栏容器 --> 
+        <div id="navbar-container"></div>
+
+        <!--功能搜索页面-->
+        <div id="功能搜索-page" class="page-content">
+            <main class="flex-grow w-full px-4 py-8 flex flex-col gap-4">
+                <div class="sticky top-20 z-20 bg-dark/90 backdrop-blur-md p-4 rounded-xl mb-6">
+                    <!-- 状态指示器 -->
+                    <div class="mb-4 text-center">
+                        <div class="inline-block bg-dark-light rounded-full px-6 py-2 terminal-border">
+                            <span id="status" class="text-sm font-medium">
+                                <i class="fa fa-check-circle text-secondary mr-2"></i>系统就绪
+                            </span>
+                        </div>
+                    </div>
+                
+                    <!--按钮区域-->
+                    <div class="bg-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl">
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <input 
+                                type="text" 
+                                id="searchInput" 
+                                class="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-gray-800"
+                                placeholder="请输入搜索内容..."
+                                >
+                            <button 
+                                id="functionserach" 
+                                class="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                                >
+                                <i class="fa fa-search"></i>
+                                <span>搜索</span>
+                            </button>
+                            <button 
+                                id="allfunction" 
+                                class="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                                >
+                                <i class="fa fa-list"></i>
+                                <span>全部功能</span>
+                            </button>
+                        </div>     
+                        <!-- 加载指示器 -->
+                        <div id="loadingIndicator" class="mt-6 flex justify-center items-center hidden">
+                            <div class="loading-spinner"></div>
+                            <span class="ml-2 text-gray-600">正在搜索...</span>
+                        </div>
+                        <!-- 空状态 -->
+                        <div id="emptyState" class="flex flex-col items-center justify-center py-16 hidden">
+                            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+                                <i class="fa fa-search text-gray-400 text-3xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-700 mb-2">未找到结果</h3>
+                            <p class="text-gray-500 max-w-md text-center">请尝试使用不同的搜索词或调整搜索条件</p>
+                        </div>               
+                    </div>
+
+                    <!-- 结果统计 -->
+                    <div id="resultStats" class="mb-6 hidden gap-6">
+                        <p class="text-gray-100"><span id="resultCount">0</span> 个结果</p>
+                    </div>
+                </div>
+
+
+                <!-- 卡片容器 -->
+                <div id="cardContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- 卡片将动态添加到这里 -->
+                </div>
+
+                <!-- 空的悬浮信息框模板 -->
+                <div id="hoverInfoTemplate" class="fixed hidden bg-white shadow-lg p-4 rounded-lg w-64 z-100 border border-gray-200">
+                    <h4 id="hoverInfoTitle" class="font-medium text-dark mb-2">详细参数</h4>
+                    <div id="hoverInfoContent" class="space-y-2 text-sm text-gray-600">
+                    <!-- 参数内容将动态生成 -->
+                    </div>
+                </div>
+
+                <!-- PDF查看模态框 (保持不变) -->
+                <div id="pdfModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden">
+                    <div class="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
+                        <div class="bg-dark text-white p-4 flex justify-between items-center border-b border-gray-200">
+                        <h3 id="pdfModalTitle" class="font-medium">技术文档</h3>
+                        <button id="closePDFBtn" class="text-gray-300 hover:text-white">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="p-6">
+                    <div class="aspect-video bg-gray-100 rounded-lg overflow-hidden">
+                        <iframe 
+                        id="pdfIframe"
+                        src="" 
+                        class="w-full h-full" 
+                        title="技术文档PDF"
+                        >
+                        您的浏览器不支持直接查看PDF，请下载后查看。
+                        </iframe>
+                    </div>
+                    <div class="mt-4 text-center">
+                        <button 
+                        id="downloadPdfBtn"
+                        class="inline-flex items-center text-primary hover:text-primary/80 font-medium"
+                        >
+                        <i class="fa fa-download mr-2"></i>
+                        <span id="pdfFileName">下载PDF</span>
+                        </button>
+                    </div>
+                    </div>
+                </div>
+                </div>
+
+                <!-- 输出区域 -->
+                <div class="terminal-border rounded-xl overflow-hidden bg-dark-light/50 mb-8 gap-6">
+                    <div class="bg-dark-light/80 px-4 py-2 flex justify-between items-center border-b border-primary/20">
+                        <h3 class="font-medium text-sm flex items-center">
+                            <i class="fa fa-terminal text-primary mr-2"></i>
+                            执行输出
+                        </h3>
+                        <div class="flex space-x-2">
+                            <button id="clear-output" class="text-gray-400 hover:text-white text-xs transition-colors">
+                                <i class="fa fa-trash-o mr-1"></i>清空
+                            </button>
+                            <button id="copy-output" class="text-gray-400 hover:text-white text-xs transition-colors">
+                                <i class="fa fa-copy mr-1"></i>复制
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-4 max-h-[300px] overflow-y-auto">
+                        <div id="output-area" class="text-sm font-mono leading-relaxed">
+                            <div class="text-gray-400 mb-2">
+                                <span class="text-primary">function@serach</span>:<span class="text-light-blue">~</span>$ <span class="text-white">welcome</span>
+                            </div>
+                            <div class="text-gray-300">
+                                执行结果将显示在此区域
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <!-- 页面特定内容 -->
+        <div id="学习智库-page" class="page-content">
+            <main class="content">
+                <div class="min-h-[8vh] flex flex-col justify-center items-center">
+                    <div class="text-center mb-6 cyber-border p-1 mt-12">
+                        <h1 class="title-animate text-[clamp(2.5rem,6vw,5rem)] font-bold text-white neon-glow mb-4">
+                            ADAS 知识库
+                        </h1>
+                        <p class="text-[clamp(1rem,3vw,1.5rem)] text-gray-300 purple-glow">
+                            帮助你学习ADAS领域的知识
+                        </p>
+                    </div>
+                    <!--主页面卡片入口-->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full max-w-7xl">                     
+                        <!-- 功能搜索卡片 -->
+                        <div class="bg-dark-light/80 rounded-lg overflow-hidden border border-primary/30 card-hover cyber-border flex flex-col h-full">
+                            <div class="h-48 overflow-hidden">
+                                <img src="../PIC/ADAS_FUNC.png" alt="功能搜索" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                            </div>
+                            <div class="p-6 flex-grow flex flex-col">
+                                <h3 class="text-xl font-bold text-white mb-2 neon-glow">功能智库</h3>
+                                <p class="text-gray-400 mb-4 flex-grow">
+                                    学习功能,了解功能
+                                </p>
+                                <button class="cyber-btn w-full bg-primary/20 hover:bg-primary/30 text-neon font-medium py-2 px-4 rounded transition-all mt-auto" onclick="showPage('功能搜索')">
+                                    进入功能智库
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 硬件搜索卡片 -->
+                        <div class="bg-dark-light/80 rounded-lg overflow-hidden border border-primary/30 card-hover cyber-border flex flex-col h-full">
+                            <div class="h-48 overflow-hidden">
+                                <img src="../PIC/HW_G.png" alt="硬件搜索" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                            </div>
+                            <div class="p-6 flex-grow flex flex-col">
+                                <h3 class="text-xl font-bold text-white mb-2 neon-glow">硬件智库</h3>
+                                <p class="text-gray-400 mb-4 flex-grow">
+                                    学习硬件，了解硬件。
+                                </p>
+                                <button class="cyber-btn w-full bg-primary/20 hover:bg-primary/30 text-neon font-medium py-2 px-4 rounded transition-all mt-auto" onclick="showPage('硬件搜索')">
+                                    进入硬件智库
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 传感器搜索卡片 -->
+                        <div class="bg-dark-light/80 rounded-lg overflow-hidden border border-primary/30 card-hover cyber-border flex flex-col h-full">
+                            <div class="h-48 overflow-hidden">
+                                <img src="../PIC/SENSOR.png" alt="传感器搜索" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                            </div>
+                            <div class="p-6 flex-grow flex flex-col">
+                                <h3 class="text-xl font-bold text-white mb-2 neon-glow">传感器智库</h3>
+                                <p class="text-gray-400 mb-4 flex-grow">
+                                    学习传感器，了解传感器。
+                                </p>
+                                <button class="cyber-btn w-full bg-primary/20 hover:bg-primary/30 text-neon font-medium py-2 px-4 rounded transition-all mt-auto" onclick="showPage('传感器搜索')">
+                                    进入传感器智库
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>>
+            </main>
+        </div>
+
+            <!--硬件智库页面-->
+        <div id="硬件搜索-page" class="page-content">
+            <main class="sticky mt-16 top-20 z-20 container mx-auto px-4 py-8 flex flex-col gap-4">
+                <!-- 状态指示器 -->
+                <div class="flex items-center gap-3">
+                    <i class="fa fa-microchip text-tech-accent text-3xl"></i>
+                    <h1 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-white">
+                        <span class="text-tech-accent text-shadow-glow">芯片</span>产品目录
+                    </h1>
+                </div>
+                
+                <!-- 搜索和筛选区域 -->
+                <div class="container mx-auto px-6 py-5">
+                    <div class="bg-white rounded-xl p-4 border border-gray-700/50">
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <!-- 搜索框 -->
+                            <div class="relative flex-grow">
+                                <input
+                                    type="text" id="hwsearch-input"
+                                    placeholder="搜索芯片型号、系列或厂商..."
+                                    class="w-full bg-tech-dark border border-gray-600 rounded-lg py-2.5 px-4 pl-10 focus:outline-none focus:border-tech-accent transition-all"
+                                >
+                                <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            </div>
+
+                            <!-- 筛选下拉菜单 -->
+                            <div class="flex flex-wrap gap-3">
+                                <div class="relative w-full md:w-auto flex-grow md:flex-grow-0">
+                                    <button id="manufacturer-filter-btn" class="w-full bg-tech-dark border border-gray-600 rounded-lg py-2.5 px-4 flex items-center justify-between hover:border-tech-accent transition-all">
+                                        <span>厂商</span>
+                                        <i class="fa fa-chevron-down ml-2 text-xs"></i>
+                                    </button>
+                                    <div id="manufacturer-dropdown" class="absolute left-0 mt-2 w-64 bg-tech-medium border border-gray-600 rounded-lg shadow-xl z-20 hidden">
+                                        <div class="p-3 max-h-60 overflow-y-auto scrollbar-thin" id="manufacturer-options">
+                                            <!-- 动态生成的厂商选项将在这里插入 -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 产品类型筛选 -->
+                                <div class="relative w-full md:w-auto flex-grow md:flex-grow-0">
+                                    <button id="type-filter-btn" class="w-full bg-tech-dark border border-gray-600 rounded-lg py-2.5 px-4 flex items-center justify-between hover:border-tech-accent transition-all">
+                                        <span>产品类型</span>
+                                        <i class="fa fa-chevron-down ml-2 text-xs"></i>
+                                    </button>
+                                    <div id="type-dropdown" class="absolute left-0 mt-2 w-64 bg-tech-medium border border-gray-600 rounded-lg shadow-xl z-20 hidden">
+                                        <div class="p-3" id="type-options">
+                                            <!-- 动态生成的产品类型选项将在这里插入 -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 应用领域筛选 -->
+                                <div class="relative w-full md:w-auto flex-grow md:flex-grow-0">
+                                    <button id="application-filter-btn" class="w-full bg-tech-dark border border-gray-600 rounded-lg py-2.5 px-4 flex items-center justify-between hover:border-tech-accent transition-all">
+                                        <span>应用领域</span>
+                                        <i class="fa fa-chevron-down ml-2 text-xs"></i>
+                                    </button>
+                                    <div id="application-dropdown" class="absolute left-0 mt-2 w-64 bg-tech-medium border border-gray-600 rounded-lg shadow-xl z-20 hidden">
+                                        <div class="p-3" id="application-options">
+                                            <!-- 动态生成的应用领域选项将在这里插入 -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 重置按钮 -->
+                                <button id="reset-btn-component" class="w-full md:w-auto bg-tech-dark border border-gray-600 rounded-lg py-2.5 px-4 hover:border-tech-accent transition-all">
+                                    <i class="fa fa-refresh mr-1"></i> 重置
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    <!-- 空状态 -->
+                    <div id="emptyState" class="flex flex-col items-center justify-center py-16 hidden">
+                        <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+                            <i class="fa fa-search text-gray-400 text-3xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">未找到结果</h3>
+                        <p class="text-gray-500 max-w-md text-center">请尝试使用不同的搜索词或调整搜索条件</p>
+                    </div>               
+
+                <!-- 主内容区域 -->
+                <div class="container mx-auto px-6 py-2 flex-grow flex flex-col lg:flex-row gap-6">
+                    <!-- 产品列表区域 -->
+                    <div class="w-full lg:w-2/3 bg-tech-medium/40 rounded-xl border border-gray-700/50 p-4 overflow-hidden">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold flex items-center">
+                                <i class="fa fa-th-large text-tech-accent mr-2"></i>产品列表
+                            </h2>
+                            <div id="result-count" class="text-sm text-gray-400">显示 0 个产品</div>
+                        </div>
+
+                        <!-- 修改后 -->
+                        <div id="product-list-container" class="max-h-[calc(100vh-300px)] overflow-y-auto scrollbar-thin pr-2">
+                            <!-- 动态内容将在这里生成 -->
+                            <div class="loading-indicator text-center py-10">
+                                <i class="fa fa-spinner fa-spin text-tech-accent text-2xl mb-2"></i>
+                                <p>加载产品数据中...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 产品详情区域 -->
+                    <div class="w-full lg:w-1/3 bg-tech-medium/40 rounded-xl border border-gray-700/50 p-4 flex flex-col">
+                        <h2 class="text-xl font-bold flex items-center mb-4">
+                            <i class="fa fa-info-circle text-tech-accent mr-2"></i>产品详情
+                        </h2>
+
+                        <div id="product-detail-empty" class="flex-grow flex flex-col items-center justify-center text-center p-6">
+                            <div class="w-24 h-24 bg-tech-dark rounded-full flex items-center justify-center mb-4 border border-gray-700">
+                                <i class="fa fa-microchip text-4xl text-gray-500"></i>
+                            </div>
+                            <h3 class="text-lg font-medium mb-2">未选择产品</h3>
+                            <p class="text-gray-400 text-sm max-w-xs">请从左侧列表中选择一个芯片产品以查看详细信息</p>
+                        </div>
+
+                        <div id="product-detail-content" class="flex-grow hidden">
+                            <div class="mb-4">
+                                <div class="bg-tech-dark rounded-lg overflow-hidden mb-4">
+                                    <img id="product-image" src="" alt="产品图片" class="w-full h-48 object-cover">
+                                </div>
+                                <h3 id="product-title" class="text-xl font-bold text-white mb-1"></h3>
+                                <p id="product-manufacturer" class="text-tech-accent mb-3"></p>
+                                <div id="product-tags" class="flex flex-wrap gap-2 mb-4"></div>
+                            </div>
+
+                            <div class="space-y-4 text-sm">
+
+                                <div class="bg-tech-dark/50 rounded-lg p-3">
+                                    <h4 class="font-medium text-tech-accent mb-2 flex items-center"><i class="fa fa-info-circle mr-2"></i>产品描述</h4>
+                                    <p id="product-description" class="text-gray-300 text-sm"></p>
+                                </div>
+
+                                <div class="bg-tech-dark/50 rounded-lg p-3">
+                                    <h4 class="font-medium text-tech-accent mb-2 flex items-center"><i class="fa fa-cogs mr-2"></i>技术规格</h4>
+                                    <ul class="space-y-2 text-sm" id="product-specs">
+                                        <!-- 动态填充规格 -->
+                                    </ul>
+                                </div>
+
+                                <div class="bg-tech-dark/50 rounded-lg p-3">
+                                    <h4 class="font-medium text-tech-accent mb-2 flex items-center"><i class="fa fa-line-chart mr-2"></i>性能参数</h4>
+                                    <div class="grid grid-cols-2 gap-2 text-sm" id="product-performance">
+                                        <!-- 动态填充性能参数 -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 卡片容器 -->
+                <div id="hwcardContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- 卡片将动态添加到这里 -->
+                </div>
+
+                <!-- 空的悬浮信息框模板 -->
+                <div id="hoverInfoTemplate3" class="fixed hidden bg-white shadow-lg p-4 rounded-lg w-64 z-100 border border-gray-200">
+                    <h4 id="hoverInfoTitle3" class="font-medium text-dark mb-2">详细参数</h4>
+                    <div id="hoverInfoContent3" class="space-y-2 text-sm text-gray-600">
+                    <!-- 参数内容将动态生成 -->
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!--传感器智库页面-->
+        <div id="传感器搜索-page" class="page-content">
+            <main class="sticky mt-16 top-20 z-20 container mx-auto px-4 py-8 flex flex-col gap-4">
+                <!-- 状态指示器 -->
+                <div class="flex items-center gap-3">
+                    <i class="fa fa-eye text-tech-accent text-3xl"></i>
+                    <h1 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-white">
+                        <span class="text-tech-accent text-shadow-glow">传感器</span>产品目录
+                    </h1>
+                </div>
+                
+                <!-- 搜索和筛选区域 -->
+                <div class="container mx-auto px-6 py-5">
+                    <div class="bg-white rounded-xl p-4 border border-gray-700/50">
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <!-- 搜索框 -->
+                            <div class="relative flex-grow">
+                                <input
+                                    type="text" id="sensorsearch-input"
+                                    placeholder="搜索传感器型号、特征."
+                                    class="w-full bg-tech-dark border border-gray-600 rounded-lg py-2.5 px-4 pl-10 focus:outline-none focus:border-tech-accent transition-all"
+                                >
+                                <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            </div>
+
+                            <!-- 筛选下拉菜单 -->
+                            <div class="flex flex-wrap gap-3">
+                                <div class="relative w-full md:w-auto flex-grow md:flex-grow-0">
+                                    <button id="manufacturer-filter-btn-sensor" class="w-full bg-tech-dark border border-gray-600 rounded-lg py-2.5 px-4 flex items-center justify-between hover:border-tech-accent transition-all">
+                                        <span>厂商</span>
+                                        <i class="fa fa-chevron-down ml-2 text-xs"></i>
+                                    </button>
+                                    <div id="manufacturer-dropdown-sensor" class="absolute left-0 mt-2 w-64 bg-tech-medium border border-gray-600 rounded-lg shadow-xl z-20 hidden">
+                                        <div class="p-3 max-h-60 overflow-y-auto scrollbar-thin" id="manufacturer-options-sensor">
+                                            <!-- 动态生成的厂商选项将在这里插入 -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 产品类型筛选 -->
+                                <div class="relative w-full md:w-auto flex-grow md:flex-grow-0">
+                                    <button id="type-filter-btn-sensor" class="w-full bg-tech-dark border border-gray-600 rounded-lg py-2.5 px-4 flex items-center justify-between hover:border-tech-accent transition-all">
+                                        <span>产品类型</span>
+                                        <i class="fa fa-chevron-down ml-2 text-xs"></i>
+                                    </button>
+                                    <div id="type-dropdown-sensor" class="absolute left-0 mt-2 w-64 bg-tech-medium border border-gray-600 rounded-lg shadow-xl z-20 hidden">
+                                        <div class="p-3" id="type-options-sensor">
+                                            <!-- 动态生成的产品类型选项将在这里插入 -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 应用领域筛选 -->
+                                <div class="relative w-full md:w-auto flex-grow md:flex-grow-0">
+                                    <button id="application-filter-btn-sensor" class="w-full bg-tech-dark border border-gray-600 rounded-lg py-2.5 px-4 flex items-center justify-between hover:border-tech-accent transition-all">
+                                        <span>应用领域</span>
+                                        <i class="fa fa-chevron-down ml-2 text-xs"></i>
+                                    </button>
+                                    <div id="application-dropdown-sensor" class="absolute left-0 mt-2 w-64 bg-tech-medium border border-gray-600 rounded-lg shadow-xl z-20 hidden">
+                                        <div class="p-3" id="application-options-sensor">
+                                            <!-- 动态生成的应用领域选项将在这里插入 -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 重置按钮 -->
+                                <button id="reset-btn-component-sensor" class="w-full md:w-auto bg-tech-dark border border-gray-600 rounded-lg py-2.5 px-4 hover:border-tech-accent transition-all">
+                                    <i class="fa fa-refresh mr-1"></i> 重置
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    <!-- 空状态 -->
+                    <div id="emptyState-sensor" class="flex flex-col items-center justify-center py-16 hidden">
+                        <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+                            <i class="fa fa-search text-gray-400 text-3xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">未找到结果</h3>
+                        <p class="text-gray-500 max-w-md text-center">请尝试使用不同的搜索词或调整搜索条件</p>
+                    </div>               
+
+                <!-- 主内容区域 -->
+                <div class="container mx-auto px-6 py-2 flex-grow flex flex-col lg:flex-row gap-6">
+                    <!-- 产品列表区域 -->
+                    <div class="w-full lg:w-2/3 bg-tech-medium/40 rounded-xl border border-gray-700/50 p-4 overflow-hidden">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold flex items-center">
+                                <i class="fa fa-th-large text-tech-accent mr-2"></i>产品列表
+                            </h2>
+                            <div id="result-count-sensor" class="text-sm text-gray-400">显示 0 个产品</div>
+                        </div>
+
+                        <!-- 修改后 -->
+                        <div id="product-list-container-sensor" class="max-h-[calc(100vh-300px)] overflow-y-auto scrollbar-thin pr-2">
+                            <!-- 动态内容将在这里生成 -->
+                            <div class="loading-indicator text-center py-10">
+                                <i class="fa fa-spinner fa-spin text-tech-accent text-2xl mb-2"></i>
+                                <p>加载产品数据中...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 产品详情区域 -->
+                    <div class="w-full lg:w-1/3 bg-tech-medium/40 rounded-xl border border-gray-700/50 p-4 flex flex-col">
+                        <h2 class="text-xl font-bold flex items-center mb-4">
+                            <i class="fa fa-info-circle text-tech-accent mr-2"></i>产品详情
+                        </h2>
+
+                        <div id="product-detail-empty-sensor" class="flex-grow flex flex-col items-center justify-center text-center p-6">
+                            <div class="w-24 h-24 bg-tech-dark rounded-full flex items-center justify-center mb-4 border border-gray-700">
+                                <i class="fa fa-microchip text-4xl text-gray-500"></i>
+                            </div>
+                            <h3 class="text-lg font-medium mb-2">未选择产品</h3>
+                            <p class="text-gray-400 text-sm max-w-xs">请从左侧列表中选择一个芯片产品以查看详细信息</p>
+                        </div>
+
+                        <div id="product-detail-content-sensor" class="flex-grow hidden">
+                            <div class="mb-4">
+                                <div class="bg-tech-dark rounded-lg overflow-hidden mb-4">
+                                    <img id="product-image-sensor" src="" alt="产品图片" class="w-full h-48 object-cover">
+                                </div>
+                                <h3 id="product-title-sensor" class="text-xl font-bold text-white mb-1"></h3>
+                                <p id="product-manufacturer-sensor" class="text-tech-accent mb-3"></p>
+                                <div id="product-tags-sensor" class="flex flex-wrap gap-2 mb-4"></div>
+                            </div>
+
+                            <div class="space-y-4 text-sm">
+
+                                <div class="bg-tech-dark/50 rounded-lg p-3">
+                                    <h4 class="font-medium text-tech-accent mb-2 flex items-center"><i class="fa fa-info-circle mr-2"></i>产品描述</h4>
+                                    <p id="product-description-sensor" class="text-gray-300 text-sm"></p>
+                                </div>
+
+                                <div class="bg-tech-dark/50 rounded-lg p-3">
+                                    <h4 class="font-medium text-tech-accent mb-2 flex items-center"><i class="fa fa-cogs mr-2"></i>技术规格</h4>
+                                    <ul class="space-y-2 text-sm" id="product-specs">
+                                        <!-- 动态填充规格 -->
+                                    </ul>
+                                </div>
+
+                                <div class="bg-tech-dark/50 rounded-lg p-3">
+                                    <h4 class="font-medium text-tech-accent mb-2 flex items-center"><i class="fa fa-line-chart mr-2"></i>性能参数</h4>
+                                    <div class="grid grid-cols-2 gap-2 text-sm" id="product-performance">
+                                        <!-- 动态填充性能参数 -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 卡片容器 -->
+                <div id="sensorcardContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- 卡片将动态添加到这里 -->
+                </div>
+
+                <!-- 空的悬浮信息框模板 -->
+                <div id="hoverInfoTemplatesensor" class="fixed hidden bg-white shadow-lg p-4 rounded-lg w-64 z-100 border border-gray-200">
+                    <h4 id="hoverInfoTitlesensor" class="font-medium text-dark mb-2">详细参数</h4>
+                    <div id="hoverInfoContentsensor" class="space-y-2 text-sm text-gray-600">
+                    <!-- 参数内容将动态生成 -->
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- 页脚容器 -->
+        <div id="footer-container"></div>   
+    </div>
+        
+    <!-- 加载组件的脚本 -->
+    <script>
+               // 显示指定页面
+        function showPage(pageName) {
+            // 隐藏所有页面内容
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.style.display = 'none';
+            });
+            
+            // 显示目标页面
+            const targetPage = document.getElementById(`${pageName}-page`);
+            if (targetPage) {
+                targetPage.style.display = 'block';
+            }
+            
+            // 更新导航栏的选中状态
+            document.querySelectorAll('nav button, .absolute a').forEach(item => {
+                item.classList.remove('bg-primary/30', 'text-neon');
+                item.classList.add('bg-primary/10', 'text-primary');
+                
+                // 如果是下拉菜单中的链接
+                if (item.classList.contains('block')) {
+                    item.classList.remove('bg-primary/20', 'text-white');
+                    item.classList.add('text-gray-300');
+                    
+                    // 如果是当前选中的页面
+                    if (item.textContent.trim().includes(pageName)) {
+                        item.classList.remove('text-gray-300');
+                        item.classList.add('bg-primary/20', 'text-white');
+                    }
+                }
+            });
+            
+            
+            // 更新页面标题
+            document.title = `${pageName} - VALEO PRODUCT CONFIGURATOR`;
+            if (pageName === '架构网络查看'){
+                if (netinitstatus ===0){
+                    if (window.apiReponse){
+                    initnetwork()
+                    netinitstatus = 1
+                }}
+                
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {           // 页面切换功能
+            // 为导航菜单中的链接添加点击事件
+            document.querySelectorAll('.absolute a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // 获取目标页面ID
+                    const targetPage = this.textContent.trim().split(' ')[0];
+                    //console.log("I am here")
+                    // 切换页面
+                    //showPage(targetPage);
+                    
+                    // 更新下拉菜单的选中状态
+                    document.querySelectorAll('.absolute a').forEach(a => {
+                        a.classList.remove('bg-primary/20', 'text-white');
+                        a.classList.add('text-gray-300');
+                    });
+                    this.classList.remove('text-gray-300');
+                    this.classList.add('bg-primary/20', 'text-white');
+                });
+            });
+            
+            // // 为首页按钮添加点击事件
+            // document.querySelector('[onclick="showPage(\'主页\')"]').addEventListener('click', function(e) {
+            //     e.preventDefault();
+            //     //showPage('主页');
+                
+            //     // 更新下拉菜单的选中状态（如果需要）
+            //     document.querySelectorAll('.absolute a').forEach(a => {
+            //         a.classList.remove('bg-primary/20', 'text-white');
+            //         a.classList.add('text-gray-300');
+            //     });
+            // });
+            
+            // 默认显示主页
+            showPage('学习智库');
+            
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {     //ADAS 功能搜索
+               
+            const searchInput = document.getElementById('searchInput');
+            const searchButton = document.getElementById('functionserach');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const emptyState = document.getElementById('emptyState');
+            const resultStats = document.getElementById('resultStats');
+            const resultCount = document.getElementById('resultCount');
+            const cardContainer = document.getElementById('cardContainer');
+            const hoverInfoTemplate = document.getElementById('hoverInfoTemplate');
+            const hoverInfoTitle = document.getElementById('hoverInfoTitle');
+            const hoverInfoContent = document.getElementById('hoverInfoContent');
+            const showbutton = document.getElementById('allfunction');
+            const hwsearchButton = document.getElementById('hwserach');
+            const hwshowbutton = document.getElementById('allHW');
+
+              // 当前显示的卡片数据
+            let currentCards = [];
+
+            // 清空输出
+            document.getElementById('clear-output').addEventListener('click', function() {
+                document.getElementById('output-area').innerHTML = '';
+            });
+            
+            // 复制输出
+            document.getElementById('copy-output').addEventListener('click', function() {
+                const outputText = document.getElementById('output-area').innerText;
+                navigator.clipboard.writeText(outputText).then(function() {
+                    showNotification('输出已复制到剪贴板');
+                }).catch(function() {
+                    showNotification('复制失败，请手动复制', 'error');
+                });
+            });
+        
+            // 绑定搜索按钮点击事件
+            showbutton.addEventListener('click', () => {
+                    executeScript("showall",'EUF','');
+            });
+
+            // 绑定搜索按钮点击事件
+            searchButton.addEventListener('click', () => {
+                const searchText = searchInput.value.trim();
+                if (searchText){
+                    executeScript("serchbyfunction","EUF","FUNCTION NAME");
+                }
+                else {
+                    alert('请输入搜索内容');
+                return;
+                }
+            });
+
+
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                searchButton.click();
+                }
+            });
+
+        // 将驼峰命名转换为中文标签
+        function camelCaseToLabel(key) {
+            const labelMap = {
+            "FUNCTION NAME": '功能简称',
+            "FUNCTION FULL NAME": '功能全程',
+            "FUNCTION DESCRIPTION": '功能描述',
+            "SIDE CAM": '传感器类型',
+            };
+            
+            return labelMap[key] || key
+            .replace(/([A-Z])/g, ' $1')
+            .replace(/_/g, ' ')
+            .trim()
+            .replace(/^\w/, (c) => c.toUpperCase());
+        }
+
+        // 执行脚本函数
+        function executeScript(scriptName,item_type,item_attri) {
+            // 禁用按钮
+            searchButton.disabled = true;
+            const searchText = searchInput.value.trim();
+            // 显示加载状态
+            // resultContainer.classList.add('hidden');
+            loadingIndicator.classList.remove('hidden');
+            cardContainer.innerHTML = '';
+            resultStats.classList.add('hidden');
+            emptyState.classList.add('hidden');
+
+            // 更新状态
+            document.getElementById('status').innerHTML = 
+                `<i class="fa fa-spinner fa-spin text-primary mr-2"></i>执行中: ${scriptName}`;
+        
+            
+            // 清空输出区域
+            document.getElementById('output-area').innerHTML = `
+                <div class="text-gray-400 mb-2">
+                    <span class="text-primary">sys@archi-dev</span>:<span class="text-light-blue">~</span>$ <span class="text-white">${scriptName}</span>
+                </div>
+                <div class="text-gray-300">
+                    正在执行脚本 ${scriptName}...
+                </div>
+            `;
+            
+            // 发送脚本名称，而不是完整路径
+            const scriptMapping = {
+                'serchbyfunction': 'serchbyfunction',
+                'showall': 'showall'
+            };
+            
+            const mappedScriptName = scriptMapping[scriptName] || scriptName;
+            
+            // 调用API执行Python脚本
+            fetch('http://localhost:5000/execute-script', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                        scriptName: mappedScriptName,
+                        searchtext:searchText,
+                        searchtype:item_type,
+                        search_index: item_attri
+
+                 })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP错误: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // 模拟进度更新
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += Math.random() * 10000;
+                    if (progress > 100) progress = 100;
+                
+                    
+                    if (progress === 100) {
+                        clearInterval(interval);
+                        
+                        // 显示执行结果
+                        if (data.success) {
+                            document.getElementById('output-area').innerHTML += `
+                                <div class="text-green-400 mt-2">
+                                    [+] 脚本执行完成<br>
+                                    [+] 状态: 成功<br>
+                                    [+] 输出: <pre>${data.output}</pre>
+                                </div>
+                            `;
+                            // 隐藏加载状态，显示结果
+                            loadingIndicator.classList.add('hidden');
+                            data_group = JSON.parse(data.output);
+                                         // 显示结果统计
+                            resultStats.classList.remove('hidden');
+                            resultCount.textContent = data_group.length;
+
+                            // 根据结果数量决定显示内容
+                            if (data_group.length === 0) {
+                                emptyState.classList.remove('hidden');
+                            } else {
+                                // 动态创建卡片
+                                createCards(data_group);
+                                initCardInteractions(); // 初始化交互逻辑
+
+                            }
+                        } else {
+                            document.getElementById('output-area').innerHTML += `
+                                <div class="text-red-400 mt-2">
+                                    [-] 脚本执行失败<br>
+                                    [-] 错误: ${data.error}
+                                </div>
+                            `;
+                        }                  
+                        // 更新状态
+                        document.getElementById('status').innerHTML = 
+                            `<i class="fa fa-check-circle text-secondary mr-2"></i>系统就绪`;
+                        
+                        // 启用按钮
+                        document.getElementById('functionserach').disabled = false;
+                        
+                        showNotification(`脚本 ${scriptName} ${data.success ? '执行完成' : '执行失败'}`);
+                    }
+                }, 300);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('output-area').innerHTML += `
+                    <div class="text-red-400 mt-2">
+                        [-] 连接服务器失败<br>
+                        [-] 错误: ${error.message}
+                    </div>
+                `;
+                
+                // 恢复状态
+                document.getElementById('status').innerHTML = 
+                    `<i class="fa fa-check-circle text-secondary mr-2"></i>系统就绪`;
+                // document.getElementById('progress-container').classList.add('hidden');
+                document.getElementById('functionserach').disabled = false;
+                showNotification('连接服务器失败', 'error');
+            });
+        } 
+
+        // 初始化卡片交互
+        function initCardInteractions() {
+            // 鼠标悬停处理
+            cardContainer.addEventListener('mouseover', (e) => {
+                if (!cardContainer.contains(e.target)) return;
+                const card = e.target.closest('.group[data-card-id]');
+                
+
+                if (!card) {
+                // 鼠标进入了容器但不是卡片（如间隙）
+                return;
+                }
+            
+                const cardId = card.getAttribute('data-card-id');
+
+                const item = data_group.find(item => item["FUNCTION NAME"] === cardId);
+
+                if (!item){
+                    return;
+                } 
+            
+            // 更新悬浮框内容
+                generateHoverInfoContent(item);
+                hoverInfoTemplate.querySelector('h4').textContent = `${item["FUNCTION NAME"]} 详情`;
+            
+            // 显示悬浮框
+                hoverInfoTemplate.classList.remove('hidden');
+            
+            // 定位悬浮框
+                const rect = card.getBoundingClientRect();
+                const x = rect.right + 10;
+                const y = rect.top;
+            
+                // 边界检查
+                if (x + hoverInfoTemplate.offsetWidth > window.innerWidth) {
+                    hoverInfoTemplate.style.left = (rect.left - hoverInfoTemplate.offsetWidth - 10) + 'px';
+                } else {
+                    hoverInfoTemplate.style.left = x + 'px';
+                }
+                
+                hoverInfoTemplate.style.top = y + 'px';
+                });
+            
+            cardContainer.addEventListener('mouseleave', () => {
+                hoverInfoTemplate.classList.add('hidden');
+            });
+            
+            // 查看PDF按钮处理
+            cardContainer.addEventListener('click', (e) => {
+                const btn = e.target.closest('.view-details-btn');
+                if (!btn) return;
+            
+                const pdfPath = btn.getAttribute('data-pdf-path');
+                const title = btn.getAttribute('data-title');
+                const btnstat = btn.getAttribute('disabled');
+                if (!btnstat==1){
+                // 更新模态框内容
+                pdfIframe.src = pdfPath;
+                pdfModalTitle.textContent = title;
+                pdfFileName.textContent = title.replace('技术文档', '') + '.pdf';
+            
+                // 显示模态框
+                pdfModal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+                }});
+        
+            // 关闭模态框
+            closePDFBtn.addEventListener('click', () => {
+                pdfModal.classList.add('hidden');
+                document.body.style.overflow = '';
+                pdfIframe.src = '';
+            });
+        
+            // 点击模态框背景关闭
+            pdfModal.addEventListener('click', (e) => {
+                if (e.target === pdfModal) {
+                pdfModal.classList.add('hidden');
+                document.body.style.overflow = '';
+                pdfIframe.src = '';
+                }
+            });
+        
+            // 按ESC键关闭模态框
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !pdfModal.classList.contains('hidden')) {
+                pdfModal.classList.add('hidden');
+                document.body.style.overflow = '';
+                pdfIframe.src = '';
+                }
+            });
+        }
+
+        function generateHoverInfoContent(item) {
+            const contentContainer = hoverInfoTemplate.querySelector('.space-y-2');
+            contentContainer.innerHTML = '';
+            
+            // 直接显示所有属性
+            Object.entries(item).forEach(([key, value]) => {
+            if (value === undefined || value === null) return;
+            
+            const row = document.createElement('div');
+            row.className = 'flex justify-between';
+            
+            const labelSpan = document.createElement('span');
+            labelSpan.textContent = `${key}:`;
+            
+            const valueSpan = document.createElement('span');
+            valueSpan.textContent = value;
+            
+            row.appendChild(labelSpan);
+            row.appendChild(valueSpan);
+            contentContainer.appendChild(row);
+            });
+            
+            const hoverInfo = document.getElementById('hoverInfoTemplate');
+            hoverInfo.style.width = '600px'; // 调整宽度
+            hoverInfo.style.backgroundColor = '#f0f9ff'; // 蓝色背景
+            hoverInfo.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
+        }
+
+        function generatecardhtml(item){
+            if (item["file_status"] == 1){
+                return  `
+                    <div class="bg-white rounded-2xl shadow-card overflow-hidden hover-scale group" data-card-id="${item["FUNCTION NAME"]}">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src=${"../PIC/"+item["FUNCTION NAME"]+".gif"} alt="动图" class="w-full h-full object-cover" loading="lazy">
+                            <div class="absolute inset-0 bg-gradient-to-t from-dark/70 to-transparent"></div>
+                            <div class="absolute bottom-4 left-4 text-white">
+                                <span class="bg-primary/90 text-white text-xs font-medium px-2 py-1 rounded-full"> ${item["SAE FUNCTION LEVEL"]}级</span>
+                            </div>
+                        </div> 
+                        
+                        <!-- 卡片内容区域 -->
+                        <div class="p-6">
+                            <!-- 功能简写和全称 -->
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h3 class="text-[clamp(1.2rem,3vw,1.5rem)] font-bold text-dark group-hover:text-primary transition-colors">
+                                    ${item["FUNCTION NAME"]}
+                                    </h3>
+                                    <p class="text-gray-500 text-sm">${item["FUNCTION FULL NAME"]}</p>
+                                </div>
+                                    <span class="bg-blue-50 text-blue-700 text-xs font-medium px-2 py-1 rounded-full">
+                                    ${item["SAE FUNCTION LEVEL"]}
+                                    </span>
+                            </div>
+                            
+                            <!-- 功能介绍 -->
+                            <p class="text-gray-600 mb-4 line-clamp-3 text-xs">
+                                ${item["FUNCTION DESCRIPTION"]}
+                            </p>
+                            
+                            <!-- 查看详情按钮 -->
+                                <button 
+                                    class="view-details-btn w-full py-3 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg transition-colors duration-300 flex items-center justify-center gap-2 "
+                                    data-pdf-path = "${"../Doc/"+item["FUNCTION NAME"]+".pdf"}" data-title = "${item["FUNCTION NAME"]+"技术文档"}">
+                                    <i class="fa fa-file-pdf-o"></i>
+                                    <span>查看技术文档</span>
+                                </button>
+                        </div>
+                    </div>
+                `;
+            }else{
+                return  `
+                    <div class="bg-white rounded-2xl shadow-card overflow-hidden hover-scale group" data-card-id="${item["FUNCTION NAME"]}">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src=${"../PIC/"+item["FUNCTION NAME"]+".gif"} alt="动图" class="w-full h-full object-cover" loading="lazy">
+                            <div class="absolute inset-0 bg-gradient-to-t from-dark/70 to-transparent"></div>
+                            <div class="absolute bottom-4 left-4 text-white">
+                                <span class="bg-primary/90 text-white text-xs font-medium px-2 py-1 rounded-full"> ${item["SAE FUNCTION LEVEL"]}级</span>
+                            </div>
+                        </div> 
+                        
+                        <!-- 卡片内容区域 -->
+                        <div class="p-6">
+                            <!-- 功能简写和全称 -->
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h3 class="text-[clamp(1.2rem,3vw,1.5rem)] font-bold text-dark group-hover:text-primary transition-colors">
+                                    ${item["FUNCTION NAME"]}
+                                    </h3>
+                                    <p class="text-gray-500 text-sm">${item["FUNCTION FULL NAME"]}</p>
+                                </div>
+                                    <span class="bg-blue-50 text-blue-700 text-xs font-medium px-2 py-1 rounded-full">
+                                    ${item["SAE FUNCTION LEVEL"]}
+                                    </span>
+                            </div>
+                            
+                            <!-- 功能介绍 -->
+                            <p class="text-gray-600 mb-4 line-clamp-3 text-xs">
+                                ${item["FUNCTION DESCRIPTION"]}
+                            </p>
+                            
+                            <!-- 查看详情按钮 -->
+                                <button 
+                                    class="view-details-btn w-full py-3 bg-ban hover:bg-ban/90 text-black font-medium rounded-lg transition-colors duration-300 flex items-center justify-center gap-2"
+                                    data-pdf-path = "a" data-title = 敬请期待"  disabled ="1">
+                                    <i class="fa fa-times-circle"></i>
+                                    <span>准备中，敬请期待</span>
+                                </button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        // 动态创建卡片的函数
+        function createCards(items) {
+            // 清空容器
+            currentCards = items;
+            cardContainer.innerHTML = '';
+            
+            // 为每个结果创建卡片
+            items.forEach(item => {
+                const card = generatecardhtml(item);
+            // 将卡片添加到容器
+            cardContainer.insertAdjacentHTML('beforeend', card);
+            });
+        }
+
+        // 显示通知
+        function showNotification(message, type = 'success') {
+            // 创建通知元素
+            const notification = document.createElement('div');
+            notification.className = `fixed top-20 right-4 px-4 py-3 rounded-lg shadow-lg z-50 transform transition-all duration-300 opacity-0 translate-x-full ${
+                type === 'success' ? 'bg-secondary/90 text-white' : 'bg-red-500/90 text-white'
+            }`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fa fa-${type === 'success' ? 'check' : 'exclamation-circle'} mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            // 添加到页面
+            document.body.appendChild(notification);
+            
+            // 显示通知
+            setTimeout(() => {
+                notification.classList.remove('opacity-0', 'translate-x-full');
+            }, 10);
+            
+            // 自动关闭
+            setTimeout(() => {
+                notification.classList.add('opacity-0', 'translate-x-full');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+        
+    });
+    
+        
+        let productData = {};
+        let manufacturerData = {};
+        let manufacturerData_init = {};
+        let sensorData = {};
+        let sensorbttypeData = {};
+        let sensorbttypeData_init = {};
+        
+        document.addEventListener('DOMContentLoaded', () => {     // 配置搜索功能函数
+            const SearchcardContainer = document.getElementById('SearchcardContainer');
+            const SearchcardContainerhw = document.getElementById('SearchcardContainerforhw');
+            const SearchcardContainersensor = document.getElementById('SearchcardContainerforsensor');
+            const SearchcardContainerreg = document.getElementById('SearchcardContainerforreg');
+            const ConfigsearchButton = document.getElementById('ConfigsearchButton');
+            const resetButton = document.getElementById('resetButton');
+            const searchresultPanel = document.getElementById('searchresultPanel');
+            const SearchresultContent = document.getElementById('SearchresultContent');
+            const solutionContainer = document.getElementById('solutionContainer');
+            const selectionpool = document.getElementById('selected-chips');
+            const productDetailEmpty = document.getElementById('product-detail-empty');
+            const productDetailContent = document.getElementById('product-detail-content');
+            const productImage = document.getElementById('product-image');
+            const productTitle = document.getElementById('product-title');
+            const productManufacturer = document.getElementById('product-manufacturer');
+            const productTags = document.getElementById('product-tags');
+            const productSpecs = document.getElementById('product-specs');
+            const productDescription = document.getElementById('product-description');
+            const productPerformance = document.getElementById('product-performance');
+            const componentsearchInput = document.getElementById('hwsearch-input');
+            const resetBtnCom = document.getElementById('reset-btn-component');
+            const dropdownButtons = [
+                {btn: 'manufacturer-filter-btn', dropdown: 'manufacturer-dropdown'},
+                {btn: 'type-filter-btn', dropdown: 'type-dropdown'},
+                {btn: 'application-filter-btn', dropdown: 'application-dropdown'},
+                {btn: 'type-filter-btn-sensor', dropdown: 'type-dropdown-sensor'},
+            ];
+
+            
+            getcomponent()
+            getsensors()
+
+            
+            function getcomponent(){
+                fetch('http://localhost:5000/component_list_get', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    scriptName: "read_chipset_catalogue.py",
+                    tablepath: "database.xlsx"
+                })
+                })
+                .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP错误: ${response.status}`);
+                }
+                return response.json();
+                })
+                .then(data => {
+                if (data.success) {
+                    productData = JSON.parse(data.output); 
+                    manufacturerData = groupProductsByManufacturer(productData.chipset_catalogue);
+                    manufacturerData_init = manufacturerData;
+                    initFilters(productData)
+                    renderProductList(manufacturerData);
+                    document.getElementById('result-count').textContent = `显示 ${Object.keys(productData.chipset_catalogue).length} 个产品`;
+                    const chipCards = document.querySelectorAll('.chip-card');
+                    chipCards.forEach(card => {
+                        card.addEventListener('click', () => {
+                            // 移除其他卡片的选中状态
+                        chipCards.forEach(c => c.classList.remove('selected'));
+                            // 添加当前卡片的选中状态
+                        card.classList.add('selected');
+                        // 显示产品详情
+                        showProductDetail(card.dataset.id);
+                            });
+                        });
+                } else {
+                    console.log("请求失败");
+                    reject(new Error("API返回失败"));
+                }
+                })
+                .catch(error => {
+                    console.error("请求过程中出错:", error);
+                reject(error);
+                });
+            }
+            
+            function getsensors(){
+                fetch('http://localhost:5000/sensor_list_get', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    scriptName: "read_sensor_catalogue.py",
+                    tablepath: "database.xlsx"
+                })
+                })
+                .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP错误: ${response.status}`);
+                }
+                return response.json();
+                })
+                .then(data => {
+                if (data.success) {
+                    sensorData = JSON.parse(data.output); 
+                    sensorbttypeData = groupProductsByType(sensorData.sensor_catalogue);
+                    sensorbttypeData_init = sensorbttypeData;
+                    initFilterssensor(sensorData)
+                    renderProductListSensor(sensorbttypeData)
+                    //document.getElementById('result-count').textContent = `显示 ${Object.keys(productData.chipset_catalogue).length} 个产品`;
+                    //const chipCards = document.querySelectorAll('.chip-card');
+                    // chipCards.forEach(card => {
+                    //     card.addEventListener('click', () => {
+                    //         // 移除其他卡片的选中状态
+                    //     chipCards.forEach(c => c.classList.remove('selected'));
+                    //         // 添加当前卡片的选中状态
+                    //     card.classList.add('selected');
+                    //     // 显示产品详情
+                    //     showProductDetail(card.dataset.id);
+                    //         });
+                    //     });
+                } else {
+                    console.log("请求失败");
+                    reject(new Error("API返回失败"));
+                }
+                })
+                .catch(error => {
+                    console.error("请求过程中出错:", error);
+                    reject(error);
+                });
+            }
+            
+            // 按厂商分组产品数据
+            function groupProductsByManufacturer(productINFO) {
+                manufacturerData = {};
+                Object.keys(productINFO).forEach(key => {
+                    product = productINFO[key]
+                    const manufacturer = product.SUPPLIER || '未知厂商';
+                    if (!manufacturerData[manufacturer]) {
+                        manufacturerData[manufacturer] = [];
+                    }
+                    manufacturerData[manufacturer].push(product);
+                });
+                return manufacturerData
+            }
+
+            // 按厂商分组产品数据
+            function groupProductsByType(productINFO) {
+                sensorbttypeData = {};
+                Object.keys(productINFO).forEach(key => {
+                    products = productINFO[key]
+                    
+                    Object.keys(products).forEach(keyy =>{
+                        product = products[keyy]
+                        const sensortype = product.TYPE || '未知厂商';
+                        if (!sensorbttypeData[sensortype]) {
+                            sensorbttypeData[sensortype] = [];
+                        }
+                        sensorbttypeData[sensortype].push(product);
+                    })
+                    
+                });
+                return sensorbttypeData
+            }
+
+            function initFilters(productINFO){
+                const supplier = productINFO.SUPPLIER;
+                const application = productINFO.DOMAIN;
+                const type = productINFO.TYPE;
+                // 生成厂商筛选选项
+                renderFilterOptions('manufacturer-options', supplier);
+                // 生成产品类型筛选选项
+                renderFilterOptions('type-options', type);
+                // 生成应用领域筛选选项
+                renderFilterOptions('application-options', application);
+            }
+
+            function initFilterssensor(productINFO){
+                const type = productINFO.TYPE;
+                //const application = productINFO.DOMAIN;
+                //const type = productINFO.TYPE;
+                // 生成厂商筛选选项
+                // renderFilterOptions('manufacturer-options', type);
+                // 生成产品类型筛选选项
+                renderFilterOptions('type-options-sensor', type);
+                // 生成应用领域筛选选项
+                // renderFilterOptions('application-options', application);
+            }
+            // 初始化下拉菜单事件
+            dropdownButtons.forEach(({btn, dropdown}) => {
+                const button = document.getElementById(btn);
+                const dropdownEl = document.getElementById(dropdown);
+
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    // 关闭其他下拉菜单
+                    dropdownButtons.forEach(({dropdown: d}) => {
+                        if (d !== dropdown) {
+                            document.getElementById(d).classList.add('hidden');
+                        }
+                    });
+                    dropdownEl.classList.toggle('hidden');
+                });
+            });
+
+            // 点击页面其他地方关闭下拉菜单
+            document.addEventListener('click', () => {
+                dropdownButtons.forEach(({dropdown}) => {
+                    document.getElementById(dropdown).classList.add('hidden');
+                });
+            });
+            // 渲染筛选器选项的通用函数
+            function renderFilterOptions(containerId, options) {
+                const container = document.getElementById(containerId);
+                container.innerHTML = '';
+
+                Object.keys(options).forEach(option => {
+                    const label = document.createElement('label');
+                    label.className = 'flex items-center gap-2 py-1.5 px-2 hover:bg-tech-light/50 rounded cursor-pointer';
+                    label.innerHTML = `
+                        <input type="checkbox" class="rounded text-tech-accent focus:ring-tech-accent" 
+                            value="${option}" checked>
+                        <span>${option}</span>
+                    `;
+                    container.appendChild(label);
+
+                    // 添加筛选事件监听
+                    label.querySelector('input').addEventListener('change', filterProducts);
+                    
+                });
+                componentsearchInput.addEventListener('input',filterProducts);
+            }
+
+            // 显示产品详情
+            function showProductDetail(productId) {
+            const product = productData.chipset_catalogue[productId];
+            if (!product) return;
+
+            productDetailEmpty.classList.add('hidden');
+            productDetailContent.classList.remove('hidden');
+
+            productImage.src = "../PIC/"+product.P+".png";
+            productTitle.textContent = product.P;
+            productManufacturer.textContent = product.SUPPLIER;
+
+            // 渲染标签
+            productTags.innerHTML = '';
+            tags =[product.TYPE,product.RAM]
+            tags.forEach(tag => {
+                const tagEl = document.createElement('span');
+                tagEl.className = 'text-xs bg-tech-light/30 px-2 py-0.5 rounded';
+                tagEl.textContent = tag;
+                productTags.appendChild(tagEl);
+            });
+
+            // 渲染规格
+            productSpecs.innerHTML = '';
+            specs =product.PROCESSOR;
+            Object.keys(specs).forEach(spec => {
+                const specs_1 = specs[spec];
+                if (typeof specs_1 == "object"){
+                    Object.keys(specs_1).forEach(spec_1 =>{
+                        const specs_2 = specs_1[spec_1];
+                        if (typeof specs_2 == "object"){
+                            Object.keys(specs_2).forEach(spec_2 =>{
+                                const specs_3 = specs_2[spec_2];
+                                if(typeof specs_3 == "object"){
+                                    Object.keys(specs_3).forEach(spec_3 => {
+                                        const specs_4 = specs_3[spec_3];
+                                        const li = document.createElement('li');
+                                        li.className = 'flex justify-between';
+                                        li.innerHTML = `<span class="text-gray-400">${spec} ${spec_1} ${spec_3}:</span> <span class="font-medium">${specs_4}</span>`;
+                                        productSpecs.appendChild(li);
+                                    });
+                                }
+                                else{
+                                    const li = document.createElement('li');
+                                    li.className = 'flex justify-between';
+                                    li.innerHTML = `<span class="text-gray-400">${spec} ${spec_1} ${spec_2}:</span> <span class="font-medium">${specs_3}</span>`;
+                                    productSpecs.appendChild(li);
+                                }});
+                        }
+                        else{
+                            const li = document.createElement('li');
+                            li.className = 'flex justify-between';
+                            li.innerHTML = `<span class="text-gray-400">${spec} ${spec_1}:</span> <span class="font-medium">${specs_2}</span>`;
+                            productSpecs.appendChild(li);
+                        }
+                    })
+                }
+            });
+
+            // 渲染描述
+            productDescription.textContent = product.DESCRIPTION;
+
+            // 渲染性能参数
+            // productPerformance.innerHTML = '';
+            // product.INTERFACE.forEach(param => {
+            //     const div = document.createElement('div');
+            //     div.className = 'flex justify-between';
+            //     div.innerHTML = `<span class="text-gray-400">${param.name}:</span> <span class="font-medium">${param.value}</span>`;
+            //     productPerformance.appendChild(div);
+            // });
+        }
+
+                // 重置按钮
+            resetBtnCom.addEventListener('click', () => {
+                componentsearchInput.value = '';
+                // 重置所有复选框
+                document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                    checkbox.checked = true;
+                });
+                // 显示所有卡片
+                const chipCards = document.querySelectorAll('.chip-card');
+                chipCards.forEach(card => card.classList.remove('hidden'));
+                const manufacturerGroups = document.querySelectorAll('.manufacturer-group');
+                manufacturerGroups.forEach(Group => {
+                    Group.classList.remove('hidden');
+                    const manufacturercounter = Group.querySelector('.supplier-count')
+                    const manufacturerproductgroups = Group.querySelectorAll('.manufacturer-products')
+                    const manufacturerproductgroup =manufacturerproductgroups[0]
+                    const total = manufacturerproductgroup.querySelectorAll('.chip-card').length
+                    manufacturercounter.textContent = ` ${total}个产品`;
+                });
+                document.getElementById('result-count').textContent = `显示 ${Object.keys(productData.chipset_catalogue).length} 个产品`;
+
+            });
+
+
+            function filterProducts() {
+                let visibleCount = Object.keys(productData.chipset_catalogue).length;
+                const chipCards = document.querySelectorAll('.chip-card');
+                // 获取所有选中的筛选条件
+                const selectedManufacturers = Array.from(document.querySelectorAll('#manufacturer-options input:checked'))
+                    .map(input => input.value);
+                const selectedTypes = Array.from(document.querySelectorAll('#type-options input:checked'))
+                    .map(input => input.value);
+                const selectedApplications = Array.from(document.querySelectorAll('#application-options input:checked'))
+                    .map(input => input.value);
+                
+                const searchTerm = document.getElementById('hwsearch-input').value.toLowerCase();
+                
+
+                const productsArray = Object.values(productData.chipset_catalogue);
+                const filteredProducts = productsArray.filter(product => {
+                    const matchesManufacturer = selectedManufacturers.includes(product.SUPPLIER);
+                    const matchesType = selectedTypes.includes(product.TYPE);
+                    // const matchesApplication = selectedApplications.includes(product.application);
+                    const matchesSearch = product.P.toLowerCase().includes(searchTerm) || 
+                                        JSON.stringify(product.PROCESSOR).toLowerCase().includes(searchTerm) ||
+                                        product.SUPPLIER.toLowerCase().includes(searchTerm);
+                                        JSON.stringify(product.DOMAIN).toLowerCase().includes(searchTerm);
+                    const result = matchesManufacturer && matchesType && matchesSearch
+
+                    if (result == false){
+                        card = Array.from(chipCards).find(node => node.getAttribute('data-id')===product.P);
+                        card.classList.add('hidden');
+                        visibleCount--;
+                    }else{
+                        card = Array.from(chipCards).find(node => node.getAttribute('data-id')===product.P);
+                        card.classList.remove('hidden');
+                        visibleCount++;
+                    }
+                    return matchesManufacturer && matchesType && matchesSearch;
+                });
+
+                const manufacturerGroups = document.querySelectorAll('.manufacturer-group');
+                manufacturerGroups.forEach(Group => {
+                    const manufacturercounter = Group.querySelector('.supplier-count')
+                    const manufacturerproductgroups = Group.querySelectorAll('.manufacturer-products')
+                    const manufacturerproductgroup =manufacturerproductgroups[0]
+
+                    const remains = manufacturerproductgroup.querySelectorAll('.chip-card').length-manufacturerproductgroup.querySelectorAll('.hidden').length
+                    manufacturercounter.textContent = ` ${remains}个产品`;
+                    if (remains ==0){
+                        Group.classList.add('hidden')
+                    }else{
+                        Group.classList.remove('hidden')
+                    }
+
+                })
+
+                // // 更新结果计数
+                document.getElementById('result-count').textContent = `显示 ${visibleCount} 个产品`;
+            }
+            
+            // 渲染产品列表
+            function renderProductList(producttoshow) {
+
+                const container = document.getElementById('product-list-container');
+                container.innerHTML = '';
+                // 遍历每个厂商
+                Object.entries(producttoshow).forEach(([manufacturer, products]) => {
+                    // 创建厂商分组
+                    const manufacturerGroup = document.createElement('div');
+                    manufacturerGroup.className = 'manufacturer-group mb-8';
+                    
+                    // 厂商头部
+                    manufacturerGroup.innerHTML = `
+                        <div class="manufacturer-header flex items-center justify-between mb-4 cursor-pointer">
+                            <h3 class="text-lg font-semibold flex items-center">
+                                <i class="fa fa-chevron-down text-tech-accent mr-2 transition-transform duration-300"></i>
+                                <img src="../PIC/${manufacturer}.png" alt="${manufacturer} Logo" class="w-16 h-6 mr-2">
+                                ${manufacturer}
+                            </h3>
+                            <span class="supplier-count text-sm bg-tech-light/50 px-2 py-1 rounded-full">${products.length} 个产品</span>
+                        </div>
+                        <div class="manufacturer-products grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+                    `;
+                    
+                    // 获取产品容器
+                    const productsContainer = manufacturerGroup.querySelector('.manufacturer-products');
+                    
+                    // 添加产品卡片
+                    products.forEach(product => {
+                        const card = createProductCard(product);
+                        productsContainer.appendChild(card);
+                    });
+                    
+                    // 添加到页面
+                    container.appendChild(manufacturerGroup);
+                });
+                
+                // 添加厂商分组折叠功能
+                attachManufacturerToggleEvents();
+            }
+            
+            // 渲染产品列表
+            function renderProductListSensor(producttoshow) {
+                const container = document.getElementById('product-list-container-sensor');
+                container.innerHTML = '';
+                // 遍历每个厂商
+                Object.entries(producttoshow).forEach(([type, products]) => {
+                    // 创建厂商分组
+                    const sensortypeGroup = document.createElement('div');
+                    sensortypeGroup.className = 'sensortype-group mb-8';
+                    
+                    // 厂商头部
+                    sensortypeGroup.innerHTML = `
+                        <div class="sensortype-header flex items-center justify-between mb-4 cursor-pointer">
+                            <h3 class="text-lg font-semibold flex items-center">
+                                <i class="fa fa-chevron-down text-tech-accent mr-2 transition-transform duration-300"></i>
+                                <img src="../PIC/${type}.png" alt="${type} Logo" class="w-16 h-6 mr-2">
+                                ${type}
+                            </h3>
+                            <span class="supplier-count text-sm bg-tech-light/50 px-2 py-1 rounded-full">${products.length} 个产品</span>
+                        </div>
+                        <div class="sensortype-products grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+                    `;
+                    
+                    // 获取产品容器
+                    const productsContainer = sensortypeGroup.querySelector('.sensortype-products');
+                    
+                    // 添加产品卡片
+                    products.forEach(product => {
+                        const card = createSensorCard(product);
+                        productsContainer.appendChild(card);
+                    });
+                    
+                    // 添加到页面
+                    container.appendChild(sensortypeGroup); 
+                });
+                
+                // 添加厂商分组折叠功能
+                attachManufacturerToggleEventsforsensor();
+            }
+            
+            // 创建产品卡片
+            function createProductCard(product) {
+                const card = document.createElement('div');
+                const productId = product.P;
+                
+                card.className = 'chip-card bg-tech-dark border border-gray-700 rounded-lg p-3';
+                card.dataset.id = productId;
+                card.dataset.manufacturer = product.SUPPLIER.toLowerCase();
+                card.dataset.cpu = product.PROCESSOR.AI || 'unknown';
+                card.dataset.type = product.TYPE || 'unknown';
+                
+                productdomain = ""
+        
+                FUSAinfo = product.FUSA
+                const tags = [product.FUSA]
+
+                if (typeof product.DOMAIN == 'string'){
+                    tags.push(product.DOMAIN)
+                }else{
+                    Object.keys(product.DOMAIN).forEach(key=>{
+                        tags.push(key)
+                    })
+                }
+
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-semibold text-white">${product.P}</h4>
+                        <span class="text-xs bg-tech-accent/20 text-tech-accent px-2 py-0.5 rounded-full">${product.TYPE || '标准级'}</span>
+                    </div>
+                    <p class="text-sm text-gray-400 mb-2">${product.PROCESSOR.AI.RESOURCE || '未知算力'} | ${product.PROCESSOR.CPU.RESOURCE || '未知核心数'} | ${product.FUSA|| '未知核心数'}</p>
+                    <div class="flex flex-wrap gap-1 mt-3">
+                        ${tags ? tags.map(tag => `<span class="text-xs bg-tech-light/30 px-2 py-0.5 rounded">${tag}</span>`).join('') : ''}
+                    </div>
+                `;
+                
+                return card;
+            }
+
+             // 创建传感器产品卡片
+            function createSensorCard(product) {
+                const card = document.createElement('div');
+                const productId = product.Name;
+                
+                card.className = 'chip-card-sensor bg-tech-dark border border-gray-700 rounded-lg p-3';
+                card.dataset.id = productId;
+                card.dataset.type = product.TYPE.toLowerCase();
+                card.dataset.resolution = product.RESOLUTION || 'unknown';
+                
+                // productdomain = ""
+        
+                // FUSAinfo = product.FUSA
+                const tags = [product.IMAGE_SENSOR.MODEL,product.IMAGE_SENSOR.SUPPLIER,product.FOV.HORIZONTAL,product.FOV.VERTICAL]
+
+                // if (typeof product.DOMAIN == 'string'){
+                //     tags.push(product.DOMAIN)
+                // }else{
+                //     Object.keys(product.DOMAIN).forEach(key=>{
+                //         tags.push(key)
+                //     })
+                // }
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-semibold text-white">${product.NAME}</h4>
+                        <span class="text-xs bg-tech-accent/20 text-tech-accent px-2 py-0.5 rounded-full">${product.TYPE || '标准级'}</span>
+                    </div>
+                    <p class="text-sm text-gray-400 mb-2">${product.RESOLUTION || '未知算力'} | ${product.VIDEO_INTERFACE || '未知核心数'} | ${product.SERIALIZER.MODEL|| '未知核心数'}</p>
+                    <div class="flex flex-wrap gap-1 mt-3">
+                        ${tags ? tags.map(tag => `<span class="text-xs bg-tech-light/30 px-2 py-0.5 rounded">${tag}</span>`).join('') : ''}
+                    </div>
+                `;
+                
+                return card;
+            }
+
+            // 添加厂商分组折叠事件
+            function attachManufacturerToggleEvents() {
+                console.log("Hey, I have been here now")
+                document.querySelectorAll('.manufacturer-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const icon = header.querySelector('i.fa-chevron-down');
+                        console.log(icon)
+                        const products = header.nextElementSibling;
+                        icon.classList.toggle('rotate-180');
+                        products.classList.toggle('hidden');
+                    });
+                });
+            }
+            // 添加厂商分组折叠事件
+            function attachManufacturerToggleEventsforsensor() {
+                console.log("Hey, I have been here now")
+                document.querySelectorAll('.sensortype-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const icon = header.querySelector('i.fa-chevron-down');
+                        console.log(icon)
+                        const products = header.nextElementSibling;
+                        icon.classList.toggle('rotate-180');
+                        products.classList.toggle('hidden');
+                    });
+                });
+            }
+
+
+            // 生成传感器卡片HTML
+            function SearchgenerateCardHTMLforReg(card){
+                return `
+                <div class="card-drawer bg-gray-903 rounded-xl shadow-card hover-scale group card-item" data-slice-id="${card.id}" style="height: 5rem;">
+                    <div class="drawer-content h-full">
+                        <div class="p-3 h-full flex flex-col">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start gap-2">
+                                    <div class="bg-primary/10 p-1.5 rounded-lg">
+                                        <i class="fas ${card.icon} text-primary text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center gap-1.5">
+                                            <input 
+                                                type="checkbox" 
+                                                class="main-checkbox w-3.5 h-3.5 text-primary rounded focus:ring-primary"
+                                                data-slice-id="${card.id}"
+                                            >
+                                            <h3 class="text-base font-bold text-dark group-hover:text-primary transition-colors">
+                                            ${card.name}
+                                            </h3>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                `
+            }
+  
+            // 生成硬件卡片HTML
+            function SearchgenerateCardHTMLforSensor(card){
+                return `
+                <div class="card-drawer bg-gray-903 rounded-xl shadow-card hover-scale group card-item" data-slice-id="${card.id}" style="height: 5rem;">
+                    <div class="drawer-content h-full">
+                        <div class="p-3 h-full flex flex-col">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start gap-2">
+                                    <div class="bg-primary/10 p-1.5 rounded-lg">
+                                        <i class="fas ${card.icon} text-primary text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center gap-1.5">
+                                            <input 
+                                                type="checkbox" 
+                                                class="main-checkbox w-3.5 h-3.5 text-primary rounded focus:ring-primary"
+                                                data-slice-id="${card.id}"
+                                            >
+                                            <h3 class="text-base font-bold text-dark group-hover:text-primary transition-colors">
+                                            ${card.name}
+                                            </h3>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                `
+            }
+  
+            // 生成硬件卡片HTML
+            function SearchgenerateCardHTMLforHW(card){
+                return `
+                    <div class="card-drawer bg-gray-903 rounded-xl shadow-card hover-scale group card-item" data-slice-id="${card.id}" style="height: 10rem;">
+                        <div class="drawer-content h-full">
+                            <div class="p-3 h-full flex flex-col">
+                                <div class="flex justify-between items-start">
+                                    <div class="flex items-start gap-2">
+                                        <div class="bg-primary/10 p-1.5 rounded-lg">
+                                            <i class="fas ${card.icon} text-primary text-lg"></i>
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center gap-1.5">
+                                                <input 
+                                                    type="checkbox" 
+                                                    class="main-checkbox w-3.5 h-3.5 text-primary rounded focus:ring-primary"
+                                                    data-slice-id="${card.id}"
+                                                >
+                                                <h3 class="text-base font-bold text-dark group-hover:text-primary transition-colors">
+                                                ${card.name}
+                                                </h3>
+                                            </div>
+                                            <p class="text-gray-800 text-xs mt-0.5">${card.description}</p>
+                                        </div>
+                                    </div>
+                                    <button 
+                                        class="toggle-subcards-btn text-yellow-500 hover:text-primary transition-colors p-1.5"
+                                        data-slice-id="${card.id}"
+                                        >
+                                        <i class="fa fa-arrow-circle-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="drawer-subcards" style="height: 10rem;">
+                            <div class="h-full flex flex-col bg-gray-904">
+                                <div class="flex justify-between items-center mb-2" style="height: 1.5rem;">
+                                <h4 class=" fixedleft-3 top-4 font-bold text-dark text-sm">${card.name}系列产品</h4>
+                                <button 
+                                    class="close-subcards-btn text-gray-400 hover:text-primary transition-colors p-3"
+                                    data-slice-id="${card.id}"
+                                    >
+                                    <i class="fa fa-arrow-circle-left"></i>
+                                </button>
+                            </div>
+                            <div class="flex-1 overflow-y-auto space-y-2">
+                                ${generateSubCardsHTMLforhw(card.id, card.name,card.features)}
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                }
+            
+            // 生成功能卡片HTML
+            function SearchgenerateCardHTML(card) {
+                if (card.features.length == 1){
+                    return `
+                <div class="card-drawer bg-gray-903 rounded-xl shadow-card hover-scale group card-item" data-slice-id="${card.id}" style="height: 5rem;">
+                    <div class="drawer-content h-full">
+                        <div class="p-3 h-full flex flex-col">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start gap-2">
+                                    <div class="bg-primary/10 p-1.5 rounded-lg">
+                                        <i class="fas ${card.icon} text-primary text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center gap-1.5">
+                                            <input 
+                                                type="checkbox" 
+                                                class="main-checkbox w-3.5 h-3.5 text-primary rounded focus:ring-primary"
+                                                data-slice-id="${card.id}"
+                                            >
+                                            <h3 class="text-base font-bold text-dark group-hover:text-primary transition-colors">
+                                            ${card.name}
+                                            </h3>
+                                        </div>
+                                        <p class="text-gray-800 text-xs mt-0.5">${card.fullName}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="drawer-subcards" style="height: 5rem;">
+                            <div class="h-full flex flex-col bg-gray-904">
+                                <div class="top-2 flex justify-between items-center mb-2">
+                                <h4 class="flex font-bold text-dark text-sm">${card.name} 子功能</h4>
+                                <button 
+                                    class="close-subcards-btn text-gray-400 hover:text-primary transition-colors p-3"
+                                    data-slice-id="${card.id}"
+                                    >
+                                    <i class="fa fa-arrow-circle-left"></i>
+                                </button>
+                            </div>
+                            <div class="flex-1 overflow-y-auto space-y-2">
+                                ${generateSubCardsHTML(card.id, card.name,card.features)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+                }else{ 
+                return `
+                <div class="card-drawer bg-gray-903 rounded-xl shadow-card hover-scale group card-item" data-slice-id="${card.id}" style="height: 5rem;">
+                    <div class="drawer-content h-full">
+                        <div class="p-3 h-full flex flex-col">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start gap-2">
+                                    <div class="bg-primary/10 p-1.5 rounded-lg">
+                                        <i class="fas ${card.icon} text-primary text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center gap-1.5">
+                                            <input 
+                                                type="checkbox" 
+                                                class="main-checkbox w-3.5 h-3.5 text-primary rounded focus:ring-primary"
+                                                data-slice-id="${card.id}"
+                                            >
+                                            <h3 class="text-base font-bold text-dark group-hover:text-primary transition-colors">
+                                            ${card.name}
+                                            </h3>
+                                        </div>
+                                        <p class="text-gray-800 text-xs mt-0.5">${card.fullName}</p>
+                                    </div>
+                                </div>
+                                <button 
+                                    class="toggle-subcards-btn text-yellow-500 hover:text-primary transition-colors p-1.5"
+                                    data-slice-id="${card.id}"
+                                    >
+                                    <i class="fa fa-arrow-circle-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="drawer-subcards" style="height: 5rem;">
+                        <div class="h-full flex flex-col bg-gray-904">
+                            <div class="flex justify-between items-center mb-2" style="height: 1.5rem;">
+                            <h4 class=" fixedleft-3 top-4 font-bold text-dark text-sm">${card.name} 子功能</h4>
+                            <button 
+                                class="close-subcards-btn text-gray-400 hover:text-primary transition-colors p-3"
+                                data-slice-id="${card.id}"
+                                >
+                                <i class="fa fa-arrow-circle-left"></i>
+                            </button>
+                        </div>
+                        <div class="flex-1 overflow-y-auto space-y-2">
+                            ${generateSubCardsHTML(card.id, card.name,card.features)}
+                        </div>
+                    </div>
+                </div>
+                `;
+            }
+        }
+            
+            // 生成子卡片HTML
+            function generateSubCardsHTML(mainId, mainName,features) {
+                let subCardsHTML = '';
+                
+                features.forEach(feature => {
+                    subCardsHTML += `
+                        <div class="flex items-center gap-4 p-1.5 bg-gray-904 hover:bg-gray-50 rounded-lg" style="height: 0.6rem;">
+                        <input 
+                            type="checkbox" 
+                            class="sub-checkbox w-3.5 h-3.5 text-primary rounded focus:ring-primary"
+                            data-slice-id="${mainId}"
+                            data-main-id="${feature.FEATURE_NAME}"
+                        >
+                        <span class="text-gray-700 text-sm">${feature.FEATURE_NAME}</span>
+                        </div>
+                    `;
+                    })   
+                return subCardsHTML;
+            }
+
+                        // 生成子卡片HTML
+            function generateSubCardsHTMLforhw(mainId, mainName,features) {
+                let subCardsHTML = '';
+                
+                features.forEach(feature => {
+                    subCardsHTML += `
+                        <div class="flex items-center gap-4 p-1.5 bg-gray-904 hover:bg-gray-50 rounded-lg" style="height: 0.6rem;">
+                        <input 
+                            type="checkbox" 
+                            class="sub-checkbox w-3.5 h-3.5 text-primary rounded focus:ring-primary"
+                            data-slice-id="${mainId}"
+                            data-main-id="${feature.PRODUCT_NAME}"
+                        >
+                        <span class="text-gray-700 text-sm">${feature.PRODUCT_NAME}</span>
+                        </div>
+                    `;
+                    })   
+                    
+                return subCardsHTML;
+            }
+            
+            // 初始化卡片交互
+            function SearchinitCardInteractions() {
+                // 切换子卡片显示/隐藏
+                document.querySelectorAll('.toggle-subcards-btn, .close-subcards-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const cardId = btn.getAttribute('data-slice-id');
+                    const card = document.querySelector(`.card-drawer[data-slice-id="${cardId}"]`);
+                    card.classList.toggle('open');
+                    
+                    // 切换图标方向
+                    const icon = btn.querySelector('i');
+                    if (card.classList.contains('open')) {
+                    icon.classList.remove('fa-arrow-circle-left');
+                    icon.classList.add('fa-arrow-circle-right');
+                    } else {
+                    icon.classList.remove('fa-arrow-circle-right');
+                    icon.classList.add('fa-arrow-circle-left');
+                    }
+                });
+                });
+                
+                // 主卡片勾选框事件
+                document.querySelectorAll('.main-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', (e) => {
+                    const cardId = e.target.getAttribute('data-slice-id');
+                    const card = document.querySelector(`.card-item[data-slice-id="${cardId}"]`);
+                    const container_obj = card.parentNode
+                    // 父卡片勾选时，变颜色
+                    if (e.target.checked){
+                        card.classList.remove('bg-gray-903')
+                        card.classList.add('bg-gray-905')
+                        addChipToContainer(card.getAttribute('data-slice-id'),card.getAttribute('data-slice-id'),container_obj,1)
+                        
+                    }else if (!e.target.checked) {
+                        const subCheckboxes = document.querySelectorAll(`.sub-checkbox[data-slice-id="${cardId}"]`);
+                        const mainCheckbox = document.querySelector(`.main-checkbox[data-slice-id="${cardId}"]`);
+                        card.classList.remove('bg-gray-905')
+                        card.classList.add('bg-gray-903')
+                        removeChipFromContainer(card.getAttribute('data-slice-id'))
+                        subCheckboxes.forEach(subCheckbox => {
+                            subCheckbox.checked = false;
+                            const maindataid = subCheckbox.getAttribute('data-main-id')
+                            removeChipFromContainer(maindataid)
+                    });
+                    }
+                });
+                });
+                
+                // 子卡片勾选框事件
+                document.querySelectorAll('.sub-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', (e) => {
+                    const slice_id = e.target.getAttribute('data-slice-id');
+                    const mainId = e.target.getAttribute('data-main-id');
+                    const mainCheckbox = document.querySelector(`.main-checkbox[data-slice-id="${slice_id}"]`);
+                    const card = document.querySelector(`.card-item[data-slice-id="${slice_id}"]`);
+                    const subCheckboxes = document.querySelectorAll(`.sub-checkbox[data-slice-id="${slice_id}"]`);
+                    const container_obj = card.parentNode
+
+                    // 当子卡片被勾选时，勾选父卡片
+                    if (e.target.checked) {
+                        mainCheckbox.checked = true;
+                        card.classList.remove('bg-gray-903')
+                        card.classList.add('bg-gray-905')
+                        addChipToContainer(mainId,mainId,container_obj,2)
+                        removeChipFromContainer(slice_id)
+                        
+                    } else {
+                    // 当子卡片被取消勾选时，检查是否还有其他子卡片被勾选
+                        const anySubChecked = Array.from(subCheckboxes).some(sub => sub.checked);
+                        mainCheckbox.checked = anySubChecked;
+                        
+                        if (!anySubChecked){
+                            card.classList.remove('bg-gray-905')
+                            card.classList.add('bg-gray-903')
+                        }
+                        const slice_id = e.target.getAttribute('data-slice-id');
+                        const mainId = e.target.getAttribute('data-main-id');
+                        removeChipFromContainer(mainId)
+                    }
+                });
+                });
+                
+                // 搜索按钮点击事件
+                ConfigsearchButton.addEventListener('click', collectSelectedCards);
+                
+                // 重置按钮点击事件
+                resetButton.addEventListener('click', resetAllCheckboxes);
+            }
+            
+            // 分类别收集选中的卡片
+            function collectSelectedCards() {
+                const mainCheckboxes = document.querySelectorAll('.main-checkbox:checked');
+                const subCheckboxes = document.querySelectorAll('.sub-checkbox:checked');
+                
+                const result = {
+                "EUF":{
+                    mainCards: [],
+                    subCards: {}
+                    },
+                "HW":{
+                    mainCards: [],
+                    subCards: {}
+                    }
+                };
+                
+
+                // 收集主卡片
+                mainCheckboxes.forEach(checkbox => {
+                const cardId = checkbox.getAttribute('data-slice-id');
+                const card = document.querySelector(`.card-item[data-slice-id="${cardId}"]`);
+                const container_obj = card.parentNode
+                if(container_obj["id"]=="SearchcardContainer"){
+                    result.EUF.mainCards.push(cardId);
+                
+                    // 为该主卡片创建子卡片数组
+                    result.EUF.subCards[cardId] = [];
+                }else if(container_obj["id"]=="SearchcardContainerforhw"){
+                    result.HW.mainCards.push(cardId);
+                
+                    // 为该主卡片创建子卡片数组
+                    result.HW.subCards[cardId] = [];
+                }
+            });
+                
+                // 收集子卡片
+                subCheckboxes.forEach(checkbox => {
+                    const cardId = checkbox.getAttribute('data-slice-id');
+                    const mainId = checkbox.getAttribute('data-main-id');
+                    const card = document.querySelector(`.card-item[data-slice-id="${cardId}"]`);
+                    const container_obj = card.parentNode
+                    if(container_obj["id"]=="SearchcardContainer"){
+                    // 确保主卡片已被选中
+                        if (result.EUF.mainCards.includes(cardId)) {
+                            result.EUF.subCards[cardId].push(mainId);
+                        }
+                    }else if(container_obj["id"]=="SearchcardContainerforhw"){
+                    // 确保主卡片已被选中
+                        if (result.HW.mainCards.includes(cardId)) {
+                            result.HW.subCards[cardId].push(mainId);
+                        }
+                    }   
+                });
+                
+                // 显示结果
+                launchsearching(result);
+            }
+
+            //开始搜索
+            function launchsearching(result){
+                solutionContainer,innerHTML ='';
+                fetch('http://localhost:5000/config_searching', {
+                    method:'POST',
+                    headers: {
+                    'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        scriptName: "solution_finding_on_func.py",
+                        input_data: JSON.stringify(result),
+                        sheetname2: "SUBFEATURES",
+                        tablepath: "database.xlsx"
+                    })
+                })
+                .then(response =>{
+                    if (!response.ok) {
+                        throw new Error(`HTTP错误: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data =>{
+                    if(data.success){
+                        solutions = JSON.parse(data.output);
+
+                        if (solutions.length != 0){
+                            
+                            createSolutionCards(solutions[0])
+                            initsolutionInteraction()
+                            updatesearchingresult(solutions[1])
+                        }
+                    }
+                })
+                }
+            
+            // 生成方案卡片
+            function createSolutionCards(items){
+                currentCards = items;
+                solutionContainer.innerHTML = '';
+
+                items.forEach(item =>{
+                    const solution = generatesolutionthml(item);
+                solutionContainer.insertAdjacentHTML('beforeend', solution);
+                })
+            }
+              
+            function updatesearchingresult(item){
+                document.getElementById('searchingphrase').textContent = item;
+            }
+            function generatesolutionthml(item){
+                bgcolor = "primary"
+                
+                if(item["STATUS"] == "IN SOP"){
+                    bgcolor = "SOP"
+                }else if(item["STATUS"] == "UNDER DEV"){
+                    bgcolor = "DEV"
+                }else if(item["STATUS"] == "IN PLAN"){
+                    bgcolor = "PLAN"
+                }
+                if(item["file_status"]==1){
+                    return  `
+                            <div class="card">
+                                <div class="card-header">
+                                    <div>
+                                        <h2 class="card-title">${item["SOLUTION NAME"]}</h2>
+                                        <span class="bg-${bgcolor}/90 text-white text-xs font-medium px-2 py-1 rounded-full"> ${item["STATUS"]}</span>
+                                    </div>
+                                    <button 
+                                        class="solution-details-btn header-btn" data-doc-path ="${"../Doc/"+item["SOLUTION NAME"]+"_report.pdf"}" data-header = "${item["SOLUTION NAME"]+"技术文档"}">
+                                        <i class="fa fa-file-pdf-o"></i>
+                                        <span>查看技术文档</span>
+                                    </button>
+                                </div>
+                                
+                                <div class="card-content">
+                                    <div class="card-image-container">
+                                        <img src=${"cPIC/"+item["SOLUTION NAME"]+".png"} alt="工业计数系统示意图" class="card-image">
+                                        <div class="image-overlay"></div>
+                                    </div>
+                                    
+                                    <div class="card-details">
+                                        <h3 class="detail-title">系统特性</h3>
+                                        
+                                        <div class="feature-tags">
+                                            <div class="feature-tag">
+                                                <div class="tag-value">${item["sensorSet"]}</div>
+                                                <div class="tag-label">传感器配置</div>
+                                            </div>
+                                            <div class="feature-tag">
+                                                <div class="tag-value">${item["calculateunitInfo"]}</div>
+                                                <div class="tag-label">使用芯片</div>
+                                            </div>
+                                            <div class="feature-tag">
+                                                <div class="tag-value">${item["highestLevel"]}</div>
+                                                <div class="tag-label">SAE等级</div>
+                                            </div>
+                                            <div class="feature-tag">
+                                                <div class="tag-value">${item["techStackInfo"]}</div>
+                                                <div class="tag-label">技术路线</div>
+                                            </div>
+                                            <div class="feature-tag">
+                                                <div class="tag-value">${item["strongDependencies"]}</div>
+                                                <div class="tag-label">外部依赖</div>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card-footer"></div>
+                            </div>
+                `;
+                }else{
+                    return  `
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <h2 class="card-title">${item["SOLUTION NAME"]}</h2>
+                                    <span class="bg-${bgcolor}/90 text-white text-xs font-medium px-2 py-1 rounded-full"> ${item["STATUS"]}</span>
+                                </div>
+                                <button 
+                                    class="solution-details-btn header-btn_ban" disabled = "1" data-doc-path ="$A" data-header = "A" >
+                                    <i class="fa fa-file-pdf-o"></i>
+                                    <span>敬请期待</span>
+                                </button>
+                            </div>
+                            
+                            <div class="card-content">
+                                <div class="card-image-container">
+                                    <img src=${"../PIC/"+item["SOLUTION NAME"]+".png"} alt="工业计数系统示意图" class="card-image">
+                                    <div class="image-overlay"></div>
+                                </div>
+                                
+                                <div class="card-details">
+                                    <h3 class="detail-title">系统特性</h3>
+                                    
+                                    <div class="feature-tags">
+                                        <div class="feature-tag">
+                                            <div class="tag-value">${item["sensorSet"]}</div>
+                                            <div class="tag-label">传感器配置</div>
+                                        </div>
+                                        <div class="feature-tag">
+                                            <div class="tag-value">${item["calculateunitInfo"]}</div>
+                                            <div class="tag-label">使用芯片</div>
+                                        </div>
+                                        <div class="feature-tag">
+                                            <div class="tag-value">${item["highestLevel"]}</div>
+                                            <div class="tag-label">SAE等级</div>
+                                        </div>
+                                        <div class="feature-tag">
+                                            <div class="tag-value">${item["techStackInfo"]}</div>
+                                            <div class="tag-label">技术路线</div>
+                                        </div>
+                                        <div class="feature-tag">
+                                            <div class="tag-value">${item["strongDependencies"]}</div>
+                                            <div class="tag-label">外部依赖</div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card-footer"></div>
+                        </div>
+                    `;
+                }
+            }
+            
+            function initsolutionInteraction(){
+                solutionContainer.addEventListener('click', (e) => {
+                    const btn = e.target.closest('.solution-details-btn');
+                    
+                    if (!btn) return;
+                        console.log("not a button")
+                    const pdfPath = btn.getAttribute('data-doc-path');
+                    const title = btn.getAttribute('data-header');
+                    const btnstate = btn.getAttribute('disabled')
+                    if (!btnstate ==1){
+                    // 更新模态框内容
+                    pdfIframe2.src = pdfPath;
+                    pdfModalTitle.textContent = title;
+                    pdfFileName.textContent = title.replace("1111"+'技术文档', '') + '.pdf';
+                    // 显示模态框
+                    pdfModal2.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden';
+                    }});
+                    // 关闭模态框
+                closeWindowBtn.addEventListener('click', () => {
+                    pdfModal2.classList.add('hidden');
+                    document.body.style.overflow = '';
+                    pdfIframe2.src = '';
+                });
+
+                // 点击模态框背景关闭
+                pdfModal2.addEventListener('click', (e) => {
+                    if (e.target === pdfModal2) {
+                    pdfModal2.classList.add('hidden');
+                    document.body.style.overflow = '';
+                    pdfIframe2.src = '';
+                    }
+                });
+            }
+            
+            function addChipToContainer(cardName,cardId,container_obj,type){
+                const selectioncontainer = document.getElementById('selected-chips');
+                const chip = document.createElement('span');
+                if(type==1){
+                    if(container_obj["id"]=="SearchcardContainer"){
+                        chip.className = 'bg-blue-300 text-blue-700 text-xs font-medium px-3 py-1 rounded-full chip';
+                        cardName = cardName + "-All Features"
+                    }else if(container_obj["id"]=="SearchcardContainerforhw"){
+                        chip.className = 'bg-green-300 text-blue-700 text-xs font-medium px-3 py-1 rounded-full chip';
+                        cardName = cardName + "-All Series"
+                    }else if(container_obj["id"]=="SearchcardContainerforsensor"){
+                        chip.className = 'bg-yellow-300 text-blue-700 text-xs font-medium px-3 py-1 rounded-full chip';
+                    }else if(container_obj["id"]=="SearchcardContainerforreg"){
+                        chip.className = 'bg-red-300 text-blue-700 text-xs font-medium px-3 py-1 rounded-full chip';
+                    }
+                }else if(type == 2){
+                    if(container_obj["id"]=="SearchcardContainer"){
+                        chip.className = 'bg-blue-300 text-blue-700 text-xs font-medium px-3 py-1 rounded-full chip';
+                    }else if(container_obj["id"]=="SearchcardContainerforhw"){
+                        chip.className = 'bg-green-300 text-blue-700 text-xs font-medium px-3 py-1 rounded-full chip';
+                    }else if(container_obj["id"]=="SearchcardContainerforsensor"){
+                        chip.className = 'bg-yellow-300 text-blue-700 text-xs font-medium px-3 py-1 rounded-full chip';
+                    }else if(container_obj["id"]=="SearchcardContainerforreg"){
+                        chip.className = 'bg-red-300 text-blue-700 text-xs font-medium px-3 py-1 rounded-full chip';
+                    }
+                }
+                chip.textContent = cardName;
+                chip.setAttribute('data-chip-id', cardId);
+                selectioncontainer.appendChild(chip);
+            }
+
+            function removeChipFromContainer(cardId) {
+                const chips = document.querySelectorAll('#selected-chips span[data-chip-id="' + cardId + '"]');
+                chips.forEach(chip => {
+                    chip.remove();
+                });
+            }
+
+            // 显示结果
+            function displayResult(result) {
+                SearchresultContent.innerHTML = '';
+                
+                if (result.mainCards.length === 0 && Object.keys(result.subCards).length === 0) {
+                SearchresultContent.innerHTML = '<p class="text-gray-500 text-sm">没有选中任何卡片</p>';
+                searchresultPanel.classList.add('hidden');
+                return;
+                }
+                
+                searchresultPanel.classList.remove('hidden');
+                SearchresultContent.innerHTML = '';
+                
+                // 显示主卡片
+                result.mainCards.forEach(mainId => {
+                const mainCard = result.mainCards.find(card => card.id === mainId);
+                
+                if (mainCard) {
+                    const mainCardEl = document.createElement('div');
+                    mainCardEl.className = 'border border-gray-200 rounded-lg p-2.5';
+                    mainCardEl.innerHTML = `
+                    <div class="flex items-center gap-1.5 mb-1.5">
+                        <i class="fas fa-check-circle text-secondary text-sm"></i>
+                        <span class="font-medium text-sm">${mainCard.name} (${mainCard.fullName})</span>
+                    </div>
+                    <div class="pl-4 space-y-1.5">
+                        ${result.subCards[mainId].length > 0 ? 
+                        result.subCards[mainId].map(subId => `
+                            <div class="flex items-center gap-1.5 text-xs">
+                            <i class="fas fa-minus-circle text-gray-400"></i>
+                            <span>${subId.replace('_', ' ')}</span>
+                            </div>
+                        `).join('') : 
+                        '<p class="text-gray-500 text-xs">没有选中子选项</p>'
+                        }
+                    </div>
+                    `;
+                    SearchresultContent.appendChild(mainCardEl);
+                }
+                });
+            }
+            
+            // 重置所有勾选框
+            function resetAllCheckboxes() {
+                document.querySelectorAll('.main-checkbox, .sub-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+                });
+                
+                document.querySelectorAll('.card-drawer').forEach(card => {
+                card.classList.remove('bg-gray-905');
+                card.classList.add('bg-gray-903');
+                });
+                
+                solutionContainer.innerHTML=''
+                selectionpool.innerHTML=''
+                // 关闭所有打开的抽屉
+                document.querySelectorAll('.card-drawer.open').forEach(card => {
+                card.classList.remove('open');
+                const icon = card.querySelector('.toggle-subcards-btn i');
+                icon.classList.remove('fa-chevron-left');
+                icon.classList.add('fa-chevron-right');
+                });
+                
+                searchresultPanel.classList.add('hidden');
+            }
+            
+
+            });
+    </script>
+        <script src="../js/load-components.js"></script>
+</body>
+</html>

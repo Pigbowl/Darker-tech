@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAELO GOOD STUFF</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>    
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/components.css">
+</head>
+
+
+<body class="bg-primary text-gray-100 font-inter min-h-screen flex flex-col bg-grid">
+    <div id="particles-js"></div>
+    <div class="content min-h-screen">
+        <!-- 页头容器 -->
+    <!-- <div id="header-container"></div> -->
+
+        <!-- 导航栏容器 --> 
+        <div id="navbar-container"></div>
+
+        <!-- 主要内容 -->
+        <main class="content">
+            <div class="container mx-auto px-4 py-8 pt-16">
+                <!-- 配置工具页面 -->
+                <div class="page-content">
+                    <header class="mb-6 text-center">
+                        <h1 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-white mb-0">产品配置工具系统</h1>
+                        <button 
+                            id="resetButton" 
+                            class="bg-light text-black px-4 py-2 rounded-lg hover:bg-light/90 transition-colors text-sm flex items-center gap-1.5 ml-4"
+                            >
+                            <i class="fa fa-rotate-left"></i>
+                            <span>重置</span>
+                        </button>
+                    </header>
+                    
+                                    
+                    <!-- 方案搜索卡片容器 -->
+                    <div class="left-40 top-60 border border-primary/30 rounded-xl p-4 mb-6 shadow-sm bg-gradient-to-t from-light-blue/40 to-dark overflow-y-auto">
+                        <div id="searchingphrase" class="text-white font-bold flex-1 text-center py-3">
+                                结果将在此进行展示
+                        </div>
+                        <div id="solutionContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 flex-1">
+                        <!-- 卡片将动态添加到这里 -->
+                        </div>
+                    </div>
+
+                    <!-- PDF查看模态框 (保持不变) -->
+                    <div id="pdfModal2" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden">
+                        <div class="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
+                            <div class="bg-dark text-white p-4 flex justify-between items-center border-b border-gray-200">
+                            <h3 id="pdfModalTitle" class="font-medium">技术文档</h3>
+                            <button id="closeWindowBtn" class="text-gray-300 hover:text-white">
+                                <i class="fa fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="p-6">
+                                <div class="aspect-video bg-gray-100 rounded-lg overflow-hidden">
+                                    <iframe 
+                                    id="pdfIframe2"
+                                    src="" 
+                                    class="w-full h-full" 
+                                    title="技术文档PDF"
+                                    >
+                                    您的浏览器不支持直接查看PDF，请下载后查看。
+                                    </iframe>
+                                </div>
+                                <div class="mt-4 text-center">
+                                    <button 
+                                    id="downloadPdfBtn"
+                                    class="inline-flex items-center text-primary hover:text-primary/80 font-medium"
+                                    >
+                                    <i class="fa fa-download mr-2"></i>
+                                    <span id="pdfFileName">下载PDF</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                
+                <!-- 卡片容器 -->
+                    
+                <!-- " w-[calc(40%-1rem)] border border-primary/30 rounded-xl p-4 shadow-sm bg-dark-light overflow-y-auto max-h-[calc(100vh-6rem)] flex flex-col " -->
+                    <div class="left-40 top-60 border border-primary/30 rounded-xl p-4 mb-6 shadow-sm bg-gradient-to-t from-light-blue/40 to-dark overflow-y-auto">
+                    <!-- 获取数据按钮和中央提醒文字放在同一行 -->
+                        <div class="flex items-center justify-between mb-6">
+                            <div id="solutionresultcontainer" class="text-white font-bold flex-1 text-center">
+                                请勾选需要的所需要的配置（功能/计算单元/传感器。。。）
+                            </div>
+                            <button 
+                                id="ConfigsearchButton" 
+                                class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors text-sm flex items-center gap-1.5 ml-4"
+                                >
+                                <i class="fa fa-search"></i>
+                                <span>获取数据</span>
+                            </button>
+                        </div>
+
+                        <!-- 选中内容收集容器 -->
+                        <div class="mb-6">
+                        <h2 class="text-lg font-semibold text-white mb-3">您选择的内容</h2>
+                            <div id="selected-chips" class="chip-container bg-gray-100/50 p-3 rounded-lg max-w-8xl">
+                                <!-- 选中的卡片名将在这里显示 -->
+                            </div>
+                        </div>
+                        <div class="tab-nav">
+                            <button class="tab-btn active" onclick="switchTab('container1')">终端客户功能</button>
+                            <button class="tab-btn" onclick="switchTab('container2')">计算平台配置</button>
+                            <button class="tab-btn" onclick="switchTab('container3')">传感器配置</button>
+                            <button class="tab-btn" onclick="switchTab('container4')">法律法规项</button>
+                        </div>
+                        <div class="tab-container active " id="container1">
+                            <div id="SearchcardContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 flex-1 group optioncontainer">
+                            <!-- 卡片将动态添加到这里 --> 
+                            </div>
+                        </div>
+                        <div class="tab-container " id="container2">
+                            <div id="SearchcardContainerforhw" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 flex-1 group optioncontainer">
+                            <!-- 卡片将动态添加到这里 --> 
+                            </div>
+                        </div>
+                        <div class="tab-container " id="container3">
+                            <div id="SearchcardContainerforsensor" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 flex-1 group optioncontainer">
+                            <!-- 卡片将动态添加到这里 --> 
+                            <div class="text-white font-bold flex-1 text-center py-3">
+                                开发中，敬请期待
+                            </div>
+                            </div>
+                        </div>
+                        <div class="tab-container" id="container4">
+                            <div id="SearchcardContainerforreg" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 flex-1 group optioncontainer">
+                            <!-- 卡片将动态添加到这里 --> 
+                                <div class="text-white font-bold flex-1 text-center py-3">
+                                    开发中，敬请期待
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                                    
+                    <div id="searchresultPanel" class="bg-white rounded-xl p-5 shadow-lg hidden">
+                        <h2 class="text-lg font-bold text-dark mb-3 flex items-center gap-1.5">
+                            <i class="fas fa-list-check text-primary"></i>
+                            <span>勾选结果</span>
+                        </h2>
+                        <div id="SearchresultContent" class="space-y-3 text-gray-700">
+                            <p class="text-gray-500 text-sm">请勾选卡片并点击获取数据按钮查看结果</p>
+                        </div>
+                        </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 页脚容器 -->
+        <div id="footer-container"></div>   
+    </div>
+            
+    <!-- 粒子背景脚本 -->
+
+    <script>    
+        function switchTab(containerId) {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContainers = document.querySelectorAll('.tab-container');
+
+            tabBtns.forEach(btn => btn.classList.remove('active'));
+            tabContainers.forEach(container => container.classList.remove('active'));
+
+            document.querySelector(`.tab-btn[onclick="switchTab('${containerId}')"]`).classList.add('active');
+            document.getElementById(containerId).classList.add('active');
+            }  
+        document.addEventListener('DOMContentLoaded', () => {     // 配置搜索功能函数
+            const SearchcardContainer = document.getElementById('SearchcardContainer');
+            const SearchcardContainerhw = document.getElementById('SearchcardContainerforhw');
+            const SearchcardContainersensor = document.getElementById('SearchcardContainerforsensor');
+            const SearchcardContainerreg = document.getElementById('SearchcardContainerforreg');
+            const ConfigsearchButton = document.getElementById('ConfigsearchButton');
+            const resetButton = document.getElementById('resetButton');
+            const searchresultPanel = document.getElementById('searchresultPanel');
+            const SearchresultContent = document.getElementById('SearchresultContent');
+            const solutionContainer = document.getElementById('solutionContainer');
+            const selectionpool = document.getElementById('selected-chips');
+            const productDetailEmpty = document.getElementById('product-detail-empty');
+            const productDetailContent = document.getElementById('product-detail-content');
+            const productImage = document.getElementById('product-image');
+            const productTitle = document.getElementById('product-title');
+            const productManufacturer = document.getElementById('product-manufacturer');
+            const productTags = document.getElementById('product-tags');
+            const productSpecs = document.getElementById('product-specs');
+            const productDescription = document.getElementById('product-description');
+            const productPerformance = document.getElementById('product-performance');
+            const componentsearchInput = document.getElementById('hwsearch-input');
+            const resetBtnCom = document.getElementById('reset-btn-component');
+
+
+            
+            initconfigfunction()
+
+            // 渲染筛选器选项的通用函数
+            function renderFilterOptions(containerId, options) {
+                const container = document.getElementById(containerId);
+                container.innerHTML = '';
+
+                Object.keys(options).forEach(option => {
+                    const label = document.createElement('label');
+                    label.className = 'flex items-center gap-2 py-1.5 px-2 hover:bg-tech-light/50 rounded cursor-pointer';
+                    label.innerHTML = `
+                        <input type="checkbox" class="rounded text-tech-accent focus:ring-tech-accent" 
+                            value="${option}" checked>
+                        <span>${option}</span>
+                    `;
+                    container.appendChild(label);
+
+                    // 添加筛选事件监听
+                    label.querySelector('input').addEventListener('change', filterProducts);
+                    
+                });
+                componentsearchInput.addEventListener('input',filterProducts);
+            }
+
+            // 显示产品详情
+            function showProductDetail(productId) {
+                const product = productData.chipset_catalogue[productId];
+                if (!product) return;
+
+                productDetailEmpty.classList.add('hidden');
+                productDetailContent.classList.remove('hidden');
+
+                productImage.src = "../PIC/"+product.P+".png";
+                productTitle.textContent = product.P;
+                productManufacturer.textContent = product.SUPPLIER;
+
+                // 渲染标签
+                productTags.innerHTML = '';
+                tags =[product.TYPE,product.RAM]
+                tags.forEach(tag => {
+                    const tagEl = document.createElement('span');
+                    tagEl.className = 'text-xs bg-tech-light/30 px-2 py-0.5 rounded';
+                    tagEl.textContent = tag;
+                    productTags.appendChild(tagEl);
+                });
+
+                // 渲染规格
+                productSpecs.innerHTML = '';
+                specs =product.PROCESSOR;
+                Object.keys(specs).forEach(spec => {
+                    const specs_1 = specs[spec];
+                    if (typeof specs_1 == "object"){
+                        Object.keys(specs_1).forEach(spec_1 =>{
+                            const specs_2 = specs_1[spec_1];
+                            if (typeof specs_2 == "object"){
+                                Object.keys(specs_2).forEach(spec_2 =>{
+                                    const specs_3 = specs_2[spec_2];
+                                    if(typeof specs_3 == "object"){
+                                        Object.keys(specs_3).forEach(spec_3 => {
+                                            const specs_4 = specs_3[spec_3];
+                                            const li = document.createElement('li');
+                                            li.className = 'flex justify-between';
+                                            li.innerHTML = `<span class="text-gray-400">${spec} ${spec_1} ${spec_3}:</span> <span class="font-medium">${specs_4}</span>`;
+                                            productSpecs.appendChild(li);
+                                        });
+                                    }
+                                    else{
+                                        const li = document.createElement('li');
+                                        li.className = 'flex justify-between';
+                                        li.innerHTML = `<span class="text-gray-400">${spec} ${spec_1} ${spec_2}:</span> <span class="font-medium">${specs_3}</span>`;
+                                        productSpecs.appendChild(li);
+                                    }});
+                            }
+                            else{
+                                const li = document.createElement('li');
+                                li.className = 'flex justify-between';
+                                li.innerHTML = `<span class="text-gray-400">${spec} ${spec_1}:</span> <span class="font-medium">${specs_2}</span>`;
+                                productSpecs.appendChild(li);
+                            }
+                        })
+                    }
+            });
+
+            // 渲染描述
+            productDescription.textContent = product.DESCRIPTION;
+
+            // 渲染性能参数
+            // productPerformance.innerHTML = '';
+            // product.INTERFACE.forEach(param => {
+            //     const div = document.createElement('div');
+            //     div.className = 'flex justify-between';
+            //     div.innerHTML = `<span class="text-gray-400">${param.name}:</span> <span class="font-medium">${param.value}</span>`;
+            //     productPerformance.appendChild(div);
+            // });
+        }
+
+            // 渲染产品列表
+            function renderProductList(producttoshow) {
+                const container = document.getElementById('product-list-container');
+                container.innerHTML = '';
+                // 遍历每个厂商
+                Object.entries(producttoshow).forEach(([manufacturer, products]) => {
+                    // 创建厂商分组
+                    const manufacturerGroup = document.createElement('div');
+                    manufacturerGroup.className = 'manufacturer-group mb-8';
+                    
+                    // 厂商头部
+                    manufacturerGroup.innerHTML = `
+                        <div class="manufacturer-header flex items-center justify-between mb-4 cursor-pointer">
+                            <h3 class="text-lg font-semibold flex items-center">
+                                <i class="fa fa-chevron-down text-tech-accent mr-2 transition-transform duration-300"></i>
+                                <img src="../PIC/${manufacturer}.png" alt="${manufacturer} Logo" class="w-16 h-6 mr-2">
+                                ${manufacturer}
+                            </h3>
+                            <span class="supplier-count text-sm bg-tech-light/50 px-2 py-1 rounded-full">${products.length} 个产品</span>
+                        </div>
+                        <div class="manufacturer-products grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+                    `;
+                    
+                    // 获取产品容器
+                    const productsContainer = manufacturerGroup.querySelector('.manufacturer-products');
+                    
+                    // 添加产品卡片
+                    products.forEach(product => {
+                        const card = createProductCard(product);
+                        productsContainer.appendChild(card);
+                    });
+                    
+                    // 添加到页面
+                    container.appendChild(manufacturerGroup);
+                });
+                
+                // 添加厂商分组折叠功能
+                attachManufacturerToggleEvents();
+            }
+            
+            // 渲染产品列表
+            function renderProductListSensor(producttoshow) {
+                const container = document.getElementById('product-list-container-sensor');
+                container.innerHTML = '';
+                // 遍历每个厂商
+                Object.entries(producttoshow).forEach(([type, products]) => {
+                    // 创建厂商分组
+                    const sensortypeGroup = document.createElement('div');
+                    sensortypeGroup.className = 'sensortype-group mb-8';
+                    
+                    // 厂商头部
+                    sensortypeGroup.innerHTML = `
+                        <div class="sensortype-header flex items-center justify-between mb-4 cursor-pointer">
+                            <h3 class="text-lg font-semibold flex items-center">
+                                <i class="fa fa-chevron-down text-tech-accent mr-2 transition-transform duration-300"></i>
+                                <img src="../PIC/${type}.png" alt="${type} Logo" class="w-16 h-6 mr-2">
+                                ${type}
+                            </h3>
+                            <span class="supplier-count text-sm bg-tech-light/50 px-2 py-1 rounded-full">${products.length} 个产品</span>
+                        </div>
+                        <div class="sensortype-products grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+                    `;
+                    
+                    // 获取产品容器
+                    const productsContainer = sensortypeGroup.querySelector('.sensortype-products');
+                    
+                    // 添加产品卡片
+                    products.forEach(product => {
+                        const card = createSensorCard(product);
+                        productsContainer.appendChild(card);
+                    });
+                    
+                    // 添加到页面
+                    container.appendChild(sensortypeGroup); 
+                });
+                
+                // 添加厂商分组折叠功能
+                attachManufacturerToggleEvents();
+            }
+
+            // 添加厂商分组折叠事件
+            function attachManufacturerToggleEvents() {
+                document.querySelectorAll('.manufacturer-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const icon = header.querySelector('i.fa-chevron-down');
+                        const products = header.nextElementSibling;
+                        icon.classList.toggle('rotate-180');
+                        products.classList.toggle('hidden');
+                    });
+                });
+            }
+            
+            function initconfigfunction() {
+                return new Promise((resolve, reject) => {
+                    fetch('http://localhost:5000/init_config_func', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        scriptName: "function_config_initiator.py",
+                        sheetname1: "EUF",
+                        sheetname2: "SUBFEATURES",
+                    })
+                    })
+                    .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP错误: ${response.status}`);
+                    }
+                    return response.json();
+                    })
+                    .then(data => {
+                    if (data.success) {
+                        
+                        resolve(JSON.parse(data.output)); // 解析Promise并传递data.output
+                    } else {
+                        console.log("请求失败");
+                        reject(new Error("API返回失败"));
+                    }
+                    })
+                    .catch(error => {
+                        console.error("请求过程中出错:", error);
+                    reject(error);
+                    });
+                });
+                }
+
+  
+            initconfigfunction()
+                .then(output => {
+                    // 在这里使用data.output的值
+
+                    renderCards(output["EUF"])
+                    rendercardsforHW(output["HW_choice"])
+                    // 初始化卡片交互
+                    SearchinitCardInteractions();
+                    
+                })
+                .catch(error => {
+                    console.error("处理请求时出错:", error);
+                });
+
+            function rendercardsforHW(cards){
+                SearchcardContainerhw.innerHTML = '';
+                cards.forEach(card=>{
+                    const cardHTMLforhw = SearchgenerateCardHTMLforHW(card);
+                    SearchcardContainerhw.insertAdjacentHTML('beforeend',cardHTMLforhw)
+                });
+                
+            }
+
+            function rendercardsforSensor(cards){
+                SearchcardContainersensor.innerHTML = '';
+                cards.forEach(card=>{
+                    const cardHTMLforsensor = SearchgenerateCardHTMLforSensor(card);
+                    SearchcardContainersensor.insertAdjacentHTML('beforeend',cardHTMLforsensor)
+                });
+                
+            }
+
+            function rendercardsforReg(cards){
+                SearchcardContainerreg.innerHTML = '';
+                cards.forEach(card=>{
+                    const cardHTMLforreg = SearchgenerateCardHTMLforReg(card);
+                    SearchcardContainerreg.insertAdjacentHTML('beforeend',cardHTMLforreg)
+                });
+                
+            }
+
+            // 渲染卡片
+            function renderCards(cards) {
+                SearchcardContainer.innerHTML = '';
+                cards.forEach(card => {
+                const cardHTML = SearchgenerateCardHTML(card);
+                SearchcardContainer.insertAdjacentHTML('beforeend', cardHTML);
+                });
+            }
+
+            // 生成传感器卡片HTML
+            function SearchgenerateCardHTMLforReg(card){
+                return `
+                <div class="card-drawer bg-gray-903 rounded-xl shadow-card hover-scale group card-item" data-slice-id="${card.id}" style="height: 5rem;">
+                    <div class="drawer-content h-full">
+                        <div class="p-3 h-full flex flex-col">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start gap-2">
+                                    <div class="bg-primary/10 p-1.5 rounded-lg">
+                                        <i class="fas ${card.icon} text-primary text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center gap-1.5">
+                                            <input 
+                                                type="checkbox" 
+                                                class="main-checkbox w-3.5 h-3.5 text-primary rounded focus:ring-primary"
+                                                data-slice-id="${card.id}"
+                                            >
+                                            <h3 class="text-base font-bold text-dark group-hover:text-primary transition-colors">
+                                            ${card.name}
+                                            </h3>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                `
+            }
+  
+            // 生成硬件卡片HTML
+            function SearchgenerateCardHTMLforSensor(card){
+                return `
+                <div class="card-drawer bg-gray-903 rounded-xl shadow-card hover-scale group card-item" data-slice-id="${card.id}" style="height: 5rem;">
+                    <div class="drawer-content h-full">
+                        <div class="p-3 h-full flex flex-col">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start gap-2">
+                                    <div class="bg-primary/10 p-1.5 rounded-lg">
+                                        <i class="fas ${card.icon} text-primary text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center gap-1.5">
+                                            <input 
+                                                type="checkbox" 
+                                                class="main-checkbox w-3.5 h-3.5 text-primary rounded focus:ring-primary"
+                                                data-slice-id="${card.id}"
+                                            >
+                                            <h3 class="text-base font-bold text-dark group-hover:text-primary transition-colors">
+                                            ${card.name}
+                                            </h3>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                `
+            }
+  
+            // 生成硬件卡片HTML
+            function SearchgenerateCardHTMLforHW(card){
+                return `
+                    <div class="card-drawer bg-gray-903 rounded-xl shadow-card hover-scale group card-item" data-slice-id="${card.id}" style="height: 10rem;">
+                        <div class="drawer-content h-full">
+                            <div class="p-3 h-full flex flex-col">
+                                <div class="flex justify-between items-start">
+                                    <div class="flex items-start gap-2">
+                                        <div class="bg-primary/10 p-1.5 rounded-lg">
+                                            <i class="fas ${card.icon} text-primary text-lg"></i>
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center gap-1.5">
+                                                <input 
+                                                    type="checkbox" 
+                                                    class="main-checkbox w-3.5 h-3.5 text-primary rounded focus:ring-primary"
+                                                    data-slice-id="${card.id}"
+                                                >
+                                                <h3 class="text-base font-bold text-dark group-hover:text-primary transition-colors">
+                                                ${card.name}
+                                                </h3>
+                                            </div>
+                                            <p class="text-gray-800 text-xs mt-0.5">${card.description}</p>
+                                        </div>
+                                    </div>
+                                    <button 
+                                        class="toggle-subcards-btn text-yellow-500 hover:text-primary transition-colors p-1.5"
+                                        data-slice-id="${card.id}"
+                                        >
+                                        <i class="fa fa-arrow-circle-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="drawer-subcards" style="height: 10rem;">
+                            <div class="h-full flex flex-col bg-gray-904">
+                                <div class="flex justify-between items-center mb-2" style="height: 1.5rem;">
+                                <h4 class=" fixedleft-3 top-4 font-bold text-dark text-sm">${card.name}系列产品</h4>
+                                <button 
+                                    class="close-subcards-btn text-gray-400 hover:text-primary transition-colors p-3"
+                                    data-slice-id="${card.id}"
+                                    >
+                                    <i class="fa fa-arrow-circle-left"></i>
+                                </button>
+                            </div>
+                            <div class="flex-1 overflow-y-auto space-y-2">
+                                ${generateSubCardsHTMLforhw(card.id, card.name,card.features)}
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                }
+            
+            // 生成功能卡片HTML
+            function SearchgenerateCardHTML(card) {
+                if (card.features.length == 1){
+                    return `
+                <div class="card-drawer bg-gray-903 rounded-xl shadow-card hover-scale group card-item" data-slice-id="${card.id}" style="height: 5rem;">
+                    <div class="drawer-content h-full">
+                        <div class="p-3 h-full flex flex-col">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start gap-2">
+                                    <div class="bg-primary/10 p-1.5 rounded-lg">
+                                        <i class="fas ${card.icon} text-primary text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center gap-1.5">
+                                            <input 
+                                                type="checkbox" 
+                                                class="main-checkbox w-3.5 h-3.5 text-primary rounded focus:ring-primary"
+                                                data-slice-id="${card.id}"
+                                            >
+                                            <h3 class="text-base font-bold text-dark group-hover:text-primary transition-colors">
+                                            ${card.name}
+                                            </h3>
+                                        </div>
+                                        <p class="text-gray-800 text-xs mt-0.5">${card.fullName}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="drawer-subcards" style="height: 5rem;">
+                            <div class="h-full flex flex-col bg-gray-904">
+                                <div class="top-2 flex justify-between items-center mb-2">
+                                <h4 class="flex font-bold text-dark text-sm">${card.name} 子功能</h4>
+                                <button 
+                                    class="close-subcards-btn text-gray-400 hover:text-primary transition-colors p-3"
+                                    data-slice-id="${card.id}"
+                                    >
+                                    <i class="fa fa-arrow-circle-left"></i>
+                                </button>
+                            </div>
+                            <div class="flex-1 overflow-y-auto space-y-2">
+                                ${generateSubCardsHTML(card.id, card.name,card.features)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+                }else{ 
+                return `
+                <div class="card-drawer bg-gray-903 rounded-xl shadow-card hover-scale group card-item" data-slice-id="${card.id}" style="height: 5rem;">
+                    <div class="drawer-content h-full">
+                        <div class="p-3 h-full flex flex-col">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start gap-2">
+                                    <div class="bg-primary/10 p-1.5 rounded-lg">
+                                        <i class="fas ${card.icon} text-primary text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center gap-1.5">
+                                            <input 
+                                                type="checkbox" 
+                                                class="main-checkbox w-3.5 h-3.5 text-primary rounded focus:ring-primary"
+                                                data-slice-id="${card.id}"
+                                            >
+                                            <h3 class="text-base font-bold text-dark group-hover:text-primary transition-colors">
+                                            ${card.name}
+                                            </h3>
+                                        </div>
+                                        <p class="text-gray-800 text-xs mt-0.5">${card.fullName}</p>
+                                    </div>
+                                </div>
+                                <button 
+                                    class="toggle-subcards-btn text-yellow-500 hover:text-primary transition-colors p-1.5"
+                                    data-slice-id="${card.id}"
+                                    >
+                                    <i class="fa fa-arrow-circle-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="drawer-subcards" style="height: 5rem;">
+                        <div class="h-full flex flex-col bg-gray-904">
+                            <div class="flex justify-between items-center mb-2" style="height: 1.5rem;">
+                            <h4 class=" fixedleft-3 top-4 font-bold text-dark text-sm">${card.name} 子功能</h4>
+                            <button 
+                                class="close-subcards-btn text-gray-400 hover:text-primary transition-colors p-3"
+                                data-slice-id="${card.id}"
+                                >
+                                <i class="fa fa-arrow-circle-left"></i>
+                            </button>
+                        </div>
+                        <div class="flex-1 overflow-y-auto space-y-2">
+                            ${generateSubCardsHTML(card.id, card.name,card.features)}
+                        </div>
+                    </div>
+                </div>
+                `;
+            }
+        }
+            
+            // 生成子卡片HTML
+            function generateSubCardsHTML(mainId, mainName,features) {
+                let subCardsHTML = '';
+                
+                features.forEach(feature => {
+                    subCardsHTML += `
+                        <div class="flex items-center gap-4 p-1.5 bg-gray-904 hover:bg-gray-50 rounded-lg" style="height: 0.6rem;">
+                        <input 
+                            type="checkbox" 
+                            class="sub-checkbox w-3.5 h-3.5 text-primary rounded focus:ring-primary"
+                            data-slice-id="${mainId}"
+                            data-main-id="${feature.FEATURE_NAME}"
+                        >
+                        <span class="text-gray-700 text-sm">${feature.FEATURE_NAME}</span>
+                        </div>
+                    `;
+                    })   
+                return subCardsHTML;
+            }
+
+            // 生成子卡片HTML
+            function generateSubCardsHTMLforhw(mainId, mainName,features) {
+                let subCardsHTML = '';
+                
+                features.forEach(feature => {
+                    subCardsHTML += `
+                        <div class="flex items-center gap-4 p-1.5 bg-gray-904 hover:bg-gray-50 rounded-lg" style="height: 0.6rem;">
+                        <input 
+                            type="checkbox" 
+                            class="sub-checkbox w-3.5 h-3.5 text-primary rounded focus:ring-primary"
+                            data-slice-id="${mainId}"
+                            data-main-id="${feature.PRODUCT_NAME}"
+                        >
+                        <span class="text-gray-700 text-sm">${feature.PRODUCT_NAME}</span>
+                        </div>
+                    `;
+                    })   
+                    
+                return subCardsHTML;
+            }
+            
+            // 初始化卡片交互
+            function SearchinitCardInteractions() {
+                // 切换子卡片显示/隐藏
+                document.querySelectorAll('.toggle-subcards-btn, .close-subcards-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const cardId = btn.getAttribute('data-slice-id');
+                    const card = document.querySelector(`.card-drawer[data-slice-id="${cardId}"]`);
+                    card.classList.toggle('open');
+                    
+                    // 切换图标方向
+                    const icon = btn.querySelector('i');
+                    if (card.classList.contains('open')) {
+                    icon.classList.remove('fa-arrow-circle-left');
+                    icon.classList.add('fa-arrow-circle-right');
+                    } else {
+                    icon.classList.remove('fa-arrow-circle-right');
+                    icon.classList.add('fa-arrow-circle-left');
+                    }
+                });
+                });
+                
+                // 主卡片勾选框事件
+                document.querySelectorAll('.main-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', (e) => {
+                    const cardId = e.target.getAttribute('data-slice-id');
+                    const card = document.querySelector(`.card-item[data-slice-id="${cardId}"]`);
+                    const container_obj = card.parentNode
+                    // 父卡片勾选时，变颜色
+                    if (e.target.checked){
+                        card.classList.remove('bg-gray-903')
+                        card.classList.add('bg-gray-905')
+                        addChipToContainer(card.getAttribute('data-slice-id'),card.getAttribute('data-slice-id'),container_obj,1)
+                        
+                    }else if (!e.target.checked) {
+                        const subCheckboxes = document.querySelectorAll(`.sub-checkbox[data-slice-id="${cardId}"]`);
+                        const mainCheckbox = document.querySelector(`.main-checkbox[data-slice-id="${cardId}"]`);
+                        card.classList.remove('bg-gray-905')
+                        card.classList.add('bg-gray-903')
+                        removeChipFromContainer(card.getAttribute('data-slice-id'))
+                        subCheckboxes.forEach(subCheckbox => {
+                            subCheckbox.checked = false;
+                            const maindataid = subCheckbox.getAttribute('data-main-id')
+                            removeChipFromContainer(maindataid)
+                    });
+                    }
+                });
+                });
+                
+                // 子卡片勾选框事件
+                document.querySelectorAll('.sub-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', (e) => {
+                    const slice_id = e.target.getAttribute('data-slice-id');
+                    const mainId = e.target.getAttribute('data-main-id');
+                    const mainCheckbox = document.querySelector(`.main-checkbox[data-slice-id="${slice_id}"]`);
+                    const card = document.querySelector(`.card-item[data-slice-id="${slice_id}"]`);
+                    const subCheckboxes = document.querySelectorAll(`.sub-checkbox[data-slice-id="${slice_id}"]`);
+                    const container_obj = card.parentNode
+
+                    // 当子卡片被勾选时，勾选父卡片
+                    if (e.target.checked) {
+                        mainCheckbox.checked = true;
+                        card.classList.remove('bg-gray-903')
+                        card.classList.add('bg-gray-905')
+                        addChipToContainer(mainId,mainId,container_obj,2)
+                        removeChipFromContainer(slice_id)
+                        
+                    } else {
+                    // 当子卡片被取消勾选时，检查是否还有其他子卡片被勾选
+                        const anySubChecked = Array.from(subCheckboxes).some(sub => sub.checked);
+                        mainCheckbox.checked = anySubChecked;
+                        
+                        if (!anySubChecked){
+                            card.classList.remove('bg-gray-905')
+                            card.classList.add('bg-gray-903')
+                        }
+                        const slice_id = e.target.getAttribute('data-slice-id');
+                        const mainId = e.target.getAttribute('data-main-id');
+                        removeChipFromContainer(mainId)
+                    }
+                });
+                });
+                
+                // 搜索按钮点击事件
+                ConfigsearchButton.addEventListener('click', collectSelectedCards);
+                
+                // 重置按钮点击事件
+                resetButton.addEventListener('click', resetAllCheckboxes);
+            }
+            
+            // 分类别收集选中的卡片
+            function collectSelectedCards() {
+                const mainCheckboxes = document.querySelectorAll('.main-checkbox:checked');
+                const subCheckboxes = document.querySelectorAll('.sub-checkbox:checked');
+                
+                const result = {
+                "EUF":{
+                    mainCards: [],
+                    subCards: {}
+                    },
+                "HW":{
+                    mainCards: [],
+                    subCards: {}
+                    }
+                };
+                
+
+                // 收集主卡片
+                mainCheckboxes.forEach(checkbox => {
+                const cardId = checkbox.getAttribute('data-slice-id');
+                const card = document.querySelector(`.card-item[data-slice-id="${cardId}"]`);
+                const container_obj = card.parentNode
+                if(container_obj["id"]=="SearchcardContainer"){
+                    result.EUF.mainCards.push(cardId);
+                
+                    // 为该主卡片创建子卡片数组
+                    result.EUF.subCards[cardId] = [];
+                }else if(container_obj["id"]=="SearchcardContainerforhw"){
+                    result.HW.mainCards.push(cardId);
+                
+                    // 为该主卡片创建子卡片数组
+                    result.HW.subCards[cardId] = [];
+                }
+            });
+                
+                // 收集子卡片
+                subCheckboxes.forEach(checkbox => {
+                    const cardId = checkbox.getAttribute('data-slice-id');
+                    const mainId = checkbox.getAttribute('data-main-id');
+                    const card = document.querySelector(`.card-item[data-slice-id="${cardId}"]`);
+                    const container_obj = card.parentNode
+                    if(container_obj["id"]=="SearchcardContainer"){
+                    // 确保主卡片已被选中
+                        if (result.EUF.mainCards.includes(cardId)) {
+                            result.EUF.subCards[cardId].push(mainId);
+                        }
+                    }else if(container_obj["id"]=="SearchcardContainerforhw"){
+                    // 确保主卡片已被选中
+                        if (result.HW.mainCards.includes(cardId)) {
+                            result.HW.subCards[cardId].push(mainId);
+                        }
+                    }   
+                });
+                
+                // 显示结果
+                launchsearching(result);
+            }
+
+            //开始搜索
+            function launchsearching(result){
+                solutionContainer,innerHTML ='';
+                fetch('http://localhost:5000/config_seaching', {
+                    method:'POST',
+                    headers: {
+                    'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        scriptName: "solution_finding_on_func.py",
+                        input_data: JSON.stringify(result),
+                        sheetname2: "SUBFEATURES",
+                    })
+                })
+                .then(response =>{
+                    if (!response.ok) {
+                        throw new Error(`HTTP错误: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data =>{
+                    if(data.success){
+                        solutions = JSON.parse(data.output);
+
+                        if (solutions.length != 0){
+                            
+                            createSolutionCards(solutions[0])
+                            initsolutionInteraction()
+                            updatesearchingresult(solutions[1])
+                        }
+                    }
+                })
+                }
+            
+            // 生成方案卡片
+            function createSolutionCards(items){
+                currentCards = items;
+                solutionContainer.innerHTML = '';
+
+                items.forEach(item =>{
+                    const solution = generatesolutionthml(item);
+                solutionContainer.insertAdjacentHTML('beforeend', solution);
+                })
+            }
+              
+            function updatesearchingresult(item){
+                document.getElementById('searchingphrase').textContent = item;
+            }
+            function generatesolutionthml(item){
+                bgcolor = "primary"
+                
+                if(item["STATUS"] == "IN SOP"){
+                    bgcolor = "SOP"
+                }else if(item["STATUS"] == "UNDER DEV"){
+                    bgcolor = "DEV"
+                }else if(item["STATUS"] == "IN PLAN"){
+                    bgcolor = "PLAN"
+                }
+                if(item["file_status"]==1){
+                    return  `
+                            <div class="card">
+                                <div class="card-header">
+                                    <div>
+                                        <h2 class="card-title text-xl">${item["SOLUTION NAME"]}</h2>
+                                        <span class="bg-${bgcolor}/90 text-white text-xs font-medium px-2 py-1 rounded-full"> ${item["STATUS"]}</span>
+                                    </div>
+                                    <button 
+                                        class="solution-details-btn header-btn" data-doc-path ="${"../Doc/"+item["SOLUTION NAME"]+"_report.pdf"}" data-header = "${item["SOLUTION NAME"]+"技术文档"}">
+                                        <i class="fa fa-file-pdf-o"></i>
+                                        <span>查看技术文档</span>
+                                    </button>
+                                </div>
+                                
+                                <div class="card-content">
+                                    <div class="card-image-container">
+                                        <img src=${"../PIC/"+item["SOLUTION NAME"]+".png"} alt="工业计数系统示意图" class="card-image">
+                                        <div class="image-overlay"></div>
+                                    </div>
+                                    
+                                    <div class="card-details">
+                                        <h3 class="detail-title">系统特性</h3>
+                                        
+                                        <div class="feature-tags">
+                                            <div class="feature-tag">
+                                                <div class="tag-value">${item["sensorSet"]}</div>
+                                                <div class="tag-label">传感器配置</div>
+                                            </div>
+                                            <div class="feature-tag">
+                                                <div class="tag-value">${item["calculateunitInfo"]}</div>
+                                                <div class="tag-label">使用芯片</div>
+                                            </div>
+                                            <div class="feature-tag">
+                                                <div class="tag-value">${item["highestLevel"]}</div>
+                                                <div class="tag-label">SAE等级</div>
+                                            </div>
+                                            <div class="feature-tag">
+                                                <div class="tag-value">${item["techStackInfo"]}</div>
+                                                <div class="tag-label">技术路线</div>
+                                            </div>
+                                            <div class="feature-tag">
+                                                <div class="tag-value">${item["strongDependencies"]}</div>
+                                                <div class="tag-label">外部依赖</div>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card-footer"></div>
+                            </div>
+                `;
+                }else{
+                    return  `
+                        <div class="card">
+                            <div class="card-header">
+                                <div>
+                                    <h2 class="card-title text-xl">${item["SOLUTION NAME"]}</h2>
+                                    <span class="bg-${bgcolor}/90 text-white text-xs font-medium px-2 py-1 rounded-full"> ${item["STATUS"]}</span>
+                                </div>
+                                <button 
+                                    class="solution-details-btn header-btn_ban" disabled = "1" data-doc-path ="$A" data-header = "A" >
+                                    <i class="fa fa-file-pdf-o"></i>
+                                    <span>敬请期待</span>
+                                </button>
+                            </div>
+                            
+                            <div class="card-content">
+                                <div class="card-image-container">
+                                    <img src=${"../PIC/"+item["SOLUTION NAME"]+".png"} alt="工业计数系统示意图" class="card-image">
+                                    <div class="image-overlay"></div>
+                                </div>
+                                
+                                <div class="card-details">
+                                    <h3 class="detail-title">系统特性</h3>
+                                    
+                                    <div class="feature-tags">
+                                        <div class="feature-tag">
+                                            <div class="tag-value">${item["sensorSet"]}</div>
+                                            <div class="tag-label">传感器配置</div>
+                                        </div>
+                                        <div class="feature-tag">
+                                            <div class="tag-value">${item["calculateunitInfo"]}</div>
+                                            <div class="tag-label">使用芯片</div>
+                                        </div>
+                                        <div class="feature-tag">
+                                            <div class="tag-value">${item["highestLevel"]}</div>
+                                            <div class="tag-label">SAE等级</div>
+                                        </div>
+                                        <div class="feature-tag">
+                                            <div class="tag-value">${item["techStackInfo"]}</div>
+                                            <div class="tag-label">技术路线</div>
+                                        </div>
+                                        <div class="feature-tag">
+                                            <div class="tag-value">${item["strongDependencies"]}</div>
+                                            <div class="tag-label">外部依赖</div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card-footer"></div>
+                        </div>
+                    `;
+                }
+            }
+            
+            function initsolutionInteraction(){
+                solutionContainer.addEventListener('click', (e) => {
+                    const btn = e.target.closest('.solution-details-btn');
+                    
+                    if (!btn) return;
+                        console.log("not a button")
+                    const pdfPath = btn.getAttribute('data-doc-path');
+                    const title = btn.getAttribute('data-header');
+                    const btnstate = btn.getAttribute('disabled')
+                    if (!btnstate ==1){
+                    // 更新模态框内容
+                    pdfIframe2.src = pdfPath;
+                    pdfModalTitle.textContent = title;
+                    pdfFileName.textContent = title.replace("1111"+'技术文档', '') + '.pdf';
+                    // 显示模态框
+                    pdfModal2.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden';
+                    }});
+                    // 关闭模态框
+                closeWindowBtn.addEventListener('click', () => {
+                    pdfModal2.classList.add('hidden');
+                    document.body.style.overflow = '';
+                    pdfIframe2.src = '';
+                });
+
+                // 点击模态框背景关闭
+                pdfModal2.addEventListener('click', (e) => {
+                    if (e.target === pdfModal2) {
+                    pdfModal2.classList.add('hidden');
+                    document.body.style.overflow = '';
+                    pdfIframe2.src = '';
+                    }
+                });
+            }
+            
+            function addChipToContainer(cardName,cardId,container_obj,type){
+                const selectioncontainer = document.getElementById('selected-chips');
+                const chip = document.createElement('span');
+                if(type==1){
+                    if(container_obj["id"]=="SearchcardContainer"){
+                        chip.className = 'bg-blue-300 text-blue-700 text-xs font-medium px-3 py-1 rounded-full chip';
+                        cardName = cardName + "-All Features"
+                    }else if(container_obj["id"]=="SearchcardContainerforhw"){
+                        chip.className = 'bg-green-300 text-blue-700 text-xs font-medium px-3 py-1 rounded-full chip';
+                        cardName = cardName + "-All Series"
+                    }else if(container_obj["id"]=="SearchcardContainerforsensor"){
+                        chip.className = 'bg-yellow-300 text-blue-700 text-xs font-medium px-3 py-1 rounded-full chip';
+                    }else if(container_obj["id"]=="SearchcardContainerforreg"){
+                        chip.className = 'bg-red-300 text-blue-700 text-xs font-medium px-3 py-1 rounded-full chip';
+                    }
+                }else if(type == 2){
+                    if(container_obj["id"]=="SearchcardContainer"){
+                        chip.className = 'bg-blue-300 text-blue-700 text-xs font-medium px-3 py-1 rounded-full chip';
+                    }else if(container_obj["id"]=="SearchcardContainerforhw"){
+                        chip.className = 'bg-green-300 text-blue-700 text-xs font-medium px-3 py-1 rounded-full chip';
+                    }else if(container_obj["id"]=="SearchcardContainerforsensor"){
+                        chip.className = 'bg-yellow-300 text-blue-700 text-xs font-medium px-3 py-1 rounded-full chip';
+                    }else if(container_obj["id"]=="SearchcardContainerforreg"){
+                        chip.className = 'bg-red-300 text-blue-700 text-xs font-medium px-3 py-1 rounded-full chip';
+                    }
+                }
+                chip.textContent = cardName;
+                chip.setAttribute('data-chip-id', cardId);
+                selectioncontainer.appendChild(chip);
+            }
+
+            function removeChipFromContainer(cardId) {
+                const chips = document.querySelectorAll('#selected-chips span[data-chip-id="' + cardId + '"]');
+                chips.forEach(chip => {
+                    chip.remove();
+                });
+            }
+
+            // 显示结果
+            function displayResult(result) {
+                SearchresultContent.innerHTML = '';
+                
+                if (result.mainCards.length === 0 && Object.keys(result.subCards).length === 0) {
+                SearchresultContent.innerHTML = '<p class="text-gray-500 text-sm">没有选中任何卡片</p>';
+                searchresultPanel.classList.add('hidden');
+                return;
+                }
+                
+                searchresultPanel.classList.remove('hidden');
+                SearchresultContent.innerHTML = '';
+                
+                // 显示主卡片
+                result.mainCards.forEach(mainId => {
+                const mainCard = result.mainCards.find(card => card.id === mainId);
+                
+                if (mainCard) {
+                    const mainCardEl = document.createElement('div');
+                    mainCardEl.className = 'border border-gray-200 rounded-lg p-2.5';
+                    mainCardEl.innerHTML = `
+                    <div class="flex items-center gap-1.5 mb-1.5">
+                        <i class="fas fa-check-circle text-secondary text-sm"></i>
+                        <span class="font-medium text-sm">${mainCard.name} (${mainCard.fullName})</span>
+                    </div>
+                    <div class="pl-4 space-y-1.5">
+                        ${result.subCards[mainId].length > 0 ? 
+                        result.subCards[mainId].map(subId => `
+                            <div class="flex items-center gap-1.5 text-xs">
+                            <i class="fas fa-minus-circle text-gray-400"></i>
+                            <span>${subId.replace('_', ' ')}</span>
+                            </div>
+                        `).join('') : 
+                        '<p class="text-gray-500 text-xs">没有选中子选项</p>'
+                        }
+                    </div>
+                    `;
+                    SearchresultContent.appendChild(mainCardEl);
+                }
+                });
+            }
+            
+            // 重置所有勾选框
+            function resetAllCheckboxes() {
+                document.querySelectorAll('.main-checkbox, .sub-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+                });
+                
+                document.querySelectorAll('.card-drawer').forEach(card => {
+                card.classList.remove('bg-gray-905');
+                card.classList.add('bg-gray-903');
+                });
+                
+                solutionContainer.innerHTML=''
+                selectionpool.innerHTML=''
+                // 关闭所有打开的抽屉
+                document.querySelectorAll('.card-drawer.open').forEach(card => {
+                card.classList.remove('open');
+                const icon = card.querySelector('.toggle-subcards-btn i');
+                icon.classList.remove('fa-chevron-left');
+                icon.classList.add('fa-chevron-right');
+                });
+                
+                searchresultPanel.classList.add('hidden');
+            }
+            
+            // // 初始化页面
+            // initconfigfunction()
+            });
+
+        // window.addEventListener('load', initnetwork);
+    </script>
+
+    <script src="../js/load-components.js"></script>
+</body>
+</html>

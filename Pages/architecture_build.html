@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAELO GOOD STUFF</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+
+
+<body class="bg-primary text-gray-100 font-inter min-h-screen flex flex-col bg-grid">
+    <div id="particles-js"></div>
+     
+
+    <div class="content min-h-screen">
+        <!-- 导航栏容器 --> 
+        <div id="navbar-container"></div>       
+        <!-- 页面特定内容 -->
+        <main class="content">
+        <!-- 主要内容 -->
+            <div class="container mx-auto px-4 py-8 pt-16">
+                <!-- 架构查看页面 -->
+                <div id="架构查看-page" class="page-content">
+                    <!-- 主要内容区 -->
+                        <div id="mode-indicator" class="fixed top-18 left-4 bg-gray-800/80 text-white px-4 py-2 rounded-lg shadow-lg z-50 backdrop-blur-sm">
+                            <button class="cyber-btn w-full bg-primary/20 hover:bg-primary/30 text-neon font-medium py-2 px-4 rounded transition-all mt-auto" onclick="showPage('架构网络查看')">
+                                切换网络模式
+                            </button>
+                        </div>
+                        <!-- 页面标题 -->
+                        <section class="mb-10 text-center">
+                            <h2 class="text-[clamp(1.75rem,4vw,2.5rem)] font-bold text-neutral mb-3">功能拆解查询工具</h2>
+                            <p class="text-gray-600 max-w-2xl mx-auto">根据输入的功能展示功能拆解的不同层次</p>
+
+                            <!-- 下拉菜单和搜索按钮 -->
+                            <div class="flex items-center space-x-4">
+                                <div class="dropdown" id="mainDropdownContainer">
+                                    <!-- 下拉菜单 -->
+                                    <button class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-colors shadow-md dropdown-toggle" type="button" id="mainDropdown">
+                                        选择选项 <i class="fa fa-chevron-down ml-1"></i>
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="mainDropdown" id="dropdownOptions">
+                                        <!-- 动态生成的选项将在这里显示 -->
+                                    </ul>
+                                </div>
+                            
+                                <!-- 搜索按钮 -->
+                                <button class="bg-accent hover:bg-accent/90 text-white px-4 py-2 rounded-lg transition-colors shadow-md" id="fbssearchBtn">
+                                    <i class="fa fa-search mr-1"></i> 搜索
+                                </button>
+                            </div>
+                        </section>
+
+                        <!-- 加载状态 -->
+                        <section id="loading-state" class="bg-light-blue/20 max-w-14xl mx-auto mt-10 flex flex-col items-center justify-center py-16">
+                            <div class=" w-16 h-16 rounded-full mb-4"></div>
+                            <p class="text-gray-500 text-lg">请选择一个功能作为输入...</p>
+                        </section>
+
+                        <!-- 层级卡片布局容器 -->
+                        <section id="card-layout" class="max-w-14xl mx-auto mt-10 hidden">
+                            <!-- 动态生成的卡片将在这里显示 -->
+                        </section>
+
+                        <!-- 无数据状态 -->
+                        <section id="no-data-state" class="bg-light-blue max-w-14xl mx-auto mt-10 hidden flex flex-col items-center justify-center py-16">
+                            <i class="fa fa-search text-5xl text-gray-300 mb-4"></i>
+                            <h3 class="text-xl font-medium text-gray-500 mb-2">未找到功能拆解数据</h3>
+                            <p class="text-gray-400 text-center max-w-md">请尝加载新数据</p>
+                        </section>
+                </div>
+
+                <!-- 架构查看树状页面 -->
+                <div id="架构网络查看-page" class="page-content">
+    
+                    <!-- 模式指示器 -->
+                    <!-- <div id="mode-indicator" class="fixed top-18 left-4 bg-gray-800/80 text-white px-4 py-2 rounded-lg shadow-lg z-50 backdrop-blur-sm">
+                        <span id="mode-text">正常模式</span>
+                    </div> -->
+
+
+                    <div id="mode-indicator" class="fixed top-18 left-4 bg-gray-800/80 text-white px-4 py-2 rounded-lg shadow-lg z-50 backdrop-blur-sm">
+                        <button class="cyber-btn w-full bg-primary/20 hover:bg-primary/30 text-neon font-medium py-2 px-4 rounded transition-all mt-auto" onclick="showPage('架构查看')">
+                            切换表状模式
+                        </button>
+                    </div>
+                    <!-- 高亮线条信息面板 -->
+                    <div id="connection-info-panel" class="fixed bottom-4 right-4 w-80 max-h-[400px] bg-gray-800/80 text-white p-4 rounded-lg shadow-lg z-50 backdrop-blur-sm overflow-y-auto panel-fade-in">
+                        <h3 class="font-bold text-lg mb-2 border-b border-gray-600 pb-2">
+                            <i class="fa fa-link mr-2"></i>功能拆解信息信息
+                        </h3>
+                        <div id="selected-card-info" class="mb-3 p-2 bg-gray-700/50 rounded">
+                            <span class="font-medium">当前选中:</span>
+                            <span id="current-selected-card" class="text-highlight text-glow">-</span>
+                        </div>
+                        <div id="connection-list" class="space-y-2">
+                            <div class="text-gray-400 italic">未选中任何卡片</div>
+                        </div>
+                    </div>
+                    
+                    <div id="visualization-container" class="relative w-full h-screen bg-dark-light/60">
+                        <svg id="connections" class="absolute inset-0 w-full h-full pointer-events-none z-10"></svg>
+                        <div id="buble-container" class="bg-primary/10 inset-0 w-full h-full overflow-hidden z-20"></div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+        
+        <!-- 页脚容器 -->
+        <div id="footer-container"></div>   
+    </div>
+            
+    
+    <!-- 粒子背景脚本 -->
+    <script>    
+        
+        let netinitstatus = 0
+        window.apiReponse = null;
+        let dropdownlist = [];
+
+        document.addEventListener('DOMContentLoaded', () => { 
+            //加载所有数据
+            getdropdowninfo()
+
+            function getdropdowninfo() {
+                fetch('http://localhost:5000/init_config_func', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        scriptName: "function_config_initiator.py",
+                        tablepath: "database.xlsx"
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        console.log('No shit');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        dropdownlist = JSON.parse(data.output); // 解析Promise并传递data.output
+                        generateDropdownOptions(dropdownlist["EUF"])
+                        initDropdown()
+                    } else {
+                        console.log("请求失败");
+                    }
+                })
+                // .catch(error => {
+                //     console.error("请求过程中出错:", error);
+                //     reject(error);
+                // });
+            }
+
+
+        })
+        
+        fetch('http://localhost:5000/fbsnetinit',{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({
+                    scriptName:'fbsnetinit'
+                })
+            })
+            .then(response=>{
+                if(!response.ok){
+                    console.log('No shit');
+                }
+                return response.json();
+            })
+            .then(data=>{
+                if (data.success){
+                    window.apiReponse = (JSON.parse(data.output))
+                    showPage('架构网络查看');   
+                }
+                else{
+                    console.log("Still no shit")
+                }
+            })
+            .catch(error => {
+                console.error("请求过程中出错:", error);
+                reject(error);
+            })
+
+        // 显示指定页面
+        function showPage(pageName) {
+            // 隐藏所有页面内容
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.style.display = 'none';
+            });
+            
+            // 显示目标页面
+            const targetPage = document.getElementById(`${pageName}-page`);
+            if (targetPage) {
+                targetPage.style.display = 'block';
+            }
+            
+            // 更新导航栏的选中状态
+            document.querySelectorAll('nav button, .absolute a').forEach(item => {
+                item.classList.remove('bg-primary/30', 'text-neon');
+                item.classList.add('bg-primary/10', 'text-primary');
+                
+                // 如果是下拉菜单中的链接
+                if (item.classList.contains('block')) {
+                    item.classList.remove('bg-primary/20', 'text-white');
+                    item.classList.add('text-gray-300');
+                    
+                    // 如果是当前选中的页面
+                    if (item.textContent.trim().includes(pageName)) {
+                        item.classList.remove('text-gray-300');
+                        item.classList.add('bg-primary/20', 'text-white');
+                    }
+                }
+            });
+            
+            
+            // 更新页面标题
+            document.title = `${pageName} - VALEO PRODUCT CONFIGURATOR`;
+            
+            if (pageName === '架构网络查看'){
+                if (netinitstatus ===0){
+                    if (window.apiReponse){
+                    initnetwork()
+                    netinitstatus = 1
+                }}
+                
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {       // 架构配置函数
+            // 模拟数据加载延迟
+            const searchBtn = document.getElementById('fbssearchBtn');
+            const mainDropdownContainer = document.getElementById('mainDropdownContainer');
+            const mainDropdowntext = document.getElementById('mainDropdown');
+
+            searchBtn.addEventListener('click',launchfbsfinding)
+
+            function launchfbsfinding(){
+                const fbsfindinginput = mainDropdowntext.textContent
+                fetch('http://localhost:5000/fbssearching',{
+                    method: 'POST',
+                    headers:{
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        scriptName: "fbssearching",
+                        intputdata:fbsfindinginput
+                    })
+                })
+                .then(response=>{
+                    if(!response.ok){
+                        console.log('No shit');
+                    }
+                    return response.json();
+                })
+                .then(data=>{
+                    if (data.success) {
+                        renderCardLayout(JSON.parse(data.output))
+                    }
+                    else{
+                        console.log("Still no shit")
+                    }
+                })
+                .catch(error => {
+                    console.error("请求过程中出错:", error);
+                    reject(error);
+                })
+            }
+        });
+        
+        function generateDropdownOptions(optiondata) {
+            const dropdownMenu = document.getElementById('dropdownOptions');
+            dropdownMenu.innerHTML = '';
+            
+            optiondata.forEach(item => {
+                // 创建主选项
+                if (item.features.length == 1) {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<a class="dropdown-item" data-id="${item.name}">${item.name}</a>`;
+                    dropdownMenu.appendChild(li);
+                } else {
+                    // 创建带子选项的主选项
+                    const li = document.createElement('li');
+                    li.className = 'dropdown-submenu';
+                    
+                    // 主选项
+                    const mainLink = document.createElement('a');
+                    mainLink.className = 'dropdown-item dropdown-toggle';
+                    mainLink.setAttribute('data-id', item.name);
+                    mainLink.textContent = item.name;
+                    li.appendChild(mainLink);
+                    
+                    // 子选项容器
+                    const subMenu = document.createElement('ul');
+                    subMenu.className = 'dropdown-menu';
+                    
+                    // 添加子选项
+                    item.features.forEach(subItem => {
+                        const subLi = document.createElement('li');
+                        subLi.innerHTML = `<a class="dropdown-item" data-id="${subItem.FEATURE_NAME}">${subItem.FEATURE_NAME}</a>`;
+                        subMenu.appendChild(subLi);
+                    });
+                    
+                    li.appendChild(subMenu);
+                    dropdownMenu.appendChild(li);
+                }
+            });
+        }
+
+        // 初始化下拉菜单交互
+        function initDropdown() {
+            // 主下拉菜单切换
+            const mainDropdownContainer = document.getElementById('mainDropdownContainer');
+            const mainToggle = document.querySelector('.dropdown-toggle');
+            const mainMenu = document.getElementById('dropdownOptions');
+            const mainDropdowntext = document.getElementById('mainDropdown');
+            
+            // 主下拉菜单切换
+            mainToggle.addEventListener('click', (e) => {
+                e.stopPropagation(); // 阻止事件冒泡到document
+                mainMenu.style.display = mainMenu.style.display === 'block' ? 'none' : 'block';
+            });
+            
+            // 点击其他区域关闭下拉菜单 - 优化版本
+            document.addEventListener('click', (e) => {
+                // 如果点击的元素不是下拉菜单容器的子元素，并且主菜单是打开的，则关闭主菜单
+                if (!mainDropdownContainer.contains(e.target) && mainMenu.style.display === 'block') {
+                    mainMenu.style.display = 'none';
+                }
+            });
+            
+            // 选项点击事件
+            document.querySelectorAll('.dropdown-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.stopPropagation(); // 阻止事件冒泡到document
+                    
+                    const selectedId = e.target.getAttribute('data-id');
+                    const selectedText = e.target.textContent;
+                    
+                    // 更新按钮文本
+                    mainToggle.innerHTML = `${selectedText} <i class="fa fa-chevron-down ml-1"></i>`;
+                    
+                    // 关闭主菜单
+                    mainMenu.style.display = 'none';
+                    
+                    // 这里可以添加选择后的处理逻辑
+                    console.log('选中了:', selectedId, selectedText);
+                });
+            });
+        }
+
+        // 渲染卡片布局
+        function renderCardLayout(data) {
+            const cardLayout = document.getElementById('card-layout');
+            const loadingState = document.getElementById('loading-state');
+            const noDataState = document.getElementById('no-data-state');
+
+            // 检查数据是否存在
+            if (!data || !data.FUNCTION_NAME) {
+                loadingState.classList.add('hidden');
+                noDataState.classList.remove('hidden');
+                return;
+            }
+
+            // 清空现有内容
+            cardLayout.innerHTML = '';
+
+            // 获取第二层卡片数据
+            const level2Data = data.mf_functions;
+            const level2number = data.mf_count;
+            if (level2Data.length === 0 || level2number ===0) {
+                loadingState.classList.add('hidden');
+                noDataState.classList.remove('hidden');
+                return;
+            }
+            
+            // 计算总第三层卡片数
+            const gridheight = 60
+            const totalLevel3Cards = data.tf_total_count;
+            const totalheight = totalLevel3Cards * gridheight
+            // 创建三层容器 - 改为水平网格布局
+            const cardContainer = document.createElement('div');
+            cardContainer.className = `grid grid-cols-[2fr_3fr_4fr] gap-0 h-[${totalheight}px] mx-auto`;
+            cardLayout.appendChild(cardContainer);
+            // console.log("大容器创建完毕")
+            
+            // 创建第一层容器和网格
+            const level1Div = document.createElement('div');
+            level1Div.className = 'level-container bg-white rounded-l-lg overflow-hidden shadow-lg';
+            cardContainer.appendChild(level1Div);
+
+            const level1Grid = document.createElement('div');
+            level1Grid.className = 'grid grid-rows-1 h-full';
+            level1Div.appendChild(level1Grid);
+            // console.log("一层创建完毕")
+
+            // 创建第二层容器和网格
+            const level2Div = document.createElement('div');
+            level2Div.className = 'level-container bg-white overflow-hidden shadow-md';
+            cardContainer.appendChild(level2Div);
+                // 设置总行数为第三层卡片总数
+            level2Div.style.setProperty('--total-rows', totalLevel3Cards);
+                // 创建垂直网格容器
+            const level2Grid = document.createElement('div');
+            level2Grid.className = 'grid grid-uniform-vertical h-full gap-px';
+            level2Div.appendChild(level2Grid);
+            // console.log("二层创建完毕")
+
+            // 创建第三层容器和网格
+            const level3Div = document.createElement('div');
+            level3Div.className = 'level-container bg-white rounded-r-lg overflow-hidden shadow-md';
+            cardContainer.appendChild(level3Div);
+                // 设置总行数为第三层卡片总数
+            level3Div.style.setProperty('--total-rows', totalLevel3Cards);
+                // 创建垂直网格容器
+            const level3Grid = document.createElement('div');
+            level3Grid.className = 'grid grid-uniform-vertical h-full gap-px';
+            level3Div.appendChild(level3Grid);
+            // console.log("三层创建完毕")
+            // 渲染第一层卡片
+            renderLevel1Cards(cardContainer,level1Grid,level2Grid,level3Grid,data);
+            
+            // 渲染第二层卡片
+            // renderLevel2Cards(cardContainer, level2Data, totalLevel3Cards);
+            
+           
+
+            // 显示布局并隐藏加载状态
+            loadingState.classList.add('hidden');
+            cardLayout.innerHTML += '<div class="mt-8 text-center"><button id="reset-btn" class="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg transition-colors shadow-md">重置布局</button></div>';
+            cardLayout.classList.remove('hidden');
+            
+            // 添加重置按钮事件
+            document.getElementById('reset-btn').addEventListener('click', () => {
+                cardLayout.classList.add('hidden');
+                loadingState.classList.remove('hidden');
+                setTimeout(() => {
+                    renderCardLayout(mockData);
+                }, 1000);
+            });
+        }
+
+        // 渲染第一层卡片
+        function renderLevel1Cards(container,level1Grid,level2Grid,level3Grid,data) {
+            
+            const card = createCard(data, 1, 'level1');
+            level1Grid.appendChild(card);
+            
+            data.mf_functions.forEach(item =>{
+                renderLevel2Cards(container,level2Grid,level3Grid,item)
+            })
+            
+        }
+
+        // 渲染第二层卡片
+        function renderLevel2Cards(container,level2Grid,level3Grid,item) {           
+            
+            // 计算每个第二层卡片的起始行和占据行数 
+            const index = 1
+            const card = createCard(item, index, 'level2');
+            
+            // 设置卡片占据的行范围
+            card.style.gridRow = `${item.position.start} / span ${item.position.length}`;
+            level2Grid.appendChild(card);
+                
+            item.tf_functions.forEach(item=>{
+                renderLevel3Cards(container,level3Grid,item)
+            })
+        }
+
+        // 渲染第三层卡片
+        function renderLevel3Cards(container, level3Grid, item) {
+            // 每个第二层卡片对应的第三层卡片数
+            const card = createCard(item, 1, 'level3');
+            // 设置卡片位置 - 每个第三层卡片占据一行
+            card.style.gridRow = `${item.tf_number} / span 1`;
+            level3Grid.appendChild(card);
+            }
+
+        // 创建卡片元素
+        function createCard(item, index, level) {
+            const card = document.createElement('div');
+            const color = getColorClass(level)
+            const headinglevel = getHeadingLevel(level)
+            const textsize = getTextSize(level)
+            const fontweithg = getFontWeight(level)
+            const icona = getIcon(level)
+            const iconmarge = getIconMargin(level)
+
+            // 第一层和第二层卡片保持不变
+            card.className = `${color} p-2 card-transition flex items-center justify-center shadow-md hover:shadow-xl transform-origin-bottom-left hover:scale-105 transition-all duration-300`;
+            card.innerHTML = `
+                <div class="flex items-start w-full ml-1.5">
+                    <i class="fa ${icona} text-white text-${getIconSize(level)} mr-2 mt-1.5"></i>
+                    <div class="text-left flex-grow">
+                        <h${headinglevel} class="text-${textsize} font-${fontweithg} text-white">${item["FUNCTION_INDEX"]}</h${headinglevel}>
+                        <p class="text-white/90 text-${getsubTextSize(level)}">${item["FUNCTION_NAME"]}</p>
+                    </div>
+                </div>
+            
+                `;
+                // console.log(card.innerHTML)
+            
+            return card;
+        }
+
+        // 辅助函数 - 获取颜色类
+        function getColorClass(colorKey) {
+            const colorMap = {
+                level1: 'bg-EUF',
+                level2: 'bg-MF',
+                level3: 'bg-TF'
+            };
+            return colorMap[colorKey] || 'bg-gray-500';
+        }
+
+        // 辅助函数 - 获取图标大小
+        function getIconSize(level) {
+            const sizeMap = {
+                level1: '5xl',
+                level2: '3xl',
+                level3: 'xl'
+            };
+            return sizeMap[level] || 'text-lg';
+        }
+
+        function getIcon(level) {
+            const sizeMap = {
+                level1: 'fa-user',
+                level2: 'fa-cubes',
+                level3: 'fa-cube'
+            };
+            return sizeMap[level] || 'text-lg';
+        }
+
+        // 辅助函数 - 获取图标边距
+        function getIconMargin(level) {
+            const marginMap = {
+                level1: '1',
+                level2: '1',
+                level3: '1'
+            };
+            return marginMap[level] || 'mb-1';
+        }
+
+        // 辅助函数 - 获取标题级别
+        function getHeadingLevel(level) {
+            const levelMap = {
+                level1: 3,
+                level2: 4,
+                level3: 5
+            };
+            return levelMap[level] || 4;
+        }
+
+        // 辅助函数 - 获取文本大小
+        function getTextSize(level) {
+            const sizeMap = {
+                level1: '3xl',
+                level2: 'xl',
+                level3: 'sm'
+            };
+            return sizeMap[level] || 'base';
+        }
+
+        // 辅助函数 - 获取文本大小
+        function getsubTextSize(level) {
+            const sizeMap = {
+                level1: 'lg',
+                level2: 'sm',
+                level3: 'xs'
+            };
+            return sizeMap[level] || 'base';
+        }
+
+        // 辅助函数 - 获取字体粗细
+        function getFontWeight(level) {
+            const weightMap = {
+                level1: 'bold',
+                level2: 'semibold',
+                level3: 'medium'
+            };
+            return weightMap[level] || 'medium';
+        }
+
+
+        // 节点尺寸配置
+        const nodeSizeConfig = {
+            top: { radius: 60, fontSize: '16px', titleFontSize: '12px' },
+            mid: { radius: 50, fontSize: '14px', titleFontSize: '10px' },
+            bottom: { radius: 40, fontSize: '12px', titleFontSize: '9px' }
+        };
+
+        const cardPositions = {};
+        const originalPositions = {}; // 保存原始位置
+        let allCardIds = [];
+        let selectedCardId = null;
+        let selectedCardName = null;
+        let relatedCardIds = new Set();
+        let isDragging = false;
+        let currentCard = null;
+        let offset = { x: 0, y: 0 };
+        let isSelectionMode = false;
+        let highlightedConnectionIds = new Set();
+
+        // // 更新模式指示器
+        // function updateModeIndicator() {
+        //     const modeText = document.getElementById('mode-text');
+        //     if (isSelectionMode) {
+        //         modeText.textContent = `选中模式: ${selectedCardId}`;
+        //         modeText.classList.add('text-highlight', 'text-glow');
+        //     } else {
+        //         modeText.textContent = '正常模式';
+        //         modeText.classList.remove('text-highlight', 'text-glow');
+        //     }
+        // }
+    
+        // 更新连接信息面板
+        function updateConnectionInfoPanel() {
+            const selectedCardEl = document.getElementById('current-selected-card');
+            const connectionListEl = document.getElementById('connection-list');
+    
+            if (!isSelectionMode || !selectedCardId) {
+                selectedCardEl.textContent = '-';
+                connectionListEl.innerHTML = '<div class="text-gray-400 italic">未选中任何卡片</div>';
+                highlightedConnectionIds.clear();
+                return;
+            }
+    
+            selectedCardEl.textContent = selectedCardName;
+    
+            // 收集所有高亮的连接线
+            const highlightedConnections = [];
+            document.querySelectorAll('.connection-line').forEach(line => {
+                if (parseFloat(line.style.opacity) > 0.5) {
+                const fromId = line.getAttribute('data-from');
+                const toId = line.getAttribute('data-to');
+                const lineType = line.getAttribute('data-type');
+                
+                highlightedConnections.push({
+                    from: fromId,
+                    to: toId,
+                    type: lineType,
+                    element: line
+                });
+                }
+            });
+    
+            if (highlightedConnections.length === 0) {
+                connectionListEl.innerHTML = '<div class="text-yellow-400 italic">没有找到相关功能拆解</div>';
+                return;
+            }
+    
+            // 生成连接信息列表
+            connectionListEl.innerHTML = '';
+            highlightedConnections.forEach((conn, index) => {
+                const connEl = document.createElement('div');
+                connEl.className = 'p-2 bg-gray-700/30 rounded hover:bg-gray-700/50 transition-colors';
+                
+                // 连接线类型颜色
+                let typeColor = 'text-blue-400';
+                if (conn.type === 'mid-bottom') {
+                typeColor = 'text-cyan-400';
+                }
+                
+                connEl.innerHTML = `
+                <div class="flex justify-between items-center">
+                    <div>
+                    <span class="font-medium">${conn.from} → ${conn.to}</span>
+                    <span class="ml-2 text-xs ${typeColor}">${conn.type}</span>
+                    </div>
+                    <span class="inline-flex items-center justify-center w-3 h-3 rounded-full bg-green-500 animate-pulse"></span>
+                </div>
+                `;
+                
+                // mother fucker to be added here yeah
+            });
+        }
+
+        // 生成随机位置
+        function getRandomPosition(type) {
+            const container = document.getElementById('visualization-container');
+            const containerRect = container.getBoundingClientRect();
+            // console.log(containerRect)
+        let minX, maxX, minY, maxY;
+        const padding = 100;
+        
+        switch(type) {
+            case 'top':
+                minX = padding;
+                maxX = containerRect.width - padding;
+                minY = padding;
+                maxY = containerRect.height * 0.3;
+            break;
+
+            case 'mid':
+                minX = padding;
+                maxX = containerRect.width - padding;
+                minY = containerRect.height * 0.3;
+                maxY = containerRect.height * 0.6;
+            break;
+            case 'bottom':
+                minX = padding;
+                maxX = containerRect.width - padding;
+                minY = containerRect.height * 0.6;
+                maxY = containerRect.height - padding;
+            break;
+        }
+        
+        const size = nodeSizeConfig[type].radius * 2;
+        const x = Math.floor(Math.random() * (maxX - minX - size) + minX);
+        const y = Math.floor(Math.random() * (maxY - minY - size) + minY);
+        
+        return { x, y };
+        }
+
+        // 创建卡片元素(圆圈)
+        function createcircle(card, type) {
+            const cardElement = document.createElement('div');
+            const position = getRandomPosition(type);
+            // console.log(position,type)
+            const delay = Math.random() * 3;
+            const sizeConfig = nodeSizeConfig[type];
+        
+            cardPositions[card.id] = {
+                x: position.x,
+                y: position.y,
+                element: cardElement,
+                type: type
+            };
+        
+            // 保存原始位置
+            originalPositions[card.id] = {
+                x: position.x,
+                y: position.y
+            };
+    
+            cardElement.id = card.id;
+            cardElement.className = `absolute cursor-pointer animate-float transition-all duration-300`;
+            cardElement.style.animationDelay = `${delay}s`;
+            cardElement.style.width = `${sizeConfig.radius * 2}px`;
+            cardElement.style.height = `${sizeConfig.radius * 2}px`;
+            cardElement.style.borderRadius = '50%';
+            cardElement.style.display = 'flex';
+            cardElement.style.flexDirection = 'column';
+            cardElement.style.justifyContent = 'center';
+            cardElement.style.alignItems = 'center';
+            cardElement.style.padding = '1rem';
+            cardElement.style.color = 'white';
+            cardElement.style.left = `${position.x}px`;
+            cardElement.style.top = `${position.y}px`;
+    
+            let baseStyle, selectedStyle;
+            switch(type) {
+                case 'top':
+                baseStyle = 'bg-top/40 border-2 border-top/30 shadow-lg opacity-60 scale-95 z-10';
+                selectedStyle = 'selected-top';
+                break;
+                case 'mid':
+                baseStyle = 'bg-mid/40 border-2 border-mid/30 shadow-lg opacity-60 scale-95 z-10';
+                selectedStyle = 'selected-mid';
+                break;
+                case 'bottom':
+                baseStyle = 'bg-indigo-900/40 border-2 border-bottom/30 shadow-lg opacity-60 scale-95 z-10';
+                selectedStyle = 'selected-bottom';
+                break;
+            }
+    
+            cardElement.classList.add(...baseStyle.split(' '));
+            cardElement.dataset.selectedClass = selectedStyle;
+            cardElement.dataset.type = type;
+        
+            cardElement.innerHTML = `
+                <div class="font-bold text-center transition-all" style="font-size: ${sizeConfig.fontSize}">${card.name}</div>
+                <div class="text-xs text-center text-gray-200 transition-all" style="font-size: ${sizeConfig.titleFontSize}">${card.desc}</div>
+            `;
+    
+            // 设置拖拽事件
+            setupDragEvents(cardElement, card.id);
+            
+            cardElement.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (!isDragging) selectCard(card.id,card.desc);
+                isDragging = false;
+            });
+        
+            return cardElement;
+        }
+
+        // 设置拖拽功能
+        function setupDragEvents(element, cardId) {
+            element.addEventListener('mousedown', startDrag);
+            
+            function startDrag(e) {
+                // 只有在选中模式下才允许拖拽相关卡片
+                if (!isSelectionMode || !relatedCardIds.has(cardId)) return;
+                
+                isDragging = true;
+                currentCard = cardId;
+                
+                const rect = element.getBoundingClientRect();
+                const containerRect = document.getElementById('visualization-container').getBoundingClientRect();
+                
+                // 计算鼠标在卡片内的相对位置
+                offset.x = e.clientX - rect.left - containerRect.left;
+                offset.y = e.clientY - rect.top - containerRect.top;
+                
+                // 添加拖拽样式
+                element.classList.add('dragging');
+                
+                // 添加移动和释放事件
+                document.addEventListener('mousemove', drag);
+                document.addEventListener('mouseup', endDrag);
+            }
+            
+            function drag(e) {
+                if (!isDragging || !currentCard) return;
+                
+                const containerRect = document.getElementById('visualization-container').getBoundingClientRect();
+                
+                // 计算新位置（相对于容器）
+                let newX = e.clientX - containerRect.left - offset.x;
+                let newY = e.clientY - containerRect.top - offset.y;
+                
+                // 获取当前卡片类型对应的尺寸
+                const cardType = cardPositions[currentCard].type;
+                const cardSize = nodeSizeConfig[cardType].radius * 2;
+                
+                // 边界检查
+                newX = Math.max(0, Math.min(containerRect.width - cardSize, newX));
+                newY = Math.max(0, Math.min(containerRect.height - cardSize, newY));
+                
+                // 更新卡片位置
+                const card = cardPositions[currentCard].element;
+                card.style.left = `${newX}px`;
+                card.style.top = `${newY}px`;
+                
+                // 更新位置数据
+                cardPositions[currentCard].x = newX;
+                cardPositions[currentCard].y = newY;
+                
+                // 重绘连接线
+                requestAnimationFrame(drawConnections);
+                
+                // 更新连接信息面板
+                requestAnimationFrame(updateConnectionInfoPanel);
+            }
+            
+            function endDrag() {
+                if (!currentCard) return;
+                
+                // 移除拖拽样式
+                cardPositions[currentCard].element.classList.remove('dragging');
+                
+                // 重置状态
+                isDragging = false;
+                currentCard = null;
+                
+                // 移除事件监听器
+                document.removeEventListener('mousemove', drag);
+                document.removeEventListener('mouseup', endDrag);
+            }
+        }
+
+        // 绘制连接线
+        function drawConnections() {
+            const svg = document.getElementById('connections');
+            svg.innerHTML = '';
+            
+            
+            // 顶层到中层
+            Object.entries(topToMid).forEach(([topId, midIds]) => {
+                const topPos = cardPositions[topId];
+                if (!topPos) return;
+                
+                midIds.forEach(midId => {
+                const midPos = cardPositions[midId];
+                if (!midPos) return;
+                
+                const fromX = topPos.x + nodeSizeConfig.top.radius;
+                const fromY = topPos.y + nodeSizeConfig.top.radius;
+                const toX = midPos.x + nodeSizeConfig.mid.radius;
+                const toY = midPos.y + nodeSizeConfig.mid.radius;
+                
+                drawLine(svg, fromX, fromY, toX, toY, '#38bdf8', topId, midId, 'top-mid');
+                });
+            });
+            
+            // 中层到底层
+            Object.entries(midToBottom).forEach(([midId, bottomIds]) => {
+                const midPos = cardPositions[midId];
+                if (!midPos) return;
+                
+                bottomIds.forEach(bottomId => {
+                const bottomPos = cardPositions[bottomId];
+                if (!bottomPos) return;
+                
+                const fromX = midPos.x + nodeSizeConfig.mid.radius;
+                const fromY = midPos.y + nodeSizeConfig.mid.radius;
+                const toX = bottomPos.x + nodeSizeConfig.bottom.radius;
+                const toY = bottomPos.y + nodeSizeConfig.bottom.radius;
+                
+                drawLine(svg, fromX, fromY, toX, toY, '#22d3ee', midId, bottomId, 'mid-bottom');
+                });
+            });
+            
+            // 更新连接信息面板
+            if (isSelectionMode) {
+                requestAnimationFrame(updateConnectionInfoPanel);
+            }
+        }
+
+        // 绘制连选中模式接线
+        function drawConnectionsinselection() {
+            const svg = document.getElementById('connections');
+            const mem = document.querySelectorAll('.connection-line')
+            svg.innerHTML = '';
+            
+            // 顶层到中层
+            Object.entries(topToMid).forEach(([topId, midIds]) => {
+                const topPos = cardPositions[topId];
+                if (!topPos) return;
+                
+                midIds.forEach(midId => {
+                const midPos = cardPositions[midId];
+                if (!midPos) return;
+                
+                const fromX = topPos.x + nodeSizeConfig.top.radius;
+                const fromY = topPos.y + nodeSizeConfig.top.radius;
+                const toX = midPos.x + nodeSizeConfig.mid.radius;
+                const toY = midPos.y + nodeSizeConfig.mid.radius;
+                
+                drawLineinselection(svg, fromX, fromY, toX, toY, '#38bdf8', topId, midId, 'top-mid');
+                });
+            });
+            
+            // 中层到底层
+            Object.entries(midToBottom).forEach(([midId, bottomIds]) => {
+                const midPos = cardPositions[midId];
+                if (!midPos) return;
+                
+                bottomIds.forEach(bottomId => {
+                const bottomPos = cardPositions[bottomId];
+                if (!bottomPos) return;
+                
+                const fromX = midPos.x + nodeSizeConfig.mid.radius;
+                const fromY = midPos.y + nodeSizeConfig.mid.radius;
+                const toX = bottomPos.x + nodeSizeConfig.bottom.radius;
+                const toY = bottomPos.y + nodeSizeConfig.bottom.radius;
+                
+                drawLineinselection(svg, fromX, fromY, toX, toY, '#22d3ee', midId, bottomId, 'mid-bottom');
+                });
+            });
+            
+            // 更新连接信息面板
+            if (isSelectionMode) {
+                requestAnimationFrame(updateConnectionInfoPanel);
+            }
+        }
+
+        // 绘制单条连接线
+        function drawLine(svg, x1, y1, x2, y2, color, fromId, toId, lineType) {
+            const lineGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            lineGroup.setAttribute('class', 'connection-line transition-all duration-300');
+            lineGroup.setAttribute('data-from', fromId);
+            lineGroup.setAttribute('data-to', toId);
+            lineGroup.setAttribute('data-type', lineType);
+            lineGroup.style.opacity = '0.2';
+            lineGroup.style.zIndex = '10';
+
+            const baseLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            baseLine.setAttribute('x1', x1);
+            baseLine.setAttribute('y1', y1);
+            baseLine.setAttribute('x2', x2);
+            baseLine.setAttribute('y2', y2);
+            baseLine.setAttribute('stroke', color);
+            baseLine.setAttribute('stroke-width', '1');
+            baseLine.setAttribute('stroke-opacity', '0.5');
+            
+            const currentLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            currentLine.setAttribute('x1', x1);
+            currentLine.setAttribute('y1', y1);
+            currentLine.setAttribute('x2', x2);
+            currentLine.setAttribute('y2', y2);
+            currentLine.setAttribute('stroke', color);
+            currentLine.setAttribute('stroke-width', '2');
+            currentLine.setAttribute('stroke-opacity', '0.7');
+            currentLine.setAttribute('class', 'current-path line-pulse'); // 直接添加电流效果类
+            
+            lineGroup.appendChild(baseLine);
+            lineGroup.appendChild(currentLine);
+            svg.appendChild(lineGroup);
+        }
+
+            // 绘制单条连接线
+        function drawLineinselection(svg, x1, y1, x2, y2, color, fromId, toId, lineType) {
+
+            const lineGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            const baseLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            const currentLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            
+            lineGroup.setAttribute('class', 'connection-line transition-all duration-300');
+            lineGroup.setAttribute('data-from', fromId);
+            lineGroup.setAttribute('data-to', toId);
+            lineGroup.setAttribute('data-type', lineType);
+                    // 根据是否为选中模式设置初始样式
+            if (isSelectionMode && highlightedConnectionIds.has(`${fromId}-${toId}`)) {
+                lineGroup.style.opacity = '1';
+                lineGroup.style.zIndex = '25';
+                        
+                baseLine.setAttribute('stroke-width', '4');
+                baseLine.setAttribute('stroke-opacity', '0.9');
+                
+                currentLine.setAttribute('stroke-width', '5');
+                currentLine.setAttribute('stroke-opacity', '1');
+                
+            }else{
+                lineGroup.style.opacity = '0.05';
+                lineGroup.style.zIndex = '10';
+
+                baseLine.setAttribute('stroke-width', '1');
+                baseLine.setAttribute('stroke-opacity', '0.5');
+
+                currentLine.setAttribute('stroke-width', '2');
+                currentLine.setAttribute('stroke-opacity', '0.7');
+            }
+
+            baseLine.setAttribute('x1', x1);
+            baseLine.setAttribute('y1', y1);
+            baseLine.setAttribute('x2', x2);
+            baseLine.setAttribute('y2', y2);
+            baseLine.setAttribute('stroke', color);
+            
+            
+            currentLine.setAttribute('x1', x1);
+            currentLine.setAttribute('y1', y1);
+            currentLine.setAttribute('x2', x2);
+            currentLine.setAttribute('y2', y2);
+            currentLine.setAttribute('stroke', color);
+            
+        
+            currentLine.classList.add('current-path', 'line-pulse');
+            lineGroup.appendChild(baseLine);
+            lineGroup.appendChild(currentLine);
+            svg.appendChild(lineGroup);
+        }
+
+        // 选中卡片处理
+        function selectCard(cardId,cardesc) {
+            
+            resetAllCardsAndLines();
+            
+            if (selectedCardId === cardId) {
+                selectedCardId = null;
+                relatedCardIds.clear();
+                isSelectionMode = false;
+                // updateModeIndicator();
+                updateConnectionInfoPanel();
+            return;
+            }
+
+            selectedCardId = cardId;
+            selectedCardName = cardesc;
+            const relatedIds = getRelatedCardIds(cardId);
+            relatedIds.add(cardId);
+            relatedCardIds = relatedIds;
+            const relatedArray = Array.from(relatedIds);
+
+            // 进入选中模式
+            isSelectionMode = true;
+            // updateModeIndicator();
+
+
+            // 高亮相关卡片
+            relatedArray.forEach(id => {
+                const isSelected = id === cardId;
+                highlightCard(id, true, isSelected);
+            });
+            
+            // 强化相关线条
+            highlightAllRelatedLines(relatedArray);
+            const mem = document.querySelectorAll('.connection-line')
+            //updateConnectionInfoPanel();
+            // 弱化不相关元素
+            dimUnrelatedElements(relatedArray);
+            // 使用requestAnimationFrame确保DOM更新完成后再排列
+            requestAnimationFrame(() => {
+            arrangeRelatedCards(relatedArray);
+            // 确保连接线正确更新
+            requestAnimationFrame(drawConnectionsinselection);
+            });
+        }
+
+        // 获取所有相关卡片ID
+        function getRelatedCardIds(cardId) {
+        const relatedIds = new Set();
+        const cardType = cardId.startsWith('E') ? 'top' : 
+                        cardId.startsWith('M') ? 'mid' : 'bottom';
+
+        switch(cardType) {
+            
+            case 'top':
+            (topToMid[cardId] || []).forEach(midId => {
+                relatedIds.add(midId);
+                (midToBottom[midId] || []).forEach(bottomId => relatedIds.add(bottomId));
+            });
+            break;
+
+            case 'mid':
+                Object.entries(topToMid).forEach(([topId, midIds]) => {
+                    if (midIds.includes(cardId)){ 
+                        relatedIds.add(topId)
+                    };
+                    
+                });
+                (midToBottom[cardId] || []).forEach(bottomId => relatedIds.add(bottomId));
+            break;
+
+            case 'bottom':
+                
+            Object.entries(midToBottom).forEach(([midId, bottomIds]) => {
+                if (bottomIds.includes(cardId)) {
+                relatedIds.add(midId);
+                Object.entries(topToMid).forEach(([topId, mIds]) => {
+                    if (mIds.includes(midId)) relatedIds.add(topId);
+                });
+                }
+            });
+            break;
+        }
+        
+        return relatedIds;
+        }
+
+        // 强化所有相关线条
+        function highlightAllRelatedLines(relatedIds) {
+        document.querySelectorAll('.connection-line').forEach(line => {
+            const fromId = line.getAttribute('data-from');
+            const toId = line.getAttribute('data-to');
+            const connId = `${fromId}-${toId}`;
+            const currentLine = line.querySelector('line:last-child');
+            // 修正：检查线段的起点和终点是否都在相关卡片集合中
+            if (relatedIds.includes(fromId) && relatedIds.includes(toId)) {
+                line.style.opacity = '1';
+                line.style.zIndex = '25';
+                const baseLine = line.querySelector('line:first-child');
+                baseLine.setAttribute('stroke-width', '4');
+                baseLine.setAttribute('stroke-opacity', '0.9');
+
+                currentLine.setAttribute('stroke-width', '5');
+                currentLine.setAttribute('stroke-opacity', '1');
+                // 确保电流效果类被添加
+                currentLine.classList.add('current-path', 'line-pulse');
+                
+                // // 添加高亮动画效果
+                line.classList.add('transition-all', 'duration-300');
+                highlightedConnectionIds.add(connId);
+                
+            } else {
+            // 确保非相关线段不显示电流效果
+            currentLine.classList.remove('current-path', 'line-pulse');
+            }
+        
+        });
+        
+
+        }
+
+        // 弱化所有不相关元素
+        function dimUnrelatedElements(relatedIds) {
+        allCardIds.forEach(cardId => {
+            if (!relatedIds.includes(cardId)) {
+            const card = document.getElementById(cardId);
+            if (card) {
+                card.classList.add('unrelated-dim', 'opacity-30', 'scale-90');
+            }
+            }
+        });
+        
+        document.querySelectorAll('.connection-line').forEach(line => {
+            const fromId = line.getAttribute('data-from');
+            const toId = line.getAttribute('data-to');
+            
+            if (!relatedIds.includes(fromId) || !relatedIds.includes(toId)) {
+            line.style.opacity = '0.05';
+            line.style.zIndex = '5';
+            }
+        });
+        }
+
+        // 高亮卡片
+        function highlightCard(cardId, highlight, isSelected = false) {
+            const card = document.getElementById(cardId);
+            if (!card) return;
+            
+            if (highlight) {
+                card.classList.remove('opacity-60', 'scale-95', 'z-10', 'unrelated-dim', 'opacity-30', 'scale-90');
+                
+                if (isSelected) {
+                card.classList.add(
+                    'opacity-100', 'scale-120', 'z-30', 'ring-4', 'ring-highlight2', 
+                    'ring-pulse', 'font-bold'
+                );
+                const titleEl = card.querySelector('div:first-child');
+                titleEl.classList.add('text-glow');
+                titleEl.style.fontSize = `${parseInt(titleEl.style.fontSize) + 2}px`;
+                } else {
+                card.classList.add('opacity-100', 'scale-105', 'z-20', 'ring-2', 'ring-highlight2/70');
+                card.querySelector('div:first-child').classList.add('text-glow');
+                }
+                
+                switch(card.dataset.selectedClass) {
+                case 'selected-top':
+                    card.classList.remove('bg-top/40', 'border-top/30');
+                    card.classList.add('bg-top/90', 'border-top/100', 'shadow-blue-500/30');
+                    break;
+                case 'selected-mid':
+                    card.classList.remove('bg-mid/40', 'border-mid/30');
+                    card.classList.add('bg-mid/90', 'border-mid/100', 'shadow-cyan-500/30');
+                    break;
+                case 'selected-bottom':
+                    card.classList.remove('bg-indigo-900/40', 'border-bottom/30');
+                    card.classList.add('bg-indigo-900/90', 'border-bottom/100', 'shadow-indigo-500/30');
+                    break;
+                }
+            } else {
+                card.classList.add('opacity-60', 'scale-95', 'z-10');
+                card.querySelector('div:first-child').classList.remove('text-glow');
+            }
+        }
+
+        // 重置所有元素状态
+        function resetAllCardsAndLines() {
+            document.querySelectorAll('#buble-container > div').forEach(card => {
+                card.classList.remove(
+                'opacity-100', 'scale-105', 'scale-120', 'z-20', 'z-30', 
+                'ring-2', 'ring-4', 'ring-highlight2', 'ring-pulse', 'font-bold',
+                'unrelated-dim', 'opacity-30', 'scale-90', 'dragging'
+                );
+                card.classList.add('opacity-60', 'scale-95', 'z-10');
+                
+                const textEl = card.querySelector('div:first-child');
+                textEl.classList.remove('text-glow');
+                
+                // 恢复原始字体大小
+                const cardType = card.dataset.type;
+                const sizeConfig = nodeSizeConfig[cardType];
+                textEl.style.fontSize = sizeConfig.fontSize;
+                
+                // 恢复原始位置
+                const id = card.id;
+                if (originalPositions[id]) {
+                card.style.left = `${originalPositions[id].x}px`;
+                card.style.top = `${originalPositions[id].y}px`;
+                cardPositions[id].x = originalPositions[id].x;
+                cardPositions[id].y = originalPositions[id].y;
+                }
+                
+                switch(card.dataset.selectedClass) {
+                case 'selected-top':
+                    card.classList.remove('bg-top/90', 'border-top/100', 'shadow-blue-500/30');
+                    card.classList.add('bg-top/40', 'border-top/30');
+                    break;
+                case 'selected-mid':
+                    card.classList.remove('bg-mid/90', 'border-mid/100', 'shadow-cyan-500/30');
+                    card.classList.add('bg-mid/40', 'border-mid/30');
+                    break;
+                case 'selected-bottom':
+                    card.classList.remove('bg-indigo-900/90', 'border-bottom/100', 'shadow-indigo-500/30');
+                    card.classList.add('bg-indigo-900/40', 'border-bottom/30');
+                    break;
+                }
+            });
+            
+            // 确保连接线也重置
+            requestAnimationFrame(drawConnections);
+            
+            selectedCardId = null;
+            relatedCardIds.clear();
+            isDragging = false;
+            currentCard = null;
+            isSelectionMode = false;
+            // updateModeIndicator();
+            updateConnectionInfoPanel();
+        }
+
+        // 有序排列相关卡片
+        function arrangeRelatedCards(relatedIds) {
+        // 分离不同层级的卡片
+        const topCards = [];
+        const midCards = [];
+        const bottomCards = [];
+        
+        relatedIds.forEach(id => {
+            const card = cardPositions[id];
+            if (!card) return;
+            
+            switch(card.type) {
+            case 'top':
+                topCards.push(card);
+                break;
+            case 'mid':
+                midCards.push(card);
+                break;
+            case 'bottom':
+                bottomCards.push(card);
+                break;
+            }
+        });
+        
+        const container = document.getElementById('visualization-container');
+        const containerRect = container.getBoundingClientRect();
+        
+        // 计算每一层的高度范围
+        const layerPadding = 80;
+        const layerHeight = (containerRect.height - layerPadding * 2) / 3;
+        const topY = layerPadding + layerHeight / 2;
+        const midY = layerPadding + layerHeight + layerHeight / 2;
+        const bottomY = layerPadding + layerHeight * 2 + layerHeight / 2;
+        
+        // 排列顶层卡片
+        arrangeCardsInRow(topCards, topY, containerRect.width*2/3,containerRect.width*1/3);
+        
+        // 排列中层卡片
+        arrangeCardsInRow(midCards, midY, containerRect.width*4/5,containerRect.width*1/5);
+        
+        // 排列底层卡片
+        arrangeCardsInRow(bottomCards, bottomY, containerRect.width,0);
+        
+        // 确保选中的卡片居中显示
+        if (selectedCardId && cardPositions[selectedCardId]) {
+            const selectedCard = cardPositions[selectedCardId];
+            const centerX = containerRect.width / 2;
+            
+            // 计算需要的偏移量
+            const cardSize = nodeSizeConfig[selectedCard.type].radius * 2;
+            const targetX = centerX - cardSize / 2;
+            
+            const offsetX = targetX - selectedCard.x;
+            
+            // 移动所有相关卡片
+            relatedIds.forEach(id => {
+            const card = cardPositions[id];
+            if (!card) return;
+            
+            card.x += offsetX;
+            
+            // 边界检查
+            const cardSize = nodeSizeConfig[card.type].radius * 2;
+            card.x = Math.max(0, Math.min(containerRect.width - cardSize, card.x));
+            
+            card.element.style.left = `${card.x}px`;
+            });
+        }
+        }
+        
+        // 在一行中排列卡片，确保不重叠且在可视区域内
+        function arrangeCardsInRow(cards, yPos, containerWidth,gap) {
+        if (cards.length === 0) return;
+        
+        // 计算所有卡片的总宽度（考虑半径）
+        let totalCardWidth = 0;
+        cards.forEach(card => {
+            totalCardWidth += nodeSizeConfig[card.type].radius * 2;
+        });
+        
+        // 计算卡片间的间距
+        let spacing;
+        if (cards.length > 1) {
+            spacing = (containerWidth - totalCardWidth) / (cards.length - 1);
+            // 确保间距至少为最小间距
+            spacing = Math.max(spacing, 20);
+        } else {
+            spacing = 0;
+        }
+        
+        // 计算起始位置（居中）
+        let startX = (containerWidth - totalCardWidth - spacing * (cards.length - 1)) / 2+gap/2;
+        // 确保起始位置不超出边界
+        startX = Math.max(0, startX);
+        
+        // 排列卡片
+        cards.forEach(card => {
+            const cardSize = nodeSizeConfig[card.type].radius * 2;
+            
+            // 计算卡片位置
+            const cardX = startX;
+            const cardY = yPos - cardSize / 2;
+            
+            // 设置卡片位置
+            card.x = cardX;
+            card.y = cardY;
+            
+            card.element.style.left = `${cardX}px`;
+            card.element.style.top = `${cardY}px`;
+            
+            // 更新下一个卡片的起始位置
+            startX += cardSize + spacing;
+        });
+        }
+
+        // 初始化，架构网络页面加载后开始执行，
+        function initnetwork() {
+            const container = document.getElementById('buble-container'); //获取卡片容器
+            topCards = window.apiReponse["EUF_LIST"]
+            midCards = window.apiReponse["MF_LIST"]
+            bottomCards = window.apiReponse["TF_LIST"]
+            topToMid = window.apiReponse["EUF2MF"]
+            midToBottom = window.apiReponse["MF2TF"]
+
+            
+            //生成三层卡片
+            topCards.forEach(card => {  
+            container.appendChild(createcircle(card, 'top'));
+            allCardIds.push(card.id);
+            });
+
+            midCards.forEach(card => {
+            container.appendChild(createcircle(card, 'mid'));
+            allCardIds.push(card.id);
+            });
+
+            bottomCards.forEach(card => {
+            container.appendChild(createcircle(card, 'bottom'));
+            allCardIds.push(card.id);
+            });
+            
+            //生成线条
+            drawConnections();
+            
+            
+            // 点击任意位置退出选中模式
+            document.getElementById('visualization-container').addEventListener('click', (e) => {
+
+                if (!isDragging) {
+                    resetAllCardsAndLines();
+                }
+                isDragging = false;
+            });
+
+            window.addEventListener('resize', () => {
+            // 窗口大小变化时重绘连接线
+                drawConnections();
+                
+
+            // 如果处于选中模式，重新排列相关卡片
+                if (isSelectionMode) {
+                    arrangeRelatedCards(Array.from(relatedCardIds));
+                    requestAnimationFrame(drawConnectionsinselection);
+                }
+            });
+        }
+        // window.addEventListener('load', initnetwork);
+    </script>
+    <script src="../js/load-components.js"></script>
+    
+</body>
+</html>

@@ -1,0 +1,827 @@
+/* 粒子背景样式 */
+#particles-js {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background-color: #070606;
+    background-image: '';
+    background-size: cover;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+}
+.content {
+    position: relative;
+    z-index: 1;
+}
+/* 调整主要内容区域的背景和透明度，使粒子背景可见 */
+.bg-gray-800, .bg-gray-900 {
+    background-color: rgba(26, 26, 46, 0.85); /* 增加透明度 */
+}
+/* 下拉菜单动画 */
+.dropdown-enter {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+.dropdown-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 300ms, transform 300ms;
+}
+.dropdown-exit {
+    opacity: 1;
+}
+.dropdown-exit-active {
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 300ms, transform 300ms;
+} 
+/* 赛博朋克风格按钮 */
+.cyber-btn {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 247, 255, 0.5);
+}
+.cyber-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 247, 255, 0.2), transparent);
+    transition: all 0.6s ease;
+}
+.cyber-btn:hover::before {
+    left: 100%;
+}
+.cyber-btn:hover {
+    box-shadow: 0 0 10px rgba(0, 247, 255, 0.5), 0 0 20px rgba(0, 247, 255, 0.3);
+    border-color: rgba(0, 247, 255, 0.8);
+}
+/* 标题动画 */
+.title-animate {
+    animation: glitch 2s infinite alternate;
+    position: relative;
+}
+.nav-links {
+    display: flex;
+    gap: 1rem;
+}
+.nav-links a {
+    color: var(--text-color);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+.nav-links a:hover {
+    color: var(--primary-color);
+}
+.nav-links a.active {
+    color: var(--primary-color);
+}
+.text-gradient {
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+}
+.nav-links a.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--primary-color);
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.7);
+}
+    
+@keyframes glitch {
+    0% {
+        transform: translate(0);
+        text-shadow: 0 0 10px rgba(0, 247, 255, 0.7), 0 0 20px rgba(0, 247, 255, 0.5);
+    }
+    20% {
+        transform: translate(-2px, 2px);
+        text-shadow: 0 0 10px rgba(157, 78, 221, 0.7), 0 0 20px rgba(157, 78, 221, 0.5);
+    }
+    40% {
+        transform: translate(-2px, -2px);
+        text-shadow: 0 0 10px rgba(231, 76, 60, 0.7), 0 0 20px rgba(231, 76, 60, 0.5);
+    }
+    60% {
+        transform: translate(2px, 2px);
+        text-shadow: 0 0 10px rgba(46, 134, 193, 0.7), 0 0 20px rgba(46, 134, 193, 0.5);
+    }
+    80% {
+        transform: translate(2px, -2px);
+        text-shadow: 0 0 10px rgba(0, 247, 255, 0.7), 0 0 20px rgba(0, 247, 255, 0.5);
+    }
+    100% {
+        transform: translate(0);
+        text-shadow: 0 0 10px rgba(157, 78, 221, 0.7), 0 0 20px rgba(157, 78, 221, 0.5);
+    }
+}
+
+/* 基础样式（原卡片布局样式） */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', 'Segoe UI', sans-serif;
+}
+body {
+    background-color: #000000;
+    padding: 15px;
+    color: #e6e8eb;
+}  
+/* 卡片容器 - 使用CSS Grid实现多列布局 */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+.grid-uniform {
+    grid-template-columns: repeat(var(--total-cols), minmax(0, 1fr));
+}
+/* 卡片主体样式 */
+.card {
+    background: #232833;
+    border-radius: 6px;
+    border: 1px solid #3a4150;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.2s ease;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, #3498db, #2ecc71);
+}
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+/* 卡片头部（标题和状态） */
+.card-header {
+    padding: 14px 18px;
+    position: relative;
+    border-bottom: 1px solid #3a4150;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+.card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: 0.2px;
+    flex: 1;
+    min-width: 60%;
+}
+.status-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-top: 6px;
+}
+/* 顶部按钮 */
+.header-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    background: linear-gradient(90deg, #3498db, #2980b9);
+    color: white;
+    position: relative;
+    overflow: hidden;
+    margin-left: 10px;
+}
+/* 禁用状态按钮 */
+.header-btn_ban {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 500;
+    cursor: not-allowed;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    background: linear-gradient(90deg, #727475, #848586);
+    color: rgb(0, 0, 0);
+    position: relative;
+    overflow: hidden;
+    margin-left: 10px;
+}
+.header-btn::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: all 0.4s ease;
+}
+.header-btn:hover::before {
+    left: 100%;
+}
+/* 卡片内容区（图片和细节） */
+.card-content {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.card-transition {
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}   
+.card-image-container {
+    position: relative;
+    overflow: hidden;
+    height: 120px; /* 进一步缩小图片高度 */
+}
+.card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+    filter: brightness(0.9);
+}
+.card:hover .card-image {
+    transform: scale(1.03);
+    filter: brightness(1);
+}
+.image-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40%;
+    background: linear-gradient(to top, rgba(35, 40, 51, 0.9), transparent);
+}
+.card-details {
+    padding: 16px 18px;
+    flex: 1;
+}
+.detail-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #ffffff;
+    margin-bottom: 12px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #3a4150;
+    position: relative;
+}
+.detail-title::after {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 25px;
+    height: 2px;
+    background-color: #3498db;
+}
+/* 数据特性标签 */
+.feature-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.feature-tag {
+    background-color: rgba(52, 152, 219, 0.1);
+    border: 1px solid rgba(52, 152, 219, 0.2);
+    border-radius: 3px;
+    padding: 5px 7px;
+    display: flex;
+    flex-direction: column;
+    min-width: 70px;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+.card:hover .feature-tag {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(52, 152, 219, 0.12);
+}
+.tag-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: #3498db;
+    margin-bottom: 2px;
+}
+.tag-label {
+    font-size: 9px;
+    color: #8fa1b3;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+/* 卡片底部（按钮） - 现在隐藏 */
+.card-footer {
+    display: none;
+}
+.grid-uniform-vertical {
+        grid-template-rows: repeat(var(--total-rows), minmax(0, 1fr));
+    }
+/* 下拉菜单样式 */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 10rem;
+    padding: 0.5rem 0;
+    margin: 0.125rem 0 0;
+    font-size: 1rem;
+    color: #212529;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 0.25rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
+}
+.dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 0.25rem 1rem;
+    clear: both;
+    font-weight: 400;
+    color: #212529;
+    text-align: inherit;
+    text-decoration: none;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+    cursor: pointer;
+}
+.dropdown-item:hover, .dropdown-item:focus {
+    color: #1e2125;
+    background-color: #e9ecef;
+}
+.dropdown-divider {
+    height: 0;
+    margin: 0.5rem 0;
+    overflow: hidden;
+    border-top: 1px solid rgba(0, 0, 0, 0.15);
+}
+.dropdown-submenu {
+    position: relative;
+}
+.dropdown-submenu > .dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -0.125rem;
+    margin-left: -0.125rem;
+    display: none;
+}
+.dropdown-toggle::after {
+    display: inline-block;
+    margin-left: 0.255em;
+    vertical-align: 0.255em;
+    content: "";
+    border-top: 0.3em solid;
+    border-right: 0.3em solid transparent;
+    border-bottom: 0;
+    border-left: 0.3em solid transparent;
+}
+.dropdown-submenu > .dropdown-item::after {
+    display: inline-block;
+    margin-left: 0.255em;
+    vertical-align: 0.255em;
+    content: "";
+    /* float: right; */
+    border-top: 0.3em solid transparent;
+    border-right: 0;
+    border-bottom: 0.3em solid transparent;
+    border-left: 0.3em solid;
+    margin-top: 0.3em;
+}
+/* 修复二级菜单显示问题 */
+.dropdown-submenu:hover > .dropdown-menu {
+    display: block;
+}
+.dropdown-menu li {
+    position: relative;
+}
+.card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(255, 0, 230, 0.1));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    color: var(--primary-color);
+    font-size: 1.8rem;
+    border: 1px solid rgba(0, 240, 255, 0.3);
+}
+.card-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
+.card-description {
+    color: #b0b0b0;
+    margin-bottom: 2rem;
+    flex-grow: 1;
+}
+.card-link {
+    display: inline-block;
+    color: var(--primary-color);
+    text-decoration: none;
+    padding: 0.8rem 1.5rem;
+    border: 1px solid var(--primary-color);
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+.dropdown-menu .dropdown-menu {
+    left: 100%;
+    top: 0;
+}
+
+/* 自定义动画（原最后一个style块） */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+.loading-spinner {
+    animation: spin 1s linear infinite;
+    border-radius: 50%;
+    height: 1.5rem;
+    width: 1.5rem;
+    border-bottom: 2px solid #165DFF;   
+}
+
+
+@layer utilities {
+    /* Tailwind工具类（原@layer内容） */
+    .content-auto {
+        content-visibility: auto;
+    }
+    .card-gradient {
+        background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+    }
+    .text-balance {
+        text-wrap: balance;
+    }
+    .ring-pulse {
+        animation: ringPulse 2s infinite;
+    }
+    .text-shadow {
+        text-shadow: 0 0 10px rgba(22, 93, 255, 0.7);
+    }
+    .text-shadow-glow {
+        text-shadow: 0 0 5px rgba(0, 240, 255, 0.7), 0 0 10px rgba(0, 240, 255, 0.5);
+    }
+    .text-glow {
+        text-shadow: 0 0 10px currentColor;
+    }
+    .border-glow {
+        box-shadow: 0 0 5px rgba(0, 240, 255, 0.7), 0 0 10px rgba(0, 240, 255, 0.3);
+    }
+    .clip-path-slant {
+        clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+    }
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+    .glass-effect {
+        backdrop-filter: blur(10px);
+        background-color: rgba(10, 14, 23, 0.7);
+    }
+    .bg-grid {
+        background-image: 
+            linear-gradient(rgba(118, 126, 243, 0.15) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(118, 126, 243, 0.15) 1px, transparent 1px);
+        background-size: 40px 40px;
+    }
+    .chip-card {
+        transition: all 0.3s ease;
+    }
+    .chip-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        border-color: rgba(0, 240, 255, 0.7);
+    }
+    .chip-card.selected {
+        border-color: #00f0ff;
+        box-shadow: 0 0 10px rgba(0, 240, 255, 0.7);
+    }
+    .terminal-border {
+        border: 1px solid rgba(22, 93, 255, 0.3);
+        box-shadow: 0 0 15px rgba(22, 93, 255, 0.2);
+    }
+    .glow-border {
+        box-shadow: 0 0 5px rgba(46, 134, 193, 0.5);
+    }
+    .scrollbar-thin {
+        scrollbar-width: thin;
+    }
+    .scrollbar-thin::-webkit-scrollbar {
+        width: 4px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 240, 255, 0.5);
+        border-radius: 2px;
+    }
+    .glow-border::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border: 1px solid rgba(22, 93, 255, 0.5);
+        border-radius: inherit;
+        pointer-events: none;
+        animation: border-pulse 2s infinite;
+    }
+    .btn-hover {
+        transition: all 0.3s ease;
+    }
+    .btn-hover:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(46, 134, 193, 0.2);
+    }
+    .card-hover {
+        transition: all 0.3s ease;
+    }
+    .hover-scale {
+        transition: transform 0.3s ease;
+    }
+    .hover-scale:hover {
+        transform: scale(1.03);
+    }
+    /* 侧边抽屉样式 */
+    .card-drawer {
+        position: relative;
+        overflow: hidden;
+        height: 160px; /* 固定卡片高度 */
+    }
+    .drawer-content {
+        transition: transform 0.3s ease;
+        height: 100%;
+    }
+    .drawer-subcards {
+        position: absolute;
+        top: 0;
+        right: -250px; /* 子卡片宽度 */
+        width: 250px;
+        height: 100%;
+        background-color: white;
+        border-left: 1px solid #e2e8f0;
+        box-shadow: -4px 0 6px -1px rgba(0, 0, 0, 0.1);
+        transition: right 0.3s ease;
+        z-index: 10;
+    }
+    .card-drawer.open .drawer-content {
+        transform: translateX(-280px); /* 子卡片宽度 */
+    }
+    .card-drawer.open .drawer-subcards {
+        right: 0;
+    }
+    .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(46, 134, 193, 0.2);
+        border-color: rgba(0, 247, 255, 0.7);
+    }
+    .neon-glow {
+        text-shadow: 0 0 10px rgba(0, 247, 255, 0.7), 0 0 20px rgba(0, 247, 255, 0.5);
+    }
+    .purple-glow {
+        text-shadow: 0 0 10px rgba(157, 78, 221, 0.7), 0 0 20px rgba(157, 78, 221, 0.5);
+    }
+    .cyber-border {
+        position: relative;
+    }
+    .cyber-border::before, .cyber-border::after {
+        content: '';
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        pointer-events: none;
+    }
+    .cyber-border::before {
+        top: -2px;
+        left: -2px;
+        border-top: 2px solid #00f7ff;
+        border-left: 2px solid #00f7ff;
+    }
+    .cyber-border::after {
+        bottom: -2px;
+        right: -2px;
+        border-bottom: 2px solid #00f7ff;
+        border-right: 2px solid #00f7ff;
+    }
+@keyframes border-pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+@keyframes ringPulse {
+    0% { box-shadow: 0 0 0 0 rgba(126, 34, 206, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(126, 34, 206, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(126, 34, 206, 0); }
+}
+.grid-bg {
+    background-size: 40px 40px;
+    background-image: 
+    linear-gradient(to right, rgba(13, 28, 34, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(3, 10, 14, 0.05) 1px, transparent 1px);
+}
+        .current-path {
+            stroke-dasharray: 15;
+            animation: current 1s linear infinite;
+        }
+        @keyframes current {
+            to { stroke-dashoffset: -100; }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .line-pulse {
+            animation: linePulse 2s infinite;
+        }
+        @keyframes linePulse {
+            0%, 100% { stroke-opacity: 1; }
+            50% { stroke-opacity: 0.7; }
+        }
+        .unrelated-dim {
+            filter: brightness(0.3) saturate(0.5);
+        }
+        .dragging {
+            cursor: grabbing !important;
+            animation-play-state: paused !important;
+            z-index: 50 !important;
+        }
+        .panel-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 响应式调整（原@layer内的响应式） */
+        @media (max-width: 768px) {
+            .card-drawer {
+                height: 140px;
+            }
+            .drawer-subcards {
+                right: -240px;
+                width: 240px;
+            }
+            /* 小屏幕下堆叠布局 */
+            .fixed.left-4.top-40 {
+                width: calc(100% - 1rem);
+                left: 1rem;
+                right: 1rem;
+            }
+            .fixed.right-4.top-40 {
+                width: calc(100% - 2rem);
+                left: 1rem;
+                right: 1rem;
+                top: calc(40vh + 4rem); /* 使用 vh 避免百分比计算问题 */
+            }
+            .dropdown-menu .dropdown-menu {
+                left: 0;
+                top: 100%;
+            }
+            .card-drawer.open .drawer-content {
+                transform: translateX(-240px);
+            }
+        }
+    }
+
+/* 容器背景样式（原第一个style块的容器背景、选项卡等） */
+.bg-gray-900 {
+    background-color: hsla(69, 96%, 56%, 0.404); /* 对比色的10%透明度 */
+    border-color: rgba(34, 29, 29, 0.3); /* 对比色的30%透明度边框 */
+}
+.bg-gray-901 {
+    background-color: hsla(135, 80%, 47%, 0.5); /* 对比色的10%透明度 */
+    border-color: rgba(34, 29, 29, 0.3); /* 对比色的30%透明度边框 */
+}
+.bg-gray-902 {
+    background-color: hsla(198, 94%, 19%, 0.572); /* 对比色的10%透明度 */
+    border-color: rgba(34, 29, 29, 0.3); /* 对比色的30%透明度边框 */
+}
+.bg-gray-903 {
+    background-color: hsla(160, 51%, 92%, 0.863); /* 对比色的10%透明度 */
+    border-color: rgba(34, 29, 29, 0.3); /* 对比色的30%透明度边框 */
+}
+.bg-gray-904 {
+    background-color: hsla(113, 65%, 86%, 0.791); /* 对比色的10%透明度 */
+    border-color: rgba(34, 29, 29, 0.3); /* 对比色的30%透明度边框 */
+}
+.bg-gray-905 {
+    background-color: hsla(112, 83%, 49%, 0.791); /* 对比色的10%透明度 */
+    border-color: rgba(34, 29, 29, 0.3); /* 对比色的30%透明度边框 */
+}
+/* 选项卡容器 */
+.tab-nav {
+    display: flex;
+    margin-left: 20px;
+    margin-top: 20px;
+    position: relative;
+    z-index: 1;
+}
+/* 选项卡按钮基础样式 - 直角梯形 */
+.tab-btn {
+    color: #1f2937;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin-right: -10px;
+    position: relative;
+    clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 100%, 0 100%);
+    box-shadow: 3px 0 5px rgba(0, 0, 0, 0.1);
+}
+/* 未选中按钮背景 */
+.tab-btn:not(.active) {
+    background: linear-gradient(to bottom, #e5e7eb 0%, #dcdde1 100%);
+}
+/* 选中按钮样式 */
+.tab-btn.active {
+    background: linear-gradient(to bottom, #193e6c 0%, #193e6c 100%);
+    color: #fff;
+    z-index: 2;
+    box-shadow: 5px 0 8px rgba(0, 0, 0, 0.2);
+}
+/* 按钮重叠效果 */
+.tab-btn:not(:first-child) {
+    margin-left: -10px;
+}
+/* 内容容器 */
+.tab-container {
+    display: none;
+    margin: 0 20px 20px 20px;
+    padding: 15px;
+    background-color: #193e6c;
+    border-radius: 0 8px 8px 8px;
+    min-height: 300px;
+    box-shadow: none;
+}
+.tab-container.active {
+    display: block;
+}
+/* 标题栏背景色 */
+div[onclick^="toggleEmbeddedContent"] {
+    background-color: hsla(69, 96%, 56%, 0.055); /* 对比色的20%透明度 */
+}
+div[onclick^="toggleEmbeddedContent"]:hover {
+    background-color: hsla(69, 96%, 56%, 0.055); /* 悬停时30%透明度 */
+}
+/* 图标颜色 */
+.embedded-toggle-icon {
+    color: #e74c3c; /* 对比色 */
+}
+    /* 参数设置区域 - 左侧缩小 */
+.control-panel {
+    width: 300px;  /* 大幅缩小参数区域 */
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-right: 20px;
+    height: fit-content;
+}
