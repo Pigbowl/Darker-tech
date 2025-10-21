@@ -1,0 +1,42 @@
+    <nav class="fixed top-0 w-full z-50 glass-effect border-b border-accent/20">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="#" class="flex items-center space-x-2">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-accent to-tech flex items-center justify-center">
+                    <span class="text-primary font-bold text-lg">DT</span>
+                </div>
+                <div>
+                    <h1 class="text-white font-bold text-xl">达客科技</h1>
+                    <p class="text-tech text-xs">DarkerTech</p>
+                </div>
+            </a>
+            
+            <!-- 桌面导航 -->
+            <nav class="hidden md:flex items-center space-x-6">
+                <a href="../../index.html" class="text-white hover:text-tech transition-colors duration-300">首页</a>
+                <a href="../Pages/Learning_Gallary.html" class="text-white hover:text-tech transition-colors duration-300">ADAS知识库</a>
+                <a href="../Pages/adas_benchmark.html" class="text-white hover:text-tech transition-colors duration-300">ADAS对标库</a>
+                <a href="../Pages/Configurator.html" class="text-white hover:text-tech transition-colors duration-300">配置工具</a>
+                <a href="../Pages/simulation_front.html" class="text-white hover:text-tech transition-colors duration-300">仿真平台</a>
+                <a href="../../index.html#about" class="tech-button bg-transparent border border-accent text-accent px-4 py-1 rounded hover:bg-accent/10">关于我们</a>
+            </nav>
+            
+            <!-- 移动端菜单按钮 -->
+            <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+                <i class="fa fa-bars text-2xl"></i>
+            </button>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div id="mobile-menu" class="hidden md:hidden glass-effect">
+            <div class="container mx-auto px-4 py-3 flex flex-col space-y-4">
+                <a href="#" class="text-white hover:text-tech transition-colors duration-300 py-2 border-b border-accent/20">首页</a>
+                <a href="#knowledge" class="text-white hover:text-tech transition-colors duration-300 py-2 border-b border-accent/20">ADAS知识库</a>
+                <a href="#benchmark" class="text-white hover:text-tech transition-colors duration-300 py-2 border-b border-accent/20">ADAS对标库</a>
+                <a href="#configurator" class="text-white hover:text-tech transition-colors duration-300 py-2 border-b border-accent/20">配置工具</a>
+                <a href="#simulation" class="text-white hover:text-tech transition-colors duration-300 py-2 border-b border-accent/20">仿真平台</a>
+                <a href="#about" class="tech-button bg-transparent border border-accent text-accent px-4 py-2 rounded hover:bg-accent/10 text-center">关于我们</a>
+            </div>
+        </div>
+
+    </nav>
