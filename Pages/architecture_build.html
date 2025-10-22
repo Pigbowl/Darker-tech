@@ -249,7 +249,7 @@
 
             function launchfbsfinding(){
                 const fbsfindinginput = mainDropdowntext.textContent
-                fetch('http://47.99.204.97:5000/fbssearching',{
+                fetch('api/fbssearching',{
                     method: 'POST',
                     headers:{
                         'Content-Type': 'application/json'
