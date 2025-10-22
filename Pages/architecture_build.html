@@ -131,7 +131,7 @@
             getdropdowninfo()
 
             function getdropdowninfo() {
-                fetch('api/init_config_func', {
+                fetch('/api/init_config_func', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -165,7 +165,7 @@
 
         })
         
-        fetch('api/fbsnetinit',{
+        fetch('/api/fbsnetinit',{
                 method:'POST',
                 headers:{
                     'Content-Type':'application/json'
@@ -249,7 +249,7 @@
 
             function launchfbsfinding(){
                 const fbsfindinginput = mainDropdowntext.textContent
-                fetch('api/fbssearching',{
+                fetch('/api/fbssearching',{
                     method: 'POST',
                     headers:{
                         'Content-Type': 'application/json'

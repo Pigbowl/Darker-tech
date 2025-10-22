@@ -638,7 +638,7 @@
                 // 显示加载状态
                 document.getElementById('product-grid').innerHTML = '<div class="col-span-full text-center py-10"><i class="fa fa-spinner fa-spin text-primary text-3xl"></i></div>';
 
-                fetch('api/launchtrying',{
+                fetch('/api/launchtrying',{
                     method:'POST',
                     headers:{
                         'Content-Type':'application/json'

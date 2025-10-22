@@ -387,7 +387,7 @@
             
             function initconfigfunction() {
                 return new Promise((resolve, reject) => {
-                    fetch('api/init_config_func', {
+                    fetch('/api/init_config_func', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -874,7 +874,7 @@
             //开始搜索
             function launchsearching(result){
                 solutionContainer,innerHTML ='';
-                fetch('api/config_seaching', {
+                fetch('/api/config_seaching', {
                     method:'POST',
                     headers: {
                     'Content-Type': 'application/json'
