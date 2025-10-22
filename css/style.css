@@ -32,25 +32,46 @@ body {
     margin-right: 20px;
     height: fit-content;
 }
-    /* 容器：居中 + 相对定位 */
-    .sensor-container {
-      position: relative;
-      width: 800px;
-      height: 600px;
-      border: 1px solid #333;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-    /* 画布样式 - 设置在车图片上方 */
-    #fov-canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 20; /* 确保在车图片上方 */
-      cursor: pointer; /* 指示可点击选择 */
-    }
+/* 科技感按钮效果 */
+.tech-button {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+.tech-button::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(123, 97, 255, 0.2), transparent);
+    transform: rotate(45deg);
+    animation: shine 3s infinite;
+}
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+/* 容器：居中 + 相对定位 */
+.sensor-container {
+    position: relative;
+    width: 800px;
+    height: 600px;
+    border: 1px solid #333;
+    border-radius: 10px;
+    overflow: hidden;
+}
+/* 画布样式 - 设置在车图片上方 */
+#fov-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 20; /* 确保在车图片上方 */
+    cursor: pointer; /* 指示可点击选择 */
+}
     /* 汽车中心标识 - 置于最底层并添加阴影 */
 .car-center {
     position: absolute;

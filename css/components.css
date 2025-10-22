@@ -662,10 +662,10 @@ body {
     linear-gradient(to right, rgba(13, 28, 34, 0.05) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(3, 10, 14, 0.05) 1px, transparent 1px);
 }
-        .current-path {
-            stroke-dasharray: 15;
-            animation: current 1s linear infinite;
-        }
+.current-path {
+    stroke-dasharray: 15;
+    animation: current 1s linear infinite;
+}
         @keyframes current {
             to { stroke-dashoffset: -100; }
         }

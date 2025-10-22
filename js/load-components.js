@@ -17,8 +17,8 @@ async function loadComponent(elementId, componentPath) {
 
 
 async function initComponents() {
-    await loadComponent('header-container', '../components/header.html');
-    await loadComponent('navbar-container', '../components/navbar.html');
+    // await loadComponent('header-container', '../components/header.html');
+    await loadComponent('navbar-container', '../components/navbar_new.html');
     await loadComponent('footer-container', '../components/footer.html');
     // 可选：添加导航栏激活状态逻辑
     setActiveNavLink();
@@ -49,6 +49,9 @@ tailwind.config = {
                 PLAN: '#E13F25',
                 secondary: '#00B42A',
                 accent: '#FF7D00',
+                logoup: '#7B61FF',
+                logobuttom:'#14F195',
+                logotext:'#14F195',
                 JW: '#F7FF11',
                 dark: '#1a1a2e',
                 'dark-light': '#2a2a4a',
