@@ -131,7 +131,7 @@
             getdropdowninfo()
 
             function getdropdowninfo() {
-                fetch('http://47.99.204.97:5000/init_config_func', {
+                fetch('api/init_config_func', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -165,7 +165,7 @@
 
         })
         
-        fetch('http://47.99.204.97:5000/fbsnetinit',{
+        fetch('api/fbsnetinit',{
                 method:'POST',
                 headers:{
                     'Content-Type':'application/json'
