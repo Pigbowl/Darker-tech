@@ -1,12 +1,14 @@
 [
 build
 ]
-  publish = "."  # 前端文件目录（根据你的实际目录修改，通常是dist/或public/）
+  # 前端文件的发布目录（根据你的实际目录修改，比如 dist/、public/ 等，默认是当前目录 "."）
+  publish = "."
 
+# 反向代理规则
 [[
 redirects
 ]]
-  from = "/api/*"
-  to = "http://47.99.204.97:5000/:splat"
-  status = 200
-  force = true  # 强制重定向，确保生效
+  from = "/api/*"               # 匹配前端的 /api/ 开头请求
+  to = "http://47.99.204.97:5000/:splat"  # 转发到后端接口（注意替换为你的实际后端地址）
+  status = 200                  # 固定为 200，确保前端路由正常
+  force = true   
