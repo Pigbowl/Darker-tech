@@ -753,7 +753,7 @@
             const mappedScriptName = scriptMapping[scriptName] || scriptName;
             
             // 调用API执行Python脚本
-            fetch('http://47.99.204.97:5000/execute-script', {
+            fetch('/api/execute-script', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -1141,7 +1141,7 @@
 
             
             function getcomponent(){
-                fetch('http://47.99.204.97:5000/component_list_get', {
+                fetch('/api/component_list_get', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -1188,7 +1188,7 @@
             }
             
             function getsensors(){
-                fetch('http://47.99.204.97:5000/sensor_list_get', {
+                fetch('/api/sensor_list_get', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -2076,7 +2076,7 @@
             //开始搜索
             function launchsearching(result){
                 solutionContainer,innerHTML ='';
-                fetch('http://47.99.204.97:5000/config_searching', {
+                fetch('/api/config_searching', {
                     method:'POST',
                     headers: {
                     'Content-Type': 'application/json'
