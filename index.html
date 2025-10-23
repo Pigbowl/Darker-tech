@@ -9,23 +9,23 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
     
     <!-- Tailwind配置 -->
-    <script>
+    <!-- <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: '#0A0E17',
-                        secondary: '#1A1F2B',
-                        accent: '#7B61FF',
-                        tech: '#14F191',
+                        colorpri: '#0A0E17',
+                        colorsec: '#1A1F2B',
+                        logoup: '#7B61FF',
+                        logobuttom: '#14F191',
                         darkAccent: '#0F172A',
                     },
                     fontFamily: {
                         sans: ['Inter', 'system-ui', 'sans-serif'],
                     },
                     animation: {
-                        'float': 'float 3s ease-in-out infinite',
-                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float2': 'float 3s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         'glow': 'glow 2s ease-in-out infinite alternate',
                     },
                     keyframes: {
@@ -41,7 +41,7 @@
                 }
             }
         }
-    </script>
+    </script> -->
     
     <!-- 自定义工具类 -->
     <style type="text/tailwindcss">
@@ -108,56 +108,15 @@
 </head>
 <body>
     <!-- 导航栏 -->
-     <!-- <div id="navbar-container"></div> -->
-    <header class="fixed top-0 w-full z-50 glass-effect border-b border-accent/20">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <!-- Logo -->
-            <a href="#" class="flex items-center space-x-2">
-                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-accent to-tech flex items-center justify-center">
-                    <span class="text-primary font-bold text-lg">DT</span>
-                </div>
-                <div>
-                    <h1 class="text-white font-bold text-xl">达客科技</h1>
-                    <p class="text-tech text-xs">DarkerTech</p>
-                </div>
-            </a>
-            
-            <!-- 桌面导航 -->
-            <nav class="hidden md:flex items-center space-x-6">
-                <a href="../../index.html" class="text-white hover:text-tech transition-colors duration-300">首页</a>
-                <a href="../Pages/Learning_Gallary.html" class="text-white hover:text-tech transition-colors duration-300">ADAS知识库</a>
-                <a href="../Pages/adas_benchmark.html" class="text-white hover:text-tech transition-colors duration-300">ADAS对标库</a>
-                <a href="../Pages/Configurator.html" class="text-white hover:text-tech transition-colors duration-300">配置工具</a>
-                <a href="../Pages/simulation_front.html" class="text-white hover:text-tech transition-colors duration-300">仿真平台</a>
-                <a href="../../index.html#about" class="tech-button bg-transparent border border-accent text-accent px-4 py-1 rounded hover:bg-accent/10">关于我们</a>
-            </nav>
-            
-            
-            <!-- 移动端菜单按钮 -->
-            <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
-                <i class="fa fa-bars text-2xl"></i>
-            </button>
-        </div>
-        
-        <!-- 移动端导航菜单 -->
-        <div id="mobile-menu" class="hidden md:hidden glass-effect">
-            <div class="container mx-auto px-4 py-3 flex flex-col space-y-4">
-                <a href="#" class="text-white hover:text-tech transition-colors duration-300 py-2 border-b border-accent/20">首页</a>
-                <a href="#knowledge" class="text-white hover:text-tech transition-colors duration-300 py-2 border-b border-accent/20">ADAS知识库</a>
-                <a href="#benchmark" class="text-white hover:text-tech transition-colors duration-300 py-2 border-b border-accent/20">ADAS对标库</a>
-                <a href="#configurator" class="text-white hover:text-tech transition-colors duration-300 py-2 border-b border-accent/20">配置工具</a>
-                <a href="#simulation" class="text-white hover:text-tech transition-colors duration-300 py-2 border-b border-accent/20">仿真平台</a>
-                <a href="#about" class="tech-button bg-transparent border border-accent text-accent px-4 py-2 rounded hover:bg-accent/10 text-center">关于我们</a>
-            </div>
-        </div>
-    </header>
+     <div id="navbar-container"></div>
+
 
     <!-- 主横幅/英雄区域 -->
     <section class="relative min-h-screen flex items-center bg-grid pt-16">
         <!-- 背景装饰 -->
         <div class="absolute inset-0 overflow-hidden">
-            <div class="absolute -top-20 -right-20 w-96 h-96 bg-accent/20 rounded-full filter blur-3xl"></div>
-            <div class="absolute bottom-10 -left-20 w-64 h-64 bg-tech/20 rounded-full filter blur-3xl"></div>
+            <div class="absolute -top-20 -right-20 w-96 h-96 bg-logoup/20 rounded-full filter blur-3xl"></div>
+            <div class="absolute bottom-10 -left-20 w-64 h-64 bg-logobuttom/20 rounded-full filter blur-3xl"></div>
         </div>
         
         <div class="container mx-auto px-4 py-20 relative z-10">
@@ -165,40 +124,40 @@
                 <div class="md:w-1/2 mb-10 md:mb-0">
                     <h1 class="text-[clamp(2.5rem,5vw,4rem)] font-bold leading-tight">
                         <span class="text-gradient bg-gradient-to-r from-white to-gray-400">智能驾驶</span>
-                        <span class="text-gradient bg-gradient-to-r from-accent to-tech ml-2 animate-glow">ADAS开发服务</span>
+                        <span class="text-gradient bg-gradient-to-r from-logoup to-logobuttom ml-2 animate-glow">ADAS开发服务</span>
                     </h1>
                     <p class="text-gray-300 mt-6 text-lg max-w-lg">
                         达客科技专注于自动驾驶技术研发与应用，提供全方位ADAS知识服务、对标分析、系统配置及仿真验证平台。
                     </p>
                     <div class="mt-10 flex flex-col sm:flex-row gap-4">
-                        <a href="#solutions" class="tech-button bg-accent hover:bg-accent/90 text-white font-medium px-8 py-3 rounded-lg text-center transition duration-300">
+                        <a href="#solutions" class="tech-button bg-logoup hover:bg-logoup/90 text-white font-medium px-8 py-3 rounded-lg text-center transition duration-300">
                             探索开发服务
                         </a>
-                        <a href="#about" class="border border-gray-600 hover:border-tech text-white font-medium px-8 py-3 rounded-lg text-center transition duration-300">
+                        <a href="#about" class="border border-gray-600 hover:border-logobuttom text-white font-medium px-8 py-3 rounded-lg text-center transition duration-300">
                             了解更多
                         </a>
                     </div>
                 </div>
                 
                 <div class="md:w-1/2 flex justify-center">
-                    <div class="relative animate-float">
+                    <div class="relative animate-float2">
                         <!-- 3D汽车模型占位图 -->
                         <div class="w-64 h-64 md:w-180 md:h-180 relative">
-                            <div class="absolute inset-0 bg-gradient-to-br from-accent/20 to-tech/20 rounded-full blur-xl"></div>
+                            <div class="absolute inset-0 bg-gradient-to-br from-logoup/20 to-logobuttom/20 rounded-full blur-xl"></div>
                             <img src="PIC/ADAS_FUNC.png" alt="ADAS功能示意图" class="absolute inset-0 w-full h-full object-contain">
                         </div>
                         
                         <!-- 环绕的技术标签 -->
-                        <div class="absolute -top-10 -right-10 bg-darkAccent neon-border rounded-lg px-4 py-2 text-tech text-sm">
+                        <div class="absolute -top-10 -right-10 bg-darkAccent neon-border rounded-lg px-4 py-2 text-logobuttom text-sm">
                             <i class="fa fa-lightbulb-o mr-2"></i>感知验证
                         </div>
-                        <div class="absolute top-10 -left-10 bg-darkAccent neon-border rounded-lg px-4 py-2 text-tech text-sm">
+                        <div class="absolute top-10 -left-10 bg-darkAccent neon-border rounded-lg px-4 py-2 text-logobuttom text-sm">
                             <i class="fa fa-car mr-2"></i>系统架构设计
                         </div>
-                        <div class="absolute -bottom-5 right-10 bg-darkAccent neon-border rounded-lg px-4 py-2 text-tech text-sm">
+                        <div class="absolute -bottom-5 right-10 bg-darkAccent neon-border rounded-lg px-4 py-2 text-logobuttom text-sm">
                             <i class="fa fa-cogs mr-2"></i>功能定义
                         </div>
-                        <div class="absolute bottom-10 -right-10 bg-darkAccent neon-border rounded-lg px-4 py-2 text-tech text-sm">
+                        <div class="absolute bottom-10 -right-10 bg-darkAccent neon-border rounded-lg px-4 py-2 text-logobuttom text-sm">
                             <i class="fa fa-cogs mr-2"></i>开发工具
                         </div>
                     </div>
@@ -207,17 +166,17 @@
             
             <!-- 滚动指示器 -->
             <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
-                <i class="fa fa-angle-down text-2xl text-tech"></i>
+                <i class="fa fa-angle-down text-2xl text-logobuttom"></i>
             </div>
         </div>
     </section>
 
     <!-- 核心业务板块 -->
-    <section id="solutions" class="py-20 relative bg-primary">
+    <section id="solutions" class="py-20 relative bg-colorpri">
         <div class="container mx-auto px-4">
             <div class="text-center mb-16">
                 <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold mb-4">
-                    <span class="text-gradient bg-gradient-to-r from-accent to-tech">核心</span>开发服务内容
+                    <span class="text-gradient bg-gradient-to-r from-logoup to-logobuttom">核心</span>开发服务内容
                 </h2>
                 <p class="text-gray-400 max-w-2xl mx-auto">达客科技提供全方位ADAS技术服务，助力智能驾驶产业发展，为客户提供从知识获取到系统验证的完整解决方案。</p>
             </div>
@@ -225,52 +184,52 @@
             <!-- 业务卡片网格 -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <!-- 业务卡片1：ADAS知识库 -->
-                <div id="knowledge" class="bg-secondary rounded-xl p-6 transition-all duration-300 hover:scale-105 neon-border group">
-                    <div class="w-16 h-16 bg-accent/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-accent/20 transition duration-300">
-                        <i class="fa fa-book text-2xl text-tech"></i>
+                <div id="knowledge" class="bg-colorsec rounded-xl p-6 transition-all duration-300 hover:scale-105 neon-border group">
+                    <div class="w-16 h-16 bg-logoup/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-logoup/20 transition duration-300">
+                        <i class="fa fa-book text-2xl text-logobuttom"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4 text-white group-hover:text-tech transition-colors duration-300">ADAS知识库</h3>
+                    <h3 class="text-xl font-bold mb-4 text-white group-hover:text-logobuttom transition-colors duration-300">ADAS知识库</h3>
                     <p class="text-gray-400 mb-6">通过公司的数据库和搜索引擎，提供应用层功能、硬件、芯片、算法、架构开发及法规信息。</p>
-                    <a href="../Pages/Learning_Gallary.html" class="inline-flex items-center text-tech font-medium group-hover:underline">
+                    <a href="../Pages/Learning_Gallary.html" class="inline-flex items-center text-logobuttom font-medium group-hover:underline">
                         探索知识库
                         <i class="fa fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform duration-300"></i>
                     </a>
                 </div>
                 
                 <!-- 业务卡片2：ADAS对标库 -->
-                <div id="benchmark" class="bg-secondary rounded-xl p-6 transition-all duration-300 hover:scale-105 neon-border group">
-                    <div class="w-16 h-16 bg-accent/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-accent/20 transition duration-300">
-                        <i class="fa fa-bar-chart text-2xl text-tech"></i>
+                <div id="benchmark" class="bg-colorsec rounded-xl p-6 transition-all duration-300 hover:scale-105 neon-border group">
+                    <div class="w-16 h-16 bg-logoup/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-logoup/20 transition duration-300">
+                        <i class="fa fa-bar-chart text-2xl text-logobuttom"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4 text-white group-hover:text-tech transition-colors duration-300">ADAS对标库</h3>
+                    <h3 class="text-xl font-bold mb-4 text-white group-hover:text-logobuttom transition-colors duration-300">ADAS对标库</h3>
                     <p class="text-gray-400 mb-6">提供市面上整车级别、芯片级别等不同级别的对标库以及产品对比分析，助力产品优化决策。</p>
-                    <a href="../Pages/adas_benchmark.html" class="inline-flex items-center text-tech font-medium group-hover:underline">
+                    <a href="../Pages/adas_benchmark.html" class="inline-flex items-center text-logobuttom font-medium group-hover:underline">
                         查看对标分析
                         <i class="fa fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform duration-300"></i>
                     </a>
                 </div>
                 
                 <!-- 业务卡片3：ADAS配置工具 -->
-                <div id="configurator" class="bg-secondary rounded-xl p-6 transition-all duration-300 hover:scale-105 neon-border group">
-                    <div class="w-16 h-16 bg-accent/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-accent/20 transition duration-300">
-                        <i class="fa fa-sliders text-2xl text-tech"></i>
+                <div id="configurator" class="bg-colorsec rounded-xl p-6 transition-all duration-300 hover:scale-105 neon-border group">
+                    <div class="w-16 h-16 bg-logoup/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-logoup/20 transition duration-300">
+                        <i class="fa fa-sliders text-2xl text-logobuttom"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4 text-white group-hover:text-tech transition-colors duration-300">ADAS配置工具</h3>
+                    <h3 class="text-xl font-bold mb-4 text-white group-hover:text-logobuttom transition-colors duration-300">ADAS配置工具</h3>
                     <p class="text-gray-400 mb-6">根据不同需求输入，推荐系统方案，提供通用架构、Usecase定义、数据等工程开发所需模板。</p>
-                    <a href="../Pages/Configurator.html" class="inline-flex items-center text-tech font-medium group-hover:underline">
+                    <a href="../Pages/Configurator.html" class="inline-flex items-center text-logobuttom font-medium group-hover:underline">
                         开始配置
                         <i class="fa fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform duration-300"></i>
                     </a>
                 </div>
                 
                 <!-- 业务卡片4：ADAS仿真平台 -->
-                <div id="simulation" class="bg-secondary rounded-xl p-6 transition-all duration-300 hover:scale-105 neon-border group">
-                    <div class="w-16 h-16 bg-accent/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-accent/20 transition duration-300">
-                        <i class="fa fa-cube text-2xl text-tech"></i>
+                <div id="simulation" class="bg-colorsec rounded-xl p-6 transition-all duration-300 hover:scale-105 neon-border group">
+                    <div class="w-16 h-16 bg-logoup/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-logoup/20 transition duration-300">
+                        <i class="fa fa-cube text-2xl text-logobuttom"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4 text-white group-hover:text-tech transition-colors duration-300">ADAS仿真平台</h3>
+                    <h3 class="text-xl font-bold mb-4 text-white group-hover:text-logobuttom transition-colors duration-300">ADAS仿真平台</h3>
                     <p class="text-gray-400 mb-6">根据用户需求进行3D场景仿真，提供仿真框架、3D场景绘制工具和完整仿真环境支持。</p>
-                    <a href="../Pages/simulation_front.html" class="inline-flex items-center text-tech font-medium group-hover:underline">
+                    <a href="../Pages/simulation_front.html" class="inline-flex items-center text-logobuttom font-medium group-hover:underline">
                         体验仿真平台
                         <i class="fa fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform duration-300"></i>
                     </a>
@@ -280,20 +239,20 @@
     </section>
 
     <!-- 业务详情展示 - ADAS知识库 -->
-    <section class="py-20 relative bg-secondary overflow-hidden">
+    <section class="py-20 relative bg-colorsec overflow-hidden">
         <div class="container mx-auto px-4 relative z-10">
             <div class="flex flex-col lg:flex-row items-center gap-12">
                 <div class="lg:w-1/2">
                     <div class="relative">
                         <img src="PIC/ADAS_FUNC.png" alt="ADAS知识库架构" class="rounded-xl neon-border">
                         <div class="absolute -bottom-4 -right-4 bg-darkAccent neon-border rounded-lg px-4 py-2">
-                            <span class="text-tech font-medium">5000+</span>
+                            <span class="text-logobuttom font-medium">5000+</span>
                             <span class="text-gray-400 ml-2">知识条目</span>
                         </div>
                     </div>
                 </div>
                 <div class="lg:w-1/2">
-                    <div class="inline-block bg-accent/10 text-tech px-4 py-1 rounded-full text-sm font-medium mb-4">
+                    <div class="inline-block bg-logoup/10 text-logobuttom px-4 py-1 rounded-full text-sm font-medium mb-4">
                         知识库
                     </div>
                     <h2 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold mb-6">ADAS知识库</h2>
@@ -302,35 +261,35 @@
                     </p>
                     <div class="space-y-4 mb-8">
                         <div class="flex items-start">
-                            <div class="mt-1 mr-4 text-tech"><i class="fa fa-check-circle"></i></div>
+                            <div class="mt-1 mr-4 text-logobuttom"><i class="fa fa-check-circle"></i></div>
                             <div>
                                 <h4 class="font-semibold text-white">应用层功能信息</h4>
                                 <p class="text-gray-400">ACC、LKA、AEB等ADAS功能详细说明与实现原理</p>
                             </div>
                         </div>
                         <div class="flex items-start">
-                            <div class="mt-1 mr-4 text-tech"><i class="fa fa-check-circle"></i></div>
+                            <div class="mt-1 mr-4 text-logobuttom"><i class="fa fa-check-circle"></i></div>
                             <div>
                                 <h4 class="font-semibold text-white">硬件与芯片资料</h4>
                                 <p class="text-gray-400">各类传感器规格参数与主流AI芯片性能对比</p>
                             </div>
                         </div>
                         <div class="flex items-start">
-                            <div class="mt-1 mr-4 text-tech"><i class="fa fa-check-circle"></i></div>
+                            <div class="mt-1 mr-4 text-logobuttom"><i class="fa fa-check-circle"></i></div>
                             <div>
                                 <h4 class="font-semibold text-white">算法与架构知识</h4>
                                 <p class="text-gray-400">感知、决策、控制算法详解与系统架构设计指南</p>
                             </div>
                         </div>
                         <div class="flex items-start">
-                            <div class="mt-1 mr-4 text-tech"><i class="fa fa-check-circle"></i></div>
+                            <div class="mt-1 mr-4 text-logobuttom"><i class="fa fa-check-circle"></i></div>
                             <div>
                                 <h4 class="font-semibold text-white">法规与标准信息</h4>
                                 <p class="text-gray-400">全球主要市场ADAS相关法规与技术标准更新</p>
                             </div>
                         </div>
                     </div>
-                    <a href="../Pages/Learning_Gallary.html" class="tech-button inline-block bg-accent hover:bg-accent/90 text-white font-medium px-6 py-3 rounded-lg transition duration-300">
+                    <a href="../Pages/Learning_Gallary.html" class="tech-button inline-block bg-logoup hover:bg-logoup/90 text-white font-medium px-6 py-3 rounded-lg transition duration-300">
                         访问知识库
                     </a>
                 </div>
@@ -339,12 +298,12 @@
     </section>
 
     <!-- 业务详情展示 - ADAS对标库 -->
-    <section class="py-20 relative bg-primary overflow-hidden">
+    <section class="py-20 relative bg-colorpri overflow-hidden">
         <div class="absolute top-0 left-0 w-full h-full bg-grid opacity-50"></div>
         <div class="container mx-auto px-4 relative z-10">
             <div class="flex flex-col-reverse lg:flex-row items-center gap-12">
                 <div class="lg:w-1/2">
-                    <div class="inline-block bg-accent/10 text-tech px-4 py-1 rounded-full text-sm font-medium mb-4">
+                    <div class="inline-block bg-logoup/10 text-logobuttom px-4 py-1 rounded-full text-sm font-medium mb-4">
                         对标分析
                     </div>
                     <h2 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold mb-6">ADAS对标库</h2>
@@ -353,35 +312,35 @@
                     </p>
                     <div class="space-y-4 mb-8">
                         <div class="flex items-start">
-                            <div class="mt-1 mr-4 text-tech"><i class="fa fa-check-circle"></i></div>
+                            <div class="mt-1 mr-4 text-logobuttom"><i class="fa fa-check-circle"></i></div>
                             <div>
                                 <h4 class="font-semibold text-white">整车级别对标</h4>
                                 <p class="text-gray-400">主流车型ADAS配置对比与功能体验评分</p>
                             </div>
                         </div>
                         <div class="flex items-start">
-                            <div class="mt-1 mr-4 text-tech"><i class="fa fa-check-circle"></i></div>
+                            <div class="mt-1 mr-4 text-logobuttom"><i class="fa fa-check-circle"></i></div>
                             <div>
                                 <h4 class="font-semibold text-white">芯片级别分析</h4>
                                 <p class="text-gray-400">AI芯片性能、功耗与价格多维度对比</p>
                             </div>
                         </div>
                         <div class="flex items-start">
-                            <div class="mt-1 mr-4 text-tech"><i class="fa fa-check-circle"></i></div>
+                            <div class="mt-1 mr-4 text-logobuttom"><i class="fa fa-check-circle"></i></div>
                             <div>
                                 <h4 class="font-semibold text-white">传感器方案对比</h4>
                                 <p class="text-gray-400">摄像头、雷达、激光雷达等传感器性能对比</p>
                             </div>
                         </div>
                         <div class="flex items-start">
-                            <div class="mt-1 mr-4 text-tech"><i class="fa fa-check-circle"></i></div>
+                            <div class="mt-1 mr-4 text-logobuttom"><i class="fa fa-check-circle"></i></div>
                             <div>
                                 <h4 class="font-semibold text-white">解决方案价格分析</h4>
                                 <p class="text-gray-400">不同级别ADAS解决方案成本结构分析</p>
                             </div>
                         </div>
                     </div>
-                    <a href="../Pages/adas_benchmark.html" class="tech-button inline-block bg-accent hover:bg-accent/90 text-white font-medium px-6 py-3 rounded-lg transition duration-300">
+                    <a href="../Pages/adas_benchmark.html" class="tech-button inline-block bg-logoup hover:bg-logoup/90 text-white font-medium px-6 py-3 rounded-lg transition duration-300">
                         查看对标数据
                     </a>
                 </div>
@@ -389,7 +348,7 @@
                     <div class="relative">
                         <img src="PIC/Benchmark.png" alt="ADAS功能对标分析" class="rounded-xl neon-border">
                         <div class="absolute -bottom-4 -right-4 bg-darkAccent neon-border rounded-lg px-4 py-2">
-                            <span class="text-tech font-medium">100+</span>
+                            <span class="text-logobuttom font-medium">100+</span>
                             <span class="text-gray-400 ml-2">对标产品</span>
                         </div>
                     </div>
@@ -399,19 +358,19 @@
     </section>
 
     <!-- 业务详情展示 - ADAS配置工具 -->
-    <section class="py-20 relative bg-secondary overflow-hidden">
+    <section class="py-20 relative bg-colorsec overflow-hidden">
         <div class="container mx-auto px-4 relative z-10">
             <div class="flex flex-col lg:flex-row items-center gap-12">
                 <div class="lg:w-1/2">
                     <div class="relative">
                         <img src="PIC/Configurator.png" alt="ADAS配置工具" class="rounded-xl neon-border">
                         <div class="absolute -bottom-4 -right-4 bg-darkAccent neon-border rounded-lg px-4 py-2">
-                            <span class="text-tech font-medium">智能推荐</span>
+                            <span class="text-logobuttom font-medium">智能推荐</span>
                         </div>
                     </div>
                 </div>
                 <div class="lg:w-1/2">
-                    <div class="inline-block bg-accent/10 text-tech px-4 py-1 rounded-full text-sm font-medium mb-4">
+                    <div class="inline-block bg-logoup/10 text-logobuttom px-4 py-1 rounded-full text-sm font-medium mb-4">
                         配置工具
                     </div>
                     <h2 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold mb-6">ADAS配置工具</h2>
@@ -420,35 +379,35 @@
                     </p>
                     <div class="space-y-4 mb-8">
                         <div class="flex items-start">
-                            <div class="mt-1 mr-4 text-tech"><i class="fa fa-check-circle"></i></div>
+                            <div class="mt-1 mr-4 text-logobuttom"><i class="fa fa-check-circle"></i></div>
                             <div>
                                 <h4 class="font-semibold text-white">需求驱动配置</h4>
                                 <p class="text-gray-400">基于性能、成本、场景等多维度需求智能推荐方案</p>
                             </div>
                         </div>
                         <div class="flex items-start">
-                            <div class="mt-1 mr-4 text-tech"><i class="fa fa-check-circle"></i></div>
+                            <div class="mt-1 mr-4 text-logobuttom"><i class="fa fa-check-circle"></i></div>
                             <div>
                                 <h4 class="font-semibold text-white">通用架构模板</h4>
                                 <p class="text-gray-400">提供标准化系统架构设计模板与接口定义</p>
                             </div>
                         </div>
                         <div class="flex items-start">
-                            <div class="mt-1 mr-4 text-tech"><i class="fa fa-check-circle"></i></div>
+                            <div class="mt-1 mr-4 text-logobuttom"><i class="fa fa-check-circle"></i></div>
                             <div>
                                 <h4 class="font-semibold text-white">Usecase定义</h4>
                                 <p class="text-gray-400">提供详细的功能用例定义与测试场景</p>
                             </div>
                         </div>
                         <div class="flex items-start">
-                            <div class="mt-1 mr-4 text-tech"><i class="fa fa-check-circle"></i></div>
+                            <div class="mt-1 mr-4 text-logobuttom"><i class="fa fa-check-circle"></i></div>
                             <div>
                                 <h4 class="font-semibold text-white">开发资源包</h4>
                                 <p class="text-gray-400">提供开发所需的参考代码、数据格式与工具链</p>
                             </div>
                         </div>
                     </div>
-                    <a href="../Pages/Configurator.html" class="tech-button inline-block bg-accent hover:bg-accent/90 text-white font-medium px-6 py-3 rounded-lg transition duration-300">
+                    <a href="../Pages/Configurator.html" class="tech-button inline-block bg-logoup hover:bg-logoup/90 text-white font-medium px-6 py-3 rounded-lg transition duration-300">
                         使用配置工具
                     </a>
                 </div>
@@ -457,12 +416,12 @@
     </section>
 
     <!-- 业务详情展示 - ADAS仿真平台 -->
-    <section class="py-20 relative bg-primary overflow-hidden">
+    <section class="py-20 relative bg-colorpri overflow-hidden">
         <div class="absolute top-0 left-0 w-full h-full bg-grid opacity-50"></div>
         <div class="container mx-auto px-4 relative z-10">
             <div class="flex flex-col-reverse lg:flex-row items-center gap-12">
                 <div class="lg:w-1/2">
-                    <div class="inline-block bg-accent/10 text-tech px-4 py-1 rounded-full text-sm font-medium mb-4">
+                    <div class="inline-block bg-logoup/10 text-logobuttom px-4 py-1 rounded-full text-sm font-medium mb-4">
                         仿真验证
                     </div>
                     <h2 class="text-[clamp(1.5rem,3vw,2.2rem)] font-bold mb-6">ADAS仿真平台</h2>
@@ -471,35 +430,35 @@
                     </p>
                     <div class="space-y-4 mb-8">
                         <div class="flex items-start">
-                            <div class="mt-1 mr-4 text-tech"><i class="fa fa-check-circle"></i></div>
+                            <div class="mt-1 mr-4 text-logobuttom"><i class="fa fa-check-circle"></i></div>
                             <div>
                                 <h4 class="font-semibold text-white">3D场景仿真</h4>
                                 <p class="text-gray-400">提供城市、高速、乡村等多种典型场景的3D仿真环境</p>
                             </div>
                         </div>
                         <div class="flex items-start">
-                            <div class="mt-1 mr-4 text-tech"><i class="fa fa-check-circle"></i></div>
+                            <div class="mt-1 mr-4 text-logobuttom"><i class="fa fa-check-circle"></i></div>
                             <div>
                                 <h4 class="font-semibold text-white">传感器模型</h4>
                                 <p class="text-gray-400">支持摄像头、毫米波雷达、激光雷达等多种传感器仿真</p>
                             </div>
                         </div>
                         <div class="flex items-start">
-                            <div class="mt-1 mr-4 text-tech"><i class="fa fa-check-circle"></i></div>
+                            <div class="mt-1 mr-4 text-logobuttom"><i class="fa fa-check-circle"></i></div>
                             <div>
                                 <h4 class="font-semibold text-white">场景绘制工具</h4>
                                 <p class="text-gray-400">提供直观的场景编辑器，支持自定义交通场景与障碍物</p>
                             </div>
                         </div>
                         <div class="flex items-start">
-                            <div class="mt-1 mr-4 text-tech"><i class="fa fa-check-circle"></i></div>
+                            <div class="mt-1 mr-4 text-logobuttom"><i class="fa fa-check-circle"></i></div>
                             <div>
                                 <h4 class="font-semibold text-white">性能分析</h4>
                                 <p class="text-gray-400">提供算法性能评估与安全测试报告生成功能</p>
                             </div>
                         </div>
                     </div>
-                    <a href="../Pages/simulation_front.html" class="tech-button inline-block bg-accent hover:bg-accent/90 text-white font-medium px-6 py-3 rounded-lg transition duration-300">
+                    <a href="../Pages/simulation_front.html" class="tech-button inline-block bg-logoup hover:bg-logoup/90 text-white font-medium px-6 py-3 rounded-lg transition duration-300">
                         体验仿真平台
                     </a>
                 </div>
@@ -507,7 +466,7 @@
                     <div class="relative">
                         <img src="PIC/Simulation.png" alt="ADAS仿真平台" class="rounded-xl neon-border">
                         <div class="absolute -bottom-4 -right-4 bg-darkAccent neon-border rounded-lg px-4 py-2">
-                            <span class="text-tech font-medium">实时仿真</span>
+                            <span class="text-logobuttom font-medium">实时仿真</span>
                         </div>
                     </div>
                 </div>
@@ -516,54 +475,54 @@
     </section>
 
     <!-- 技术优势 -->
-    <section class="py-20 relative bg-secondary">
+    <section class="py-20 relative bg-colorsec">
         <div class="container mx-auto px-4">
             <div class="text-center mb-16">
                 <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold mb-4">
-                    <span class="text-gradient bg-gradient-to-r from-accent to-tech">技术优势</span>
+                    <span class="text-gradient bg-gradient-to-r from-logoup to-logobuttom">技术优势</span>
                 </h2>
                 <p class="text-gray-400 max-w-2xl mx-auto">我们拥有业内领先的技术团队和丰富的项目经验，为客户提供高质量的ADAS解决方案。</p>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <div class="bg-darkAccent p-6 rounded-xl transition-all duration-300 hover:scale-105 neon-border">
-                    <div class="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center mb-4">
-                        <i class="fa fa-line-chart text-xl text-tech"></i>
+                    <div class="w-12 h-12 bg-logoup/20 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fa fa-line-chart text-xl text-logobuttom"></i>
                     </div>
                     <h3 class="text-lg font-semibold mb-2">数据驱动分析</h3>
                     <p class="text-gray-400">基于海量行业数据进行深度分析，提供精准的技术洞察和市场趋势预测。</p>
                 </div>
                 <div class="bg-darkAccent p-6 rounded-xl transition-all duration-300 hover:scale-105 neon-border">
-                    <div class="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center mb-4">
-                        <i class="fa fa-cogs text-xl text-tech"></i>
+                    <div class="w-12 h-12 bg-logoup/20 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fa fa-cogs text-xl text-logobuttom"></i>
                     </div>
                     <h3 class="text-lg font-semibold mb-2">全栈技术能力</h3>
                     <p class="text-gray-400">从硬件选型、算法开发到系统集成的全栈技术能力，提供端到端解决方案。</p>
                 </div>
                 <div class="bg-darkAccent p-6 rounded-xl transition-all duration-300 hover:scale-105 neon-border">
-                    <div class="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center mb-4">
-                        <i class="fa fa-users text-xl text-tech"></i>
+                    <div class="w-12 h-12 bg-logoup/20 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fa fa-users text-xl text-logobuttom"></i>
                     </div>
                     <h3 class="text-lg font-semibold mb-2">专业团队支持</h3>
                     <p class="text-gray-400">拥有多年ADAS行业经验的专业团队，为客户提供技术支持和咨询服务。</p>
                 </div>
                 <div class="bg-darkAccent p-6 rounded-xl transition-all duration-300 hover:scale-105 neon-border">
-                    <div class="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center mb-4">
-                        <i class="fa fa-rocket text-xl text-tech"></i>
+                    <div class="w-12 h-12 bg-logoup/20 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fa fa-rocket text-xl text-logobuttom"></i>
                     </div>
                     <h3 class="text-lg font-semibold mb-2">创新研发投入</h3>
                     <p class="text-gray-400">持续的研发投入和技术创新，保持行业领先的技术水平和解决方案能力。</p>
                 </div>
                 <div class="bg-darkAccent p-6 rounded-xl transition-all duration-300 hover:scale-105 neon-border">
-                    <div class="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center mb-4">
-                        <i class="fa fa-handshake-o text-xl text-tech"></i>
+                    <div class="w-12 h-12 bg-logoup/20 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fa fa-handshake-o text-xl text-logobuttom"></i>
                     </div>
                     <h3 class="text-lg font-semibold mb-2">定制化服务</h3>
                     <p class="text-gray-400">根据客户需求提供定制化解决方案，满足不同应用场景和技术要求。</p>
                 </div>
                 <div class="bg-darkAccent p-6 rounded-xl transition-all duration-300 hover:scale-105 neon-border">
-                    <div class="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center mb-4">
-                        <i class="fa fa-shield text-xl text-tech"></i>
+                    <div class="w-12 h-12 bg-logoup/20 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fa fa-shield text-xl text-logobuttom"></i>
                     </div>
                     <h3 class="text-lg font-semibold mb-2">安全合规保障</h3>
                     <p class="text-gray-400">严格遵循行业标准和安全规范，确保解决方案的安全性和合规性。</p>
@@ -573,12 +532,12 @@
     </section>
 
     <!-- 关于我们 -->
-    <section id="about" class="py-20 relative bg-primary">
+    <section id="about" class="py-20 relative bg-colorpri">
         <div class="absolute top-0 left-0 w-full h-full bg-grid opacity-50"></div>
         <div class="container mx-auto px-4 relative z-10">
             <div class="flex flex-col lg:flex-row items-center gap-12">
                 <div class="lg:w-1/2">
-                    <div class="inline-block bg-accent/10 text-tech px-4 py-1 rounded-full text-sm font-medium mb-4">
+                    <div class="inline-block bg-logoup/10 text-logobuttom px-4 py-1 rounded-full text-sm font-medium mb-4">
                         关于达客科技
                     </div>
                     <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold mb-6">DarkerTech</h2>
@@ -590,23 +549,23 @@
                     </p>
                     <div class="grid grid-cols-2 gap-6 mb-8">
                         <div>
-                            <h3 class="text-3xl font-bold text-tech mb-2">50+</h3>
+                            <h3 class="text-3xl font-bold text-logobuttom mb-2">50+</h3>
                             <p class="text-gray-400">专业技术人员</p>
                         </div>
                         <div>
-                            <h3 class="text-3xl font-bold text-tech mb-2">30+</h3>
+                            <h3 class="text-3xl font-bold text-logobuttom mb-2">30+</h3>
                             <p class="text-gray-400">行业合作伙伴</p>
                         </div>
                         <div>
-                            <h3 class="text-3xl font-bold text-tech mb-2">100+</h3>
+                            <h3 class="text-3xl font-bold text-logobuttom mb-2">100+</h3>
                             <p class="text-gray-400">完成项目</p>
                         </div>
                         <div>
-                            <h3 class="text-3xl font-bold text-tech mb-2">5+</h3>
+                            <h3 class="text-3xl font-bold text-logobuttom mb-2">5+</h3>
                             <p class="text-gray-400">行业专利</p>
                         </div>
                     </div>
-                    <a href="#" class="tech-button inline-block bg-accent hover:bg-accent/90 text-white font-medium px-6 py-3 rounded-lg transition duration-300">
+                    <a href="#" class="tech-button inline-block bg-logoup hover:bg-logoup/90 text-white font-medium px-6 py-3 rounded-lg transition duration-300">
                         联系我们
                     </a>
                 </div>
@@ -623,55 +582,66 @@
     </section>
 
     <!-- 联系我们 -->
-    <section class="py-20 relative bg-secondary">
+    <section class="py-20 relative bg-colorsec">
         <div class="container mx-auto px-4">
             <div class="text-center mb-16">
                 <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold mb-4">
-                    <span class="text-gradient bg-gradient-to-r from-accent to-tech">联系我们</span>
+                    <span class="text-gradient bg-gradient-to-r from-logoup to-logobuttom">联系我们</span>
                 </h2>
                 <p class="text-gray-400 max-w-2xl mx-auto">如果您对我们的产品和服务有任何疑问，欢迎随时联系我们，我们将竭诚为您服务。</p>
             </div>
             
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
                 <div class="bg-darkAccent p-8 rounded-xl neon-border">
-                    <form>
+                    <form id="contactForm">
                         <div class="mb-6">
                             <label for="name" class="block text-gray-300 mb-2">姓名</label>
-                            <input type="text" id="name" class="w-full bg-primary/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-tech transition duration-300">
+                            <input type="text" id="name" name="name" required class="w-full bg-colorpri/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-logobuttom transition duration-300">
                         </div>
                         <div class="mb-6">
                             <label for="email" class="block text-gray-300 mb-2">邮箱</label>
-                            <input type="email" id="email" class="w-full bg-primary/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-tech transition duration-300">
+                            <input type="email" id="email" name="email" required class="w-full bg-colorpri/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-logobuttom transition duration-300">
                         </div>
                         <div class="mb-6">
-                            <label for="company" class="block text-gray-300 mb-2">公司名称</label>
-                            <input type="text" id="company" class="w-full bg-primary/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-tech transition duration-300">
+                            <label for="subject" class="block text-gray-300 mb-2">主题</label>
+                            <input type="text" id="subject" name="subject" class="w-full bg-colorpri/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-logobuttom transition duration-300">
                         </div>
                         <div class="mb-6">
                             <label for="message" class="block text-gray-300 mb-2">留言内容</label>
-                            <textarea id="message" rows="5" class="w-full bg-primary/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-tech transition duration-300"></textarea>
+                            <textarea id="message" name="message" rows="5" required class="w-full bg-colorpri/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-logobuttom transition duration-300"></textarea>
                         </div>
-                        <button type="submit" class="tech-button w-full bg-accent hover:bg-accent/90 text-white font-medium py-3 rounded-lg transition duration-300">
+                        <button type="submit" class="tech-button w-full bg-logoup hover:bg-logoup/90 text-white font-medium py-3 rounded-lg transition duration-300">
                             提交信息
                         </button>
                     </form>
+                    <!-- 提交成功提示 -->
+                    <div id="successMessage" class="hidden fixed top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-darkAccent p-6 rounded-xl neon-border z-50">
+                        <div class="text-center">
+                            <i class="fa fa-check-circle text-logobuttom text-4xl mb-4"></i>
+                            <h3 class="text-xl font-bold text-white mb-2">提交成功</h3>
+                            <p class="text-gray-400 mb-4">感谢您的留言，我们会尽快回复您！</p>
+                            <button id="closeMessage" class="bg-logoup hover:bg-logoup/90 text-white font-medium px-4 py-2 rounded-lg transition duration-300">
+                                关闭
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <div>
                     <div class="bg-darkAccent p-8 rounded-xl neon-border mb-8">
                         <h3 class="text-xl font-bold mb-6 text-white">联系方式</h3>
                         <div class="space-y-4">
                             <div class="flex items-start">
-                                <div class="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
-                                    <i class="fa fa-map-marker text-tech"></i>
+                                <div class="w-10 h-10 bg-logoup/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                    <i class="fa fa-map-marker text-logobuttom"></i>
                                 </div>
                                 <div>
                                     <h4 class="font-medium text-white">公司地址</h4>
-                                    <p class="text-gray-400">北京市海淀区中关村软件园</p>
+                                    <p class="text-gray-400">上海市松江区恒泽路58弄</p>
                                 </div>
                             </div>
                             <div class="flex items-start">
-                                <div class="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
-                                    <i class="fa fa-phone text-tech"></i>
+                                <div class="w-10 h-10 bg-logoup/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                    <i class="fa fa-phone text-logobuttom"></i>
                                 </div>
                                 <div>
                                     <h4 class="font-medium text-white">联系电话</h4>
@@ -679,12 +649,12 @@
                                 </div>
                             </div>
                             <div class="flex items-start">
-                                <div class="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
-                                    <i class="fa fa-envelope text-tech"></i>
+                                <div class="w-10 h-10 bg-logoup/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                    <i class="fa fa-envelope text-logobuttom"></i>
                                 </div>
                                 <div>
                                     <h4 class="font-medium text-white">电子邮箱</h4>
-                                    <p class="text-gray-400">contact@darkertech.com</p>
+                                    <p class="text-gray-400">1273880613@qq.com</p>
                                 </div>
                             </div>
                         </div>
@@ -692,16 +662,16 @@
                     <div class="bg-darkAccent p-8 rounded-xl neon-border">
                         <h3 class="text-xl font-bold mb-6 text-white">关注我们</h3>
                         <div class="flex space-x-4">
-                            <a href="#" class="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center text-tech hover:bg-accent/20 transition duration-300">
+                            <a href="#" class="w-12 h-12 bg-logoup/10 rounded-full flex items-center justify-center text-logobuttom hover:bg-logoup/20 transition duration-300">
                                 <i class="fa fa-weixin text-xl"></i>
                             </a>
-                            <a href="#" class="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center text-tech hover:bg-accent/20 transition duration-300">
+                            <a href="#" class="w-12 h-12 bg-logoup/10 rounded-full flex items-center justify-center text-logobuttom hover:bg-logoup/20 transition duration-300">
                                 <i class="fa fa-weibo text-xl"></i>
                             </a>
-                            <a href="#" class="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center text-tech hover:bg-accent/20 transition duration-300">
+                            <a href="#" class="w-12 h-12 bg-logoup/10 rounded-full flex items-center justify-center text-logobuttom hover:bg-logoup/20 transition duration-300">
                                 <i class="fa fa-linkedin text-xl"></i>
                             </a>
-                            <a href="#" class="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center text-tech hover:bg-accent/20 transition duration-300">
+                            <a href="#" class="w-12 h-12 bg-logoup/10 rounded-full flex items-center justify-center text-logobuttom hover:bg-logoup/20 transition duration-300">
                                 <i class="fa fa-github text-xl"></i>
                             </a>
                         </div>
@@ -712,76 +682,127 @@
     </section>
 
     <!-- 页脚 -->
-    <footer class="bg-primary border-t border-accent/20">
+    <footer class="bg-colorpri border-t border-logoup/20">
         <div class="container mx-auto px-4 py-12">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
                 <div>
                     <div class="flex items-center space-x-2 mb-6">
-                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-accent to-tech flex items-center justify-center">
-                            <span class="text-primary font-bold text-lg">DT</span>
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-logoup to-logobuttom flex items-center justify-center">
+                            <span class="text-colorpri font-bold text-lg">DT</span>
                         </div>
                         <div>
                             <h2 class="text-white font-bold text-xl">达客科技</h2>
-                            <p class="text-tech text-xs">DarkerTech</p>
+                            <p class="text-logobuttom text-xs">DarkerTech</p>
                         </div>
                     </div>
                     <p class="text-gray-400 mb-6">
                         专注于智能驾驶技术研发与应用，提供全方位ADAS解决方案。
                     </p>
                     <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-tech transition duration-300">
+                        <a href="#" class="text-gray-400 hover:text-logobuttom transition duration-300">
                             <i class="fa fa-weixin"></i>
                         </a>
-                        <a href="#" class="text-gray-400 hover:text-tech transition duration-300">
+                        <a href="#" class="text-gray-400 hover:text-logobuttom transition duration-300">
                             <i class="fa fa-weibo"></i>
                         </a>
-                        <a href="#" class="text-gray-400 hover:text-tech transition duration-300">
+                        <a href="#" class="text-gray-400 hover:text-logobuttom transition duration-300">
                             <i class="fa fa-linkedin"></i>
                         </a>
-                        <a href="#" class="text-gray-400 hover:text-tech transition duration-300">
+                        <a href="#" class="text-gray-400 hover:text-logobuttom transition duration-300">
                             <i class="fa fa-github"></i>
                         </a>
                     </div>
                 </div>
+                
+                <script>
+                    // 表单提交处理
+                    document.getElementById('contactForm').addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        
+                        // 表单验证
+                        const name = document.getElementById('name').value;
+                        const email = document.getElementById('email').value;
+                        const message = document.getElementById('message').value;
+                        const subject = document.getElementById('subject').value || '网站留言';
+                        
+                        if (!name || !email || !message) {
+                            alert('请填写必填字段');
+                            return;
+                        }
+                        
+                        // 验证邮箱格式
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        if (!emailRegex.test(email)) {
+                            alert('请输入有效的邮箱地址');
+                            return;
+                        }
+                        
+                        // 构建邮件内容
+                        const body = `
+姓名: ${name}
+邮箱: ${email}
+主题: ${subject}
+留言内容:
+${message}
+                        `.trim();
+                        
+                        // 使用mailto打开邮件客户端
+                        const mailtoLink = `mailto:1273880613@qq.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                        
+                        // 尝试打开邮件客户端
+                        window.location.href = mailtoLink;
+                        
+                        // 显示提交成功消息
+                        setTimeout(() => {
+                            document.getElementById('successMessage').classList.remove('hidden');
+                            document.getElementById('contactForm').reset();
+                        }, 500);
+                    });
+                    
+                    // 关闭成功消息
+                    document.getElementById('closeMessage').addEventListener('click', function() {
+                        document.getElementById('successMessage').classList.add('hidden');
+                    });
+                </script>
                 <div>
                     <h3 class="text-white font-bold mb-6">业务板块</h3>
                     <ul class="space-y-3">
-                        <li><a href="#knowledge" class="text-gray-400 hover:text-tech transition duration-300">ADAS知识库</a></li>
-                        <li><a href="#benchmark" class="text-gray-400 hover:text-tech transition duration-300">ADAS对标库</a></li>
-                        <li><a href="#configurator" class="text-gray-400 hover:text-tech transition duration-300">ADAS配置工具</a></li>
-                        <li><a href="#simulation" class="text-gray-400 hover:text-tech transition duration-300">ADAS仿真平台</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-tech transition duration-300">技术咨询服务</a></li>
+                        <li><a href="#knowledge" class="text-gray-400 hover:text-logobuttom transition duration-300">ADAS知识库</a></li>
+                        <li><a href="#benchmark" class="text-gray-400 hover:text-logobuttom transition duration-300">ADAS对标库</a></li>
+                        <li><a href="#configurator" class="text-gray-400 hover:text-logobuttom transition duration-300">ADAS配置工具</a></li>
+                        <li><a href="#simulation" class="text-gray-400 hover:text-logobuttom transition duration-300">ADAS仿真平台</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-logobuttom transition duration-300">技术咨询服务</a></li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="text-white font-bold mb-6">关于我们</h3>
                     <ul class="space-y-3">
-                        <li><a href="#about" class="text-gray-400 hover:text-tech transition duration-300">公司简介</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-tech transition duration-300">团队介绍</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-tech transition duration-300">合作伙伴</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-tech transition duration-300">新闻动态</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-tech transition duration-300">招贤纳士</a></li>
+                        <li><a href="#about" class="text-gray-400 hover:text-logobuttom transition duration-300">公司简介</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-logobuttom transition duration-300">团队介绍</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-logobuttom transition duration-300">合作伙伴</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-logobuttom transition duration-300">新闻动态</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-logobuttom transition duration-300">招贤纳士</a></li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="text-white font-bold mb-6">联系我们</h3>
                     <ul class="space-y-3">
                         <li class="flex items-start">
-                            <i class="fa fa-map-marker text-tech mt-1 mr-3"></i>
+                            <i class="fa fa-map-marker text-logobuttom mt-1 mr-3"></i>
                             <span class="text-gray-400">北京市海淀区中关村软件园</span>
                         </li>
                         <li class="flex items-start">
-                            <i class="fa fa-phone text-tech mt-1 mr-3"></i>
+                            <i class="fa fa-phone text-logobuttom mt-1 mr-3"></i>
                             <span class="text-gray-400">010-12345678</span>
                         </li>
                         <li class="flex items-start">
-                            <i class="fa fa-envelope text-tech mt-1 mr-3"></i>
+                            <i class="fa fa-envelope text-logobuttom mt-1 mr-3"></i>
                             <span class="text-gray-400">contact@darkertech.com</span>
                         </li>
                     </ul>
                 </div>
             </div>
-            <div class="border-t border-accent/20 pt-8 text-center text-gray-500">
+            <div class="border-t border-logoup/20 pt-8 text-center text-gray-500">
                 <p>&copy; 2023 达客科技（DarkerTech）. 保留所有权利.</p>
             </div>
         </div>
@@ -845,7 +866,7 @@
             document.body.classList.remove('opacity-0');
             
             // 初始化动画元素
-            const animatedElements = document.querySelectorAll('.animate-float, .neon-border');
+            const animatedElements = document.querySelectorAll('.animate-float2, .neon-border');
             animatedElements.forEach(element => {
                 element.style.opacity = '0';
                 element.style.transform = 'translateY(20px)';
@@ -869,5 +890,6 @@
             });
         });
     </script>
+    <script src="/js/load-components.js"></script>
 </body>
 </html>

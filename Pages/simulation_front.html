@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ADAS仿真平台</title>
     <script src="libs/socketio/socket.io.js"></script>
-    <link href="libs/tailwindcss/tailwind.min.css" rel="stylesheet">
+    <!-- <link href="libs/tailwindcss/tailwind.min.css" rel="stylesheet"> -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-
     <script src="libs/threejs/three.min.js"></script>
     <script src="libs/threejs/examples/js/renderers/CSS2DRenderer.js"></script>
     <script src="libs/threejs/examples/js/loaders/GLTFLoader.js"></script>
@@ -34,15 +34,74 @@
     <script src="libs/threejs/examples/js/shaders/BokehShader.js"></script>
 
     <script src="libs/functionlib/modules.js"></script>
-    <script src="../js/load-components.js"></script>
+    <!-- <script src="../js/load-components.js"></script> -->
+
+        <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-gradient {
+                background-clip: text;
+                -webkit-background-clip: text;
+                color: transparent;
+            }
+            .bg-grid {
+                background-image: 
+                    linear-gradient(rgba(97, 255, 202, 0.1) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(123, 97, 255, 0.1) 1px, transparent 1px);
+                background-size: 20px 20px;
+            }
+            .glass-effect {
+                backdrop-filter: blur(10px);
+                background-color: rgba(10, 14, 23, 0.8);
+            }
+        }
+    </style>
 
     <style>
-        
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            background-color: #0A0E17;
+            color: #FFFFFF;
+            overflow-x: hidden;
+        }
+        /* 霓虹边框效果 */
+        .neon-border {
+            box-shadow: 0 0 5px rgba(123, 97, 255, 0.5), 
+                        0 0 10px rgba(123, 97, 255, 0.3),
+                        inset 0 0 5px rgba(123, 97, 255, 0.5);
+            border: 1px solid rgba(123, 97, 255, 0.3);
+        }
+        /* 科技感按钮效果 */
+        .tech-button {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .tech-button::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(123, 97, 255, 0.2), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
         /* 3D仿真容器样式 */
         #simulation-container {
             width: 100%;
             height: 700px;
-            background-color: #222;
+            background-color: #302b2b;
         }
         #simulation-container-adas {
             width: 100%;
@@ -100,57 +159,59 @@
             right: 10px;
             padding: 8px;
             background-color: rgba(0, 0, 0, 0.8);
-            color: white;
+            color: rgb(102, 35, 35);
             font-size: 12px;
             border-radius: 4px;
             z-index: 50;
         }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen font-sans">
-    <div id="navbar-container"></div>
-    <div style="padding-left: 20px; padding-right: 20px; width: 100%; margin: 0 auto; margin-top: 80px;">
 
+<body>
+    <div id="navbar-container"></div>    
+    <div class = "bg-grid" style="padding-left: 20px; padding-right: 20px; width: 100%; margin: 0 auto; margin-top: 80px; background-color: transparent;">
         <!-- 页面标题和状态 -->
+                 <!-- 背景装饰 -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute -top-20 -right-20 w-96 h-96 bg-logoup/20 rounded-full filter blur-3xl"></div>
+            <div class="absolute bottom-10 -left-20 w-64 h-64 bg-logobuttom/20 rounded-full filter blur-3xl"></div>
+        </div>
         <div class="mb-6">
             <div class="flex flex-col md:flex-row md:justify-between md:items-center">
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-800 mb-1">自动驾驶仿真平台</h1>
-                    <p class="text-gray-600 text-sm">实时显示汽车状态参数</p>
+                    <h1 class="text-2xl font-bold text-logoup mb-1">自动驾驶仿真平台</h1>
+                    <p class="text-white text-sm">实时显示汽车状态参数</p>
                 </div>
-                <div id="vision-status" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
-                    <i class="fa fa-circle mr-2 text-yellow-500"></i>视觉连接初始化中
-                </div>
-                <div class="mt-3 md:mt-0 flex items-center">
-                    <span id="connection-status" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
-                        <i class="fa fa-circle mr-2 animate-pulse"></i>连接中
-                    </span>
-                    <span id="data-receive-indicator" class="ml-3 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
-                        <i class="fa fa-circle mr-2 text-gray-500"></i>未接收数据
-                    </span>
-                    <span id="last-update" class="ml-3 text-xs text-gray-500">
-                        最后更新: --
-                    </span>
-                    <div id="file-selection" class="ml-4 flex items-center">
-                        <input type="file" id="map-file" accept=".json" class="p-1 border rounded-md hidden md:block"/>
-                        <p id="file-status" class="text-xs text-gray-600 ml-2">未选择文件</p>
+                <div class="flex flex-col md:flex-row md:justify-between md:items-center mt-3 md:mt-0">
+                    <div id="vision-status" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800 md:mr-4 mb-3 md:mb-0">
+                        <i class="fa fa-circle mr-2 text-yellow-500"></i>感知连接初始化中
+                    </div>
+                    <div id="connection-status" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800 md:mr-4 mb-3 md:mb-0">
+                        <i class="fa fa-circle mr-2 text-yellow-500"></i>控制连接初始化中
+                    </div>
+
+                    <div id="data-receive-indicator" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800 md:mr-4 mb-3 md:mb-0">
+                        <i class="fa fa-circle mr-2 text-yellow-500"></i>未接收数据
+                    </div>
+                    <div class="flex flex-wrap justify-between md:justify-end items-center gap-4">
+                        <span id="last-update" class="text-xs text-gray-500">
+                            最后更新: --
+                        </span>
+                        <div id="file-selection" class="flex items-center">
+                            <input type="file" id="map-file" accept=".json" class="p-1 border rounded-md hidden md:block"/>
+                            <p id="file-status" class="text-xs text-gray-600 ml-2">未选择文件</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
     <!-- 新增汽车仪表盘 -->
-        <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+        <div class="bg-container rounded-xl shadow-md p-6 mb-6">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- 速度表 -->
                 <div class="bg-gray-50 rounded-lg p-4 flex flex-col items-center">
-                    <div class="relative w-24 h-20 flex items-center justify-center mb-2">
-                        <svg class="w-full h-full" viewBox="0 0 100 100">
-                            <!-- 背景圆环 -->
-                            <circle cx="50" cy="50" r="30" fill="none" stroke="#e5e7eb" stroke-width="10" />
-                            <!-- 速度指示器圆环 -->
-                            <circle id="speed-gauge" cx="50" cy="50" r="30" fill="none" stroke="#3b82f6" stroke-width="10" stroke-dasharray="283" stroke-dashoffset="283" transform="rotate(-90 50 50)" />
-                        </svg>
+                    <div class="relative w-24 h-10 flex items-center justify-center mb-2">
                         <div class="absolute text-center">
                             <span id="speed-value" class="text-2xl font-bold text-gray-800">0</span>
                             <span class="text-sm text-gray-600">km/h</span>
@@ -201,12 +262,12 @@
         <!-- 三栏布局容器 -->
         <div class="flex flex-row w-full gap-4 mb-6">
             <!-- 第一部分：键盘控制和相机模式区域 (宽度0.15) -->
-            <div class="bg-white rounded-lg shadow-md p-4 flex flex-col" style="width: 15% !important; height: 700px !important;">
+            <div class="bg-container rounded-lg shadow-md p-4 flex flex-col" style="width: 15% !important; height: 700px !important;">
                 <!-- <h3 class="text-lg font-semibold mb-3">键盘控制</h3> -->
-                <div class="flex justify-center items-center space-x-4 mb-6">
+                <div class="flex justify-center items-center space-x-4 mb-3">
                     <!-- 方向键区域 -->
                     <div class="key-container" style="display: flex; flex-direction: column; align-items: center;">
-                        <div class="text-xs text-gray-500 mb-1">方向键</div>
+                        <div class="text-s text-white mb-1">方向键</div>
                         <div id="key-up" class="key" style="width: 40px; height: 40px; margin: 3px; background: #333; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px;">↑</div>
                         <div style="display: flex;">
                             <div id="key-left" class="key" style="width: 40px; height: 40px; margin: 3px; background: #333; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px;">←</div>
@@ -217,10 +278,10 @@
                 </div>
                 
                 <!-- <h3 class="text-lg font-semibold mb-3">键盘控制</h3> -->
-                <div class="flex justify-center items-center space-y-2 mb-6">
+                <div class="flex justify-center items-center space-y-2 mb-3">
                     <!-- 方向键区域 -->
                     <div class="key-container" style="display: flex; flex-direction: column; align-items: center;">
-                        <div class="text-xs text-gray-500 mb-1">功能按键</div>
+                        <div class="text-s text-white mb-1">功能按键</div>
                         <div id="key-x" class="key" style="width: 130px; height: 40px; margin: 3px; background: #333; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px;">X  [激活ADAS]</div>
                         <div id="key-f" class="key" style="width: 130px; height: 40px; margin: 3px; background: #333; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px;">F  [开启融合定位]</div>
                         <div id="key-q" class="key" style="width: 130px; height: 40px; margin: 3px; background: #333; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px;">Q  [暂停仿真]</div>
@@ -228,7 +289,7 @@
                 </div>
 
                 <h3 class="text-lg font-semibold mb-3">相机模式</h3>
-                <div class="flex flex-col space-y-3">
+                <div class="flex flex-col space-y-3 mb-3">
                     <label class="inline-flex items-center text-sm">
                         <input type="radio" name="cameraMode" value="free" class="form-radio text-blue-600">
                         <span class="ml-2">自由模式</span>
@@ -257,15 +318,13 @@
                         <button type="button" id="day-mode" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-l-lg hover:bg-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:text-white">
                             白天
                         </button>
-                        <button type="button" id="night-mode" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border-t border-b border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:text-blue-700 rounded-r-lg">
+                        <button type="button" id="night-mode" class="mr-4 px-4 py-2 text-sm font-medium text-gray-700 bg-white border-t border-b border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:text-blue-700 rounded-r-lg">
                             夜晚
                         </button>
-                    </div>
-                </div>
-                                <div class="px-2 mt-4">
-                    <button type="button" id="toggle-special-weather" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:text-white">
+                        <button type="button" id="toggle-special-weather" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:text-white">
                         开启特殊天气
-                    </button>
+                        </button>
+                    </div>
                 </div>
                 <div class="px-2 mt-4">
                     <h3 class="text-lg font-semibold mb-3">特殊天气选择</h3>
@@ -298,12 +357,13 @@
         </div>
         <!-- 使用内联style属性设置自定义高度 -->
         <div class="mt-4">
-            <h3 class="text-lg font-semibold mb-2">CV检测视图</h3>
-            <div id="cv-video-container" class="rounded-xl shadow-md overflow-hidden w-full bg-gray-900 relative" style="height: 600px;"></div>
+            <div id="cv-video-container" class="rounded-xl shadow-md overflow-hidden w-full bg-box relative" style="height: 600px;"></div>
         </div>
     </div>
+    
     <script src="libs/Animation.js"></script>
-    <!-- <script src="../js/load-components.js"></script> -->
+    <script src="../js/load-components.js"></script>
+
 </body>
 </html>
     

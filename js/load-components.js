@@ -78,6 +78,13 @@ tailwind.config = {
                 'neon-yellow': '#feca57',
                 'light-blue':'#00f0ff',
                 'light2-blue':'#00f0f8',
+                colorpri: '#0A0E17',
+                colorsec: '#1A1F2B',
+                logoup: '#7B61FF',
+                logobuttom: '#14F191',
+                darkAccent: '#0F172A',
+                container:'#00ffea7a',
+                box:'#302b2b',
             },
             fontFamily: {
                 inter: ['Inter', 'sans-serif'],
@@ -90,6 +97,7 @@ tailwind.config = {
                 'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                 'glow': 'glow 2s ease-in-out infinite alternate',
                 'float': 'float 6s ease-in-out infinite',
+                'float2': 'float 3s ease-in-out infinite',
             },
             boxShadow: {
                 'card': '0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03)',
