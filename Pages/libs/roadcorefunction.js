@@ -1,5 +1,5 @@
 
-        // 全局变量
+// 全局变量
         let currentMode = 'road'; // 当前模式：road 或 object 或 intersection
         let mainMode = 'generator'; // 主模式：generator 或 modifier
         let startPoint = null; // 道路起点
@@ -157,10 +157,155 @@
             // document.getElementById('save-map-btn').addEventListener('click', saveMapScene);
             document.getElementById('load-map-btn').addEventListener('click', loadMapScene);
             document.getElementById('map-file-input').addEventListener('change', handleMapFileSelect);
+            // 添加加载成品模板按钮的事件监听器
+            document.getElementById('load-template-btn').addEventListener('click', loadTemplate);
                         
             
-            // 键盘事件监听
-            document.addEventListener('keydown', handleKeyDown);
+            // 加载成品模板功能
+        function loadTemplate() {
+            // 获取模板文件列表
+            getTemplateFiles().then(templateFiles => {
+                createTemplateSelectionDialog(templateFiles);
+            }).catch(error => {
+                console.error('获取模板文件列表失败:', error);
+                // 使用备用的硬编码文件列表
+                const fallbackTemplateFiles = [
+                    'DroneIntersection_project.json',
+                    'For3D_project.json',
+                    'HighwayEntrance_project.json'
+                ];
+                showNotification('无法动态获取模板文件列表，使用默认模板', 'warning');
+                createTemplateSelectionDialog(fallbackTemplateFiles);
+            });
+        }
+        
+        // 获取MapProjectFile文件夹中的JSON文件列表
+        async function getTemplateFiles() {
+            try {
+                // 注意：在浏览器环境中，由于安全限制，JavaScript无法直接访问本地文件系统
+                // 这里模拟通过后端API获取文件列表
+                // 在实际项目中，需要后端提供一个API端点来列出文件夹内容
+                const response = await fetch('../../MapProjectFile/');
+                
+                // 检查响应是否成功
+                if (!response.ok) {
+                    // 如果直接访问文件夹失败，可能是因为服务器配置不允许目录列表
+                    // 抛出错误，让调用者使用备用列表
+                    throw new Error('无法访问文件夹内容');
+                }
+                
+                // 假设响应包含文件列表的HTML或JSON
+                // 这里模拟解析HTML响应，提取.json文件
+                const html = await response.text();
+                const templateFiles = [];
+                
+                // 简单的正则表达式来匹配JSON文件名
+                // 注意：这只是一个基本示例，实际的HTML解析可能需要更复杂的逻辑
+                const jsonFileRegex = /href="([^"]+\.json)"/g;
+                let match;
+                while ((match = jsonFileRegex.exec(html)) !== null) {
+                    let fileName = match[1];
+                    // 移除路径前缀，只保留文件名
+                    // 检查是否包含/MapProjectFile/前缀
+                    if (fileName.includes('/MapProjectFile/')) {
+                        fileName = fileName.split('/MapProjectFile/')[1];
+                    }
+                    // 也可以使用basename函数获取文件名
+                    fileName = fileName.split('/').pop();
+                    
+                    // 只添加以_project.json结尾的文件（如果需要筛选）
+                    if (fileName.endsWith('_project.json')) {
+                        templateFiles.push(fileName);
+                    }
+                }
+                
+                return templateFiles;
+            } catch (error) {
+                console.error('获取模板文件列表出错:', error);
+                throw error;
+            }
+        }
+        
+        // 创建模板选择弹窗
+        function createTemplateSelectionDialog(files) {
+            // 检查是否已存在弹窗，如果有则移除
+            const existingDialog = document.getElementById('template-selection-dialog');
+            if (existingDialog) {
+                existingDialog.remove();
+            }
+            
+            // 创建弹窗容器
+            const dialogContainer = document.createElement('div');
+            dialogContainer.id = 'template-selection-dialog';
+            dialogContainer.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center';
+            
+            // 弹窗内容
+            dialogContainer.innerHTML = `
+                <div class="bg-white rounded-lg shadow-xl w-full max-w-md overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">选择成品模板</h3>
+                    </div>
+                    <div class="px-6 py-4 max-h-96 overflow-y-auto">
+                        <ul class="space-y-2">
+                            ${files.map((file, index) => `
+                                <li>
+                                    <label class="flex items-center p-2 hover:bg-gray-100 rounded cursor-pointer">
+                                        <input type="radio" name="template" value="${file}" class="mr-3" ${index === 0 ? 'checked' : ''}>
+                                        <span style="color: black;">${file}</span>
+                                    </label>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                    <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 flex justify-end space-x-3">
+                        <button id="cancel-template-selection" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                            取消
+                        </button>
+                        <button id="confirm-template-selection" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90">
+                            确定
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // 添加到文档中
+            document.body.appendChild(dialogContainer);
+            
+            // 绑定取消按钮事件
+            document.getElementById('cancel-template-selection').addEventListener('click', () => {
+                dialogContainer.remove();
+            });
+            
+            // 绑定确定按钮事件
+            document.getElementById('confirm-template-selection').addEventListener('click', () => {
+                const selectedTemplate = document.querySelector('input[name="template"]:checked').value;
+                loadSelectedTemplate(selectedTemplate);
+                
+                dialogContainer.remove();
+            });
+        }
+        
+        // 加载选中的模板
+        function loadSelectedTemplate(templateFileName) {
+            // 在实际环境中，这里应该使用fetch请求来获取模板文件内容
+            // 由于这是前端演示，我们模拟加载过程
+            
+            // 显示加载状态
+            showNotification(`正在加载模板: ${templateFileName}`, 'info');
+            loadMapTemplate(templateFileName);
+            // // 模拟异步加载过程
+            // setTimeout(() => {
+            //     // 在实际项目中，这里应该是实际加载模板文件的逻辑
+            //     // 例如：fetch(`../MapProjectFile/${templateFileName}`)...
+                
+            //     // 模拟加载成功
+            //     showNotification(`模板 ${templateFileName} 加载成功`, 'success');
+            //     console.log(`用户选择的模板文件: ${templateFileName}`);
+                
+            //     // 这里可以添加实际加载模板文件的逻辑，类似于handleMapFileSelect函数
+            //     // 由于是演示，我们只打印选中的文件名
+            // }, 1000);
+        }
 
                 // 添加物体类型选择按钮事件监听
             const objectTypeButtons = document.querySelectorAll('.object-type-button');
@@ -297,6 +442,52 @@
         function loadMapScene() {
             // 触发文件选择对话框
             document.getElementById('map-file-input').click();
+        }
+        
+        // 加载选中的模板
+        function loadSelectedTemplate(templateFileName) {
+            // 显示加载状态
+            showNotification(`正在加载模板: ${templateFileName}`, 'info');
+            
+            // 构建模板文件的路径
+            const templateFilePath = `../../MapProjectFile/${templateFileName}`;
+            
+            // 使用fetch获取模板文件内容
+            fetch(templateFilePath)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`网络响应错误: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(mapSceneData => {
+                    // 检查文件格式是否正确
+                    if (!mapSceneData || mapSceneData.DataType !== 'MapProject') {
+                        showNotification('加载模板失败，请检查文件格式', 'error');
+                        return;
+                    }
+                    
+                    // 清空现有数据
+                    clearMap();
+                    
+                    // 导入数据
+                    importMapSceneData(mapSceneData);
+                    
+                    // 重新绘制所有道路
+                    redrawAllRoads();
+                    
+                    // 更新UI
+                    updateRoadInfo();
+                    updateEndpointHints();
+                    
+                    // 显示成功提示
+                    showNotification(`模板 ${templateFileName} 加载成功`, 'success');
+                    console.log(`用户选择的模板文件: ${templateFileName}`);
+                })
+                .catch(error => {
+                    console.error('加载模板文件失败:', error);
+                    showNotification(`加载模板失败: ${error.message}`, 'error');
+                });
         }
         // 修复drawZebraCrossing函数，实现完全自适应道路宽度的斑马线
         function drawZebraCrossing(road, roadGroup, centerLinePointsUnshift, direction, yellowLineMarker, gap,shifting) {
@@ -1289,6 +1480,38 @@
             event.target.value = '';
             }
 
+        function loadMapTemplate(templateName){
+            const templatePath = `../../MapProjectFile/${templateName}`;
+            console.log(templatePath);
+            fetch(templatePath)
+            .then(response => response.json())
+            .then(mapSceneData => {
+                if (mapSceneData.DataType !== 'MapProject'){
+                    showNotification('加载地图文件失败，请检查文件格式,文件类型必须为XXX_Project', 'error');
+                    return;
+                }
+                // 清空现有数据
+                clearMap();
+                
+                // 导入数据
+                importMapSceneData(mapSceneData);
+                
+                // 重新绘制所有道路
+                redrawAllRoads();
+                
+                // 更新UI
+                updateRoadInfo();
+                updateEndpointHints();
+                
+                // 显示成功提示
+                showNotification('成品模板加载成功', 'success');
+                })
+            .catch(error => {
+                console.error('加载成品模板失败:', error);
+                showNotification('加载成品模板失败，请检查文件格式', 'error');
+                });
+        }
+            
         // 清空所有数据
         function clearAllData() {
             // 清空roads数组
@@ -3942,7 +4165,7 @@
                 modifierModeButton.classList.add('option-active');
                 modifierModeButton.classList.remove('border-gray-200', 'hover:border-primary/50', 'hover:bg-primary/5');
                 generatorModeButton.classList.remove('option-active');
-                generatorModeButton.classList.add('border-gray-200', 'hover:border-primary/50', 'hover:bg-primary/5');
+                generatorModeButton.classList.add('border-gray-200', 'hover:border-primary/50', 'hover:bg-primary/5', 'text-gray-700');
                 editModeContainer.classList.add('hidden');
                 parameterPanel.classList.remove('hidden');
                 roadInfoPanel.classList.add('hidden');

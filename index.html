@@ -824,7 +824,7 @@
             </div>
         </div>
     </footer>
-
+    <script src="../js/ipcontroller.js"></script>   
     <!-- JavaScript -->
     <script>
         let issue_number = 0;
@@ -881,7 +881,8 @@
 
 
         function addnewissue(name,message,subject,email){
-            fetch('/api/add_issue',{
+            command = ip + '/add_issue'
+            fetch(command,{
                 method:'POST',
                 headers:{
                     'Content-Type':'application/json'
@@ -905,7 +906,8 @@
         }
 
         function addnewadvice(name,message,subject,email){
-            fetch('/api/add_advice',{
+            command = ip + '/add_advice'
+            fetch(command,{
                 method:'POST',
                 headers:{
                     'Content-Type':'application/json'
@@ -931,7 +933,8 @@
 
 
         function getissuecount(){
-            fetch('/api/get_issue_number',{
+            command = ip + '/get_issue_number'
+            fetch(command,{
                 method:'POST',
                 headers:{
                     'Content-Type':'application/json'
@@ -946,7 +949,8 @@
             })
         }
         function getadvicecount(){
-            fetch('/api/get_advice_number',{
+            command = ip + '/get_advice_number'
+            fetch(command,{
                 method:'POST',
                 headers:{
                     'Content-Type':'application/json'

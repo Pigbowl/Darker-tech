@@ -203,9 +203,6 @@
                         <button id="clear-map" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-all duration-300 flex items-center">
                             <i class="fa fa-trash mr-2"></i>清空地图
                         </button>
-                        <!-- <button id="save-canvas" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-all duration-300 flex items-center">
-                            <i class="fa fa-image mr-2"></i>保存地图数据
-                        </button> -->
 
                         <button id="reset-scale" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-all duration-300 flex items-center">
                             <i class="fa fa-gear mr-2"></i>重置比例尺
@@ -215,14 +212,17 @@
                             <i class="fa fa-save mr-1"></i> 保存地图项目
                         </button>
                         <button id="load-map-btn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
-                            <i class="fa fa-load mr-1"></i> 加载项目
+                            <i class="fa fa-load mr-1"></i> 加载个人项目
+                        </button>
+                        <button id="load-template-btn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
+                            <i class="fa fa-load mr-1"></i> 加载成品模板
                         </button>
                         <input type="file" id="map-file-input" accept=".json" class="hidden">
                         <button id="save-canvas" class="px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg transition-all duration-300 flex items-center ml-auto">
                             <i class="fa fa-download mr-2"></i>导出地图结果
                         </button>
                     </div>
-                </div>
+                </div>·
                 
                 <!-- 右侧选项器 -->
                 <div class="w-full lg:w-80">
@@ -236,10 +236,10 @@
                             <h3 class="text-sm font-medium text-gray-500 mb-2">主模式</h3>
                             <div class="flex space-x-2">
                                 <button id="generator-mode" class="flex-1 px-3 py-2 border rounded-lg transition-all duration-300 option-active">
-                                    <i class="fa fa-plus-circle mr-1"></i>生成器
+                                    <i class="fa fa-plus-circle mr-1"></i>绘制模式
                                 </button>
                                 <button id="modifier-mode" class="flex-1 px-3 py-2 border border-gray-200 text-gray-700 rounded-lg transition-all duration-300 hover:border-primary/50 hover:bg-primary/5">
-                                    <i class="fa fa-wrench mr-1"></i>编辑器
+                                    <i class="fa fa-wrench mr-1"></i>编辑模式
                                 </button>
                             </div>
                         </div>

@@ -682,6 +682,7 @@
     </div>
     
     <!-- JavaScript -->
+    <script src="../js/ipcontroller.js"></script>
     <script>
         // 认证信息
         const VALID_USERNAME = 'Admin';
@@ -809,7 +810,8 @@
         const adviceCustomDateRange = document.getElementById('advice-custom-date-range');
 
         function getalladvice(){
-            fetch('/api/get_all_advice',{
+            command = ip + '/get_all_advice'
+            fetch(command,{
                 method:'POST',
                 headers:{
                     'Content-Type':'application/json'
@@ -1237,7 +1239,8 @@
         }
         
         function getsitebasicinfo(){
-            fetch('/api/get_all_issue',{
+            command = ip + '/get_all_issue'
+            fetch(command,{
                 method:'POST',
                 headers:{
                     'Content-Type':'application/json'
@@ -1742,7 +1745,8 @@
         }
 
         function modifyIssueinDatabase(issue){
-            fetch('/api/manage_issue',{
+            command = ip + '/manage_issue'
+            fetch(command,{
                 method:'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1756,8 +1760,8 @@
         }
 
         function modifyAdviceinDatabase(advice){
-            console.log(advice)
-            fetch('/api/manage_advice',{
+            command = ip + '/manage_advice'
+            fetch(command,{
                 method:'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -116,8 +116,9 @@
         <div id="footer-container"></div>   
     </div>
             
-    
-    <!-- 粒子背景脚本 -->
+        <!-- 粒子背景脚本 -->
+    <script src="../js/particles.js"></script>
+    <script src="../js/ipcontroller.js"></script>
     <script>    
         
         let netinitstatus = 0
@@ -129,7 +130,8 @@
             getdropdowninfo()
 
             function getdropdowninfo() {
-                fetch('/api/init_config_func', {
+                command = ip + '/init_config_func'
+                fetch(command, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -163,7 +165,8 @@
 
         })
         
-        fetch('/api/fbsnetinit',{
+        command = ip + '/fbsnetinit'
+        fetch(command,{
                 method:'POST',
                 headers:{
                     'Content-Type':'application/json'
@@ -247,7 +250,8 @@
 
             function launchfbsfinding(){
                 const fbsfindinginput = mainDropdowntext.textContent
-                fetch('/api/fbssearching',{
+                command = ip + '/fbssearching'
+                fetch(command,{
                     method: 'POST',
                     headers:{
                         'Content-Type': 'application/json'

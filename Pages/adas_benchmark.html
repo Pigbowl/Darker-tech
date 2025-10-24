@@ -373,6 +373,7 @@
         <div id="footer-container"></div>   
     </div>
     <!-- JavaScript -->
+    <script src="../js/ipcontroller.js"></script>
     <script>
         // 初始化图表
         document.addEventListener('DOMContentLoaded', function() {
@@ -637,8 +638,8 @@
             function loadProducts(){    //初始化加载数据库
                 // 显示加载状态
                 document.getElementById('product-grid').innerHTML = '<div class="col-span-full text-center py-10"><i class="fa fa-spinner fa-spin text-primary text-3xl"></i></div>';
-
-                fetch('/api/launchtrying',{
+                command = ip + '/launchtrying'
+                fetch(command,{
                     method:'POST',
                     headers:{
                         'Content-Type':'application/json'

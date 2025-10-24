@@ -779,6 +779,7 @@ body {
 /* 未选中按钮背景 */
 .tab-btn:not(.active) {
     background: linear-gradient(to bottom, #e5e7eb 0%, #dcdde1 100%);
+    color: #000000;
 }
 /* 选中按钮样式 */
 .tab-btn.active {
