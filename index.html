@@ -7,42 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
-    
-    <!-- Tailwind配置 -->
-    <!-- <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        colorpri: '#0A0E17',
-                        colorsec: '#1A1F2B',
-                        logoup: '#7B61FF',
-                        logobuttom: '#14F191',
-                        darkAccent: '#0F172A',
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif'],
-                    },
-                    animation: {
-                        'float2': 'float 3s ease-in-out infinite',
-                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'glow': 'glow 2s ease-in-out infinite alternate',
-                    },
-                    keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-10px)' },
-                        },
-                        glow: {
-                            '0%': { textShadow: '0 0 5px rgba(20, 241, 149, 0.5)' },
-                            '100%': { textShadow: '0 0 20px rgba(20, 241, 149, 0.8), 0 0 30px rgba(20, 241, 149, 0.6)' },
-                        },
-                    },
-                }
-            }
-        }
-    </script> -->
-    
+        
     <!-- 自定义工具类 -->
     <style type="text/tailwindcss">
         @layer utilities {
@@ -542,10 +507,10 @@
                     </div>
                     <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold mb-6">DarkerTech</h2>
                     <p class="text-gray-300 mb-6">
-                        达客科技（DarkerTech）成立于2018年，是一家专注于智能驾驶和ADAS技术研发的高科技企业。我们致力于为汽车行业提供全方位的ADAS解决方案，包括知识库、对标分析、系统配置和仿真验证等服务。
+                        达客科技（DarkerTech）与2025年10月份正式上线，是一个提供ADAS知识，自动化开发工具的平台。我们致力于为提升ADAS行业的发开效率，降低学习成本，提供自动化工具，包括知识库、对标分析、系统配置和仿真验证等服务。
                     </p>
                     <p class="text-gray-300 mb-8">
-                        公司核心团队来自国内外知名汽车厂商、科技公司和研究机构，拥有丰富的ADAS研发和产业化经验。我们以"推动智能驾驶技术创新，提升汽车安全性能"为使命，不断探索前沿技术，为客户创造价值。
+                        服务平台核心团队来自国内外知名汽车厂商、科技公司和研究机构，拥有丰富的ADAS研发和产业化经验。我们以"推动智能驾驶技术创新，简化ADAS开发流程"为使命，不断探索前沿技术，为客户创造价值。
                     </p>
                     <div class="grid grid-cols-2 gap-6 mb-8">
                         <div>
@@ -603,8 +568,17 @@
                             <input type="email" id="email" name="email" required class="w-full bg-colorpri/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-logobuttom transition duration-300">
                         </div>
                         <div class="mb-6">
+                            <label for="contactType" class="block text-gray-300 mb-2">类型</label>
+                            <select id="contactType" name="contactType" class="w-full bg-colorpri/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-logobuttom transition duration-300">
+                                <option value="suggestion">意见建议</option>
+                                <option value="issue">问题提报</option>
+                            </select>
+                        </div>
+                        <div class="mb-6">
                             <label for="subject" class="block text-gray-300 mb-2">主题</label>
-                            <input type="text" id="subject" name="subject" class="w-full bg-colorpri/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-logobuttom transition duration-300">
+                            <select id="subject" name="subject" class="w-full bg-colorpri/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-logobuttom transition duration-300">
+                                <option value="general">通用选项</option>
+                            </select>
                         </div>
                         <div class="mb-6">
                             <label for="message" class="block text-gray-300 mb-2">留言内容</label>
@@ -614,6 +588,50 @@
                             提交信息
                         </button>
                     </form>
+                    
+                    <script>
+                        // 处理联系类型变更，动态更新主题选项
+                        document.getElementById('contactType').addEventListener('change', function() {
+                            const subjectSelect = document.getElementById('subject');
+                            const contactType = this.value;
+                            
+                            // 清空现有选项
+                            subjectSelect.innerHTML = '';
+                            
+                            if (contactType === 'issue') {
+                                // 问题提报类型，添加所有页面选项
+                                const options = [
+                                    { value: 'general', text: '通用选项' },
+                                    { value: 'adas_knowledge', text: 'ADAS知识库' },
+                                    { value: 'adas_benchmark', text: 'ADAS对标库' },
+                                    { value: 'configurator', text: '配置工具' },
+                                    { value: 'simulation', text: '仿真平台' },
+                                    { value: 'road_builder', text: '环境生成器' },
+                                    { value: 'fov_builder', text: '传感器配置器' }
+                                ];
+                                
+                                options.forEach(option => {
+                                    const opt = document.createElement('option');
+                                    opt.value = option.value;
+                                    opt.textContent = option.text;
+                                    subjectSelect.appendChild(opt);
+                                });
+                            } else {
+                                // 意见建议类型，只显示通用选项
+                                const opt = document.createElement('option');
+                                opt.value = 'general';
+                                opt.textContent = '通用选项';
+                                subjectSelect.appendChild(opt);
+                            }
+                        });
+                        
+                        // 页面加载时初始化主题选项（默认是意见建议）
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const contactType = document.getElementById('contactType');
+                            // 触发change事件以正确设置初始选项
+                            contactType.dispatchEvent(new Event('change'));
+                        });
+                    </script>
                     <!-- 提交成功提示 -->
                     <div id="successMessage" class="hidden fixed top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-darkAccent p-6 rounded-xl neon-border z-50">
                         <div class="text-center">
@@ -718,10 +736,11 @@
                     // 表单提交处理
                     document.getElementById('contactForm').addEventListener('submit', function(e) {
                         e.preventDefault();
-                        
+
                         // 表单验证
                         const name = document.getElementById('name').value;
                         const email = document.getElementById('email').value;
+                        const contactType = document.getElementById('contactType').value;
                         const message = document.getElementById('message').value;
                         const subject = document.getElementById('subject').value || '网站留言';
                         
@@ -736,27 +755,25 @@
                             alert('请输入有效的邮箱地址');
                             return;
                         }
+                        if (contactType === 'issue') {
+                            addnewissue(name,message,subject,email);
+                        }
                         
                         // 构建邮件内容
-                        const body = `
-姓名: ${name}
-邮箱: ${email}
-主题: ${subject}
-留言内容:
-${message}
-                        `.trim();
+//                         const body = `
+// 姓名: ${name}
+// 邮箱: ${email}
+// 主题: ${subject}
+// 留言内容:
+// ${message}
+//                         `.trim();
                         
-                        // 使用mailto打开邮件客户端
-                        const mailtoLink = `mailto:1273880613@qq.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+//                         // 使用mailto打开邮件客户端
+//                         const mailtoLink = `mailto:1273880613@qq.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
                         
-                        // 尝试打开邮件客户端
-                        window.location.href = mailtoLink;
-                        
-                        // 显示提交成功消息
-                        setTimeout(() => {
-                            document.getElementById('successMessage').classList.remove('hidden');
-                            document.getElementById('contactForm').reset();
-                        }, 500);
+//                         // 尝试打开邮件客户端
+//                         window.location.href = mailtoLink;
+                    
                     });
                     
                     // 关闭成功消息
@@ -789,7 +806,7 @@ ${message}
                     <ul class="space-y-3">
                         <li class="flex items-start">
                             <i class="fa fa-map-marker text-logobuttom mt-1 mr-3"></i>
-                            <span class="text-gray-400">北京市海淀区中关村软件园</span>
+                            <span class="text-gray-400">上海市松江区恒泽路58弄</span>
                         </li>
                         <li class="flex items-start">
                             <i class="fa fa-phone text-logobuttom mt-1 mr-3"></i>
@@ -810,7 +827,10 @@ ${message}
 
     <!-- JavaScript -->
     <script>
+        let issue_number = 0;
+        let advice_number = 0;
         // 移动端菜单切换
+        getissuecount();
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
         
@@ -858,7 +878,88 @@ ${message}
                 }
             });
         });
-        
+
+
+        function addnewissue(name,message,subject,email){
+            fetch('http://47.99.204.97:5000/add_issue',{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({
+                    'issue':     {
+                        "id": "ISSUE-"+issue_number,
+                        "title": subject,
+                        "description": message,
+                        "submit_time": new Date().toISOString(),
+                        "submit_email": email,
+                        "submitter_name": name,
+                        },
+                    })
+            }).then(response=>response.json()).then(data=>{
+                if(data.success){
+                        document.getElementById('successMessage').classList.remove('hidden');
+                        document.getElementById('contactForm').reset();
+                }
+            })
+        }
+
+        function addnewadvice(name,message,subject,email){
+            fetch('http://47.99.204.97:5000/add_advice',{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({
+                    'issue':     {
+                        "id": "ADVICE-"+advice_number,
+                        "title": subject,
+                        "description": message,
+                        "submit_time": new Date().toISOString(),
+                        "submit_email": email,
+                        "submitter_name": name,
+                        },
+                    })
+            }).then(response=>response.json()).then(data=>{
+                if(data.success){
+                        document.getElementById('successMessage').classList.remove('hidden');
+                        document.getElementById('contactForm').reset();
+                }
+            })
+
+        }
+
+
+        function getissuecount(){
+            fetch('http://47.99.204.97:5000/get_issue_number',{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({
+                    'req':'none',
+                    })
+            }).then(response=>response.json()).then(data=>{
+                if(data.success){
+                    issue_number = JSON.parse(data.output)+1;
+                }
+            })
+        }
+        function getadvicecount(){
+            fetch('http://47.99.204.97:5000/get_advice_number',{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({
+                    'req':'none',
+                    })
+            }).then(response=>response.json()).then(data=>{
+                if(data.success){
+                    advice_number = JSON.parse(data.output)+1;
+                }
+            })
+        }
         // 页面加载动画
         document.addEventListener('DOMContentLoaded', () => {
             // 淡入效果
@@ -888,7 +989,10 @@ ${message}
             animatedElements.forEach(element => {
                 observer.observe(element);
             });
-        });
+
+        }
+        
+    );
     </script>
     <script src="/js/load-components.js"></script>
 </body>

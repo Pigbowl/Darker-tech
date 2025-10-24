@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>站点管理后台 - Darker-tech</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 配置Tailwind自定义颜色和字体 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#00e5ff',
+                        secondary: '#673ab7',
+                        darkAccent: '#1a1a2e',
+                        logobuttom: '#0a9396',
+                        dark: '#0f0f1a',
+                        neon: '#00e5ff',
+                        issue: '#acbd2e',
+                        advice: '#1243d8',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .neon-border {
+                box-shadow: 0 0 5px #00e5ff, 0 0 10px rgba(0, 229, 255, 0.5);
+            }
+            .issue-border {
+                box-shadow: 0 0 5px #acbd2e, 0 0 10px #acbd2e;
+            }
+            .advice-border {
+                box-shadow: 0 0 5px #1243d8, 0 0 10px #1243d8;
+            }
+            .cyber-bg {
+                background-color: #0f0f1a;
+                background-image: 
+                    linear-gradient(rgba(10, 147, 150, 0.05) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(10, 147, 150, 0.05) 1px, transparent 1px);
+                background-size: 20px 20px;
+            }
+            .glass-effect {
+                backdrop-filter: blur(10px);
+                background-color: rgba(17, 24, 39, 0.8);
+            }
+            .animate-pulse-slow {
+                animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            }
+        }
+    </style>
+</head>
+<body class="cyber-bg text-gray-100 font-inter min-h-screen flex flex-col">
+    <!-- 登录界面容器 -->
+    <div id="login-container" class="min-h-screen flex items-center justify-center p-4">
+        <div class="glass-effect rounded-lg p-8 w-full max-w-md neon-border">
+            <a href="../../index.html" class="text-white hover:text-logobuttom transition-colors duration-300">返回首页</a>
+            <div class="text-center mb-8">
+                <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-neon">
+                    <i class="fa fa-cogs mr-2"></i>站点管理后台
+                </h2>
+                <p class="text-gray-400 mt-2">请输入管理员凭据</p>
+                
+            </div>
+            
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-300 mb-1">用户名</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                            <i class="fa fa-user"></i>
+                        </span>
+                        <input type="text" id="username" 
+                               class="block w-full pl-10 pr-3 py-2 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-neon focus:border-transparent text-gray-100" 
+                               placeholder="输入用户名">
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-300 mb-1">密码</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                            <i class="fa fa-lock"></i>
+                        </span>
+                        <input type="password" id="password" 
+                               class="block w-full pl-10 pr-3 py-2 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-neon focus:border-transparent text-gray-100" 
+                               placeholder="输入密码">
+                    </div>
+                </div>
+                
+                <div class="text-red-500 text-sm hidden" id="error-message">
+                    用户名或密码错误，请重试
+                </div>
+                
+                <button type="submit" 
+                        class="w-full bg-neon hover:bg-primary/80 text-dark font-bold py-3 px-4 rounded transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center">
+                    <i class="fa fa-sign-in mr-2"></i>登录
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 仪表板容器（默认隐藏） -->
+    <div id="dashboard-container" class="hidden flex flex-col min-h-screen">
+        <!-- 顶部导航栏 -->
+        <header class="glass-effect border-b border-gray-800 sticky top-0 z-50">
+            <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fa fa-cogs text-neon text-2xl"></i>
+                    <h1 class="text-xl font-bold text-white">站点管理后台</h1>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <a href="../../index.html" class="text-white hover:text-logobuttom transition-colors duration-300">首页</a>
+                    <div class="hidden md:flex items-center space-x-2 text-sm text-gray-400">
+                        <i class="fa fa-user-circle-o text-neon"></i>
+                        <span>Admin</span>
+                    </div>
+                    <button id="logout-btn" class="text-gray-300 hover:text-neon transition-colors">
+                        <i class="fa fa-sign-out text-xl"></i>
+                    </button>
+                    
+                </div>
+            </div>
+        </header>
+        
+        <!-- 主要内容区域 -->
+        <main class="flex-grow container mx-auto px-4 py-8">
+            <!-- 统计卡片 -->
+            <section class="mb-10">
+                <h2 class="text-[clamp(1.25rem,2vw,1.75rem)] font-bold mb-6 flex items-center">
+                    <i class="fa fa-bar-chart text-neon mr-2"></i>站点统计
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+                    <!-- 访问次数卡片 -->
+                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02]">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-400 text-sm">总访问次数</p>
+                                <h3 id="visit-count" class="text-3xl font-bold mt-2 text-neon">--</h3>
+                            </div>
+                            <div class="p-3 bg-neon/10 rounded-full">
+                                <i class="fa fa-eye text-neon text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center text-sm">
+                            <span class="text-green-400 flex items-center">
+                                <i class="fa fa-arrow-up mr-1"></i> 12%
+                            </span>
+                            <span class="text-gray-500 ml-2">相比上月</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 问题总数卡片 -->
+                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02]">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-400 text-sm">问题总数</p>
+                                <h3 id="total-issues" class="text-3xl font-bold mt-2 text-primary">--</h3>
+                            </div>
+                            <div class="p-3 bg-primary/10 rounded-full">
+                                <i class="fa fa-question-circle text-primary text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center text-sm">
+                            <span class="text-blue-400 flex items-center">
+                                <i class="fa fa-info-circle mr-1"></i> 查看详情
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- 处理中的问题卡片 -->
+                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02]">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-400 text-sm">处理中的问题</p>
+                                <h3 id="inwork-issues" class="text-3xl font-bold mt-2 text-yellow-400">--</h3>
+                            </div>
+                            <div class="p-3 bg-yellow-400/10 rounded-full">
+                                <i class="fa fa-clock-o text-yellow-400 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center text-sm">
+                            <span class="text-yellow-400 flex items-center">
+                                <i class="fa fa-exclamation-triangle mr-1"></i> 需要处理
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- 待处理问题卡片 -->
+                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02]">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-400 text-sm">待处理的问题</p>
+                                <h3 id="pending-issues" class="text-3xl font-bold mt-2 text-red-400">--</h3>
+                            </div>
+                            <div class="p-3 bg-red-400/10 rounded-full">
+                                <i class="fa fa-clock-o text-red-400 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center text-sm">
+                            <span class="text-red-400 flex items-center">
+                                <i class="fa fa-exclamation-triangle mr-1"></i> 需要处理
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- 已解决问题卡片 -->
+                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02]">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-400 text-sm">已解决问题</p>
+                                <h3 id="resolved-issues" class="text-3xl font-bold mt-2 text-green-400">--</h3>
+                            </div>
+                            <div class="p-3 bg-green-400/10 rounded-full">
+                                <i class="fa fa-check-circle text-green-400 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center text-sm">
+                            <span class="text-green-400 flex items-center">
+                                <i class="fa fa-arrow-up mr-1"></i> 8%
+                            </span>
+                            <span class="text-gray-500 ml-2">相比上月</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 问题列表 -->
+            <section>
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <h2 class="text-[clamp(1.25rem,2vw,1.75rem)] font-bold flex items-center">
+                        <i class="fa fa-list-alt text-issue mr-2"></i>问题列表
+                    </h2>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <button id="filter-toggle" class="px-4 py-2 border border-gray-700 text-gray-300 hover:text-neon hover:border-neon rounded transition-all flex items-center">
+                            <i class="fa fa-filter mr-2"></i>筛选
+                        </button>
+                        <button id="clear-filters" class="px-4 py-2 border border-gray-700 text-gray-300 hover:text-neon hover:border-neon rounded transition-all flex items-center hidden">
+                            <i class="fa fa-times mr-2"></i>清除筛选
+                        </button>
+                        <!-- <button id="add-issue-btn" class="px-4 py-2 bg-neon hover:bg-primary/80 text-dark font-medium rounded transition-all flex items-center">
+                            <i class="fa fa-plus mr-2"></i>添加问题
+                        </button> -->
+                    </div>
+                </div>
+                
+                <!-- 筛选条件面板 -->
+                <div id="filter-panel" class="glass-effect rounded-lg p-6 mb-4 issue-border hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <!-- 问题ID筛选 -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">问题ID</label>
+                            <div class="flex flex-wrap gap-2" id="id-filter-container">
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="filter-checkbox id-filter" value="custom" />
+                                    <span class="ml-2 text-sm text-gray-300">自定义范围</span>
+                                </label>
+                                <div id="custom-id-range" class="w-full mt-2 hidden">
+                                    <div class="flex gap-2">
+                                        <input type="number" id="id-min" placeholder="最小ID" 
+                                            class="flex-1 px-3 py-1 bg-gray-800 border border-gray-700 rounded text-sm text-gray-100" />
+                                        <input type="number" id="id-max" placeholder="最大ID" 
+                                            class="flex-1 px-3 py-1 bg-gray-800 border border-gray-700 rounded text-sm text-gray-100" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 问题名称筛选 -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">问题功能</label>
+                            <input type="text" id="name-filter" placeholder="搜索问题功能" 
+                                class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-100" />
+                        </div>
+                        
+                        <!-- 提交时间筛选 -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">提交时间</label>
+                            <div class="flex flex-wrap gap-2" id="time-filter-container">
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="filter-checkbox time-filter" value="today" />
+                                    <span class="ml-2 text-sm text-gray-300">今天</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="filter-checkbox time-filter" value="week" />
+                                    <span class="ml-2 text-sm text-gray-300">本周</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="filter-checkbox time-filter" value="month" />
+                                    <span class="ml-2 text-sm text-gray-300">本月</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="filter-checkbox time-filter" value="custom" />
+                                    <span class="ml-2 text-sm text-gray-300">自定义</span>
+                                </label>
+                                <div id="custom-date-range" class="w-full mt-2 hidden">
+                                    <div class="flex gap-2">
+                                        <input type="date" id="date-start" 
+                                            class="flex-1 px-3 py-1 bg-gray-800 border border-gray-700 rounded text-sm text-gray-100" />
+                                        <input type="date" id="date-end" 
+                                            class="flex-1 px-3 py-1 bg-gray-800 border border-gray-700 rounded text-sm text-gray-100" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 问题状态筛选 -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">问题状态</label>
+                            <div class="flex flex-wrap gap-2" id="status-filter-container">
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="filter-checkbox status-filter" value="待处理" checked />
+                                    <span class="ml-2 text-sm text-yellow-400">待处理</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="filter-checkbox status-filter" value="处理中" checked />
+                                    <span class="ml-2 text-sm text-blue-400">处理中</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="filter-checkbox status-filter" value="已解决" />
+                                    <span class="ml-2 text-sm text-green-400">已解决</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="filter-checkbox status-filter" value="已关闭" />
+                                    <span class="ml-2 text-sm text-gray-400">已关闭</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="filter-checkbox status-filter" value="已取消" />
+                                    <span class="ml-2 text-sm text-red-400">已取消</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end mt-6">
+                        <button id="apply-filters" class="px-4 py-2 bg-neon hover:bg-primary/80 text-dark font-medium rounded transition-all">
+                            应用筛选
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="glass-effect rounded-lg p-6 issue-border overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-800">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-s font-medium text-gray-400 uppercase tracking-wider">
+                                        问题编号
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-s font-medium text-gray-400 uppercase tracking-wider">
+                                        问题功能
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-s font-medium text-gray-400 uppercase tracking-wider">
+                                        问题名称
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-s font-medium text-gray-400 uppercase tracking-wider">
+                                        提交时间
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-s font-medium text-gray-400 uppercase tracking-wider">
+                                        问题状态
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-right text-s font-medium text-gray-400 uppercase tracking-wider">
+                                        操作
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="issues-table-body" class="bg-gray-900/30 divide-y divide-gray-800">
+                                <!-- 问题列表行将通过JavaScript动态生成 -->
+                                <tr class="animate-pulse-slow">
+                                    <td colspan="5" class="px-6 py-10 text-center text-gray-400">
+                                        <i class="fa fa-spinner fa-spin mr-2"></i>加载问题数据中...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- 分页控制 -->
+                    <div class="flex justify-between items-center mt-6">
+                        <div class="text-sm text-gray-400">
+                            显示 <span id="showing-range">0-0</span> 共 <span id="total-items">0</span> 项
+                        </div>
+                        <div class="flex space-x-2">
+                            <button id="prev-page" class="px-3 py-1 border border-gray-700 rounded text-gray-400 hover:text-neon hover:border-neon transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                <i class="fa fa-chevron-left"></i>
+                            </button>
+                            <button id="next-page" class="px-3 py-1 border border-gray-700 rounded text-gray-400 hover:text-neon hover:border-neon transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                <i class="fa fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 建议列表 -->
+            <section class="mt-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <h2 class="text-[clamp(1.25rem,2vw,1.75rem)] font-bold flex items-center">
+                        <i class="fa fa-lightbulb-o text-advice mr-2"></i>建议列表
+                    </h2>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <button id="advice-filter-toggle" class="px-4 py-2 border border-gray-700 text-gray-300 hover:text-neon hover:border-neon rounded transition-all flex items-center">
+                            <i class="fa fa-filter mr-2"></i>筛选
+                        </button>
+                        <button id="advice-clear-filters" class="px-4 py-2 border border-gray-700 text-gray-300 hover:text-neon hover:border-neon rounded transition-all flex items-center hidden">
+                            <i class="fa fa-times mr-2"></i>清除筛选
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 建议筛选条件面板 -->
+                <div id="advice-filter-panel" class="glass-effect rounded-lg p-6 mb-4 advice-border hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <!-- 建议ID筛选 -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">建议ID</label>
+                            <div class="flex flex-wrap gap-2" id="advice-id-filter-container">
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="filter-checkbox advice-id-filter" value="custom" />
+                                    <span class="ml-2 text-sm text-gray-300">自定义范围</span>
+                                </label>
+                                <div id="advice-custom-id-range" class="w-full mt-2 hidden">
+                                    <div class="flex gap-2">
+                                        <input type="number" id="advice-id-min" placeholder="最小ID" 
+                                            class="flex-1 px-3 py-1 bg-gray-800 border border-gray-700 rounded text-sm text-gray-100" />
+                                        <input type="number" id="advice-id-max" placeholder="最大ID" 
+                                            class="flex-1 px-3 py-1 bg-gray-800 border border-gray-700 rounded text-sm text-gray-100" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 建议名称筛选 -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">建议功能</label>
+                            <input type="text" id="advice-name-filter" placeholder="搜索建议功能" 
+                                class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-100" />
+                        </div>
+                        
+                        <!-- 提交时间筛选 -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">提交时间</label>
+                            <div class="flex flex-wrap gap-2" id="advice-time-filter-container">
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="filter-checkbox advice-time-filter" value="today" />
+                                    <span class="ml-2 text-sm text-gray-300">今天</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="filter-checkbox advice-time-filter" value="week" />
+                                    <span class="ml-2 text-sm text-gray-300">本周</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="filter-checkbox advice-time-filter" value="month" />
+                                    <span class="ml-2 text-sm text-gray-300">本月</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="filter-checkbox advice-time-filter" value="custom" />
+                                    <span class="ml-2 text-sm text-gray-300">自定义</span>
+                                </label>
+                                <div id="advice-custom-date-range" class="w-full mt-2 hidden">
+                                    <div class="flex gap-2">
+                                        <input type="date" id="advice-date-start" 
+                                            class="flex-1 px-3 py-1 bg-gray-800 border border-gray-700 rounded text-sm text-gray-100" />
+                                        <input type="date" id="advice-date-end" 
+                                            class="flex-1 px-3 py-1 bg-gray-800 border border-gray-700 rounded text-sm text-gray-100" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 建议状态筛选 -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">建议状态</label>
+                            <div class="flex flex-wrap gap-2" id="advice-status-filter-container">
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="filter-checkbox advice-status-filter" value="待处理" checked />
+                                    <span class="ml-2 text-sm text-yellow-400">待处理</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="filter-checkbox advice-status-filter" value="处理中" checked />
+                                    <span class="ml-2 text-sm text-blue-400">处理中</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="filter-checkbox advice-status-filter" value="已采纳" />
+                                    <span class="ml-2 text-sm text-green-400">已采纳</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="filter-checkbox advice-status-filter" value="已拒绝" />
+                                    <span class="ml-2 text-sm text-red-400">已拒绝</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end mt-6">
+                        <button id="advice-apply-filters" class="px-4 py-2 bg-neon hover:bg-primary/80 text-dark font-medium rounded transition-all">
+                            应用筛选
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="glass-effect rounded-lg p-6 advice-border overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-800">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-s font-medium text-gray-400 uppercase tracking-wider">
+                                        建议编号
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-s font-medium text-gray-400 uppercase tracking-wider">
+                                        建议功能
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-s font-medium text-gray-400 uppercase tracking-wider">
+                                        建议名称
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-s font-medium text-gray-400 uppercase tracking-wider">
+                                        提交时间
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-s font-medium text-gray-400 uppercase tracking-wider">
+                                        建议状态
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-right text-s font-medium text-gray-400 uppercase tracking-wider">
+                                        操作
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="advice-table-body" class="bg-gray-900/30 divide-y divide-gray-800">
+                                <!-- 建议列表行将通过JavaScript动态生成 -->
+                                <tr class="animate-pulse-slow">
+                                    <td colspan="5" class="px-6 py-10 text-center text-gray-400">
+                                        <i class="fa fa-spinner fa-spin mr-2"></i>加载建议数据中...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- 分页控制 -->
+                    <div class="flex justify-between items-center mt-6">
+                        <div class="text-sm text-gray-400">
+                            显示 <span id="advice-showing-range">0-0</span> 共 <span id="advice-total-items">0</span> 项
+                        </div>
+                        <div class="flex space-x-2">
+                            <button id="advice-prev-page" class="px-3 py-1 border border-gray-700 rounded text-gray-400 hover:text-neon hover:border-neon transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                <i class="fa fa-chevron-left"></i>
+                            </button>
+                            <button id="advice-next-page" class="px-3 py-1 border border-gray-700 rounded text-gray-400 hover:text-neon hover:border-neon transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                <i class="fa fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <!-- 页脚 -->
+        <footer class="glass-effect border-t border-gray-800 py-6">
+            <div class="container mx-auto px-4 text-center text-gray-400 text-sm">
+                <p>© 2023 Darker-tech. 站点管理后台</p>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- 添加/编辑问题模态框 -->
+    <div id="issue-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50 hidden">
+        <div class="glass-effect rounded-lg p-6 w-full max-w-lg neon-border transform transition-all duration-300">
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="modal-title" class="text-xl font-bold text-white">添加问题</h3>
+                <button id="close-modal" class="text-gray-400 hover:text-neon transition-colors">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="issue-form" class="space-y-6">
+                <input type="hidden" id="issue-id">
+                <div>
+                    <label for="issue-name" class="block text-sm font-medium text-gray-300 mb-1">问题名称</label>
+                    <input type="text" id="issue-name" 
+                           class="block w-full px-4 py-2 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-neon focus:border-transparent text-gray-100" 
+                           placeholder="输入问题名称" required>
+                </div>
+                
+                <div>
+                    <label for="issue-status" class="block text-sm font-medium text-gray-300 mb-1">问题状态</label>
+                    <select id="issue-status" 
+                            class="block w-full px-4 py-2 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-neon focus:border-transparent text-gray-100" 
+                            required>
+                        <option value="待处理">待处理</option>
+                        <option value="处理中">处理中</option>
+                        <option value="已解决">已解决</option>
+                        <option value="已关闭">已关闭</option>
+                        <option value="已取消">已取消</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="issue-description" class="block text-sm font-medium text-gray-300 mb-1">问题描述</label>
+                    <textarea id="issue-description" rows="4" 
+                              class="block w-full px-4 py-2 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-neon focus:border-transparent text-gray-100" 
+                              placeholder="详细描述问题..."></textarea>
+                </div>
+                
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" id="cancel-issue" class="px-4 py-2 border border-gray-700 rounded text-gray-400 hover:text-white hover:border-gray-500 transition-colors">
+                        取消
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-neon hover:bg-primary/80 text-dark font-medium rounded transition-all">
+                        保存
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 添加/编辑建议模态框 -->
+    <div id="advice-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50 hidden">
+        <div class="glass-effect rounded-lg p-6 w-full max-w-lg neon-border transform transition-all duration-300">
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="advice-modal-title" class="text-xl font-bold text-white">添加建议</h3>
+                <button id="advice-close-modal" class="text-gray-400 hover:text-neon transition-colors">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="advice-form" class="space-y-6">
+                <input type="hidden" id="advice-id">
+                <div>
+                    <label for="advice-name" class="block text-sm font-medium text-gray-300 mb-1">建议名称</label>
+                    <input type="text" id="advice-name" 
+                           class="block w-full px-4 py-2 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-neon focus:border-transparent text-gray-100" 
+                           placeholder="输入建议名称" required>
+                </div>
+                
+                <div>
+                    <label for="advice-status" class="block text-sm font-medium text-gray-300 mb-1">建议状态</label>
+                    <select id="advice-status" 
+                            class="block w-full px-4 py-2 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-neon focus:border-transparent text-gray-100" 
+                            required>
+                        <option value="待处理">待处理</option>
+                        <option value="处理中">处理中</option>
+                        <option value="已采纳">已采纳</option>
+                        <option value="已拒绝">已拒绝</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="advice-description" class="block text-sm font-medium text-gray-300 mb-1">建议描述</label>
+                    <textarea id="advice-description" rows="4" 
+                              class="block w-full px-4 py-2 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-neon focus:border-transparent text-gray-100" 
+                              placeholder="详细描述建议..."></textarea>
+                </div>
+                
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" id="advice-cancel-btn" class="px-4 py-2 border border-gray-700 rounded text-gray-400 hover:text-white hover:border-gray-500 transition-colors">
+                        取消
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-neon hover:bg-primary/80 text-dark font-medium rounded transition-all">
+                        保存
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 提示消息 -->
+    <div id="toast" class="fixed bottom-6 right-6 glass-effect px-6 py-3 rounded-lg neon-border transform translate-y-20 opacity-0 transition-all duration-300 flex items-center space-x-3 max-w-xs">
+        <i id="toast-icon" class="fa fa-check-circle text-green-400 text-xl"></i>
+        <p id="toast-message" class="text-sm text-gray-200"></p>
+    </div>
+    
+    <!-- JavaScript -->
+    <script>
+        // 认证信息
+        const VALID_USERNAME = 'Admin';
+        const VALID_PASSWORD = 'darkertech';
+        
+        // DOM元素
+        const loginContainer = document.getElementById('login-container');
+        const dashboardContainer = document.getElementById('dashboard-container');
+        const loginForm = document.getElementById('login-form');
+        const errorMessage = document.getElementById('error-message');
+        const logoutBtn = document.getElementById('logout-btn');
+        const visitCount = document.getElementById('visit-count');
+        const totalIssuesEl = document.getElementById('total-issues');
+        const pendingIssuesEl = document.getElementById('pending-issues');
+        const inworkIssuesEl = document.getElementById('inwork-issues');
+        const resolvedIssuesEl = document.getElementById('resolved-issues');
+        const issuesTableBody = document.getElementById('issues-table-body');
+        const showingRange = document.getElementById('showing-range');
+        const totalItems = document.getElementById('total-items');
+        const prevPageBtn = document.getElementById('prev-page');
+        const nextPageBtn = document.getElementById('next-page');
+        // const addIssueBtn = document.getElementById('add-issue-btn');
+        const issueModal = document.getElementById('issue-modal');
+        const closeModal = document.getElementById('close-modal');
+        const cancelIssue = document.getElementById('cancel-issue');
+        const issueForm = document.getElementById('issue-form');
+        const modalTitle = document.getElementById('modal-title');
+        const toast = document.getElementById('toast');
+        const toastIcon = document.getElementById('toast-icon');
+        const toastMessage = document.getElementById('toast-message');
+        
+        // Advice DOM元素
+        const adviceTableBody = document.getElementById('advice-table-body');
+        const adviceShowingRange = document.getElementById('advice-showing-range');
+        const adviceTotalItems = document.getElementById('advice-total-items');
+        const advicePrevPageBtn = document.getElementById('advice-prev-page');
+        const adviceNextPageBtn = document.getElementById('advice-next-page');
+        const adviceModal = document.getElementById('advice-modal');
+        const adviceCloseModal = document.getElementById('advice-close-modal');
+        const adviceCancelBtn = document.getElementById('advice-cancel-btn');
+        const adviceForm = document.getElementById('advice-form');
+        const adviceModalTitle = document.getElementById('advice-modal-title');
+        
+        // 问题数据
+        let issues = [
+            { id: 1, name: '首页加载速度慢', description: '首页图片资源过多，导致加载时间过长', status: 'processing', createdAt: '2023-10-15T08:30:00' },
+            { id: 2, name: '导航栏在移动端显示异常', description: '在iPhone SE上导航栏菜单无法正常展开', status: 'pending', createdAt: '2023-10-14T14:20:00' },
+            { id: 3, name: '模拟平台无法导入JSON文件', description: '点击导入按钮后没有任何响应', status: 'resolved', createdAt: '2023-10-12T10:15:00' },
+            { id: 4, name: '知识库搜索功能不精确', description: '搜索关键词返回结果不相关', status: 'pending', createdAt: '2023-10-10T16:45:00' },
+            { id: 5, name: '对标库数据更新失败', description: '最新车型数据无法同步', status: 'resolved', createdAt: '2023-10-08T09:10:00' },
+            { id: 6, name: '配置工具保存功能异常', description: '用户配置无法正确保存到本地', status: 'processing', createdAt: '2023-10-06T11:30:00' },
+            { id: 7, name: '夜间模式下文字对比度低', description: '部分文本难以阅读', status: 'pending', createdAt: '2023-10-05T15:20:00' },
+            { id: 8, name: '联系我们表单提交失败', description: '表单数据无法正确发送', status: 'resolved', createdAt: '2023-10-03T13:40:00' }
+        ];
+        let issue_static ;
+        // 分页配置
+        const itemsPerPage = 5;
+        let currentPage = 1;
+        
+        // Advice分页配置
+        const adviceItemsPerPage = 5;
+        let adviceCurrentPage = 1;
+        
+        // 筛选配置
+        let filters = {
+            id: {
+                useCustom: false,
+                min: null,
+                max: null
+            },
+            name: '',
+            time: {
+                ranges: [], // 'today', 'week', 'month'
+                useCustom: false,
+                start: null,
+                end: null
+            },
+            status: ['待处理', '处理中'] // 默认只显示待处理和处理中
+        };
+        
+        // Advice筛选配置
+        let adviceFilters = {
+            id: {
+                useCustom: false,
+                min: null,
+                max: null
+            },
+            name: '',
+            time: {
+                ranges: [], // 'today', 'week', 'month'
+                useCustom: false,
+                start: null,
+                end: null
+            },
+            status: ['待处理', '处理中'] // 默认只显示待处理和处理中
+        };
+        let advice = [];
+        let advice_static = {};
+        
+        // DOM筛选元素
+        const filterToggle = document.getElementById('filter-toggle');
+        const filterPanel = document.getElementById('filter-panel');
+        const clearFiltersBtn = document.getElementById('clear-filters');
+        const applyFiltersBtn = document.getElementById('apply-filters');
+        const idFilterContainer = document.getElementById('id-filter-container');
+        const customIdRange = document.getElementById('custom-id-range');
+        const customDateRange = document.getElementById('custom-date-range');
+        const nameFilter = document.getElementById('name-filter');
+        const idMinInput = document.getElementById('id-min');
+        const idMaxInput = document.getElementById('id-max');
+        const dateStartInput = document.getElementById('date-start');
+        const dateEndInput = document.getElementById('date-end');
+        
+        // Advice筛选DOM元素
+        const adviceFilterToggle = document.getElementById('advice-filter-toggle');
+        const adviceFilterPanel = document.getElementById('advice-filter-panel');
+        const adviceClearFiltersBtn = document.getElementById('advice-clear-filters');
+        const adviceApplyFiltersBtn = document.getElementById('advice-apply-filters');
+        const adviceNameFilter = document.getElementById('advice-name-filter');
+        const adviceIdMinInput = document.getElementById('advice-id-min');
+        const adviceIdMaxInput = document.getElementById('advice-id-max');
+        const adviceCustomIdRange = document.getElementById('advice-custom-id-range');
+        const adviceDateStartInput = document.getElementById('advice-date-start');
+        const adviceDateEndInput = document.getElementById('advice-date-end');
+        const adviceCustomDateRange = document.getElementById('advice-custom-date-range');
+
+        function getalladvice(){
+            fetch('http://47.99.204.97:5000/get_all_advice',{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({
+                    'scriptName':'get_all_advice'
+                })
+            }).then(response=>response.json()).then(data=>{
+                if(data.success){
+                    advice_object = JSON.parse(data.output);
+                    advice = advice_object.advice;
+                    advice_static = advice_object.statistics;
+                    renderAdvice();
+                } else {
+                    // 模拟数据，用于演示
+                    advice = [
+                        { id: 1, title: '优化网站加载速度', description: '建议压缩图片资源并使用CDN加速', status: '待处理', submit_time: new Date().toISOString() },
+                        { id: 2, title: '增加暗黑模式', description: '希望网站支持暗黑模式切换', status: '处理中', submit_time: new Date(Date.now() - 86400000).toISOString() },
+                        { id: 3, title: '改进用户界面', description: '导航栏布局可以更加直观', status: '已采纳', submit_time: new Date(Date.now() - 172800000).toISOString() },
+                        { id: 4, title: '添加搜索功能', description: '建议增加全站搜索功能', status: '已拒绝', submit_time: new Date(Date.now() - 259200000).toISOString() }
+                    ];
+                    renderAdvice();
+                }
+            }).catch(error => {
+                console.error('获取建议数据失败:', error);
+                // 模拟数据，用于演示
+                advice = [
+                    { id: 1, title: '优化网站加载速度', description: '建议压缩图片资源并使用CDN加速', status: '待处理', submit_time: new Date().toISOString() },
+                    { id: 2, title: '增加暗黑模式', description: '希望网站支持暗黑模式切换', status: '处理中', submit_time: new Date(Date.now() - 86400000).toISOString() },
+                    { id: 3, title: '改进用户界面', description: '导航栏布局可以更加直观', status: '已采纳', submit_time: new Date(Date.now() - 172800000).toISOString() },
+                    { id: 4, title: '添加搜索功能', description: '建议增加全站搜索功能', status: '已拒绝', submit_time: new Date(Date.now() - 259200000).toISOString() }
+                ];
+                renderAdvice();
+            });
+        }
+
+        // 渲染建议列表
+        function renderAdvice() {
+            // 应用筛选
+            const filteredAdvice = filterAdvice(advice);
+            
+            // 计算分页
+            const startIndex = (adviceCurrentPage - 1) * adviceItemsPerPage;
+            const endIndex = startIndex + adviceItemsPerPage;
+            const paginatedAdvice = filteredAdvice.slice(startIndex, endIndex);
+            
+            // 更新显示范围
+            if (adviceShowingRange) {
+                adviceShowingRange.textContent = filteredAdvice.length > 0 ? 
+                    `${startIndex + 1}-${Math.min(endIndex, filteredAdvice.length)}` : '0-0';
+            }
+            
+            // 更新总数
+            if (adviceTotalItems) {
+                adviceTotalItems.textContent = filteredAdvice.length;
+            }
+            
+            // 更新分页按钮状态
+            if (advicePrevPageBtn) {
+                advicePrevPageBtn.disabled = adviceCurrentPage === 1;
+            }
+            if (adviceNextPageBtn) {
+                adviceNextPageBtn.disabled = endIndex >= filteredAdvice.length;
+            }
+            
+            // 清空表格
+            if (adviceTableBody) {
+                adviceTableBody.innerHTML = '';
+                
+                if (paginatedAdvice.length === 0) {
+                    // 无数据状态
+                    const emptyRow = document.createElement('tr');
+                    const message = filteredAdvice.length === 0 ? 
+                        '没有符合条件的建议数据' : '暂无建议数据';
+                    emptyRow.innerHTML = `
+                        <td colspan="5" class="px-6 py-10 text-center text-gray-400">
+                            <i class="fa fa-search mr-2"></i>${message}
+                        </td>
+                    `;
+                    adviceTableBody.appendChild(emptyRow);
+                } else {
+                    // 渲染建议行
+                    paginatedAdvice.forEach(adviceItem => {
+                        const row = document.createElement('tr');
+                        row.className = 'hover:bg-gray-800/40 transition-colors';
+                        row.innerHTML = `
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-300">
+                                #${adviceItem.id}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                                <div class="font-medium">${adviceItem.title || adviceItem.name || '未命名'}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                                <div class="text-xs text-gray-500 mt-1">${truncateText(adviceItem.description || '', 60)}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                                ${formatDate(adviceItem.submit_time || adviceItem.createdAt)}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="px-2 py-1 text-xs rounded-full ${getAdviceStatusClass(adviceItem.status)}">
+                                    ${getAdviceStatusText(adviceItem.status)}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <button class="text-neon hover:text-primary mr-3 edit-advice" data-id="${adviceItem.id}">
+                                    <i class="fa fa-pencil mr-1"></i>编辑
+                                </button>
+                                <button class="text-red-400 hover:text-red-300 delete-advice" data-id="${adviceItem.id}">
+                                    <i class="fa fa-trash mr-1"></i>删除
+                                </button>
+                            </td>
+                        `;
+                        adviceTableBody.appendChild(row);
+                    });
+                    
+                    // 绑定编辑和删除按钮事件
+                    document.querySelectorAll('.edit-advice').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const adviceId = btn.getAttribute('data-id');
+                            editAdvice(adviceId);
+                        });
+                    });
+                    
+                    document.querySelectorAll('.delete-advice').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const adviceId = parseInt(btn.getAttribute('data-id'));
+                            deleteAdvice(adviceId);
+                        });
+                    });
+                }
+            }
+        }
+        
+        // 筛选建议
+        function filterAdvice(adviceList) {
+            return adviceList.filter(advice => {
+                // ID筛选
+                if (adviceFilters.id.useCustom) {
+                    if (adviceFilters.id.min !== null && advice.id < adviceFilters.id.min) return false;
+                    if (adviceFilters.id.max !== null && advice.id > adviceFilters.id.max) return false;
+                }
+                
+                // 名称筛选
+                const adviceName = advice.title || advice.name || '';
+                if (adviceFilters.name && !adviceName.toLowerCase().includes(adviceFilters.name.toLowerCase())) {
+                    return false;
+                }
+                
+                // 时间筛选
+                if (adviceFilters.time.ranges.length > 0 || adviceFilters.time.useCustom) {
+                    const adviceDate = new Date(advice.submit_time || advice.createdAt);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    
+                    let timeMatch = false;
+                    
+                    // 预定义时间范围
+                    if (adviceFilters.time.ranges.includes('today') && adviceDate >= today) {
+                        timeMatch = true;
+                    }
+                    
+                    if (adviceFilters.time.ranges.includes('week')) {
+                        const weekAgo = new Date(today);
+                        weekAgo.setDate(today.getDate() - 7);
+                        if (adviceDate >= weekAgo) timeMatch = true;
+                    }
+                    
+                    if (adviceFilters.time.ranges.includes('month')) {
+                        const monthAgo = new Date(today);
+                        monthAgo.setMonth(today.getMonth() - 1);
+                        if (adviceDate >= monthAgo) timeMatch = true;
+                    }
+                    
+                    // 自定义时间范围
+                    if (adviceFilters.time.useCustom && adviceFilters.time.start && adviceFilters.time.end) {
+                        const startDate = new Date(adviceFilters.time.start);
+                        const endDate = new Date(adviceFilters.time.end);
+                        endDate.setHours(23, 59, 59, 999);
+                        
+                        if (adviceDate >= startDate && adviceDate <= endDate) {
+                            timeMatch = true;
+                        }
+                    }
+                    
+                    if (!timeMatch) return false;
+                }
+                
+                // 状态筛选
+                if (adviceFilters.status.length > 0 && !adviceFilters.status.includes(advice.status)) {
+                    return false;
+                }
+                
+                return true;
+            });
+        }
+        
+        // 获取建议状态样式类
+        function getAdviceStatusClass(status) {
+            switch (status) {
+                case '待处理': 
+                case 'pending': 
+                    return 'bg-yellow-400/20 text-yellow-400';
+                case '处理中': 
+                case 'processing': 
+                    return 'bg-blue-400/20 text-blue-400';
+                case '已采纳': 
+                case 'accepted': 
+                    return 'bg-green-400/20 text-green-400';
+                case '已拒绝': 
+                case 'rejected': 
+                    return 'bg-red-400/20 text-red-400';
+                default: 
+                    return 'bg-gray-400/20 text-gray-400';
+            }
+        }
+        
+        // 获取建议状态文本
+        function getAdviceStatusText(status) {
+            switch (status) {
+                case '待处理': 
+                case 'pending': 
+                    return '待处理';
+                case '处理中': 
+                case 'processing': 
+                    return '处理中';
+                case '已采纳': 
+                case 'accepted': 
+                    return '已采纳';
+                case '已拒绝': 
+                case 'rejected': 
+                    return '已拒绝';
+                default: 
+                    return '未知';
+            }
+        }
+        
+        // 建议分页控制
+        function goToAdvicePrevPage() {
+            if (adviceCurrentPage > 1) {
+                adviceCurrentPage--;
+                renderAdvice();
+            }
+        }
+        
+        function goToAdviceNextPage() {
+            const totalPages = Math.ceil(advice.length / adviceItemsPerPage);
+            if (adviceCurrentPage < totalPages) {
+                adviceCurrentPage++;
+                renderAdvice();
+            }
+        }
+        
+        // 编辑建议
+        function editAdvice(id) {
+            const adviceItem = advice.find(item => item.id == id);
+            if (adviceItem && adviceModal && adviceForm) {
+                adviceModalTitle.textContent = '编辑建议';
+                document.getElementById('advice-id').value = adviceItem.id;
+                document.getElementById('advice-name').value = adviceItem.title || adviceItem.name || '';
+                document.getElementById('advice-status').value = adviceItem.status;
+                document.getElementById('advice-description').value = adviceItem.description || '';
+                adviceModal.classList.remove('hidden');
+            }
+        }
+        
+        // 删除建议
+        function deleteAdvice(id) {
+            if (confirm('确定要删除此建议吗？')) {
+                advice = advice.filter(item => item.id != id);
+                renderAdvice();
+                showToast('success', '建议已删除');
+            }
+        }
+        
+        // 处理建议表单提交
+        function handleAdviceSubmit(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('advice-id').value;
+            const name = document.getElementById('advice-name').value.trim();
+            const status = document.getElementById('advice-status').value;
+            const description = document.getElementById('advice-description').value.trim();
+            
+            if (id) {
+                // 编辑现有建议
+                const index = advice.findIndex(item => item.id == id);
+                if (index !== -1) {
+                    advice[index] = {
+                        ...advice[index],
+                        title: name,
+                        name: name, // 兼容旧数据结构
+                        status,
+                        description
+                    };
+                    showToast('success', '建议已更新');
+                }
+                modifyAdviceinDatabase(advice[index]);
+            } else {
+                // 添加新建议
+                const newId = advice.length > 0 ? Math.max(...advice.map(item => item.id)) + 1 : 1;
+                advice.unshift({
+                    id: newId,
+                    title: name,
+                    name: name,
+                    status,
+                    description,
+                    submit_time: new Date().toISOString(),
+                    createdAt: new Date().toISOString()
+                });
+                showToast('success', '建议已添加');
+            }
+            
+            // 关闭模态框并重新渲染
+            closeAdviceModal();
+            renderAdvice();
+        }
+        
+
+        
+
+        // 关闭建议模态框
+        function closeAdviceModal() {
+            if (adviceModal) {
+                adviceModal.classList.add('hidden');
+            }
+        }
+        
+        // 打开添加建议模态框
+        function openAddAdviceModal() {
+            if (adviceModal && adviceForm) {
+                adviceModalTitle.textContent = '添加建议';
+                adviceForm.reset();
+                document.getElementById('advice-id').value = '';
+                adviceModal.classList.remove('hidden');
+            }
+        }
+        
+        // 切换建议筛选面板
+        function toggleAdviceFilterPanel() {
+            if (adviceFilterPanel) {
+                adviceFilterPanel.classList.toggle('hidden');
+            }
+        }
+        
+        // 应用建议筛选
+        function applyAdviceFilters() {
+            // 收集ID筛选条件
+            const idCustomCheckbox = document.querySelector('.advice-id-filter[value="custom"]');
+            if (idCustomCheckbox) {
+                adviceFilters.id.useCustom = idCustomCheckbox.checked;
+                adviceFilters.id.min = adviceIdMinInput?.value ? parseInt(adviceIdMinInput.value) : null;
+                adviceFilters.id.max = adviceIdMaxInput?.value ? parseInt(adviceIdMaxInput.value) : null;
+            }
+            
+            // 收集名称筛选条件
+            adviceFilters.name = adviceNameFilter?.value.trim() || '';
+            
+            // 收集时间筛选条件
+            adviceFilters.time.ranges = Array.from(document.querySelectorAll('.advice-time-filter:not([value="custom"]):checked'))
+                .map(checkbox => checkbox.value);
+            const timeCustomCheckbox = document.querySelector('.advice-time-filter[value="custom"]');
+            if (timeCustomCheckbox) {
+                adviceFilters.time.useCustom = timeCustomCheckbox.checked;
+                adviceFilters.time.start = adviceDateStartInput?.value;
+                adviceFilters.time.end = adviceDateEndInput?.value;
+            }
+            
+            // 收集状态筛选条件
+            adviceFilters.status = Array.from(document.querySelectorAll('.advice-status-filter:checked'))
+                .map(checkbox => checkbox.value);
+            
+            // 重置分页并重新渲染
+            adviceCurrentPage = 1;
+            renderAdvice();
+            
+            // 关闭筛选面板
+            if (adviceFilterPanel) {
+                adviceFilterPanel.classList.add('hidden');
+            }
+        }
+        
+        // 清除所有建议筛选
+        function clearAdviceFilters() {
+            // 重置筛选器值
+            adviceFilters = {
+                id: {
+                    useCustom: false,
+                    min: null,
+                    max: null
+                },
+                name: '',
+                time: {
+                    ranges: [],
+                    useCustom: false,
+                    start: null,
+                    end: null
+                },
+                status: ['待处理', '处理中']
+            };
+            
+            // 重置UI
+            if (adviceNameFilter) adviceNameFilter.value = '';
+            if (adviceIdMinInput) adviceIdMinInput.value = '';
+            if (adviceIdMaxInput) adviceIdMaxInput.value = '';
+            
+            // 取消选中所有筛选框
+            document.querySelectorAll('.advice-filter-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            // 选中默认状态
+            document.querySelectorAll('.advice-status-filter').forEach(checkbox => {
+                if (checkbox.value === '待处理' || checkbox.value === '处理中') {
+                    checkbox.checked = true;
+                }
+            });
+            
+            // 隐藏自定义范围输入框
+            if (adviceCustomIdRange) adviceCustomIdRange.classList.add('hidden');
+            if (adviceCustomDateRange) adviceCustomDateRange.classList.add('hidden');
+            
+            // 重置分页并重新渲染
+            adviceCurrentPage = 1;
+            renderAdvice();
+        }
+        
+        function getsitebasicinfo(){
+            fetch('http://47.99.204.97:5000/get_all_issue',{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({
+                    'scriptName':'get_site_basic_info'
+                })
+            }).then(response=>response.json()).then(data=>{
+                if(data.success){
+                    issues_object = JSON.parse(data.output);
+                    issues = issues_object.issues;
+                    issue_static = issues_object.statistics;
+                    showDashboard();
+                    // console.log(data.output);
+                }
+            })
+
+        }
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 检查是否已登录
+            checkAuth();
+            getsitebasicinfo();
+            getalladvice(); // 获取建议数据
+            
+            // 绑定事件
+            loginForm.addEventListener('submit', handleLogin);
+            logoutBtn.addEventListener('click', handleLogout);
+            // addIssueBtn.addEventListener('click', openAddIssueModal);
+            closeModal.addEventListener('click', closeIssueModal);
+            cancelIssue.addEventListener('click', closeIssueModal);
+            issueForm.addEventListener('submit', handleIssueSubmit);
+            prevPageBtn.addEventListener('click', goToPrevPage);
+            nextPageBtn.addEventListener('click', goToNextPage);
+            
+            // Advice相关事件
+            if (advicePrevPageBtn) advicePrevPageBtn.addEventListener('click', goToAdvicePrevPage);
+            if (adviceNextPageBtn) adviceNextPageBtn.addEventListener('click', goToAdviceNextPage);
+            if (adviceCloseModal) adviceCloseModal.addEventListener('click', closeAdviceModal);
+            if (adviceCancelBtn) adviceCancelBtn.addEventListener('click', closeAdviceModal);
+            if (adviceForm) adviceForm.addEventListener('submit', handleAdviceSubmit);
+            
+            // 筛选相关事件
+            filterToggle?.addEventListener('click', toggleFilterPanel);
+            applyFiltersBtn?.addEventListener('click', applyFilters);
+            clearFiltersBtn?.addEventListener('click', clearFilters);
+            
+            // Advice筛选相关事件
+            adviceFilterToggle?.addEventListener('click', toggleAdviceFilterPanel);
+            adviceApplyFiltersBtn?.addEventListener('click', applyAdviceFilters);
+            adviceClearFiltersBtn?.addEventListener('click', clearAdviceFilters);
+            
+            // 自定义ID范围切换
+            const idCustomCheckbox = document.querySelector('.id-filter[value="custom"]');
+            if (idCustomCheckbox) {
+                idCustomCheckbox.addEventListener('change', function() {
+                    if (customIdRange) {
+                        customIdRange.classList.toggle('hidden', !this.checked);
+                    }
+                });
+            }
+            
+            // 自定义日期范围切换
+            const timeCustomCheckbox = document.querySelector('.time-filter[value="custom"]');
+            if (timeCustomCheckbox) {
+                timeCustomCheckbox.addEventListener('change', function() {
+                    if (customDateRange) {
+                        customDateRange.classList.toggle('hidden', !this.checked);
+                    }
+                });
+            }
+            
+            // Advice自定义ID范围切换
+            const adviceIdCustomCheckbox = document.querySelector('.advice-id-filter[value="custom"]');
+            if (adviceIdCustomCheckbox) {
+                adviceIdCustomCheckbox.addEventListener('change', function() {
+                    if (adviceCustomIdRange) {
+                        adviceCustomIdRange.classList.toggle('hidden', !this.checked);
+                    }
+                });
+            }
+            
+            // Advice自定义日期范围切换
+            const adviceTimeCustomCheckbox = document.querySelector('.advice-time-filter[value="custom"]');
+            if (adviceTimeCustomCheckbox) {
+                adviceTimeCustomCheckbox.addEventListener('change', function() {
+                    if (adviceCustomDateRange) {
+                        adviceCustomDateRange.classList.toggle('hidden', !this.checked);
+                    }
+                });
+            }
+            
+            // 设置日期输入框的默认值
+            const today = new Date().toISOString().split('T')[0];
+            if (dateStartInput) dateStartInput.value = today;
+            if (dateEndInput) dateEndInput.value = today;
+            if (adviceDateStartInput) adviceDateStartInput.value = today;
+            if (adviceDateEndInput) adviceDateEndInput.value = today;
+        });
+        
+        // 切换筛选面板显示状态
+        function toggleFilterPanel() {
+            if (filterPanel) {
+                filterPanel.classList.toggle('hidden');
+            }
+        }
+        
+        // 应用筛选
+        function applyFilters() {
+            // 收集ID筛选条件
+            const idCustomCheckbox = document.querySelector('.id-filter[value="custom"]');
+            if (idCustomCheckbox) {
+                filters.id.useCustom = idCustomCheckbox.checked;
+                filters.id.min = idMinInput?.value ? parseInt(idMinInput.value) : null;
+                filters.id.max = idMaxInput?.value ? parseInt(idMaxInput.value) : null;
+            }
+            
+            // 收集名称筛选条件
+            filters.name = nameFilter?.value.trim() || '';
+            
+            // 收集时间筛选条件
+            filters.time.ranges = Array.from(document.querySelectorAll('.time-filter:not([value="custom"]):checked'))
+                .map(checkbox => checkbox.value);
+            const timeCustomCheckbox = document.querySelector('.time-filter[value="custom"]');
+            if (timeCustomCheckbox) {
+                filters.time.useCustom = timeCustomCheckbox.checked;
+                filters.time.start = dateStartInput?.value;
+                filters.time.end = dateEndInput?.value;
+            }
+            
+            // 收集状态筛选条件
+            filters.status = Array.from(document.querySelectorAll('.status-filter:checked'))
+                .map(checkbox => checkbox.value);
+            
+            // 更新UI状态
+            updateFilterUI();
+            
+            // 重置分页并重新渲染
+            currentPage = 1;
+            renderIssues();
+            
+            // 关闭筛选面板
+            if (filterPanel) {
+                filterPanel.classList.add('hidden');
+            }
+        }
+        
+        // 清除所有筛选
+        function clearFilters() {
+            // 重置筛选器值
+            filters = {
+                id: { useCustom: false, min: null, max: null },
+                name: '',
+                time: { ranges: [], useCustom: false, start: null, end: null },
+                status: ['待处理', '处理中'] // 重置为默认状态
+            };
+            
+            // 重置UI
+            if (nameFilter) nameFilter.value = '';
+            if (idMinInput) idMinInput.value = '';
+            if (idMaxInput) idMaxInput.value = '';
+            
+            // 取消选中所有筛选框
+            document.querySelectorAll('.filter-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            // 选中默认状态
+            document.querySelector('.status-filter[value="待处理"]').checked = true;
+            document.querySelector('.status-filter[value="处理中"]').checked = true;
+            
+            // 隐藏自定义范围输入框
+            if (customIdRange) customIdRange.classList.add('hidden');
+            if (customDateRange) customDateRange.classList.add('hidden');
+            
+            // 更新UI状态
+            updateFilterUI();
+            
+            // 重置分页并重新渲染
+            currentPage = 1;
+            renderIssues();
+        }
+        
+        // 更新筛选UI状态
+        function updateFilterUI() {
+            // 检查是否有活动筛选器
+            const hasActiveFilters = 
+                filters.name !== '' || 
+                filters.id.useCustom || 
+                filters.time.ranges.length > 0 || 
+                filters.time.useCustom ||
+                filters.status.length > 0 && filters.status.length < 5; // 如果只选择了部分状态
+                
+            // 显示或隐藏清除筛选按钮
+            if (clearFiltersBtn) {
+                clearFiltersBtn.classList.toggle('hidden', !hasActiveFilters);
+            }
+            
+            // 更新筛选按钮样式
+            if (filterToggle) {
+                if (hasActiveFilters) {
+                    filterToggle.classList.add('border-neon', 'text-neon');
+                } else {
+                    filterToggle.classList.remove('border-neon', 'text-neon');
+                }
+            }
+        }
+        
+        // 筛选问题
+        function filterIssues(issuesList) {
+            return issuesList.filter(issue => {
+                // ID筛选
+                if (filters.id.useCustom) {
+                    if (filters.id.min !== null && issue.id < filters.id.min) return false;
+                    if (filters.id.max !== null && issue.id > filters.id.max) return false;
+                }
+                
+                // 名称筛选
+                if (filters.name && !issue.title.toLowerCase().includes(filters.name.toLowerCase())) {
+                    return false;
+                }
+                
+                // 时间筛选
+                if (filters.time.ranges.length > 0 || filters.time.useCustom) {
+                    const issueDate = new Date(issue.submit_time);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    
+                    let timeMatch = false;
+                    
+                    // 预定义时间范围
+                    if (filters.time.ranges.includes('today') && issueDate >= today) {
+                        timeMatch = true;
+                    }
+                    
+                    if (filters.time.ranges.includes('week')) {
+                        const weekAgo = new Date(today);
+                        weekAgo.setDate(today.getDate() - 7);
+                        if (issueDate >= weekAgo) timeMatch = true;
+                    }
+                    
+                    if (filters.time.ranges.includes('month')) {
+                        const monthAgo = new Date(today);
+                        monthAgo.setMonth(today.getMonth() - 1);
+                        if (issueDate >= monthAgo) timeMatch = true;
+                    }
+                    
+                    // 自定义时间范围
+                    if (filters.time.useCustom && filters.time.start && filters.time.end) {
+                        const startDate = new Date(filters.time.start);
+                        const endDate = new Date(filters.time.end);
+                        endDate.setHours(23, 59, 59, 999);
+                        
+                        if (issueDate >= startDate && issueDate <= endDate) {
+                            timeMatch = true;
+                        }
+                    }
+                    
+                    if (!timeMatch) return false;
+                }
+                
+                // 状态筛选
+                if (filters.status.length > 0 && !filters.status.includes(issue.status)) {
+                    return false;
+                }
+                
+                return true;
+            });
+        }
+        
+        // 检查认证状态
+        function checkAuth() {
+            const isAuthenticated = localStorage.getItem('admin_authenticated') === 'true';
+            if (isAuthenticated) {
+                getsitebasicinfo();
+            } else {
+                showLogin();
+            }
+        }
+        
+        // 显示登录界面
+        function showLogin() {
+            loginContainer.classList.remove('hidden');
+            dashboardContainer.classList.add('hidden');
+        }
+        
+        // 显示仪表板
+        function showDashboard() {
+            loginContainer.classList.add('hidden');
+            dashboardContainer.classList.remove('hidden');
+            
+            // 更新统计数据
+            updateStatistics();
+            
+            // 渲染问题列表
+            renderIssues();
+            
+            // 模拟加载访问次数（实际应用中应从后端获取）
+            setTimeout(() => {
+                const mockVisitCount = Math.floor(Math.random() * 10000) + 5000;
+                visitCount.textContent = mockVisitCount.toLocaleString();
+            }, 500);
+        }
+        
+        // 处理登录
+        function handleLogin(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            
+            if (username === VALID_USERNAME && password === VALID_PASSWORD) {
+                // 登录成功
+                localStorage.setItem('admin_authenticated', 'true');
+                getsitebasicinfo();
+                showToast('success', '登录成功');
+            } else {
+                // 登录失败
+                errorMessage.classList.remove('hidden');
+                setTimeout(() => {
+                    errorMessage.classList.add('hidden');
+                }, 3000);
+            }
+        }
+        
+        // 处理登出
+        function handleLogout() {
+            localStorage.removeItem('admin_authenticated');
+            showLogin();
+            // 重置表单
+            loginForm.reset();
+        }
+        
+        // 更新统计数据
+        function updateStatistics() {
+            const total = issue_static.total_issues;
+            const pending = issue_static.pending_issues;
+            const resolved = issue_static.solved_issues;
+            const inwork = issue_static.in_progress_issues;
+            
+            totalIssuesEl.textContent = total;
+            pendingIssuesEl.textContent = pending;
+            resolvedIssuesEl.textContent = resolved;
+            totalItems.textContent = total;
+            inworkIssuesEl.textContent = inwork;
+        }
+        
+        // 渲染问题列表
+        function renderIssues() {
+            // 应用筛选
+            const filteredIssues = filterIssues(issues);
+            
+            // 计算分页
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedIssues = filteredIssues.slice(startIndex, endIndex);
+            
+            // 更新显示范围
+            showingRange.textContent = filteredIssues.length > 0 ? 
+                `${startIndex + 1}-${Math.min(endIndex, filteredIssues.length)}` : '0-0';
+            
+            // 更新总数
+            totalItems.textContent = filteredIssues.length;
+            
+            // 更新分页按钮状态
+            prevPageBtn.disabled = currentPage === 1;
+            nextPageBtn.disabled = endIndex >= filteredIssues.length;
+            
+            // 清空表格
+            issuesTableBody.innerHTML = '';
+            
+            if (paginatedIssues.length === 0) {
+                // 无数据状态
+                const emptyRow = document.createElement('tr');
+                const message = filteredIssues.length === 0 ? 
+                    '没有符合条件的问题数据' : '暂无问题数据';
+                emptyRow.innerHTML = `
+                    <td colspan="5" class="px-6 py-10 text-center text-gray-400">
+                        <i class="fa fa-search mr-2"></i>${message}
+                    </td>
+                `;
+                issuesTableBody.appendChild(emptyRow);
+            } else {
+                // 渲染问题行
+                paginatedIssues.forEach(issue => {
+                    const row = document.createElement('tr');
+                    row.className = 'hover:bg-gray-800/40 transition-colors';
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-300">
+                            #${issue.id}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                            <div class="font-medium">${issue.title}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                            <div class="text-xs text-gray-500 mt-1">${truncateText(issue.description, 60)}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                            ${formatDate(issue.submit_time)}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <span class="px-2 py-1 text-xs rounded-full ${getStatusClass(issue.status)}">
+                                ${getStatusText(issue.status)}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <button class="text-neon hover:text-primary mr-3 edit-issue" data-id="${issue.id}">
+                                <i class="fa fa-pencil mr-1"></i>编辑
+                            </button>
+                            <button class="text-red-400 hover:text-red-300 delete-issue" data-id="${issue.id}">
+                                <i class="fa fa-trash mr-1"></i>删除
+                            </button>
+                        </td>
+                    `;
+                    issuesTableBody.appendChild(row);
+                });
+                
+                // 绑定编辑和删除按钮事件
+                document.querySelectorAll('.edit-issue').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const issueId = btn.getAttribute('data-id');
+                        editIssue(issueId);
+                    });
+                });
+                
+                document.querySelectorAll('.delete-issue').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const issueId = parseInt(btn.getAttribute('data-id'));
+                        deleteIssue(issueId);
+                    });
+                });
+            }
+        }
+        
+        // 格式化日期
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        // 获取状态样式类
+        function getStatusClass(status) {
+            switch (status) {
+                case '待处理': return 'bg-yellow-400/20 text-yellow-400';
+                case '处理中': return 'bg-blue-400/20 text-blue-400';
+                case '已解决': return 'bg-green-400/20 text-green-400';
+                case '已关闭': return 'bg-gray-400/20 text-gray-400';
+                case '已取消': return 'bg-red-400/20 text-red-400';
+                default: return 'bg-gray-400/20 text-gray-400';
+            }
+        }
+        
+        // 获取状态文本
+        function getStatusText(status) {
+            switch (status) {
+                case '待处理': return '待处理';
+                case '处理中': return '处理中';
+                case '已解决': return '已解决';
+                case '已关闭': return '已关闭';
+                case '已取消': return '已取消';
+                default: return '未知';
+            }
+        }
+        
+        // 截断文本
+        function truncateText(text, maxLength) {
+            if (!text) return '';
+            return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+        }
+        
+        // 打开添加问题模态框
+        function openAddIssueModal() {
+            modalTitle.textContent = '添加问题';
+            issueForm.reset();
+            document.getElementById('issue-id').value = '';
+            issueModal.classList.remove('hidden');
+        }
+        
+        // 编辑问题
+        function editIssue(id) {
+            const issue = issues.find(issue => issue.id === id);
+            if (issue) {
+                console.log(issue)
+                modalTitle.textContent = '编辑问题';
+                document.getElementById('issue-id').value = issue.id;
+                document.getElementById('issue-name').value = issue.title;
+                document.getElementById('issue-status').value = issue.status;
+                document.getElementById('issue-description').value = issue.description || '';
+                issueModal.classList.remove('hidden');
+            }
+        }
+        
+        // 关闭问题模态框
+        function closeIssueModal() {
+            issueModal.classList.add('hidden');
+        }
+
+        function modifyIssueinDatabase(issue){
+            fetch('http://47.99.204.97:5000/manage_issue',{
+                method:'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(issue),
+            }).then(response=>response.json()).then(data=>{
+                if(data.success){
+                    updateStatistics();
+                }
+            })
+        }
+
+        function modifyAdviceinDatabase(advice){
+            console.log(advice)
+            fetch('http://47.99.204.97:5000/manage_advice',{
+                method:'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(advice),
+            }).then(response=>response.json()).then(data=>{
+                if(data.success){
+                    console.log(advice)
+                    // updateStatistics();
+                }
+            })
+        }
+        
+        // 处理问题表单提交
+        function handleIssueSubmit(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('issue-id').value;
+            const name = document.getElementById('issue-name').value.trim();
+            const status = document.getElementById('issue-status').value;
+            const description = document.getElementById('issue-description').value.trim();
+            
+            if (id) {
+                // 编辑现有问题
+                const index = issues.findIndex(issue => issue.id === id);
+                if (index !== -1) {
+                    issues[index] = {
+                        ...issues[index],
+                        name,
+                        status,
+                        description
+                    };
+                    modifyIssueinDatabase(issues[index])
+                    showToast('success', '问题已更新');
+                    renderIssues();
+                }
+            } else {
+                // 添加新问题
+                const newId = issues.length > 0 ? Math.max(...issues.map(issue => issue.id)) + 1 : 1;
+                issues.unshift({
+                    id: newId,
+                    title: name, // 使用title作为问题名称字段
+                    status,
+                    description,
+                    submit_time: new Date().toISOString() // 使用submit_time作为时间字段
+                });
+                showToast('success', '问题已添加');
+                
+                // 应用筛选后重新渲染列表
+                renderIssues();
+            }
+            
+            // 关闭模态框并更新数据
+            closeIssueModal();
+            updateStatistics();
+        }
+        
+        // 删除问题
+        function deleteIssue(id) {
+            if (confirm('确定要删除此问题吗？')) {
+                issues = issues.filter(issue => issue.id !== id);
+                updateStatistics();
+                renderIssues();
+                showToast('success', '问题已删除');
+            }
+        }
+        
+        // 上一页
+        function goToPrevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderIssues();
+            }
+        }
+        
+        // 下一页
+        function goToNextPage() {
+            if (currentPage < Math.ceil(issues.length / itemsPerPage)) {
+                currentPage++;
+                renderIssues();
+            }
+        }
+        
+        // 显示提示消息
+        function showToast(type, message) {
+            toastMessage.textContent = message;
+            
+            if (type === 'success') {
+                toastIcon.className = 'fa fa-check-circle text-green-400 text-xl';
+            } else if (type === 'error') {
+                toastIcon.className = 'fa fa-exclamation-circle text-red-400 text-xl';
+            } else if (type === 'info') {
+                toastIcon.className = 'fa fa-info-circle text-blue-400 text-xl';
+            }
+            
+            // 显示提示
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            
+            // 3秒后隐藏
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
