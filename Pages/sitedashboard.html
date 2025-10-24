@@ -809,7 +809,7 @@
         const adviceCustomDateRange = document.getElementById('advice-custom-date-range');
 
         function getalladvice(){
-            fetch('http://47.99.204.97:5000/get_all_advice',{
+            fetch('/api/get_all_advice',{
                 method:'POST',
                 headers:{
                     'Content-Type':'application/json'
@@ -1237,7 +1237,7 @@
         }
         
         function getsitebasicinfo(){
-            fetch('http://47.99.204.97:5000/get_all_issue',{
+            fetch('/api/get_all_issue',{
                 method:'POST',
                 headers:{
                     'Content-Type':'application/json'
@@ -1742,7 +1742,7 @@
         }
 
         function modifyIssueinDatabase(issue){
-            fetch('http://47.99.204.97:5000/manage_issue',{
+            fetch('/api/manage_issue',{
                 method:'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1757,7 +1757,7 @@
 
         function modifyAdviceinDatabase(advice){
             console.log(advice)
-            fetch('http://47.99.204.97:5000/manage_advice',{
+            fetch('/api/manage_advice',{
                 method:'POST',
                 headers: {
                     'Content-Type': 'application/json',

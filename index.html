@@ -881,7 +881,7 @@
 
 
         function addnewissue(name,message,subject,email){
-            fetch('http://47.99.204.97:5000/add_issue',{
+            fetch('/api/add_issue',{
                 method:'POST',
                 headers:{
                     'Content-Type':'application/json'
@@ -905,7 +905,7 @@
         }
 
         function addnewadvice(name,message,subject,email){
-            fetch('http://47.99.204.97:5000/add_advice',{
+            fetch('/api/add_advice',{
                 method:'POST',
                 headers:{
                     'Content-Type':'application/json'
@@ -931,7 +931,7 @@
 
 
         function getissuecount(){
-            fetch('http://47.99.204.97:5000/get_issue_number',{
+            fetch('/api/get_issue_number',{
                 method:'POST',
                 headers:{
                     'Content-Type':'application/json'
@@ -946,7 +946,7 @@
             })
         }
         function getadvicecount(){
-            fetch('http://47.99.204.97:5000/get_advice_number',{
+            fetch('/api/get_advice_number',{
                 method:'POST',
                 headers:{
                     'Content-Type':'application/json'
