@@ -1729,7 +1729,6 @@
         function editIssue(id) {
             const issue = issues.find(issue => issue.id === id);
             if (issue) {
-                console.log(issue)
                 modalTitle.textContent = '编辑问题';
                 document.getElementById('issue-id').value = issue.id;
                 document.getElementById('issue-name').value = issue.title;

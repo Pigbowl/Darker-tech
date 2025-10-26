@@ -85,6 +85,7 @@ tailwind.config = {
                 darkAccent: '#0F172A',
                 container:'#00ffea7a',
                 box:'#302b2b',
+                applybutton:'#165DFF',
             },
             fontFamily: {
                 inter: ['Inter', 'sans-serif'],

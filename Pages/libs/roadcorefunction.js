@@ -1,5 +1,3 @@
-
-// 全局变量
         let currentMode = 'road'; // 当前模式：road 或 object 或 intersection
         let mainMode = 'generator'; // 主模式：generator 或 modifier
         let startPoint = null; // 道路起点
@@ -2697,10 +2695,10 @@
             const roadParameterForm = document.getElementById('road-parameter-form');
             roadParameterForm.innerHTML = `
                 <div class="space-y-2">
-                    <button id="apply-changes" class="w-full px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg transition-all duration-300 flex items-center justify-center mt-4">
+                    <button id="apply-changes" class="w-full px-4 py-2 bg-applybutton hover:bg-primary/90 text-white rounded-lg transition-all duration-300 flex items-center justify-center mt-4">
                         <i class="fa fa-check mr-2"></i>应用修改
                     </button>
-                    <button id="move-to-top" class="w-full px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg transition-all duration-300 flex items-center justify-center mt-4">
+                    <button id="move-to-top" class="w-full px-4 py-2 bg-applybutton hover:bg-primary/90 text-white rounded-lg transition-all duration-300 flex items-center justify-center mt-4">
                         <i class="fa fa-gear mr-2"></i>移到最上
                     </button>
                     <!-- 道路级别属性（第一层） -->
@@ -2716,7 +2714,7 @@
                         <!-- 道路方向选择器 -->
                         <div class="flex justify-between items-center">
                             <label class="text-sm text-gray-600">道路方向</label>
-                            <select id="selected-road-direction-select" class="text-sm border rounded px-2 py-1">
+                            <select id="selected-road-direction-select" class="text-sm border rounded px-2 py-1 text-black">
                                 <option value="one-way">单向</option>
                                 <option value="two-way">双向</option>
                             </select>
@@ -2725,29 +2723,29 @@
                         <!-- 左侧车道数量输入框 -->
                         <div class="flex justify-between items-center left-lane-container">
                             <label class="text-sm text-gray-600">左侧车道数量</label>
-                            <input type="number" min="0" max="10" value="1" class="text-sm border rounded px-2 py-1" id="selected-road-left-lanes-input">
+                            <input type="number" min="0" max="10" value="1" class="text-sm border rounded px-2 py-1 text-black" id="selected-road-left-lanes-input">
                         </div>
                         
                         <!-- 右侧车道数量输入框 -->
                         <div class="flex justify-between items-center">
                             <label class="text-sm text-gray-600">右侧车道数量</label>
-                            <input type="number" min="1" max="10" value="1" class="text-sm border rounded px-2 py-1" id="selected-road-right-lanes-input">
+                            <input type="number" min="1" max="10" value="1" class="text-sm border rounded px-2 py-1 text-black" id="selected-road-right-lanes-input">
                         </div>
                         <!-- 起点高度输入框 -->
                         <div class="flex justify-between items-center">
                             <label class="text-sm text-gray-600">起点高度</label>
-                            <input type="number" min="0" max="30" value="0" class="text-sm border rounded px-2 py-1" id="selected-road-start-height-input">
+                            <input type="number" min="0" max="30" value="0" class="text-sm border rounded px-2 py-1 text-black" id="selected-road-start-height-input">
                         </div>
                         <!-- 终点高度输入框 -->
                         <div class="flex justify-between items-center">
                             <label class="text-sm text-gray-600">终点高度</label>
-                            <input type="number" min="0" max="30" value="0" class="text-sm border rounded px-2 py-1" id="selected-road-end-height-input">
+                            <input type="number" min="0" max="30" value="0" class="text-sm border rounded px-2 py-1 text-black" id="selected-road-end-height-input">
                         </div>
                     </div>
 
                     <div class="flex justify-between items-center">
                         <label class="text-sm text-gray-600">右侧车道数量变化</label>
-                        <select id="select-rightside-lanecountchange-selection" class="text-sm border rounded px-2 py-1">
+                        <select id="select-rightside-lanecountchange-selection" class="text-sm border rounded px-2 py-1 text-black">
                             <option value="none">没有变化</option>
                             <option value="reduce">车道减少</option>
                             <option value="increase">车道增加</option>
@@ -2755,7 +2753,7 @@
                     </div>
                     <div class="flex justify-between items-center">
                         <label class="text-sm text-gray-600">左侧车道数量变化</label>
-                        <select id="select-leftside-lanecountchange-selection" class="text-sm border rounded px-2 py-1">
+                        <select id="select-leftside-lanecountchange-selection" class="text-sm border rounded px-2 py-1 text-black">
                             <option value="none">没有变化</option>
                             <option value="reduce">车道减少</option>
                             <option value="increase">车道增加</option>
@@ -2764,7 +2762,7 @@
 
                     <div class="flex justify-between items-center">
                         <label class="text-sm text-gray-600">起点道路对齐</label>
-                        <select id="select-startpoint-alignment" class="text-sm border rounded px-2 py-1">
+                        <select id="select-startpoint-alignment" class="text-sm border rounded px-2 py-1 text-black">
                             <option value="center-align">中间对齐</option>
                             <option value="left-align">左侧对齐</option>
                             <option value="right-align">右侧对齐</option>
@@ -2772,7 +2770,7 @@
                     </div>
                     <div class="flex justify-between items-center">
                         <label class="text-sm text-gray-600">终点道路对齐</label>
-                        <select id="select-endpoint-alignment" class="text-sm border rounded px-2 py-1">
+                        <select id="select-endpoint-alignment" class="text-sm border rounded px-2 py-1 text-black">
                             <option value="center-align">中间对齐</option>
                             <option value="left-align">左侧对齐</option>
                             <option value="right-align">右侧对齐</option>
@@ -2783,7 +2781,7 @@
                     <div class="mt-4">
                         <div id="lane-markers-header" class="flex justify-between items-center cursor-pointer p-2 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100">
                             <h4 class="text-sm font-medium text-gray-600">车道线设置</h4>
-                            <i class="fa fa-chevron-down transition-transform duration-300" id="lane-markers-toggle"></i>
+                            <i class="fa fa-chevron-down transition-transform duration-300 text-black" id="lane-markers-toggle"></i>
                         </div>
                         <div id="lane-markers-container" class="space-y-3 mt-2 hidden p-3 bg-gray-50 rounded-lg border border-gray-200 border-t-0">
                             <!-- 车道线设置将通过JavaScript动态生成 -->
@@ -2794,7 +2792,7 @@
                     <div class="mt-4">
                         <div id="lane-params-header" class="flex justify-between items-center cursor-pointer p-2 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100">
                             <h4 class="text-sm font-medium text-gray-600">车道参数设置</h4>
-                            <i class="fa fa-chevron-down transition-transform duration-300" id="lane-params-toggle"></i>
+                            <i class="fa fa-chevron-down transition-transform duration-300 text-black" id="lane-params-toggle"></i>
                         </div>
                         <div id="lane-params-container" class="space-y-3 mt-2 hidden p-3 bg-gray-50 rounded-lg border border-gray-200 border-t-0">
                             <!-- 车道参数设置将通过JavaScript动态生成 -->
@@ -3188,7 +3186,7 @@
             setTimeout(() => {
                 saveCanvas(`${fileName}_image`);
             }, 500);
-
+            launch3Dbuild()
                         // 延迟调用saveCanvas，确保上一个下载完成
             setTimeout(() => {
                 saveMapScene(`${fileName}_project`);
@@ -4622,7 +4620,7 @@
                         </div>
                         <div>
                             <label class="text-xs text-gray-500 mb-1 block">颜色</label>
-                            <select class="lane-marker-color w-full text-sm border rounded px-2 py-1" data-index="${index}">
+                            <select class="lane-marker-color w-full text-sm border rounded px-2 py-1 text-black" data-index="${index}">
                                 <option value="#FFFFFF" ${marker.color === '#FFFFFF' ? 'selected' : ''}>白色</option>
                                 <option value="#FFFF00" ${marker.color === '#FFFF00' ? 'selected' : ''}>黄色</option>
                                 <option value="#0000FF" ${marker.color === '#0000FF' ? 'selected' : ''}>蓝色</option>
@@ -4631,7 +4629,7 @@
                         </div>
                         <div>
                             <label class="text-xs text-gray-500 mb-1 block">类型</label>
-                            <select class="lane-marker-type w-full text-sm border rounded px-2 py-1" data-index="${index}">
+                            <select class="lane-marker-type w-full text-sm border rounded px-2 py-1 text-black" data-index="${index}">
                                 <option value="solid_single" ${marker.type === 'solid_single' ? 'selected' : ''}>单实线</option>
                                 <option value="dashed_single" ${marker.type === 'dashed_single' ? 'selected' : ''}>单虚线</option>
                                 <option value="solid_double" ${marker.type === 'solid_double' ? 'selected' : ''}>双实线</option>
@@ -4943,6 +4941,232 @@
             showNotification('地图已清空', 'success');
         }
         
+        function launch3Dbuild(){
+            const mapData = {
+                DataName:"testtest",
+                DataType:"MapData",
+                Physical_env:{
+                    Road:roads.map((road) => {
+                        return {
+                            roadID:road.id,
+                            totallanenumber:road.totalLanes,
+                            startx:road.start.x,
+                            starty:road.start.y,
+                            endx:road.end.x,
+                            endy:road.end.y,
+                            roadDirection:roadDirection,
+                            direction:road.direction,
+                            roadborder:road.roadedge.map((edge)=>{
+                                return {
+                                    id:edge.id,
+                                    type:edge.type,
+                                    xpoints:edge.points.map((point) => {
+                                        return point.x;
+                                    }),
+                                    ypoints:edge.points.map((point) => {
+                                        return point.y;
+                                    }),
+                                    zpoints:edge.points.map((point) => {
+                                        return point.z;
+                                    }),
+                                }
+                            }),
+                            centerline:{
+                                xpoints:road.roadcenterline.map((point) => {
+                                    return point.x;
+                                }),
+                                ypoints:road.roadcenterline.map((point) => {
+                                    return point.y;
+                                }),
+                                zpoints:road.roadcenterline.map((point) => {
+                                    return point.z;
+                                }),
+                            },
+                            roadshape:{
+                                xpoints:road.roadshape.map((point) => {
+                                    return point.x;
+                                }),
+                                ypoints:road.roadshape.map((point) => {
+                                    return point.y;
+                                }),
+                                zpoints:road.roadshape.map((point) => {
+                                    return point.z;
+                                }),
+                            },
+                            leftboundshape:{
+                                xpoints:road.leftboundshape.map((point) => {
+                                    return point.x;
+                                }),
+                                ypoints:road.leftboundshape.map((point) => {
+                                    return point.y;
+                                }),
+                                zpoints:road.leftboundshape.map((point) => {
+                                    return point.z;
+                                }),
+                            },
+                            rightboundshape:{
+                                xpoints:road.rightboundshape.map((point) => {
+                                    return point.x;
+                                }),
+                                ypoints:road.rightboundshape.map((point) => {
+                                    return point.y;
+                                }),
+                                zpoints:road.rightboundshape.map((point) => {
+                                    return point.z;
+                                }),
+                            },
+                            lanes:road.lanes.map((lane) => {
+                                return {
+                                    id:lane.id,
+                                    left_line:lane.left_laneline_id,
+                                    right_line:lane.right_laneline_id,
+                                    width:lane.width,
+                                    drivingdirection:lane.direction,
+                                    turndirection:lane.turnDirection,
+                                    xpoints:lane.lanecenter.points.map((point) => {
+                                        return point.x;
+                                    }),
+                                    ypoints:lane.lanecenter.points.map((point) => {
+                                        return point.y;
+                                    }),
+                                    zpoints:lane.lanecenter.points.map((point) => {
+                                        return point.z;
+                                    }),
+                                }
+                            }),
+                            markers:road.lanemarkers.map((marker) => {
+                                return {
+                                    id:marker.id,
+                                    type:marker.type,
+                                    color:marker.color,
+                                    xpoints:marker.points.map((point) => {
+                                        return point.x;
+                                    }),
+                                    ypoints:marker.points.map((point) => {
+                                        return point.y;
+                                    }),
+                                    zpoints:marker.points.map((point) => {
+                                        return point.z;
+                                    }),
+                                }
+                            }),
+                            stopline:road.stopLines.map((stopline)=>{
+                                return {
+                                    id: stopline.id,
+                                }
+                            })
+                        }
+                    }),
+            // 使用flatMap替代map，实现数组扁平化
+                    Stopline:roads.flatMap((road) => {
+                        // 确保road.stopLines存在且为数组
+                        if (!road.stopLines || !Array.isArray(road.stopLines)) {
+                            return [];
+                        }
+                        
+                        return road.stopLines.map((stopline) => {
+                            return {
+                                ID: stopline.id,
+                                startx:stopline.points[0].x,
+                                starty:stopline.points[0].y,
+                                endx:stopline.points[1].x,
+                                endy:stopline.points[1].y,
+                            };
+                        });
+                    }),
+                    LandMarks:roads.flatMap((road) => {
+                        // 确保road.stopLines存在且为数组
+                        if (!road.arrows || !Array.isArray(road.arrows)) {
+                            return [];
+                        }
+                        
+                        return road.arrows.map((arrow) => {
+                            return {
+                                ID: arrow.id,
+                                posx:arrow.posx,
+                                posy:arrow.posy,
+                                posz:arrow.posz,
+                                angle:arrow.angle,
+                                type:arrow.type,
+                                RoadID:arrow.RoadID,
+                                LaneID:arrow.LaneID
+                            };
+                        });
+                    }),
+                    TrafficLights:roads.flatMap((road) => {
+                        // 确保road.stopLines存在且为数组
+                        if (!road.trafficlights || !Array.isArray(road.trafficlights)) {
+                            return [];
+                        }
+                        
+                        return road.trafficlights.map((trafficlight) => {
+                            return {
+                                ID: trafficlight.id,
+                                posx:trafficlight.position.x,
+                                posy:trafficlight.position.y,
+                                direction:trafficlight.direction,
+                                rotation:trafficlight.rotation,
+                            };
+                        });
+                    }),
+                    StreetLights:roads.flatMap((road) => {
+                        // 确保road.stopLines存在且为数组
+                        if (!road.streetLights || !Array.isArray(road.streetLights)) {
+                            return [];
+                        }
+                        
+                        return road.streetLights.map((streetlight) => {
+                            return {
+                                ID: streetlight.id,
+                                posx:streetlight.position.x,
+                                posy:streetlight.position.y,
+                                posz:streetlight.position.z,
+                                // direction:streetlight.direction,
+                                rotation:streetlight.rotation,
+                            };
+                        });
+                    }),
+                    ZebraCrossings:roads.flatMap((road) => {
+                        // 确保road.stopLines存在且为数组
+                        if (!road.zebraCrossings || !Array.isArray(road.zebraCrossings)) {
+                            return [];
+                        }
+                        
+                        return road.zebraCrossings.map((zebracrossing) => {
+                            return {
+                                ID: zebracrossing.id,
+                                geo:zebracrossing.points,
+                            };
+                        });
+                    }),
+
+            
+                Intersection:intersections.map((intersection) =>{
+                    return {
+                        interID:intersection.id,
+                        posx:intersection.x,
+                        posy:intersection.y,
+                        type:intersection.type,
+                        size:intersection.size,
+                    }
+                })
+            }}
+            // 创建JSON文件
+            const dataStr = JSON.stringify(mapData, null, 2);
+            command = ip + '/process_map_data'
+            fetch(command,{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:dataStr
+            }).then(response=>response.json()).then(data=>{
+                if(data.success){
+                    console.log('cool')
+                }
+            })
+        }
+
         function generatemapfile(customFileName){
 
             const mapData = {
