@@ -1,4 +1,4 @@
-    let mode = 'local'
+    let mode = 'online'
     let ip = '';
     // 调用API执行Python脚本
     if (mode == 'local'){
