@@ -79,7 +79,10 @@
                     <input type="range" id="transparency" min="0.1" max="1" step="0.1" value="0.5">
                     <div class="unit-info">0.1-1.0</div>
                 </div>
-                <!-- 按钮组 -->
+                <div>
+                  <button id="3DView-btn" class="w-full bg-white text-black" style="font-size: 11px;" onclick="window.location.href='SENSOR_SIMU.html'">3D视图</button>
+                </div>
+                  <!-- 按钮组 -->
                 <div class="button-group flex flex-wrap gap-2">
                     <button id="new-fan-btn" class="rounded bg-white text-black" style="font-size: 11px;">新建传感器</button>
                     <button id="save-config-btn" class="rounded bg-white text-black" style="font-size: 11px;">保存配置</button>
@@ -88,33 +91,41 @@
                     <button id="stop-anim-btn" class="rounded bg-white text-black" style="font-size: 11px;">启动动画</button>
                     <button id="save-image-btn" class="rounded bg-white text-black" style="font-size: 11px;">保存图片</button>
                 </div>
+                
             </div>
 
             <!-- 类型选择弹窗 -->
             <div id="type-select-modal" class="modal">
                 <div class="modal-content">
-                <h3>选择FoV类型</h3>
-                <div class="modal-form">
-                    <div class="form-group">
-                    <label for="type-select">大类:</label>
-                    <select id="type-select">
-                        <option value="camera">摄像头</option>
-                        <option value="radar">毫米波雷达</option>
-                        <option value="ultrasonic">超声波雷达</option>
-                        <option value="lidar">激光雷达</option>
-                    </select>
-                    </div>
-                    <div class="form-group">
-                    <label for="subtype-select">子类:</label>
-                    <select id="subtype-select">
-                        <!-- 会通过JavaScript动态更新 -->
-                    </select>
-                    </div>
-                    <div class="button-group">
-                    <button id="confirm-type-btn">确认</button>
-                    <button id="cancel-type-btn">取消</button>
-                    </div>
-                </div>
+                  <h3>选择FoV类型</h3>
+                  <div style="height: 15px;"></div> <!-- 添加垂直间距 -->
+                  <div class="modal-form">
+                      <div class="form-group">
+                      <label for="type-select">传感器类型:</label>
+                      <select id="type-select">
+                          <option value="camera">摄像头</option>
+                          <option value="radar">毫米波雷达</option>
+                          <option value="ultrasonic">超声波雷达</option>
+                          <option value="lidar">激光雷达</option>
+                      </select>
+                      </div>
+                      <div class="form-group">
+                      <label for="subtype-select">子类:</label>
+                      <select id="subtype-select">
+                          <!-- 会通过JavaScript动态更新 -->
+                      </select>
+                      </div>
+                      <div class="form-group">
+                      <label for="subsubtype-select">参数:</label>
+                      <select id="subsubtype-select">
+                          <!-- 会通过JavaScript动态更新 -->
+                      </select>
+                      </div>
+                      <div class="button-group">
+                        <button id="confirm-type-btn" class="rounded bg-white text-black" style="font-size: 13px;">确认</button>
+                        <button id="cancel-type-btn" class="rounded bg-white text-black" style="font-size: 13px;">取消</button>
+                      </div>
+                  </div>
                 </div>
             </div>
 
@@ -183,20 +194,19 @@
             // 根据容器宽度和固定比例设置画布高度
             canvas.width = container.clientWidth * 0.9;
             canvas.height = (container.clientWidth * 0.9) / ASPECT_RATIO;
-            console.log(canvas.width,canvas.height, canvas.width/canvas.height-16/9);
+            // console.log(canvas.width,canvas.height, canvas.width/canvas.height-16/9);
             
             // 确保车辆图片位置正确
             if (carCenter) {
                 // 可以在这里添加额外的位置调整逻辑（如果需要）
                 carCenter.style.left = '40%';
                 carCenter.style.top = '50%';
-                console.log(resizing)
             }
         }
     }
 
     // 页面加载和窗口调整大小时调整画布
-    window.addEventListener('load', resizeCanvas);
+    // window.addEventListener('load', resizeCanvas);
     window.addEventListener('resize', resizeCanvas);
     // 保存图片功能
     function saveImage() {
@@ -225,7 +235,7 @@
         // 计算汽车位置和大小
         const carWidth = 60;
         const carHeight = 36;
-        const carX = canvas.width * 0.35 - carWidth / 2;
+        const carX = canvas.width * 0.35 - carWidth / 2+15;
         const carY = (canvas.height - carHeight) / 2;
 
         // 绘制汽车
@@ -859,20 +869,23 @@
     // 初始化子类选择框
     function initSubtypeSelect(type) {
       const subtypeSelect = document.getElementById('subtype-select');
+      const subsubtypeSelect = document.getElementById('subsubtype-select');
       // 先移除已存在的二级子项选择框
       const existingSecondSubtypeSelect = document.getElementById('second-subtype-select');
       if (existingSecondSubtypeSelect) {
         existingSecondSubtypeSelect.remove();
       }
 
-      const secondSubtypeSelect = document.createElement('select');
-      secondSubtypeSelect.id = 'second-subtype-select';
-      secondSubtypeSelect.className = 'form-control';
-      secondSubtypeSelect.style.marginTop = '10px';
-      secondSubtypeSelect.style.display = 'none';
+      // const secondSubtypeSelect = document.createElement('select');
+      // secondSubtypeSelect.id = 'second-subtype-select';
+      // secondSubtypeSelect.className = 'form-control';
+      // secondSubtypeSelect.style.marginTop = '10px';
+      // secondSubtypeSelect.style.display = 'none';
+      // secondSubtypeSelect.classList.add('text-black');
+      // secondSubtypeSelect.classList.add('text-xs')
 
       subtypeSelect.innerHTML = '';
-      document.getElementById('type-select-modal').querySelector('.modal-form').appendChild(secondSubtypeSelect);
+      // document.getElementById('type-select-modal').querySelector('.modal-form').appendChild(secondSubtypeSelect);
 
       const subtypes = fovTemplates[type]?.subtypes || {};
       for (const [key, value] of Object.entries(subtypes)) {
@@ -888,17 +901,17 @@
     const secondSubtypes = fovTemplates[type].subtypes[selectedSubtype]?.subtypes || {};
 
     if (Object.keys(secondSubtypes).length > 0) {
-      secondSubtypeSelect.innerHTML = '';
-      secondSubtypeSelect.style.display = 'block';
+      subsubtypeSelect.innerHTML = '';
+      // secondSubtypeSelect.style.display = 'block';
 
       for (const [key, value] of Object.entries(secondSubtypes)) {
         const option = document.createElement('option');
         option.value = key;
         option.textContent = value.name;
-        secondSubtypeSelect.appendChild(option);
+        subsubtypeSelect.appendChild(option);
       }
     } else {
-      secondSubtypeSelect.style.display = 'none';
+      // secondSubtypeSelect.style.display = 'none';
     }
   };
 
@@ -912,7 +925,7 @@
     function confirmTypeSelection() {
       const type = document.getElementById('type-select').value;
       let subtype = document.getElementById('subtype-select').value;
-      const secondSubtypeSelect = document.getElementById('second-subtype-select');
+      const secondSubtypeSelect = document.getElementById('subsubtype-select');
       let template;
       let color;
 

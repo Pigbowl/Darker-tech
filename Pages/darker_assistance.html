@@ -1,0 +1,323 @@
+<link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<script src="../js/ipcontroller.js"></script>  
+<!-- 动态虚拟助手 -->
+<div id="duckAssistant" style="position:fixed;bottom:150px;right:50px;display:flex;flex-direction:column;align-items:flex-end;z-index:9999;">
+  <!-- 对话气泡 -->
+     <!-- 对话气泡 -->
+  <div id="chatBubble" style="width:280px;background:rgb(253, 229, 10);border-radius:15px;padding:12px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1);position:relative;">
+    <div id="bubbleContent" style="font-size:14px;color:rgb(0, 0, 0);line-height:1.5;">欢迎来到达客科技！</div>
+      <div style="position:absolute;bottom:-5px;right:10px;width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:8px solid rgba(253, 229, 10);"></div>
+  </div>
+  <!-- 选项列表 -->
+  <div id="optionList" style="
+    width:200px;
+    background:rgb(253, 229, 10);
+    border-radius:15px;
+    padding:8px 0;
+    margin-bottom:10px;
+    box-shadow:0 2px 10px rgba(251, 251, 251, 0.1);
+    position:relative;
+    display:none;
+    transform-origin: bottom right;
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
+  ">
+    <!-- <div style="position:absolute;bottom:-8px;right:10px;width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:8px solid white;"></div> -->
+        <!-- 选项项 -->
+    <div class="option-item" style="border-radius:10px;padding:12px 20px;cursor:pointer;transition:background-color 0.2s;" data-action="report">
+      <span style="color:rgb(0, 0, 0);font-size:14px;margin-right:8px;"><i class="fa fa-bug"></i></span>
+      <span style="color:rgb(0, 0, 0);font-size:14px;">问题提报</span>
+    </div>
+    <div class="option-item" style="border-radius:10px;padding:12px 20px;cursor:pointer;transition:background-color 0.2s;" data-action="about">
+      <span style="color:rgb(0, 0, 0);font-size:14px;margin-right:8px;"><i class="fa fa-user"></i></span>
+      <span style="color:rgb(0, 0, 0);font-size:14px;">认识达客</span>
+    </div>
+    <div class="option-item" style="border-radius:10px;padding:12px 20px;cursor:pointer;transition:background-color 0.2s;" data-action="start">
+      <span style="color:rgb(0, 0, 0);font-size:14px;margin-right:8px;"><i class="fa fa-road"></i></span>
+      <span style="color:rgb(0, 0, 0);font-size:14px;">开始旅程</span>
+    </div>
+    <div class="option-item" style="border-radius:10px;padding:12px 20px;cursor:pointer;transition:background-color 0.2s;" data-action="question">
+      <span style="color:rgb(0, 0, 0);font-size:14px;margin-right:8px;"><i class="fa fa-question-circle"></i></span>
+      <span style="color:rgb(0, 0, 0);font-size:14px;">达客问答</span>
+    </div>
+  </div>
+
+  <!-- 动态图标（雪碧图实现） -->
+  <!-- <div 
+    id="duckIcon" 
+    style="
+      
+      width:100px; 
+      height:100px; 
+      border-radius:50%; 
+      cursor:pointer; 
+      background-image: url('../PIC/duck_sprites_yellow.png');  /* 雪碧图路径 */
+      background-repeat: no-repeat;
+      background-position: 0 0;  /* 默认显示第0帧（静止） */
+      background-size: auto 100%;  /* 确保高度适配，宽度自动缩放 */
+    "
+  ></div> -->
+
+  <video 
+  id="duckIcon" 
+  src="../PIC/duck_spin.mp4"
+  style="
+    width:80px; 
+    height:80px; 
+    border-radius:50%; 
+    cursor:pointer; 
+    display:none;  /* 默认隐藏 */
+  "
+  autoplay 
+  loop 
+  muted 
+  playsinline
+></video>
+<!-- 静止图（默认显示） -->
+<img 
+  id="duckStatic" 
+  src="../PIC/duck_action_0.png" 
+  style="width:80px; height:80px; border-radius:50%; cursor:pointer;"
+>
+
+  <!-- 聊天输入框 -->
+  <div id="chatInputBox" style="display:none;width:1000px;background:rgb(255, 252, 61);border-radius:10px;padding:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1);margin-top:10px;position:relative;">
+    <!-- 关闭按钮 -->
+    <button id="closeChatBtn" style="position:absolute;top:5px;right:5px;width:24px;height:24px;border:none;border-radius:50%;background:#ff6b6b;color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,0.2);">
+      <i class="fa fa-times"></i>
+    </button>
+    <div id="chatContent" style="height:380px;overflow-y:auto;padding:10px;background:#000000;"></div>
+    <div style="display:flex;padding:10px;border-top:1px solid #eee;">
+      <input type="text" id="userInput" placeholder="请输入你的问题..." style="flex:1;padding:8px;border:1px solid #ddd;border-radius:4px;">
+      <button id="sendBtn" style="margin-left:10px;padding:8px 15px;border:none;border-radius:4px;background:#007bff;color:white;cursor:pointer;">发送</button>
+    </div>
+</div>
+
+<script>
+  // 点击交互（触发挥手动画+切换输入框）
+let isChatting = false;
+let introInterval;
+const chatBubble = document.getElementById('chatBubble');
+const duckIcon = document.getElementById('duckIcon');
+const chatInputBox = document.getElementById('chatInputBox');
+const chatContent = document.getElementById('chatContent');
+const userInput = document.getElementById('userInput');
+const sendBtn = document.getElementById('sendBtn');
+const frameWidth = 100;  // 单帧宽度（与雪碧图单帧尺寸一致）
+const totalFrames = 6;  // 总帧数（6帧动画）
+const duckVideo = document.getElementById('duckIcon');
+const duckStatic = document.getElementById('duckStatic');
+let animationInterval = null;
+let animationTimeout = null; // 定义animationTimeout变量
+
+// 自动播放动画（每5秒触发一次挥手，避免频繁动画）
+function startAutoAnimation() {
+  setInterval(() => {
+    playWaveAnimation();
+  }, 8000);
+}
+function playWaveAnimation() {
+  if (animationTimeout) clearTimeout(animationTimeout);
+  // 显示视频，隐藏静止图
+  duckVideo.style.display = "block";
+  duckStatic.style.display = "none";
+  // 视频播放1.5秒后恢复静止图
+  animationTimeout = setTimeout(() => {
+    duckVideo.style.display = "none";
+    duckStatic.style.display = "block";
+  }, 5000);
+}
+// function playWaveAnimation() {
+//   if (animationTimeout) clearTimeout(animationTimeout);
+//   if (animationInterval) clearInterval(animationInterval);
+  
+//   let currentFrame = 0;
+//   // 使用雪碧图实现动画
+//   animationInterval = setInterval(() => {
+//     currentFrame++;
+//     // 计算背景位置，实现帧动画效果
+//     duckIcon.style.backgroundPosition = `-${currentFrame * frameWidth}px 0`;
+    
+//     // 当播放完所有帧后重置到第一帧并停止动画
+//     if (currentFrame >= totalFrames - 1) {
+//       clearInterval(animationInterval);
+//       // 1.5秒后恢复静止状态
+//       animationTimeout = setTimeout(() => {
+//         duckIcon.style.backgroundPosition = '0 0';
+//       }, 1500);
+//     }
+//   }, 150); // 每100ms切换帧
+// }
+
+// 获取DOM元素
+const optionList = document.getElementById('optionList');
+const optionItems = document.querySelectorAll('.option-item');
+
+// 鼠标悬停事件处理
+function showOptions() {
+  duckVideo.src = "../PIC/duck_move.mp4";
+  playWaveAnimation(); // 显示选项时播放挥手动画
+  optionList.style.display = 'block';
+  // 使用setTimeout确保display改变后再执行transform动画
+  setTimeout(() => {
+    optionList.style.transform = 'scaleY(1)';
+  }, 10);
+  chatBubble.style.display = 'none'
+  updateIframeSize();
+}
+
+duckIcon.onclick = () => {
+  playWaveAnimation();  // 点击时播放挥手动画
+
+};
+
+// 关闭聊天框功能
+const closeChatBtn = document.getElementById('closeChatBtn');
+closeChatBtn.addEventListener('click', () => {
+  chatInputBox.style.display = "none";
+  chatBubble.style.display = "block";
+  startIntroAnimation();
+  isChatting = false;
+  updateIframeSize();
+});
+
+function hideOptions() {
+  optionList.style.transform = 'scaleY(0)';
+  // 动画结束后隐藏元素
+  setTimeout(() => {
+    optionList.style.display = 'none';
+  }, 300);
+  updateIframeSize();
+}
+
+// 添加鼠标事件监听器
+duckIcon.addEventListener('mouseenter', showOptions);
+// 移除duckIcon的mouseleave事件，防止用户从图标移动到选项列表时选项列表消失
+// duckIcon.addEventListener('mouseleave', hideOptions);
+
+// 为了防止鼠标从图标移动到选项列表时选项列表消失，给选项列表也添加事件监听
+optionList.addEventListener('mouseenter', () => {
+  optionList.style.display = 'block';
+  optionList.style.transform = 'scaleY(1)';
+});
+
+optionList.addEventListener('mouseleave', hideOptions);
+
+// 为选项添加点击事件处理
+optionItems.forEach(item => {
+  item.addEventListener('mouseenter', () => {
+    item.style.backgroundColor = '#fffc3d';
+  });
+  
+  item.addEventListener('mouseleave', () => {
+    item.style.backgroundColor = 'transparent';
+  });
+  
+  item.addEventListener('click', () => {
+    const action = item.getAttribute('data-action');
+    handleOptionClick(action);
+    hideOptions();
+  });
+});
+
+// 添加点击页面其他区域隐藏选项列表的功能
+document.addEventListener('click', (event) => {
+  // 检查点击目标是否是duckIcon或optionList及其子元素
+  if (!duckIcon.contains(event.target) && !optionList.contains(event.target)) {
+    hideOptions();
+  }
+});
+
+// 处理选项点击事件
+function handleOptionClick(action) {
+  // 根据选择的选项执行相应操作
+  switch(action) {
+    case 'report':
+      // 问题提报功能
+      window.parent.location.href = "../index.html#contact";
+      break;
+    case 'about':
+      // 理解达客功能
+      window.parent.location.href = "../index.html#about";
+      break;
+      break;
+    case 'question':
+      duckVideo.src = "../PIC/duck_keyboard.mp4";
+      // 我有问题功能
+        if (!isChatting) {
+          clearInterval(introInterval);
+          bubbleContent.textContent = "请问有什么可以帮你了解的？";
+          chatInputBox.style.display = "block";
+          userInput.focus();
+        } else {
+          chatInputBox.style.display = "none";
+          startIntroAnimation();
+        }
+        isChatting = !isChatting;
+        updateIframeSize();
+      break;
+  }
+}
+
+
+// 发送消息功能
+sendBtn.onclick = async () => {
+  console.log("Yes my friend, you clicked it")
+  const question = userInput.value.trim();
+  if (!question) return;
+  // 添加用户消息到界面
+  chatContent.innerHTML += `<div style="margin:10px 0;text-align:right;"><span style="background:#007bff;color:white;padding:5px 10px;border-radius:10px;">${question}</span></div>`;
+  userInput.value = '';
+  command = ip + '/chat';
+  // // 调用后端接口
+  // const res = await fetch(command, {
+  //   method: 'POST',
+  //   headers: { 'Content-Type': 'application/json' },
+  //   body: JSON.stringify({ question })
+  // });
+  // const data = await res.json();
+  // 添加助手回复到界面
+  chatContent.innerHTML += `<div style="margin:10px 0;text-align:left;"><span style="background:#eee;padding:5px 10px;border-radius:10px;">"即将上线,敬请期待！"</span></div>`;
+  chatContent.scrollTop = chatContent.scrollHeight; // 滚动到底部
+  updateIframeSize();
+};
+
+// 自动介绍文本（保持不变）
+function startIntroAnimation() {
+  const introTexts = [
+    "欢迎了解ADAS仿真平台！",
+    "我可以帮你解答平台相关问题~",
+    "点击我开始对话吧！"
+  ];
+  let currentIntroIndex = 0;
+  introInterval = setInterval(() => {
+    bubbleContent.textContent = introTexts[currentIntroIndex];
+    currentIntroIndex = (currentIntroIndex + 1) % introTexts.length;
+    updateIframeSize();
+  }, 2000);
+}
+
+// 初始化
+startIntroAnimation();
+// 初始化 - 只启动自动动画
+startAutoAnimation();
+
+// 图标悬停时添加缩放效果
+duckIcon.addEventListener('mouseenter', () => {
+  duckIcon.style.transform = 'scale(1.05)';
+});
+
+duckIcon.addEventListener('mouseleave', () => {
+  duckIcon.style.transform = 'scale(1)';
+});
+
+// 宽高自适应
+function updateIframeSize() {
+  const assistant = document.getElementById('duckAssistant');
+  window.parent.postMessage({
+    type: 'updateDuckSize',
+    width: assistant.offsetWidth,
+    height: assistant.offsetHeight
+  }, '*');
+}
+</script>

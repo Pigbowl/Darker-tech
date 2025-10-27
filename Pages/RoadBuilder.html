@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>环境生成器-V1.1</title>
+    <title>Darker-Tech 环境生成器</title>
     <!-- 引入Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入Font Awesome -->
@@ -53,7 +53,7 @@
                 border-color: #165DFF;
             }
             .map-container {
-                background-color: #003366; /* 黑色背景 */
+                background-color: #4b98e5; /* 黑色背景 */
                 border: 1px solid #333;
                 border-radius: 0.5rem;
                 overflow: hidden;
@@ -1638,7 +1638,7 @@
                 dialog.className = 'hint-selection-dialog fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
                 
                 const dialogContent = document.createElement('div');
-                dialogContent.className = 'bg-white rounded-lg shadow-lg p-6 w-80 max-w-full';
+                dialogContent.className = 'bg-white text-black rounded-lg shadow-lg p-6 w-80 max-w-full';
                 
                 const dialogTitle = document.createElement('h3');
                 dialogTitle.className = 'text-xl font-bold mb-4';
@@ -3354,7 +3354,7 @@
                         <!-- 道路宽度输入框（只读） -->
                         <div class="flex justify-between items-center">
                             <label class="text-sm text-gray-600">道路宽度</label>
-                            <input type="number" min="1" max="50" value="10" class="width-input" id="selected-road-width-input" readonly>
+                            <input type="number" min="1" max="50" value="10" class="width-input text-black" id="selected-road-width-input" readonly>
                         </div>
                         
                         <!-- 道路方向选择器 -->

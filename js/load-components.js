@@ -38,7 +38,19 @@ function setActiveNavLink() {
         }
     });
 }
+// 监听子页面发送的高度更新消息
+window.addEventListener('message', function(event) {
+// 验证消息来源（可选，增强安全性）
+// if (event.origin !== 'http://你的子页面域名') return;
 
+// 如果是虚拟助手的高度更新消息，则调整iframe高度
+if (event.data.type === 'updateDuckSize') {
+    const duckIframe = document.getElementById('duckIframe');
+    // 增加缓冲值（避免内容紧贴边框，可根据实际样式调整）
+    duckIframe.style.height = (event.data.height + 150) + 'px';
+    duckIframe.style.width = (event.data.width + 80) + 'px'; // 新增宽度设置
+}
+});
 tailwind.config = {
     theme: {
         extend: {

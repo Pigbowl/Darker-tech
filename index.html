@@ -72,6 +72,14 @@
     </style>
 </head>
 <body>
+        <!-- 引入虚拟助手的iframe -->
+    <iframe 
+        id="duckIframe"
+        src="./Pages/darker_assistance.html" 
+        style="position: fixed; bottom: 50px; right: 50px; width: 400px; height: 400px; border: none; z-index: 9999; overflow: visible;"
+        frameborder="0"
+        scrolling="no" 
+    ></iframe>
     <!-- 导航栏 -->
      <div id="navbar-container"></div>
 
@@ -547,7 +555,7 @@
     </section>
 
     <!-- 联系我们 -->
-    <section class="py-20 relative bg-colorsec">
+    <section id="contact" class="py-20 relative bg-colorsec">
         <div class="container mx-auto px-4">
             <div class="text-center mb-16">
                 <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold mb-4">
@@ -699,6 +707,8 @@
         </div>
     </section>
 
+
+
     <!-- 页脚 -->
     <footer class="bg-colorpri border-t border-logoup/20">
         <div class="container mx-auto px-4 py-12">
@@ -755,24 +765,12 @@
                             alert('请输入有效的邮箱地址');
                             return;
                         }
+                        console.log(contactType);
                         if (contactType === 'issue') {
                             addnewissue(name,message,subject,email);
+                        }else if (contactType === 'suggestion') {
+                            addnewadvice(name,message,subject,email);
                         }
-                        
-                        // 构建邮件内容
-//                         const body = `
-// 姓名: ${name}
-// 邮箱: ${email}
-// 主题: ${subject}
-// 留言内容:
-// ${message}
-//                         `.trim();
-                        
-//                         // 使用mailto打开邮件客户端
-//                         const mailtoLink = `mailto:1273880613@qq.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-                        
-//                         // 尝试打开邮件客户端
-//                         window.location.href = mailtoLink;
                     
                     });
                     
@@ -825,6 +823,22 @@
         </div>
     </footer>
     <script src="../js/ipcontroller.js"></script>   
+        <!-- 父页面添加监听脚本 -->
+    <script>
+    // 监听子页面发送的高度更新消息
+        window.addEventListener('message', function(event) {
+    // 验证消息来源（可选，增强安全性）
+    // if (event.origin !== 'http://你的子页面域名') return;
+
+        // 如果是虚拟助手的高度更新消息，则调整iframe高度
+        if (event.data.type === 'updateDuckSize') {
+            const duckIframe = document.getElementById('duckIframe');
+            // 增加缓冲值（避免内容紧贴边框，可根据实际样式调整）
+            duckIframe.style.height = (event.data.height + 150) + 'px';
+            duckIframe.style.width = (event.data.width + 80) + 'px'; // 新增宽度设置
+        }
+        });
+    </script>
     <!-- JavaScript -->
     <script>
         let issue_number = 0;
@@ -913,7 +927,7 @@
                     'Content-Type':'application/json'
                 },
                 body:JSON.stringify({
-                    'issue':     {
+                    'advice':     {
                         "id": "ADVICE-"+advice_number,
                         "title": subject,
                         "description": message,

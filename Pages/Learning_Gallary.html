@@ -17,6 +17,15 @@
 
 <body class="bg-dark text-gray-100 font-inter min-h-screen flex flex-col bg-grid">
     <div id="particles-js"></div>
+            <!-- 引入虚拟助手的iframe -->
+    <iframe 
+        id="duckIframe"
+        src="../Pages/darker_assistance.html" 
+        style="position: fixed; bottom: 50px; right: 50px; width: 400px; height: 400px; border: none; z-index: 9999; overflow: visible;"
+        frameborder="0"
+        scrolling="no" 
+    ></iframe>
+
     <div class="content min-h-screen">
 
         <!-- 导航栏容器 --> 
@@ -540,7 +549,22 @@
         <!-- 页脚容器 -->
         <div id="footer-container"></div>   
     </div>
-    <script src="../js/ipcontroller.js"></script>    
+    <script src="../js/ipcontroller.js"></script>  
+    <!-- <script>
+    // 监听子页面发送的高度更新消息
+        window.addEventListener('message', function(event) {
+    // 验证消息来源（可选，增强安全性）
+    // if (event.origin !== 'http://你的子页面域名') return;
+
+        // 如果是虚拟助手的高度更新消息，则调整iframe高度
+        if (event.data.type === 'updateDuckSize') {
+            const duckIframe = document.getElementById('duckIframe');
+            // 增加缓冲值（避免内容紧贴边框，可根据实际样式调整）
+            duckIframe.style.height = (event.data.height + 150) + 'px';
+            duckIframe.style.width = (event.data.width + 80) + 'px'; // 新增宽度设置
+        }
+        });
+    </script>   -->
     <!-- 加载组件的脚本 -->
     <script>
 

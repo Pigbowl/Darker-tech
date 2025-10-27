@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>达客科技-多视角传感器模拟</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        #container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+        }
+        #controls {
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #file-input {
+            display: none;
+        }
+        label[for="file-input"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .view-label {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 4px 8px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="navbar-container"></div>   
+    <div>
+        <div id="cameraControls" style="position: absolute; top: 500px; left: 500px; z-index: 100; background: rgba(0,0,0,0.7); padding: 10px; border-radius: 5px; color: white;">
+            <h3>相机视锥控制</h3>
+            <div id="cameraCheckboxes"></div>
+        </div>
+        <div id="container"></div>
+
+        <div id="mainViewLabel" class="view-label">主视图 (可交互)</div>
+
+        <div id="frontWideViewLabel" class="view-label" style="top: 10px; left: 300px;">前视宽相机</div>
+        <div id="frontNarrowViewLabel" class="view-label" style="top: 10px; left: 300px;">前视窄相机</div>
+        <div id="frontRightViewLabel" class="view-label" style="top: 120px; left: 300px;">前右相机</div>
+        <div id="frontLeftViewLabel" class="view-label" style="top: 120px; left: 300px;">前左相机</div>
+        <div id="rearRightViewLabel" class="view-label" style="top: 120px; left: 300px;">后右相机</div>
+        <div id="rearLeftViewLabel" class="view-label" style="top: 10px; left: 300px;">后左相机</div>
+        <div id="rearViewLabel" class="view-label" style="top: 120px; left: 300px;">后视</div>
+    </div>
+    <!-- 添加速度控制按钮 -->
+    <button id="speedControl" style="position: absolute; bottom: 140px; left: 10px; padding: 8px 16px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">开始</button>
+    <button id="leftturn" style="position: absolute; bottom: 140px; left: 110px; padding: 8px 16px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">左转向</button>
+    <button id="rightturn" style="position: absolute; bottom: 140px; left: 220px; padding: 8px 16px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">右转向</button>
+
+    <button id="lighton" style="position: absolute; bottom: 140px; left: 330px; padding: 8px 16px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">开灯</button>
+    <button id="3DView-btn" style="position: absolute; bottom: 140px; left: 400px; padding: 8px 16px; background-color: #4c4caf; color: white; border: none; border-radius: 4px; cursor: pointer;" onclick="window.location.href='FoV_build.html'">切换2D视图</button>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- 后处理基础组件 - 必须按此顺序引入 -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/postprocessing/Pass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/shaders/CopyShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/postprocessing/ShaderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/loaders/RGBELoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/utils/PMREMGenerator.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/helpers/RectAreaLightHelper.js"></script>
+
+    <script>
+        let lighton = false;
+        let lightdense = 0;
+        let steering_speed = Math.PI/90;
+        let adascampara = {
+            "frontWide":    {'posx':0,'posy':1.45,'posz':1.18,'anglex':0,'angley':0,'anglez':0,'hfov':120,'vfov':60,'range':200},
+            "frontNarrow":  {'posx':0.1,'posy':1.45,'posz':1.18,'anglex':0,'angley':0,'anglez':0,'hfov':30,'vfov':40,'range':400},
+            "frontRight":   {'posx':-0.927,'posy':0.85,'posz':1.905,'anglex':0,'angley':-135,'anglez':0,'hfov':100,'vfov':60,'range':80},  // near the wheel, looking backwards
+            "frontLeft":    {'posx':0.927,'posy':0.85,'posz':1.905,'anglex':0,'angley':135,'anglez':0,'hfov':100,'vfov':60,'range':80},
+            "rearRight":    {'posx':-0.918,'posy':1.05,'posz':1.3656,'anglex':35,'angley':-50,'anglez':0,'hfov':100,'vfov':60,'range':80},
+            "rearLeft":     {'posx':0.918,'posy':1.05,'posz':1.3656,'anglex':35,'angley':50,'anglez':0,'hfov':100,'vfov':60,'range':80},
+            "rear":         {'posx':0,'posy':1.62,'posz':-0.88,'anglex':-15,'angley':-180,'anglez':0,'hfov':100,'vfov':60,'range':80},
+        }
+
+        let virtualcameras = {};
+        let envsetsup = {
+            "ROAD":{posx:0,posy:0,posz:0,scale:1.5,rotationx:0,rotationy:15,rotationz:0},
+            "exported_map":{posx:9,posy:0,posz:-20,scale:1,rotationx:0,rotationy:90,rotationz:0},
+        }
+        let egosetup ={
+            "Urus":{posx:0,posy:0,posz:0,scale:100,rotationx:0,rotationy:0,rotationz:0,wheelsize:0.75},
+
+            "NIO_ES7":{posx:0,posy:0,posz:0,scale:1,rotationx:0,rotationy:0,rotationz:0,wheelsize:0.725},
+        }
+        // 添加HDR环境贴图
+        const hdrLoader = new THREE.RGBELoader();
+        hdrLoader.load('templates/hdr_env.hdr', function(texture) {
+            texture.mapping = THREE.EquirectangularReflectionMapping;
+            scene.environment = texture;  // 这将影响所有PBR材质
+            
+            // 创建间接光照
+            const pmremGenerator = new THREE.PMREMGenerator(renderer);
+            pmremGenerator.compileEquirectangularShader();
+            const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+            scene.environment = envMap;
+            pmremGenerator.dispose();
+        });
+        let lightsetup ={
+            "frontLight":{"posx":0,"posy":0,"posz":0,"color":0x222222,"density":0},
+            "backLight":{"posx":0,"posy":4,"posz":-4,"color":0xFFFFFF,"density":0},
+            "rightLight":{"posx":4,"posy":4,"posz":0,"color":0xFFFFFF,"density":0},
+            "leftLight":{"posx":-4,"posy":4,"posz":0,"color":0xFFFFFF,"density":0},
+            "leftheadlight":{"posx":0.806,"posy":0.79,"posz":3,"color":0xFFFFFF,"density":lightdense},
+            "rightheadlight":{"posx":-0.806,"posy":0.79,"posz":3,"color":0xFFFFFF,"density":lightdense}
+            }
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+        let viewSizeH = width/4; // 调整视口大小，避免重叠
+        let viewSizeV = height/4; // 调整视口大小，避免重叠
+        let layoutdetail = {};
+        let lights = {};
+        let leftblinkState = false;  // 闪烁状态（true为亮，false为灭）
+        let rightblinkState = false;  // 闪烁状态（true为亮，false为灭）
+        let leftblinking = false;
+        let rightblinking = false;
+        let leftlastBlinkTime = 0;   // 上次闪烁时间
+        let rightlastBlinkTime = 0;   // 上次闪烁时间
+        let wheelradius = 0;
+
+        const BLINK_INTERVAL = 500;  // 闪烁间隔时间（毫秒，这里设为1秒，完整周期2秒）
+        let pagelayoutscale ={
+            "frontWide":{"sizex":1,"sizey":1,"posx":2,"posy":3},
+            "frontNarrow":{"sizex":1,"sizey":1,"posx":3,"posy":3},
+            "frontRight":{"sizex":1,"sizey":1,"posx":2,"posy":2},
+            "frontLeft":{"sizex":1,"sizey":1,"posx":3,"posy":2},
+            "rearRight":{"sizex":1,"sizey":1,"posx":2,"posy":1},
+            "rearLeft":{"sizex":1,"sizey":1,"posx":3,"posy":1},
+            "rear":{"sizex":1,"sizey":1,"posx":3,"posy":0},
+        }
+        
+
+        function determineviewunitsize(){
+                Object.keys(pagelayoutscale).forEach((value,key) => {
+                    const unit = Math.min(pagelayoutscale[value].sizex*viewSizeH/adascampara[value].hfov,pagelayoutscale.frontWide.sizey*viewSizeV/adascampara[value].vfov);
+                    const sizex = unit*adascampara[value].hfov;
+                    const sizey = unit*adascampara[value].vfov;
+                    const posx = pagelayoutscale[value].posx*viewSizeH;
+                    const posy = pagelayoutscale[value].posy*viewSizeV;
+                    const labelposy = height - sizey - posy;
+                    layoutdetail[value] = {
+                        "sizex":sizex,
+                        "sizey":sizey,
+                        "posx":posx,
+                        "posy":posy,
+                        "labelposy":labelposy,
+                    }
+                });
+            };
+
+        let lablemap = {
+            "frontWide":"frontWideViewLabel",
+            "frontNarrow":"frontNarrowViewLabel",
+            "frontRight":"frontRightViewLabel",
+            "frontLeft":"frontLeftViewLabel",
+            "rearRight":"rearRightViewLabel",
+            "rearLeft":"rearLeftViewLabel",
+            "rear":"rearViewLabel",
+
+        }
+        let cycle = 0;
+        let speed = 0;
+        let scninit = false;
+        let frustum_scale = 0.5;
+
+
+        let unitmainacamera = Math.min(viewSizeH,viewSizeV)
+        let sizeviewmain = {'x':viewSizeH*2,'y':viewSizeV*2}
+        let posviewmain = {'x':0,'labely':0,'viewy':viewSizeV*2}
+
+        determineviewunitsize()
+        renderlabel("frontWide");
+            // renderviewport("frontWide");
+
+        renderlabel("frontNarrow");
+            // renderviewport("frontNarrow");
+
+        renderlabel("rearLeft");
+            // renderviewport("rearLeft");
+
+        renderlabel("rearRight");
+            // renderviewport("rearRight");
+
+        renderlabel("frontRight");
+            // renderviewport("frontRight");
+
+        renderlabel("frontLeft");
+            // renderviewport("frontLeft");
+
+        renderlabel("rear");
+            // renderviewport("rear");
+
+        // 初始化场景、相机和渲染器
+        const scene = new THREE.Scene();
+        // scene.background = new THREE.Color(0x87CEEB);
+        
+        // 使用CubeTextureLoader加载天空盒图片
+        const loader = new THREE.CubeTextureLoader();
+        // 设置加载路径
+        loader.setPath('templates/');
+        
+        // 加载六张图片创建天空盒
+        const textureCube = loader.load([
+            'px.png', // 右侧
+            'nx.png', // 左侧
+            'ny.png', // 顶部
+            'ny.png', // 底部
+            'pz.png', // 前面
+            'nz.png'  // 后面
+        ]);
+        
+        // 设置场景背景为天空盒
+        scene.background = textureCube;
+        console.log('场景初始化完成');
+        let lightswitch = 1;
+        // 创建单个渲染器
+        const container = document.getElementById('container');
+        const renderer = new THREE.WebGLRenderer({
+            antialias: true
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        container.appendChild(renderer.domElement);
+        // console.log('渲染器初始化完成，尺寸:', window.innerWidth, 'x', window.innerHeight);
+
+                // 修改摄像头初始化部分
+        const cameraMain = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        cameraMain.position.set(0, 10, 20);
+        cameraMain.layers.enable(1); 
+        cameraMain.layers.enable(2); // 主相机启用图层2
+        // 添加后处理效果
+        const renderScene = new THREE.RenderPass(scene, cameraMain);
+        const bloomPass = new THREE.UnrealBloomPass(
+            new THREE.Vector2(window.innerWidth, window.innerHeight),
+            1.5,  // 强度
+            0.4,  // 半径
+            0.85  // 阈值
+        );
+        const composer = new THREE.EffectComposer(renderer);
+        composer.addPass(renderScene);
+        composer.addPass(bloomPass);
+        // 添加环境光
+        const ambientLight = new THREE.AmbientLight(0xFFFFFF, 2.5); // 暗蓝色环境光，强度0.7
+        scene.add(ambientLight);
+
+        // if(lightswitch == 1){
+            // 前上方灯光（蓝色）
+        createlight("frontLight");
+        createlight("backLight");
+        createlight("rightLight");
+        createlight("leftLight");
+        createlight("leftheadlight")
+        createlight("rightheadlight")
+        
+        // determineviewunitsize()
+        // renderlabel("frontWide");
+        //     // renderviewport("frontWide");
+
+        // renderlabel("frontNarrow");
+        //     // renderviewport("frontNarrow");
+
+        // renderlabel("rearLeft");
+        //     // renderviewport("rearLeft");
+
+        // renderlabel("rearRight");
+        //     // renderviewport("rearRight");
+
+        // renderlabel("frontRight");
+        //     // renderviewport("frontRight");
+
+        // renderlabel("frontLeft");
+        //     // renderviewport("frontLeft");
+
+        // renderlabel("rear");
+        //     // renderviewport("rear");
+
+        function createlight(lightname){
+            if (lightname === "frontLight"){
+                lights[lightname] = new THREE.RectAreaLight(lightsetup[lightname].color, lightsetup[lightname].density, 70, 70);
+                lights[lightname].position.set(lightsetup[lightname].posx, lightsetup[lightname].posy+10, lightsetup[lightname].posz);
+                lights[lightname].lookAt(0, 0, 0); // 指向原点（车辆位置）
+
+                scene.add(lights[lightname]);
+                scene.add(lights[lightname].target);
+
+
+
+            }else if(lightname === "leftheadlight" || lightname === "rightheadlight") {
+                lights[lightname] = new THREE.SpotLight(lightsetup[lightname].color, lightsetup[lightname].density * 10);
+                lights[lightname].position.set(lightsetup[lightname].posx, lightsetup[lightname].posy, lightsetup[lightname].posz);
+                lights[lightname].lookAt(0, 0, 0); // 指向原点（车辆位置）
+                scene.add(lights[lightname]);
+                scene.add(lights[lightname].target);
+                // 设置灯光锥和有限照明距离
+                lights[lightname].angle = Math.PI / 9; // 约30度的光束角度
+                lights[lightname].penumbra = 0.2; // 边缘模糊度
+                lights[lightname].distance = 100; // 照明距离（单位与场景一致）
+                lights[lightname].decay = 2; // 距离衰减率，符合真实物理
+            }
+            else{
+            lights[lightname]= new THREE.DirectionalLight(lightsetup[lightname].color, lightsetup[lightname].density);
+            lights[lightname].position.set(lightsetup[lightname].posx, lightsetup[lightname].posy, lightsetup[lightname].posz); // 前上方位置
+            lights[lightname].target.position.set(0, 0, 0); // 指向原点（车辆位置）
+            scene.add(lights[lightname]);
+            scene.add(lights[lightname].target);
+            }
+            // // console.log(lightname,'前上方灯光添加完成');
+            // const spotLightHelper1 = new THREE.SpotLightHelper(lights["leftheadlight"]);
+            // const spotLightHelper2 = new THREE.SpotLightHelper(lights["rightheadlight"]);
+            // scene.add(spotLightHelper2);
+            // scene.add(spotLightHelper1);
+
+        }
+
+        function createvirtualCameras(name){
+            virtualcameras[name] = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.05, 1000);
+            virtualcameras[name].fovx=adascampara[name].hfov;
+            virtualcameras[name].fovy=adascampara[name].vfov;
+            virtualcameras[name].tags=name;
+            virtualcameras[name].far = adascampara[name].range;
+            virtualcameras[name].layers.enable(1); // 前视图相机启用图层1
+            virtualcameras[name].layers.disable(2); // 前视图相机启用图层2
+        }
+
+
+        // 前视图摄像头 - 安装在车头
+        createvirtualCameras("frontWide")
+        createvirtualCameras("frontNarrow")
+        createvirtualCameras("frontRight")
+        createvirtualCameras("frontLeft")
+        createvirtualCameras("rear")
+        createvirtualCameras("rearRight")
+        createvirtualCameras("rearLeft")
+
+        // 存储所有相机视锥的数组
+        let cameraFrustums = [];
+        const frustumLength = 10; // 视锥长度
+
+
+        function setCameraHorizontalVerticalFOV(camera, horizontalFOV, verticalFOV, near, far2) {
+            far = frustum_scale*far2
+            const fovX = THREE.MathUtils.degToRad(horizontalFOV);
+            const fovY = THREE.MathUtils.degToRad(verticalFOV);
+            
+            const cotHalfFovY = 1 / Math.tan(fovY / 2);
+            const cotHalfFovX = 1 / Math.tan(fovX / 2);
+            
+            // 创建自定义投影矩阵
+            const projectionMatrix = new THREE.Matrix4();
+            projectionMatrix.set(
+                cotHalfFovX, 0, 0, 0,
+                0, cotHalfFovY, 0, 0,
+                0, 0, -(far + near) / (far - near), -2 * far * near / (far - near),
+                0, 0, -1, 0
+            );
+            
+            camera.projectionMatrix = projectionMatrix;
+            camera.projectionMatrixInverse.copy(projectionMatrix).invert();
+        }
+
+        function setnewPosition(Name,model,angle){
+            const center = model.position;
+
+            const newz = adascampara[Name].posz*Math.cos(angle)-adascampara[Name].posx*Math.sin(angle);
+            const newx = adascampara[Name].posz*Math.sin(angle)+adascampara[Name].posx*Math.cos(angle);
+            virtualcameras[Name].position.set(center.x+newx, center.y+adascampara[Name].posy, center.z+newz); // 安装位置
+            cameraaxe=getDirectionVector(adascampara[Name].anglex, adascampara[Name].angley+angle/(Math.PI/180), adascampara[Name].anglez);
+            const frontLookAt = new THREE.Vector3(center.x+newx+cameraaxe.x, center.y+adascampara[Name].posy+cameraaxe.y, center.z+newz+cameraaxe.z); 
+            virtualcameras[Name].lookAt(frontLookAt);
+            setCameraHorizontalVerticalFOV(virtualcameras[Name], adascampara[Name].hfov, adascampara[Name].vfov, 0.05, adascampara[Name].range);
+            
+        }
+
+        // 设置相机初始位置
+        function updateCameraPositions() {
+            // 尝试获取Urus模型（假设它是第一个加载的模型）
+            const modelName = models && models.length > 0 ? models[0].type : 'Model not loaded';
+            const urusModel = models && models.find(model => model.type === "ego_car") || null;
+            if (!urusModel) {
+                const defaultPosition = new THREE.Vector3(0, 0, 0);
+                virtualcameras["frontWide"].lookAt(defaultPosition);
+                virtualcameras["frontNarrow"].lookAt(defaultPosition);
+                virtualcameras["frontRight"].lookAt(defaultPosition);
+                virtualcameras["frontLeft"].lookAt(defaultPosition);
+                virtualcameras["rear"].lookAt(defaultPosition);
+                virtualcameras["rearLeft"].lookAt(defaultPosition);
+                virtualcameras["rearRight"].lookAt(defaultPosition);
+                if (Object.keys(lights).length >0) {
+                    // 如果没有Urus模型，将灯光目标设置回原点
+                    lights["frontLight"].lookAt(0, 0, 0);
+                    lights["backLight"].target.position.set(0, 0, 0);
+                    lights["leftLight"].target.position.set(0, 0, 0);
+                    lights["rightLight"].target.position.set(0, 0, 0);
+                }
+                return;
+            }
+            urusModel.position.z = urusModel.position.z+speed;
+            // console.log(urusModel.rotation.y)
+            // 仅计算Urus模型的中心点作为相机目标
+            const box = new THREE.Box3().setFromObject(urusModel);
+            const center = box.getCenter(new THREE.Vector3());
+            center.z = urusModel.position.z;
+            center.y = 0;
+            const distance = 15; // 相机距离模型的距离
+            // console.log('更新相机位置，Urus模型中心:', center.x, center.y, center.z, '距离:', distance);
+
+            
+            // 更新灯光目标位置到Urus模型中心
+            if (Object.keys(lights).length >0) {
+                lights["frontLight"].lookAt(urusModel.position.x,urusModel.position.y,urusModel.position.z);
+                lights["backLight"].target.position.copy(center.x,center.y,center.z);
+                lights["leftLight"].target.position.copy(center);
+                lights["rightLight"].target.position.copy(center);
+                lights["leftheadlight"].target.position.set(urusModel.position.x + lightsetup["leftheadlight"].posx, urusModel.position.y + lightsetup["leftheadlight"].posy, urusModel.position.z + lightsetup["leftheadlight"].posz+30);
+                
+                lights["rightheadlight"].target.position.set(urusModel.position.x + lightsetup["rightheadlight"].posx, urusModel.position.y + lightsetup["rightheadlight"].posy, urusModel.position.z + lightsetup["rightheadlight"].posz+30);
+                
+            }
+
+
+            // 可选：让灯光位置相对于Urus模型中心保持固定
+
+            // 前上方灯光
+            if (Object.keys(lights).length >0) {
+                lights["frontLight"].position.set(center.x, center.y+2, center.z);
+                // 后上方灯光
+                lights["backLight"].position.set(center.x - 5, center.y+0.5, center.z);
+                // 左上方灯光
+                lights["leftLight"].position.set(center.x - 5, center.y +0.5, center.z + 5); 
+                // 右上方灯光
+                lights["rightLight"].position.set(center.x + 5, center.y + 0.5, center.z - 5);
+                // 左侧车灯
+                lights["leftheadlight"].position.set(urusModel.position.x + lightsetup["leftheadlight"].posx, urusModel.position.y + lightsetup["leftheadlight"].posy, urusModel.position.z + lightsetup["leftheadlight"].posz);
+                lights["leftheadlight"].intensity = lightdense*10;
+                // 右侧车灯
+                lights["rightheadlight"].position.set(urusModel.position.x + lightsetup["rightheadlight"].posx, urusModel.position.y + lightsetup["rightheadlight"].posy, urusModel.position.z + lightsetup["rightheadlight"].posz);
+                lights["rightheadlight"].intensity=lightdense*10;
+            }
+            
+            // console.log(lights["rightheadlight"])
+            // 前视广角 - 安装在前档风玻璃
+            setnewPosition("frontWide",urusModel,urusModel.rotation.y);
+            setnewPosition("frontNarrow",urusModel,urusModel.rotation.y);
+            setnewPosition("frontRight",urusModel,urusModel.rotation.y);
+            setnewPosition("frontLeft",urusModel,urusModel.rotation.y);
+            setnewPosition("rear",urusModel,urusModel.rotation.y);
+            setnewPosition("rearLeft",urusModel,urusModel.rotation.y);
+            setnewPosition("rearRight",urusModel,urusModel.rotation.y);
+
+            scene.children.forEach((child) => {
+                if(child.type in adascampara){
+                    child.position.x = center.x+adascampara[child.type].posx;
+                    child.position.y = center.y+adascampara[child.type].posy;
+                    child.position.z = center.z+adascampara[child.type].posz;
+
+                }});
+
+            updateCameraFrustums();
+            }
+        
+        
+        // 更新相机视锥位置和方向
+        function updateCameraFrustums() {
+            cameraFrustums.forEach(({ camera, frustum }) => {
+
+                // 获取相机的世界矩阵
+                const worldMatrix = new THREE.Matrix4();
+                camera.updateMatrixWorld();
+                worldMatrix.copy(camera.matrixWorld);
+
+                // 更新视锥的位置和方向
+                frustum.position.setFromMatrixPosition(worldMatrix);
+                frustum.quaternion.setFromRotationMatrix(worldMatrix);
+            });
+        }
+        // 创建相机视锥函数
+        function createCameraFrustum(camera, color = 0xff0000) {
+            // 创建视锥几何体
+            const fov = THREE.MathUtils.degToRad(camera.fov);
+            const fovX = THREE.MathUtils.degToRad(camera.fovx);
+            const fovY = THREE.MathUtils.degToRad(camera.fovy);
+            // console.log(camera.fovx,camera.fovy)
+
+            const aspect = camera.aspect;
+            const near = camera.near;
+            const far = frustum_scale*camera.far; // 使用固定长度而不是相机的far值
+
+            // 计算视锥的顶点
+            const halfHeightNear = Math.tan(fovY / 2) * near;
+            const halfWidthNear = Math.tan(fovX / 2) * near;
+            const halfHeightFar = Math.tan(fovY / 2) * far;
+            const halfWidthFar = Math.tan(fovX / 2) * far;
+            
+
+            // 创建顶点数组
+            const vertices = [
+                // 近裁剪面
+                -halfWidthNear, -halfHeightNear, -near,
+                halfWidthNear, -halfHeightNear, -near,
+                halfWidthNear, halfHeightNear, -near,
+                -halfWidthNear, halfHeightNear, -near,
+
+                // 远裁剪面
+                -halfWidthFar, -halfHeightFar, -far,
+                halfWidthFar, -halfHeightFar, -far,
+                halfWidthFar, halfHeightFar, -far,
+                -halfWidthFar, halfHeightFar, -far
+            ];
+
+            // 创建面索引（添加填充面）
+            const indices = [
+                // 近裁剪面
+                0, 1, 2,
+                2, 3, 0,
+
+                // // 远裁剪面
+                // 4, 5, 6,
+                // 6, 7, 4,
+
+                // 四个侧面
+                0, 1, 5,
+                5, 4, 0,
+
+                1, 2, 6,
+                6, 5, 1,
+
+                2, 3, 7,
+                7, 6, 2,
+
+                3, 0, 4,
+                4, 7, 3
+            ];
+
+
+            // 创建几何体
+            const geometry = new THREE.BufferGeometry();
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+            geometry.setIndex(indices);
+
+            // 创建线框材质
+            const wireframeMaterial = new THREE.MeshBasicMaterial({
+                color: color,
+                opacity: 0.4,
+                transparent: true,
+                wireframe: true
+            });
+
+            // 创建填充材质
+            const fillMaterial = new THREE.MeshBasicMaterial({
+                color: color,
+                transparent: true,
+                opacity: 0.3,
+                side: THREE.DoubleSide
+            });
+
+            // 创建线框网格和填充网格
+            const wireframeMesh = new THREE.Mesh(geometry, wireframeMaterial);
+            const fillMesh = new THREE.Mesh(geometry, fillMaterial);
+            wireframeMesh.layers.set(2); // 使用图层2
+            fillMesh.layers.set(2); // 使用图层2
+
+            // 创建组来包含线框和填充
+            const frustum = new THREE.Group();
+            frustum.add(wireframeMesh);
+            frustum.add(fillMesh);
+
+            frustum.layers.set(2); // 使用图层2
+
+            return { camera, frustum };
+        }
+        
+        // 初始化相机视锥
+        function initCameraFrustums() {
+            // 清空现有视锥
+            if (cameraFrustums && cameraFrustums.length > 0) {
+                cameraFrustums.forEach(item => {
+                    if (item.frustum && item.frustum.parent === scene) {
+                        scene.remove(item.frustum);
+                    }
+                });
+            }
+
+            cameraFrustums = [];
+
+            // 相机和颜色配置
+            const cameraConfigs = [
+                { camera: virtualcameras["frontWide"], color: 0xff0000 },  // 红色
+                { camera: virtualcameras["frontNarrow"], color: 0x00ff00 },// 绿色
+                { camera: virtualcameras["frontRight"], color: 0x00ffff }, // 蓝色
+                { camera: virtualcameras["frontLeft"], color: 0x00ffff },  // 黄色
+                { camera: virtualcameras["rear"], color: 0xff00ff },       // 品红
+                { camera: virtualcameras["rearLeft"], color: 0x00ffff },   // 青色
+                { camera: virtualcameras["rearRight"], color: 0x00ffff }   // 橙色
+            ];
+    
+
+             cameraConfigs.forEach(config => {
+                if (config.camera) {
+                    const frustum = createCameraFrustum(config.camera, config.color);
+                    if (frustum && frustum.frustum) {
+                        frustum.frustum.layers.set(2); // 确保设置为图层2
+                        scene.add(frustum.frustum);
+                        cameraFrustums.push(frustum);
+                    }
+                }
+            });
+
+            createCameraCheckboxes();
+        }
+        
+        function createCameraCheckboxes() {
+            const container = document.getElementById('cameraCheckboxes');
+            container.innerHTML = ''; // 清空容器
+            
+            // 存储相机名称和对应关系
+            const cameraMap = {
+                'frontWide': '前视宽相机',
+                'frontNarrow': '前视窄相机',
+                'frontRight': '前右相机',
+                'frontLeft': '前左相机',
+                'rear': '后视相机',
+                'rearLeft': '后左相机',
+                'rearRight': '后右相机'
+            };
+     
+            // console.log("Here we go")
+            const checkbox = document.createElement('div');
+            checkbox.style.margin = '5px 0';
+            
+            const input = document.createElement('input');
+            input.type = 'checkbox';
+            input.id = `show All`;
+            input.checked = true; // 默认勾选
+            
+            const label = document.createElement('label');
+            label.htmlFor = `show All`;
+            label.textContent = '显示所有相机';
+            label.style.marginLeft = '5px';
+            
+            checkbox.appendChild(input);
+            checkbox.appendChild(label);
+            container.appendChild(checkbox);
+
+            // 添加事件监听器
+            input.addEventListener('change', function() {
+                toggleallCameraFrustum();
+            });
+            
+            // 为每个非主相机创建勾选框
+            Object.keys(cameraMap).forEach(cameraKey => {
+                if (window.THREE) { // 确保相机存在
+
+                    // console.log("Here we go")
+                    const checkbox = document.createElement('div');
+                    checkbox.style.margin = '5px 0';
+                    
+                    const input = document.createElement('input');
+                    input.type = 'checkbox';
+                    input.id = `show${cameraKey}`;
+                    input.checked = true; // 默认勾选
+                    
+                    const label = document.createElement('label');
+                    label.htmlFor = `show${cameraKey}`;
+                    label.textContent = cameraMap[cameraKey];
+                    label.style.marginLeft = '5px';
+                    
+                    checkbox.appendChild(input);
+                    checkbox.appendChild(label);
+                    container.appendChild(checkbox);
+                    
+                    // 添加事件监听器
+                    input.addEventListener('change', function() {
+                        toggleCameraFrustum(cameraKey, this.checked);
+                    });
+                }
+            });
+        }
+        
+        // 显示/隐藏指定相机的视锥
+        function toggleCameraFrustum(cameraKey, show) {
+            // 查找对应相机的视锥
+            const frustumItem = cameraFrustums.find(item => item.camera.tags === cameraKey);
+            if (frustumItem && frustumItem.frustum) {
+                frustumItem.frustum.visible = show;
+            }
+        }
+        
+        // 显示/隐藏所有相机的视锥
+        function toggleallCameraFrustum() {
+            const showAll = document.getElementById('show All').checked;
+            cameraFrustums.forEach(item => {
+                item.frustum.visible = showAll;
+            });
+        }
+
+        // 创建主视图轨道控制器
+        const controls = new THREE.OrbitControls(cameraMain, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.1;
+        // console.log('轨道控制器创建完成');  
+
+        // 初始设置主相机位置
+        cameraMain.position.set(5, 5, 5);
+        cameraMain.lookAt(0, 0, 0);
+        // console.log('主相机初始位置:', cameraMain.position);
+
+        // 模型变量
+        // 模型变量         
+        let models = []; // 用于存储多个模型
+        // 根据绕x、y、z轴的旋转角度计算方向向量
+        function getDirectionVector(rotationX, rotationY, rotationZ) {
+            // 将角度转换为弧度
+            const radX = THREE.MathUtils.degToRad(rotationX);
+            const radY = THREE.MathUtils.degToRad(rotationY);
+            const radZ = THREE.MathUtils.degToRad(rotationZ);
+
+            // 初始方向向量 (0, 0, 1)
+            let direction = new THREE.Vector3(0, 0, 1);
+
+            // 创建欧拉角对象 - 使用XYZ旋转顺序
+            const euler = new THREE.Euler(radX, radY, radZ, 'XYZ');
+
+            // 创建旋转四元数
+            const quaternion = new THREE.Quaternion().setFromEuler(euler);
+
+            // 应用旋转四元数到方向向量
+            direction.applyQuaternion(quaternion);
+
+            // 归一化向量
+            direction.normalize();
+
+            return direction;
+        }
+
+        function renderviewport(Name){
+            // renderer.setViewport(posview.x, posview.viewy, sizeview.x, sizeview.y);
+            // renderer.setScissor(posview.x, posview.viewy, sizeview.x, sizeview.y);
+            renderer.setViewport(layoutdetail[Name].posx,layoutdetail[Name].posy,layoutdetail[Name].sizex,layoutdetail[Name].sizey);
+            renderer.setScissor(layoutdetail[Name].posx,layoutdetail[Name].posy,layoutdetail[Name].sizex,layoutdetail[Name].sizey);
+
+            cam = virtualcameras[Name]
+            if (cam === cameraMain){
+                cam.layers.enable(1);
+                cam.layers.enable(2); // 渲染后禁用，防止影响其他相机
+            }
+            else{
+                cam.layers.enable(1);
+                cam.layers.disable(2);
+            }
+            renderer.clear();
+            renderer.render(scene, cam);
+        }
+
+        function renderlabel(Name){
+            const label = document.getElementById(lablemap[Name]);
+            label.style.left = layoutdetail[Name].posx + 'px'
+            label.style.top = layoutdetail[Name].labelposy + 'px'
+
+        }
+        function renderOnce() {
+            renderer.setViewport(posviewmain.x, posviewmain.viewy, sizeviewmain.x, sizeviewmain.y);
+            renderer.setScissor(posviewmain.x, posviewmain.viewy, sizeviewmain.x, sizeviewmain.y);
+            renderer.setScissorTest(true);
+            scene.background = textureCube;
+            composer.render(); // 使用composer渲染主视图
+
+            renderlabel("frontWide");
+            renderviewport("frontWide");
+
+            renderlabel("frontNarrow");
+            renderviewport("frontNarrow");
+
+            renderlabel("rearLeft");
+            renderviewport("rearLeft");
+
+            renderlabel("rearRight");
+            renderviewport("rearRight");
+
+            renderlabel("frontRight");
+            renderviewport("frontRight");
+
+            renderlabel("frontLeft");
+            renderviewport("frontLeft");
+
+            renderlabel("rear");
+            renderviewport("rear");
+
+
+            // 关闭scissor测试
+            renderer.setScissorTest(false);
+        }
+                
+        
+        // 加载模型函数
+        // 修改loadModel函数定义，添加rotation参数
+        function loadModel(filePath,filetype, position = new THREE.Vector3(0, 0, 0), scaleFactor = 3, rotation = new THREE.Vector3(0, 0, 0)) {
+            // console.log('开始加载模型:', filePath);
+            const loader = new THREE.GLTFLoader();
+            loader.load(filePath, (gltf) => {
+                // 添加新模型
+                const newModel = gltf.scene;
+                newModel.type = filetype;
+                                              // 设置模型到图层1
+                newModel.traverse(function(child) {
+                    child.layers.set(1);
+                                // 为车辆和相机模型应用PBR材质
+                if ((filetype === "ego_car" || filetype === "target_car" || filetype.includes("camera")) && child.isMesh) {
+                    // 检查是否已有材质，有则保留基础属性
+                    const originalMaterial = child.material;
+                    
+                    // 创建PBR材质
+                    const pbrMaterial = new THREE.MeshPhysicalMaterial({
+                        color: originalMaterial.color || 0xffffff,
+                        metalness: 0.8,
+                        roughness: 0.3,
+                        clearcoat: 1.0,
+                        clearcoatRoughness: 0.1,
+                        reflectivity: 0.9,
+                        transparent: originalMaterial.transparent || false,
+                        opacity: originalMaterial.opacity !== undefined ? originalMaterial.opacity : 1
+                    });
+                    
+                    // 如果原始材质有贴图，应用到PBR材质上
+                    if (originalMaterial.map) pbrMaterial.map = originalMaterial.map;
+                    if (originalMaterial.normalMap) pbrMaterial.normalMap = originalMaterial.normalMap;
+                    if (originalMaterial.metalnessMap) pbrMaterial.metalnessMap = originalMaterial.metalnessMap;
+                    if (originalMaterial.roughnessMap) pbrMaterial.roughnessMap = originalMaterial.roughnessMap;
+                    
+                    child.material = pbrMaterial;
+                }
+                });
+                // console.log(newModel.name, '及其所有子对象已设置到图层1');
+                models.push(newModel); // 将新模型添加到数组
+                scene.add(newModel);
+                
+  
+                // 调整模型大小
+                const box = new THREE.Box3().setFromObject(newModel);
+                const size = box.getSize(new THREE.Vector3());
+                const maxSize = Math.max(size.x, size.y, size.z);
+                // const scale = (5 * scaleFactor) / maxSize; // 根据缩放系数调整
+                newModel.scale.set(scaleFactor, scaleFactor, scaleFactor);
+                
+                // 设置模型旋转
+                newModel.rotation.x = rotation.x * Math.PI/180;
+                newModel.rotation.y = rotation.y * Math.PI/180; 
+                newModel.rotation.z = rotation.z * Math.PI/180;
+                
+                // 新增：输出模型原始尺寸和缩放后的尺寸
+                const scaledSize = new THREE.Vector3(size.x * scaleFactor, size.y * scaleFactor, size.z * scaleFactor);
+
+                
+                // 如果是第一个模型（假设是Urus），更新轨道控制器目标
+                if (filetype === "ego_car") {
+                    const modelBox = new THREE.Box3().setFromObject(newModel);
+                    const modelCenter = modelBox.getCenter(new THREE.Vector3());
+                    controls.target.copy(modelCenter);
+                    cameraMain.lookAt(modelCenter);
+                    initCameraFrustums();
+                    // console.log('更新轨道控制器目标到Urus模型中心');    
+                }
+
+                
+        
+                // 设置模型位置
+                newModel.position.copy(position);
+                // console.log('模型位置设置为:', position.x, position.y, position.z);
+        
+                // 更新相机位置
+                updateCameraPositions();
+        
+                // 模型加载完成后渲染一次
+                renderOnce();
+                // console.log('模型加载成功完成');
+            }, (xhr) => {
+                // 加载进度回调
+                const percentComplete = xhr.loaded / xhr.total * 100;
+                // console.log('模型加载进度:', percentComplete.toFixed(2), '%');      
+            }, (error) => {
+                console.error('模型加载失败', error);
+                alert('模型加载失败，请检查文件格式是否正确');
+            });
+        }
+
+
+        // 文件输入事件监听
+        // document.getElementById('file-input').addEventListener('change', function (event) {
+        //     const file = event.target.files[0];
+        //     if (file) {
+        //         const fileURL = URL.createObjectURL(file);
+        //         // console.log('用户选择文件:', file.name);
+        //         loadModel(fileURL);
+        //     }
+        // });
+
+        // 窗口大小调整事件
+        window.addEventListener('resize', function () {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            // console.log('窗口大小调整为:', window.innerWidth, 'x', window.innerHeight);
+        });
+
+                // 添加速度控制按钮逻辑
+        const speedControlBtn = document.getElementById('speedControl');
+        const leftturnBtn = document.getElementById('leftturn');
+        const rightturnBtn = document.getElementById('rightturn');
+        const LightonBtn = document.getElementById('lighton');
+        LightonBtn.addEventListener('click', function() {
+            lighton = !lighton;
+            if (lighton) {
+                lightdense = 0.3;  // 设置速度为0.01
+                LightonBtn.textContent = '关灯';
+                LightonBtn.style.backgroundColor = '#f44336';
+            } else {
+                lightdense = 0;
+                LightonBtn.textContent = '开灯';
+                LightonBtn.style.backgroundColor = '#4CAF50';
+            }
+        });
+
+
+        let isPlaying = false;
+        speedControlBtn.addEventListener('click', function() {
+            isPlaying = !isPlaying;
+            if (isPlaying) {
+                speed = 0.01;  // 设置速度为0.01
+                speedControlBtn.textContent = '暂停';
+                speedControlBtn.style.backgroundColor = '#f44336';
+            } else {
+                speed = 0;  // 停止
+                speedControlBtn.textContent = '开始';
+                speedControlBtn.style.backgroundColor = '#4CAF50';
+            }
+        });
+        leftturnBtn.addEventListener('click', function() {
+            leftblinking = !leftblinking;
+            if (leftblinking) {
+                leftturnBtn.textContent = "转向中"
+                leftturnBtn.style.backgroundColor = '#f44336';
+            } else {
+                leftturnBtn.textContent = "左转向"
+                leftturnBtn.style.backgroundColor = '#4CAF50';
+
+            }
+
+        });
+
+        
+        rightturnBtn.addEventListener('click', function() {
+            rightblinking = !rightblinking;
+            if (rightblinking) {
+                rightturnBtn.textContent = "转向中"
+                rightturnBtn.style.backgroundColor = '#f44336';
+            } else {
+                rightturnBtn.textContent = "右转向"
+                rightturnBtn.style.backgroundColor = '#4CAF50';
+            }
+        });
+
+
+        function leftblinkeron() {
+            const urusModel = models && models.find(model => model.type === "ego_car") || null;
+            if (urusModel) {
+
+            const turnlight_1 = urusModel.getObjectByName("Left_Head_Blinker");
+            turnlight_1.material.emissive.r = 1;
+            turnlight_1.material.emissive.g = 1;
+            turnlight_1.material.emissive.b = 0;
+            const turnlight_2 = urusModel.getObjectByName("Left_Ear_Blinker");
+            turnlight_2.material.emissive.r = 1;
+            turnlight_2.material.emissive.g = 1;
+            turnlight_2.material.emissive.b = 0;
+            const turnlight_3 = urusModel.getObjectByName("Left_Rear_Blinker");
+            turnlight_3.material.emissive.r = 1;
+            turnlight_3.material.emissive.g = 1;
+            turnlight_3.material.emissive.b = 0;
+            }
+        }
+        function leftblinkeroff() {
+
+            const urusModel = models && models.find(model => model.type === "ego_car") || null;
+            if (urusModel) {
+
+            const turnlight_1 = urusModel.getObjectByName("Left_Head_Blinker");
+            turnlight_1.material.emissive.r = 0;
+            turnlight_1.material.emissive.g = 0;
+            turnlight_1.material.emissive.b = 0;
+            const turnlight_2 = urusModel.getObjectByName("Left_Ear_Blinker");
+            turnlight_2.material.emissive.r = 0;
+            turnlight_2.material.emissive.g = 0;
+            turnlight_2.material.emissive.b = 0;
+            const turnlight_3 = urusModel.getObjectByName("Left_Rear_Blinker");
+            turnlight_3.material.emissive.r = 0;
+            turnlight_3.material.emissive.g = 0;
+            turnlight_3.material.emissive.b = 0;
+
+            }
+        }
+
+        function rightblinkeron() {
+            const urusModel = models && models.find(model => model.type === "ego_car") || null;
+            if (urusModel) {
+
+            const turnlight_1 = urusModel.getObjectByName("Right_Head_Blinker");
+            turnlight_1.material.emissive.r = 1;
+            turnlight_1.material.emissive.g = 1;
+            turnlight_1.material.emissive.b = 0;
+            const turnlight_2 = urusModel.getObjectByName("Right_Ear_Blinker");
+            turnlight_2.material.emissive.r = 1;
+            turnlight_2.material.emissive.g = 1;
+            turnlight_2.material.emissive.b = 0;
+            const turnlight_3 = urusModel.getObjectByName("Right_Rear_Blinker");
+            turnlight_3.material.emissive.r = 1;
+            turnlight_3.material.emissive.g = 1;
+            turnlight_3.material.emissive.b = 0;
+            }
+        }
+        function rightblinkeroff() {
+
+            const urusModel = models && models.find(model => model.type === "ego_car") || null;
+            if (urusModel) {
+
+            const turnlight_1 = urusModel.getObjectByName("Right_Head_Blinker");
+            turnlight_1.material.emissive.r = 0;
+            turnlight_1.material.emissive.g = 0;
+            turnlight_1.material.emissive.b = 0;
+            const turnlight_2 = urusModel.getObjectByName("Right_Ear_Blinker");
+            turnlight_2.material.emissive.r = 0;
+            turnlight_2.material.emissive.g = 0;
+            turnlight_2.material.emissive.b = 0;
+            const turnlight_3 = urusModel.getObjectByName("Right_Rear_Blinker");
+            turnlight_3.material.emissive.r = 0;
+            turnlight_3.material.emissive.g = 0;
+            turnlight_3.material.emissive.b = 0;
+
+            }
+        }
+
+        function wheelspin(){
+            const urusModel = models && models.find(model => model.type === "ego_car") || null;
+            if (urusModel) {
+
+            const LFW = urusModel.getObjectByName("Left_Front_Wheel");
+            const RFW = urusModel.getObjectByName("Right_Front_Wheel");
+            const RRW = urusModel.getObjectByName("Right_Rear_Wheel");
+            const LRW = urusModel.getObjectByName("Left_Rear_Wheel");   
+
+            LFW.rotation.y += speed/(wheelradius/2);
+            RFW.rotation.y -= speed/(wheelradius/2);
+            RRW.rotation.y -= speed/(wheelradius/2);
+            LRW.rotation.y -= speed/(wheelradius/2);
+
+            }
+        }
+
+        function steeringspin(){
+            const urusModel = models && models.find(model => model.type === "ego_car") || null;
+            if (urusModel) {
+
+            const Steer = urusModel.getObjectByName("Steering_Wheel");
+
+            Steer.rotation.x = cycle * steering_speed;
+
+            }
+        }
+
+        // 修改后的animate函数
+        function animate() {
+
+            requestAnimationFrame(animate);
+            controls.update();
+            updateCameraPositions();
+            cycle ++;
+            renderer.setViewport(posviewmain.x, posviewmain.viewy, sizeviewmain.x, sizeviewmain.y);
+            renderer.setScissor(posviewmain.x, posviewmain.viewy, sizeviewmain.x, sizeviewmain.y);
+            renderer.setScissorTest(true);
+            scene.background = textureCube;
+            composer.render(); // 使用composer渲染主视图
+
+            renderviewport("frontWide");
+            renderviewport("frontNarrow");
+            renderviewport("rearLeft");
+            renderviewport("rearRight");
+            renderviewport("frontRight");
+            renderviewport("frontLeft");
+            renderviewport("rear");
+
+            // 关闭scissor测试
+            renderer.setScissorTest(false);
+
+        // 转向灯闪烁逻辑
+        if (leftblinking === true) {
+            const currentTime = Date.now();
+            // 检查是否达到闪烁间隔时间
+            if (currentTime - leftlastBlinkTime >= BLINK_INTERVAL) {
+                // 切换闪烁状态
+                leftblinkState = !leftblinkState;
+
+                leftlastBlinkTime = currentTime;
+
+                
+                // 根据闪烁状态调用相应的函数
+                if (leftblinkState) {
+
+                    leftblinkeron();
+                } else {
+                    leftblinkeroff();
+
+                }
+            }
+            } else {
+            // 当blinking为0时，确保转向灯熄灭
+            leftblinkeroff();
+
+            // 重置闪烁状态，以便下次blinking为1时从头开始
+            leftblinkState = false;
+            leftlastBlinkTime = 0;
+            }
+
+        if (rightblinking === true) {
+            const currentTime = Date.now();
+            // 检查是否达到闪烁间隔时间
+            if (currentTime - rightlastBlinkTime >= BLINK_INTERVAL) {
+                // 切换闪烁状态
+                rightblinkState = !rightblinkState;
+                rightlastBlinkTime = currentTime;
+                
+                // 根据闪烁状态调用相应的函数
+                if (rightblinkState) {
+                    rightblinkeron();
+                } else {
+                    rightblinkeroff();
+
+                }
+
+            }
+        } else {
+            // 当blinking为0时，确保转向灯熄灭
+            rightblinkeroff();
+            // 重置闪烁状态，以便下次blinking为1时从头开始
+            rightblinkState = false;
+            rightlastBlinkTime = 0;
+        }
+
+        wheelspin();
+        steeringspin();
+        }
+        
+        // 启动动画循环
+        animate();
+        // console.log('动画循环已启动');
+
+        // 尝试自动加载模型
+        try {
+            // 使用相对路径加载模型
+                    
+            // 加载Urus模型(位置原点)
+            const egoname = "NIO_ES7";
+
+            const egoPath = `templates/${egoname}.glb`;
+
+            //   console.log('尝试自动加载Urus模型:', urusPath);
+            loadModel(egoPath,"ego_car",new THREE.Vector3(egosetup[egoname].posx, egosetup[egoname].posy, egosetup[egoname].posz), egosetup[egoname].scale,new THREE.Vector3(egosetup[egoname].rotationx, egosetup[egoname].rotationy, egosetup[egoname].rotationz)); 
+            wheelradius = egosetup[egoname].wheelsize;
+
+            loadModel('templates/traffic_cone.glb',"obstacle",new THREE.Vector3(1.2, 0.3, 1), 0.3,new THREE.Vector3(0, 0, 0)); 
+                   
+            const VUTPath = 'templates/VUT.glb';
+        //    console.log('尝试自动加载Urus模型:', urusPath);
+            loadModel(VUTPath,"target_car",new THREE.Vector3(0, 0, -40), 1,new THREE.Vector3(0, -90, 0)); 
+            loadModel('templates/VUT_1.glb',"target_car",new THREE.Vector3(10, 0, 10), 1,new THREE.Vector3(0, 90, 0)); 
+            loadModel('templates/VUT_2.glb',"target_car",new THREE.Vector3(4.5, 0, 0), 1,new THREE.Vector3(0, -90, 0));
+            loadModel('templates/VUT_3.glb',"target_car",new THREE.Vector3(0, 0, 30), 1,new THREE.Vector3(0, -90, 0)); 
+            loadModel('templates/VUT_4.glb',"target_car",new THREE.Vector3(10, 0, -15), 1,new THREE.Vector3(0, 90, 0)); 
+            loadModel('templates/VUT_5.glb',"target_car",new THREE.Vector3(4.5, 0, -15), 1,new THREE.Vector3(0, -90, 0)); 
+            // 加载env模型(位置偏移)
+            const envname = "exported_map";
+            const envPath = `templates/${envname}.glb`;
+            //    console.log('尝试自动加载env模型:', envPath);
+            console.log(envsetsup[envname].posz)
+            loadModel(envPath,"environment", new THREE.Vector3(envsetsup[envname].posx, envsetsup[envname].posy, envsetsup[envname].posz), envsetsup[envname].scale,new THREE.Vector3(envsetsup[envname].rotationx, envsetsup[envname].rotationy, envsetsup[envname].rotationz));
+
+
+            // 加载env模型(位置偏移)
+            const camPath = 'templates/CAM.glb';
+            const camscale = 0.5;
+            //    console.log('尝试自动加载env模型:', envPath);
+            loadModel(camPath,"frontWide", new THREE.Vector3(adascampara["frontWide"].posx, adascampara["frontWide"].posy, adascampara["frontWide"].posz), camscale, new THREE.Vector3(adascampara["frontWide"].anglex, 90+adascampara["frontWide"].angley, adascampara["frontWide"].anglez));
+            loadModel(camPath,"frontNarrow", new THREE.Vector3(adascampara["frontNarrow"].posx, adascampara["frontNarrow"].posy, adascampara["frontNarrow"].posz), camscale, new THREE.Vector3(adascampara["frontNarrow"].anglex, 90+adascampara["frontNarrow"].angley, adascampara["frontNarrow"].anglez));
+            loadModel(camPath,"rear", new THREE.Vector3(adascampara["rear"].posx, adascampara["rear"].posy, adascampara["rear"].posz), camscale, new THREE.Vector3(adascampara["rear"].anglex, 90+adascampara["rear"].angley, adascampara["rear"].anglez));
+            loadModel(camPath,"frontLeft", new THREE.Vector3(adascampara["frontLeft"].posx, adascampara["frontLeft"].posy, adascampara["frontLeft"].posz), camscale, new THREE.Vector3(adascampara["frontLeft"].anglex, 90+adascampara["frontLeft"].angley, adascampara["frontLeft"].anglez));
+            loadModel(camPath,"frontRight", new THREE.Vector3(adascampara["frontRight"].posx, adascampara["frontRight"].posy, adascampara["frontRight"].posz), camscale, new THREE.Vector3(adascampara["frontRight"].anglex, 90+adascampara["frontRight"].angley, adascampara["frontRight"].anglez));    
+            loadModel(camPath,"rearRight", new THREE.Vector3(adascampara["rearRight"].posx, adascampara["rearRight"].posy, adascampara["rearRight"].posz), camscale, new THREE.Vector3(adascampara["rearRight"].anglex, 90+adascampara["rearRight"].angley, adascampara["rearRight"].anglez));
+            loadModel(camPath,"rearLeft", new THREE.Vector3(adascampara["rearLeft"].posx, adascampara["rearLeft"].posy, adascampara["rearLeft"].posz), camscale, new THREE.Vector3(adascampara["rearLeft"].anglex, 90+adascampara["rearLeft"].angley, adascampara["rearLeft"].anglez));
+
+            sceneInit = true;
+
+        } catch (e) {
+            console.error('自动加载模型失败:', e);
+            alert('自动加载模型失败，请使用界面上的"加载模型"按钮选择文件');
+        }
+    </script>
+    <!-- <script src="../js/load-components.js"></script> -->
+</body>
+</html>
