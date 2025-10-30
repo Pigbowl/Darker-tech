@@ -2,7 +2,7 @@
 function loadDuckAssistant() {
     let parenthtml = window.parent.location.pathname;
     console.log(parenthtml);
-    if (parenthtml == 'https://thedarker-tech.com/'){
+    if (parenthtml == '/'){
         darkurl = './Pages/darker_assistance.html';
     }else{
         darkurl = 'darker_assistance.html';
