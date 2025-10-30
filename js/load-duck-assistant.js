@@ -1,7 +1,8 @@
 // 加载达客虚拟助手组件
 function loadDuckAssistant() {
     let parenthtml = window.parent.location.pathname;
-    if (parenthtml == '/index.html'){
+    console.log(parenthtml);
+    if (parenthtml == 'https://thedarker-tech.com/'){
         darkurl = './Pages/darker_assistance.html';
     }else{
         darkurl = 'darker_assistance.html';
