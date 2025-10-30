@@ -1,5 +1,5 @@
 let conversion_blog ={
-  "https://thedarker-tech.com/": [
+  "/": [
       "我是你的智能助手小达~",
       "我能引导您游览《达客科技》",
       "在《达客科技》我们能您提供的ADAS知识框架,让您了解如何开发ADAS",
@@ -9,7 +9,7 @@ let conversion_blog ={
       "想要了解关于《达客科技》的更多信息吗？",
       "点击我聊天啊！:)"
   ],
-  "https://thedarker-tech.com//Pages/FoV_build.html": [
+  "/pages/fov_build.html": [
       "你曾经因为绘制传感器图而苦恼么？",
       "那你来对地方了！",
       "我在这里给你提供一个工具",
@@ -19,7 +19,7 @@ let conversion_blog ={
       "2D不过瘾的话,我还有3D版本哦",
       "开始尝试吧！ ^o^"
   ],
-  "https://thedarker-tech.com//Pages/AdasBenchmark.html": [
+  "/pages/adas_benchmark.html": [
       "你知道市面上有多少ADAS产品吗？",
       "你知道哪些车辆有什么ADAS功能么？",
       "你知道谁做得好谁做的不好么？",
@@ -28,7 +28,7 @@ let conversion_blog ={
       "ADAS对标库里具备海量的咨询和工具！，让你了解ADAS市场",
       "开整！"
   ],
-  "https://thedarker-tech.com//Pages/architecture_build.html": [
+  "/pages/architecture_build.html": [
       "恭喜您来到了神秘的“架构领域”",
       "听过架构吧？只是听过吧？（果然）",
       "那让我带你了解一下ADAS的架构",
@@ -36,28 +36,20 @@ let conversion_blog ={
       "还给你提供了工具能够让你自动生成架构哦",
       "GO GO GO！"
   ],
-  "https://thedarker-tech.com/Pages/architecture_build.html": [
-      "恭喜您来到了神秘的<架构领域>",
-      "听过架构吧？只是听过吧？（果然）",
-      "那让我带你了解一下ADAS的架构",
-      "让你了解什么是架构，怎么做架构",
-      "还给你提供了工具能够让你自动生成架构哦",
-      "GO GO GO！"
-  ],
-  "https://thedarker-tech.com//Pages/Configurator.html": [
+  "/pages/configurator.html": [
       "我要给客户一个ADAS产品/解决方案了！怎么办",
       "都有哪些方案？需要考虑哪些需求？我该怎么选？",
       "不要着急，跟着咱们得工具一步一步来！",
       "让你找到合适的产品，让你定义自己的产品",
       "GO GO GO！"
   ],
-  "https://thedarker-tech.com//Pages/Learning_Gallary.html": [
+  "/pages/learning_gallary.html": [
       "ADAS领域太庞大了！知识太多了！要是有个知识库就好了！",
       "嗯呢，那你来对地方了。",
       "东西都在这了，自己看吧。",
       "看完你就出师了",
   ],
-  "https://thedarker-tech.com//Pages/RoadBuilder.html": [
+  "/pages/roadbuilder.html": [
       "你曾经因为绘制场景，道路而苦恼么？",
       "别苦恼了，这儿都有",
       "在这里你可以简单在画布上绘制道路，配置道路，哪些复杂道路的绘制不再是噩梦。",
@@ -65,20 +57,20 @@ let conversion_blog ={
       "最后还能生成导出3D环境模型哦，问我能干嘛？晚点告诉你",
       "尝试绘制你的环境吧！",
   ],
-  "https://thedarker-tech.com//Pages/SENSOR_SIMU.html": [
+  "/pages/sensor_simu.html": [
       "来了来了,3D的来了,炫酷的来了！",
       "这个页面给你提供了一个3D的视觉传感器仿真的地方",
       "想看你布置的摄像头能看到什么嘛？想看你的传感器组有没有盲区嘛？",
       "想尝试不用的传感器嘛？",
       "自己试试吧！"
   ],
-  "https://thedarker-tech.com//Pages/simulation_front.html": [
+  "/pages/simulation_front.html": [
       "这是一个完整的仿真工具和仿真框架",
       "你可以用这个工具验证的感知算法，规控算法，以及ADAS系统的整体性能",
       "这个框架提供简单易读的接口和架构，完整的算法部署环境。简单易上手",
       "不过还未上线哦，敬请期待！"
   ],
-    "https://thedarker-tech.com//Pages/KnowledgeNet.html": [
+    "/pages/knowledgenet.html": [
       "在这里你可以看到所有的ADAS开发的相关知识的网络",
       "我能给你提供所有需要做的事情，对应的知识点，相关的任务以及应有的产出",
       "点击任务可以进入细节模式哦~",
@@ -87,15 +79,15 @@ let conversion_blog ={
 }
 
 let pagename = {
-    "https://thedarker-tech.com/":'达客科技主',
-    "https://thedarker-tech.com//Pages/FoV_build.html":'传感器图构建工具',
-    "https://thedarker-tech.com//Pages/Learning_Gallary.html":'学习智库',
-    "https://thedarker-tech.com//Pages/architecture_build.html":"架构查看",
-    "https://thedarker-tech.com//Pages/Configurator.html":"产品配置工具",
-    "https://thedarker-tech.com//Pages/FoV_build.html":"传感器图生成工具",
-    "https://thedarker-tech.com//Pages/RoadBuilder.html":"道路环境绘制工具",
-    "https://thedarker-tech.com//Pages/SENSOR_SIMU.html":"传感器模拟工具",
-    "https://thedarker-tech.com//Pages/simulation_front.html":"ADAS仿真环境",
-    "https://thedarker-tech.com//Pages/AdasBenchmark.html":"ADAS对标库",
-    "https://thedarker-tech.com//Pages/KnowledgeNet.html":"ADAS知识网络"
+    "/":'达客科技主',
+    "/pages/fov_build.html":'传感器图构建工具',
+    "/pages/learning_gallary.html":'学习智库',
+    "/pages/architecture_build.html":"架构查看",
+    "/pages/configurator.html":"产品配置工具",
+    "/pages/fov_build.html":"传感器图生成工具",
+    "/pages/roadbuilder.html":"道路环境绘制工具",
+    "/pages/sensor_simu.html":"传感器模拟工具",
+    "/pages/simulation_front.html":"ADAS仿真环境",
+    "/pages/adas_benchmark.html":"ADAS对标库",
+    "/pages/knowledgenet.html":"ADAS知识网络"
 }
