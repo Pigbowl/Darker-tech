@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    .country { 
+      fill: #e0e0e0;
+      stroke: #fff;
+      stroke-width: 0.6;
+      transition: fill 0.3s;
+    }
+    .country:hover { 
+      fill: #69b3a2;
+      cursor: pointer;
+    }
+
+    .tooltip {
+      position: absolute;
+      padding: 10px 15px;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      font-family: 'Segoe UI', Arial, sans-serif;
+      pointer-events: none;
+      opacity: 0; /* 默认隐藏 */
+      transition: opacity 0.2s;
+    }
+    .tooltip .country-name {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 4px;
+    }
+    .tooltip .continent-name {
+      font-size: 14px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <svg width="1000" height="600"></svg>
+  <div class="tooltip"></div>
+
+  <script>
+    let countryToContinent = {};
+
+    // 加载大洲数据（稳定数据源）
+    d3.json("https://raw.githubusercontent.com/mledoze/countries/master/countries.json")
+      .then(continentData => {
+        // 构建国家-大洲映射表（用常用名匹配）
+        continentData.forEach(item => {
+          countryToContinent[item.name.common] = item.region;
+        });
+        loadMapData();
+      })
+      .catch(error => {
+        console.error("大洲数据加载失败：", error);
+        alert("大洲数据加载失败，请检查网络");
+      });
+
+    function loadMapData() {
+      const svg = d3.select("svg");
+      const tooltip = d3.select(".tooltip");
+      const width = +svg.attr("width");
+      const height = +svg.attr("height");
+
+      // 定义地图投影
+      const projection = d3.geoMercator()
+        .scale(150)
+        .translate([width / 2, height / 1.4]);
+
+      const path = d3.geoPath().projection(projection);
+
+      // 加载地图边界数据
+      d3.json("https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson")
+        .then(mapData => {
+          svg.selectAll(".country")
+            .data(mapData.features)
+            .enter()
+            .append("path")
+            .attr("class", "country")
+            .attr("d", path)
+            .on("mouseover", (event, d) => {
+              const countryName = d.properties.name;
+              const continentName = countryToContinent[countryName] || "未知";
+              // 修正：用 .style("opacity", 1) 设置透明度（核心修复点）
+              tooltip.transition()
+                .duration(200)
+                .style("opacity", 1); // 替换 .opacity(1) 为 .style("opacity", 1)
+
+              tooltip.html(`
+                <div class="country-name">${countryName}</div>
+                <div class="continent-name">所属大洲：${continentName}</div>
+              `)
+                .style("left", (event.pageX + 10) + "px")
+                .style("top", (event.pageY - 30) + "px");
+            })
+            .on("mouseout", () => {
+              // 同样修正鼠标离开时的透明度设置
+              tooltip.transition()
+                .duration(200)
+                .style("opacity", 0); // 替换 .opacity(0) 为 .style("opacity", 0)
+            });
+        })
+        .catch(error => {
+          console.error("地图数据加载失败：", error);
+          alert("地图数据加载失败，请检查网络");
+        });
+    }
+  </script>
+</body>
+</html>

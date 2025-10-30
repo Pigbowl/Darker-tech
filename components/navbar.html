@@ -1,39 +1,82 @@
-<nav class="bg-dark-light/80 backdrop-blur-md border-b border-gray-700 fixed top-0 left-0 right-0 z-50 m-0 p-0 h-16 flex items-center">
-    <div class="w-full px-4 flex justify-between items-center">
-        <div class="flex items-center space-x-2">
-            <i class="fa fa-cogs text-neon text-2xl"></i>
-            <h1 class="text-xl font-bold text-gradient">PRODUCT CONFIGURATOR</h1>
-            <div class="nav-links ml-8 space-x-4">
-                <a href="../../index.html" class="px-2 py-1 rounded transition-colors">首页</a>
-                <a href="../Pages/Configurator.html" class="px-2 py-1 rounded transition-colors">配置工具</a>
-                <a href="../Pages/Learning_Gallary.html" class="px-2 py-1 rounded transition-colors">学习宝库</a>
-                <a href="../Pages/adas_benchmark.html" class="px-2 py-1 rounded transition-colors">ADAS 对标库</a>
-                <a href="../Pages/architecture_build.html" class="px-2 py-1 rounded transition-olors">架构建立</a>
-                <a href="../Pages/FoV_build.html" class="px-2 py-1 rounded transition-colors">乌龟图配置</a>
+<header class="fixed top-0 w-full z-50 glass-effect border-b border-logoup/20">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="#" class="flex items-center space-x-2">
+                <!-- <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-logoup to-logobuttom flex items-center justify-center"> -->
+                    <!-- <span class="text-primary font-bold text-lg">DT</span> -->
+                <!-- </div> -->
+                <img src="../PIC/logo.png" alt="logo" class="w-10 h-10 rounded-lg">
+                
+                <div>
+                    <h1 class="text-white font-bold text-xl">达客科技</h1>
+                    <p class="text-logotext text-xs">DarkerTech</p>
+                </div>
+            </a>
+            
+            <!-- 桌面导航 -->
+            <nav class="hidden md:flex items-center space-x-6">
+                <a href="../../index.html" class="text-white hover:text-logobuttom transition-colors duration-300">首页</a>
+                <a href="../Pages/KnowledgeNet.html" class="text-white hover:text-logobuttom transition-colors duration-300">知识网络</a>
+                
+                <!-- ADAS知识库 - 带下拉菜单 -->
+                <div class="relative group">
+                    <a href="../Pages/Learning_Gallary.html" class="text-white hover:text-logobuttom transition-colors duration-300 flex items-center">
+                        知识宇宙
+                        <i class="fa fa-chevron-down ml-1 text-xs"></i>
+                    </a>
+                    <div class="absolute left-0 mt-2 w-48 glass-effect rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                        <div class="py-2">
+                            <a href="../Pages/FunctionHall.html" class="block px-4 py-2 text-sm text-white hover:bg-logoup/20">功能领域</a>
+                            <a href="../Pages/HardWareHall.html" class="block px-4 py-2 text-sm text-white hover:bg-logoup/20">硬件领域</a>
+                            <a href="../Pages/SensorHall.html" class="block px-4 py-2 text-sm text-white hover:bg-logoup/20">传感器领域</a>
+                            <a href="../Pages/RegulationMap.html" class="block px-4 py-2 text-sm text-white hover:bg-logoup/20">法规/标准领域</a>
+                            <a href="../Pages/architecture_build.html" class="block px-4 py-2 text-sm text-white hover:bg-logoup/20">架构领域</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <a href="../Pages/AdasBenchmark.html" class="text-white hover:text-logobuttom transition-colors duration-300">行业矩阵</a>
+                
+                <!-- ADAS工具库 - 带下拉菜单 -->
+                <div class="relative group">
+                    <button class="text-white hover:text-logobuttom transition-colors duration-300 flex items-center bg-transparent border-none">
+                        智驾军火库
+                        <i class="fa fa-chevron-down ml-1 text-xs"></i>
+                    </button>
+                    <div class="absolute left-0 mt-2 w-48 glass-effect rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                        <div class="py-2">
+                            <a href="../Pages/Configurator.html" class="block px-4 py-2 text-sm text-white hover:bg-logoup/20">产品配置器</a>
+                            <a href="../Pages/RoadBuilder.html" class="block px-4 py-2 text-sm text-white hover:bg-logoup/20">环境生成器</a>
+                            <a href="../Pages/FoV_build.html" class="block px-4 py-2 text-sm text-white hover:bg-logoup/20">传感器配置器</a>
+                            <a href="../Pages/SENSOR_SIMU.html" class="block px-4 py-2 text-sm text-white hover:bg-logoup/20">传感器仿真器</a>
+                            <a href="../Pages/simulation_front.html" class="block px-4 py-2 text-sm text-white hover:bg-logoup/20">仿真平台</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-logoup/20">其它工具</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <a href="../Pages/sitedashboard.html" class="text-white hover:text-logobuttom transition-colors duration-300" title="站点管理">
+                    <i class="fa fa-wrench text-xl"></i>
+                </a>
+                <a href="../../index.html#about" class="tech-button bg-transparent border border-logoup text-logoup px-4 py-1 rounded hover:bg-logoup/10">关于我们</a>
+            </nav>
+            
+            <!-- 移动端菜单按钮 -->
+            <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+                <i class="fa fa-bars text-2xl"></i>
+            </button>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div id="mobile-menu" class="hidden md:hidden glass-effect">
+            <div class="container mx-auto px-4 py-3 flex flex-col space-y-4">
+                <a href="#" class="text-white hover:text-tech transition-colors duration-300 py-2 border-b border-accent/20">首页</a>
+                <a href="#knowledge" class="text-white hover:text-tech transition-colors duration-300 py-2 border-b border-accent/20">ADAS知识库</a>
+                <a href="#benchmark" class="text-white hover:text-tech transition-colors duration-300 py-2 border-b border-accent/20">ADAS对标库</a>
+                <a href="#configurator" class="text-white hover:text-tech transition-colors duration-300 py-2 border-b border-accent/20">配置工具</a>
+                <a href="#simulation" class="text-white hover:text-tech transition-colors duration-300 py-2 border-b border-accent/20">仿真平台</a>
+                <a href="#about" class="tech-button bg-transparent border border-accent text-accent px-4 py-2 rounded hover:bg-accent/10 text-center">关于我们</a>
             </div>
         </div>
 
-        <div class="flex space-x-3">
-            <div class="relative group">
-                <button class="cyber-btn bg-primary hover:bg-primary/20 text-neon px-3 py-1.5 rounded transition-all flex items-center text-sm text-light-blue">
-                    <i class="fa fa-info-circle mr-1"></i>关于
-                    <i class="fa fa-caret-down ml-1 text-xs"></i>
-                </button>
-                <div class="absolute right-0 mt-2 w-48 bg-dark-light rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 z-50">
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-primary/20 hover:text-white rounded-md" onclick="showPage('工具信息')">
-                        <i class="fa fa-bars mr-2"></i>版本信息: V1.2
-                    </a>
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-primary/20 hover:text-white rounded-md" onclick="showPage('工具信息')">
-                        <i class="fa fa-user mr-2"></i>创作者：宋嘉玮
-                    </a>
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-primary/20 hover:text-white rounded-md" onclick="showPage('工具信息')">
-                        <i class="fa fa-calendar mr-2"></i>更新日期: 2025-07-11
-                    </a>
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-primary/20 hover:text-white rounded-md" onclick="showPage('工具信息')">
-                        <i class="fa fa-user mr-2"></i>合作参与: 罗东柱
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</nav>
+    </header>

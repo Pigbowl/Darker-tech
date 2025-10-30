@@ -145,7 +145,7 @@
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
                     <!-- 访问次数卡片 -->
-                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02]">
+                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02] flex flex-col min-h-[180px]">
                         <div class="flex justify-between items-start">
                             <div>
                                 <p class="text-gray-400 text-sm">总访问次数</p>
@@ -155,7 +155,26 @@
                                 <i class="fa fa-eye text-neon text-xl"></i>
                             </div>
                         </div>
-                        <div class="mt-4 flex items-center text-sm">
+                        <div class="mt-auto flex items-center text-sm">
+                            <span class="text-green-400 flex items-center">
+                                <i class="fa fa-arrow-up mr-1"></i> 12%
+                            </span>
+                            <span class="text-gray-500 ml-2">相比上月</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 处理中的问题卡片 -->
+                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02] flex flex-col min-h-[180px]">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-400 text-sm">总访问人数</p>
+                                <h3 id="total-visitors" class="text-3xl font-bold mt-2 text-yellow-400">--</h3>
+                            </div>
+                            <div class="p-3 bg-yellow-400/10 rounded-full">
+                                <i class="fa fa-users text-yellow-400 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-auto flex items-center text-sm">
                             <span class="text-green-400 flex items-center">
                                 <i class="fa fa-arrow-up mr-1"></i> 12%
                             </span>
@@ -164,43 +183,25 @@
                     </div>
                     
                     <!-- 问题总数卡片 -->
-                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02]">
+                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02] flex flex-col min-h-[180px]">
                         <div class="flex justify-between items-start">
                             <div>
-                                <p class="text-gray-400 text-sm">问题总数</p>
-                                <h3 id="total-issues" class="text-3xl font-bold mt-2 text-primary">--</h3>
+                                <p class="text-gray-400 text-sm">用户总数</p>
+                                <h3 id="total-user" class="text-3xl font-bold mt-2 text-primary">--</h3>
                             </div>
                             <div class="p-3 bg-primary/10 rounded-full">
-                                <i class="fa fa-question-circle text-primary text-xl"></i>
+                                <i class="fa fa-user-circle-o text-primary text-xl"></i>
                             </div>
                         </div>
-                        <div class="mt-4 flex items-center text-sm">
+                        <div class="mt-auto flex items-center text-sm">
                             <span class="text-blue-400 flex items-center">
                                 <i class="fa fa-info-circle mr-1"></i> 查看详情
                             </span>
                         </div>
                     </div>
                     
-                    <!-- 处理中的问题卡片 -->
-                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02]">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-gray-400 text-sm">处理中的问题</p>
-                                <h3 id="inwork-issues" class="text-3xl font-bold mt-2 text-yellow-400">--</h3>
-                            </div>
-                            <div class="p-3 bg-yellow-400/10 rounded-full">
-                                <i class="fa fa-clock-o text-yellow-400 text-xl"></i>
-                            </div>
-                        </div>
-                        <div class="mt-4 flex items-center text-sm">
-                            <span class="text-yellow-400 flex items-center">
-                                <i class="fa fa-exclamation-triangle mr-1"></i> 需要处理
-                            </span>
-                        </div>
-                    </div>
-
                     <!-- 待处理问题卡片 -->
-                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02]">
+                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02] flex flex-col min-h-[180px]">
                         <div class="flex justify-between items-start">
                             <div>
                                 <p class="text-gray-400 text-sm">待处理的问题</p>
@@ -210,7 +211,7 @@
                                 <i class="fa fa-clock-o text-red-400 text-xl"></i>
                             </div>
                         </div>
-                        <div class="mt-4 flex items-center text-sm">
+                        <div class="mt-auto flex items-center text-sm">
                             <span class="text-red-400 flex items-center">
                                 <i class="fa fa-exclamation-triangle mr-1"></i> 需要处理
                             </span>
@@ -695,9 +696,9 @@
         const errorMessage = document.getElementById('error-message');
         const logoutBtn = document.getElementById('logout-btn');
         const visitCount = document.getElementById('visit-count');
-        const totalIssuesEl = document.getElementById('total-issues');
+        const totalUserEl = document.getElementById('total-user');  
         const pendingIssuesEl = document.getElementById('pending-issues');
-        const inworkIssuesEl = document.getElementById('inwork-issues');
+        const totalVisitorsEl = document.getElementById('total-visitors');
         const resolvedIssuesEl = document.getElementById('resolved-issues');
         const issuesTableBody = document.getElementById('issues-table-body');
         const showingRange = document.getElementById('showing-range');
@@ -737,7 +738,9 @@
             { id: 7, name: '夜间模式下文字对比度低', description: '部分文本难以阅读', status: 'pending', createdAt: '2023-10-05T15:20:00' },
             { id: 8, name: '联系我们表单提交失败', description: '表单数据无法正确发送', status: 'resolved', createdAt: '2023-10-03T13:40:00' }
         ];
-        let issue_static ;
+        let issue_static = {};
+        let total_visit = 0;
+        let total_user = 0;
         // 分页配置
         const itemsPerPage = 5;
         let currentPage = 1;
@@ -781,6 +784,7 @@
         };
         let advice = [];
         let advice_static = {};
+        let user_number = 0;
         
         // DOM筛选元素
         const filterToggle = document.getElementById('filter-toggle');
@@ -1254,7 +1258,6 @@
                     issues = issues_object.issues;
                     issue_static = issues_object.statistics;
                     showDashboard();
-                    // console.log(data.output);
                 }
             })
 
@@ -1265,7 +1268,8 @@
             checkAuth();
             getsitebasicinfo();
             getalladvice(); // 获取建议数据
-            
+            getusernumber();
+            getvisitstat();
             // 绑定事件
             loginForm.addEventListener('submit', handleLogin);
             logoutBtn.addEventListener('click', handleLogout);
@@ -1538,11 +1542,11 @@
             // 渲染问题列表
             renderIssues();
             
-            // 模拟加载访问次数（实际应用中应从后端获取）
-            setTimeout(() => {
-                const mockVisitCount = Math.floor(Math.random() * 10000) + 5000;
-                visitCount.textContent = mockVisitCount.toLocaleString();
-            }, 500);
+            // // 模拟加载访问次数（实际应用中应从后端获取）
+            // setTimeout(() => {
+            //     const mockVisitCount = Math.floor(Math.random() * 10000) + 5000;
+            //     visitCount.textContent = mockVisitCount.toLocaleString();
+            // }, 500);
         }
         
         // 处理登录
@@ -1576,16 +1580,19 @@
         
         // 更新统计数据
         function updateStatistics() {
-            const total = issue_static.total_issues;
+            const totaluser = user_number;
             const pending = issue_static.pending_issues;
             const resolved = issue_static.solved_issues;
-            const inwork = issue_static.in_progress_issues;
+            // const inwork = issue_static.in_progress_issues;
+            const totalvisit = total_visit;
+            const totalwatcher = total_user;
             
-            totalIssuesEl.textContent = total;
+            totalUserEl.textContent = totaluser;
             pendingIssuesEl.textContent = pending;
             resolvedIssuesEl.textContent = resolved;
-            totalItems.textContent = total;
-            inworkIssuesEl.textContent = inwork;
+            // totalItems.textContent = total;
+            totalVisitorsEl.textContent = totalwatcher;
+            visitCount.textContent = totalvisit;
         }
         
         // 渲染问题列表
@@ -1742,6 +1749,44 @@
         function closeIssueModal() {
             issueModal.classList.add('hidden');
         }
+        
+        function getusernumber(){
+            command = ip + '/get_user_number'
+            fetch(command,{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({
+                    'req':'none',
+                    })
+            }).then(response=>response.json()).then(data=>{
+                if(data.success){
+                    user_number = JSON.parse(data.output);
+                    showDashboard();
+                }
+            })
+        }
+
+        function getvisitstat(){
+            command = ip + '/get_visit_stat'
+            fetch(command,{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({
+                    'req':'none',
+                    })
+            }).then(response=>response.json()).then(data=>{
+                if(data.success){
+                    visit_stat = JSON.parse(data.output);
+                    total_visit = visit_stat.total_visits;
+                    total_user = visit_stat.unique_visitors;
+                    showDashboard();
+                }
+            })
+        }
 
         function modifyIssueinDatabase(issue){
             command = ip + '/manage_issue'
@@ -1768,7 +1813,7 @@
                 body: JSON.stringify(advice),
             }).then(response=>response.json()).then(data=>{
                 if(data.success){
-                    console.log(advice)
+                    console.log("advice data", advice)
                     // updateStatistics();
                 }
             })

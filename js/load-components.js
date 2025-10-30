@@ -16,9 +16,12 @@ async function loadComponent(elementId, componentPath) {
 }
 
 
+
+
 async function initComponents() {
     // await loadComponent('header-container', '../components/header.html');
-    await loadComponent('navbar-container', '../components/navbar_new.html');
+
+    await loadComponent('navbar-container', '../components/navbar.html');
     await loadComponent('footer-container', '../components/footer.html');
     // 可选：添加导航栏激活状态逻辑
     setActiveNavLink();
@@ -30,11 +33,22 @@ initComponents();
 // 设置当前页面的导航链接为激活状态
 function setActiveNavLink() {
     const currentPath = window.location.pathname;
-    
-    const navLinks = document.querySelectorAll('.nav-links a');
+    const navLinks = document.querySelectorAll('nav a');
     navLinks.forEach(link => {
-        if ("/"+link.getAttribute('href') === currentPath) {
-            link.classList.add('active');
+        const href = link.getAttribute('href');
+        if (href && href !== '#') {
+            // 创建完整的URL对象用于比较
+            const linkUrl = new URL(href, window.location.origin);
+            const linkPath = linkUrl.pathname;
+                        
+            // 简化匹配：如果当前路径包含链接路径，或者链接路径包含当前路径（处理index.html情况）
+            if (currentPath.endsWith(linkPath) || linkPath.endsWith(currentPath) || 
+                (linkPath.endsWith('/index.html') && currentPath === '/')) {
+                link.classList.add('active');
+                // 为激活的链接添加样式（可以根据需要调整）
+                link.classList.add('text-logobuttom', 'font-medium');
+                link.classList.remove('text-white');
+            }
         }
     });
 }
@@ -51,6 +65,8 @@ if (event.data.type === 'updateDuckSize') {
     duckIframe.style.width = (event.data.width + 80) + 'px'; // 新增宽度设置
 }
 });
+
+
 tailwind.config = {
     theme: {
         extend: {
@@ -59,6 +75,7 @@ tailwind.config = {
                 SOP: '#53C93D',
                 DEV: '#D0D631',
                 PLAN: '#E13F25',
+                cardback:'#6163d4ff',
                 secondary: '#00B42A',
                 accent: '#FF7D00',
                 logoup: '#7B61FF',
@@ -135,54 +152,56 @@ tailwind.config = {
         }
     }
 }
-// 粒子背景配置
-particlesJS('particles-js', {
-    particles: {
-        number: { value: 200, density: { enable: true, value_area: 800 } },
-        color: { value: "#0029FE" }, // 霓虹蓝色
-        shape: { type: "triangle" },
-        opacity: {
-            value: 0.5,
-            random: true,
-            anim: { enable: false, speed: 1, opacity_min: 0.1, sync: false }
+// 粒子背景配置 - 只在页面中存在particles-js元素时才初始化
+if (document.getElementById('particles-js')) {
+    particlesJS('particles-js', {
+        particles: {
+            number: { value: 200, density: { enable: true, value_area: 800 } },
+            color: { value: "#0029FE" }, // 霓虹蓝色
+            shape: { type: "triangle" },
+            opacity: {
+                value: 0.5,
+                random: true,
+                anim: { enable: false, speed: 1, opacity_min: 0.1, sync: false }
+            },
+            size: {
+                value: 3,
+                random: true,
+                anim: { enable: false, speed: 40, size_min: 0.1, sync: false }
+            },
+            line_linked: {
+                enable: true,
+                distance: 150,
+                color: "#00f7ff", // 霓虹蓝色
+                opacity: 0.4,
+                width: 1
+            },
+            move: {
+                enable: true,
+                speed: 2,
+                direction: "none",
+                random: true,
+                straight: false,
+                out_mode: "out",
+                bounce: false,
+                attract: { enable: false, rotateX: 600, rotateY: 1200 }
+            }
         },
-        size: {
-            value: 3,
-            random: true,
-            anim: { enable: false, speed: 40, size_min: 0.1, sync: false }
+        interactivity: {
+            detect_on: "canvas",
+            events: {
+                onhover: { enable: true, mode: "grab" },
+                onclick: { enable: true, mode: "push" },
+                resize: true
+            },
+            modes: {
+                grab: { distance: 140, line_linked: { opacity: 1 } },
+                bubble: { distance: 400, size: 40, duration: 2, opacity: 8, speed: 3 },
+                repulse: { distance: 200, duration: 0.4 },
+                push: { particles_nb: 4 },
+                remove: { particles_nb: 2 }
+            }
         },
-        line_linked: {
-            enable: true,
-            distance: 150,
-            color: "#00f7ff", // 霓虹蓝色
-            opacity: 0.4,
-            width: 1
-        },
-        move: {
-            enable: true,
-            speed: 2,
-            direction: "none",
-            random: true,
-            straight: false,
-            out_mode: "out",
-            bounce: false,
-            attract: { enable: false, rotateX: 600, rotateY: 1200 }
-        }
-    },
-    interactivity: {
-        detect_on: "canvas",
-        events: {
-            onhover: { enable: true, mode: "grab" },
-            onclick: { enable: true, mode: "push" },
-            resize: true
-        },
-        modes: {
-            grab: { distance: 140, line_linked: { opacity: 1 } },
-            bubble: { distance: 400, size: 40, duration: 2, opacity: 8, speed: 3 },
-            repulse: { distance: 200, duration: 0.4 },
-            push: { particles_nb: 4 },
-            remove: { particles_nb: 2 }
-        }
-    },
-    retina_detect: true
-});
+        retina_detect: true
+    });
+}

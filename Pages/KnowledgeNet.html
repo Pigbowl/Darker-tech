@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>虚拟大画布网络状图</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../js/load-duck-assistant.js"></script>
+  <script src="../js/elementdata.js"></script>
+  <script src="../css/components.css"></script>
+  <script src="../css/style.css"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+  <style>
+    body { margin: 0; background: #000; /* 移除overflow:hidden，允许页面正常滚动 */ }
+    .link { stroke-linecap: round; }
+    .node { stroke: rgba(255,255,255,0.3); stroke-width: 1px; }
+    .node:hover { 
+      stroke: #fff; 
+      stroke-width: 2px; 
+      cursor: pointer; 
+      z-index: 10; 
+    }
+    .label { 
+      fill: #fff; 
+      font-size: 8px;
+      pointer-events: none; 
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    }
+    .tooltip {
+      position: fixed;
+      padding: 12px 16px;
+      background: rgba(0,0,0,0.9);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 6px;
+      color: #fff;
+      font-size: 13px;
+      line-height: 1.6;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+      z-index: 100;
+      min-width: 200px;
+      max-width: 320px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    .tooltip-title {
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #d23f37;
+      font-size: 15px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      padding-bottom: 5px;
+    }
+    .tooltip-info {
+      margin-bottom: 5px;
+    }
+    .tooltip-label {
+      color: #B0BEC5;
+      font-size: 12px;
+      margin-right: 5px;
+    }
+    /* 画布容器样式 - 修改为贴在页面底部 */
+    #canvas-container {
+      width: 100%;
+      height: calc(100vh - 80px); /* 假设navbar高度为80px，可以根据实际情况调整 */
+      cursor: grab;
+      position: fixed; /* 固定定位在页面底部 */
+      bottom: 0; /* 贴在底部 */
+      left: 0; /* 从左侧开始 */
+      overflow: hidden; /* 防止内容溢出 */
+      z-index: 1; /* 确保在其他内容下方但在背景上方 */
+    }
+    #canvas-container-hidder{
+        width: 100%;
+        height: calc(100vh - 80px); /* 假设navbar高度为80px，可以根据实际情况调整 */
+        cursor: grab;
+        position: fixed; /* 固定定位在页面底部 */
+        bottom: 0; /* 贴在底部 */
+        left: 0; /* 从左侧开始 */
+        overflow: hidden; /* 防止内容溢出 */
+        z-index: 100; /* 确保在其他内容下方但在背景上方 */
+        background: #000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      
+      /* 加载容器样式 */
+      .loading-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+      }
+      
+      /* 加载动画样式 */
+      .loading-spinner {
+        width: 60px;
+        height: 60px;
+        border: 5px solid rgba(255, 255, 255, 0.1);
+        border-top: 5px solid #FF8C00;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      
+      /* 旋转动画关键帧 */
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      /* 加载文本样式 */
+      .loading-text {
+        color: #ffffff;
+        font-size: 18px;
+        font-family: Arial, sans-serif;
+        text-align: center;
+        opacity: 0.9;
+      }
+    #canvas-container.dragging {
+      cursor: grabbing;
+    }
+    
+    /* 缩放比例指示器样式 */
+    #scale-indicator {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 14px;
+      z-index: 1000;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+      /* 搜索组件样式 */
+      .search-container {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        z-index: 1001;
+        display: flex;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 6px;
+        overflow: hidden;
+      }
+      
+      .search-input {
+        padding: 10px 15px;
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 14px;
+        min-width: 200px;
+        outline: none;
+      }
+      
+      .search-input::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+      }
+      
+      .search-button {
+        padding: 10px 15px;
+        background: rgba(255, 140, 0, 0.8);
+        border: none;
+        color: white;
+        cursor: pointer;
+        transition: background 0.3s;
+        font-size: 14px;
+      }
+      
+      .search-button:hover {
+        background: rgba(255, 140, 0, 1);
+      }
+      
+      .search-results {
+        position: fixed;
+        top: 140px;
+        right: 20px;
+        z-index: 1001;
+        background: rgba(0, 0, 0, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 6px;
+        max-height: 300px;
+        overflow-y: auto;
+        width: 330px;
+        display: none;
+      }
+      
+      .search-results.show {
+        display: block;
+      }
+      
+      .search-result-item {
+        padding: 12px 15px;
+        color: white;
+        cursor: pointer;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        transition: background 0.2s;
+      }
+      
+      .search-result-item:last-child {
+        border-bottom: none;
+      }
+      
+      .search-result-item:hover {
+        background: rgba(255, 140, 0, 0.2);
+      }
+  </style>
+</head>
+<body>
+  
+  <div class="tooltip"></div>
+  <div id="navbar-container"></div>
+  <!-- 留出空间给固定在底部的canvas -->
+  <div style="height: calc(100vh - 80px); position: relative;">
+        <div id="canvas-container-hidder">
+            <!-- 加载动画元素 -->
+            <div class="loading-container">
+              <div class="loading-spinner"></div>
+              <div class="loading-text">正在构建知识网络...</div>
+            </div>
+          </div>
+        <div id="canvas-container">
+    <!-- 搜索组件 -->
+    <div class="search-container">
+      <input type="text" id="search-input" class="search-input" placeholder="搜索元素...">
+      <button id="search-button" class="search-button">搜索</button>
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+  <div id="scale-indicator">缩放比例: 100%</div>
+
+  <script>
+    // 获取画布容器和搜索相关元素
+    const canvasContainer = document.getElementById('canvas-container');
+    const searchInput = document.getElementById('search-input');
+    const searchButton = document.getElementById('search-button');
+    const searchResults = document.getElementById('search-results');
+    
+    // 搜索功能实现
+    function performSearch(query) {
+      if (!query.trim()) {
+        searchResults.classList.remove('show');
+        return;
+      }
+      
+      // 计算匹配度的函数
+      function calculateRelevance(element, query) {
+        let relevance = 0;
+        const lowerQuery = query.toLowerCase();
+        
+        // 搜索所有可枚举属性
+        for (const key in element) {
+          if (element.hasOwnProperty(key)) {
+            const value = element[key];
+            
+            // 检查不同类型的值
+            if (typeof value === 'string') {
+              const lowerValue = value.toLowerCase();
+              if (lowerValue.includes(lowerQuery)) {
+                // 完全匹配给最高分
+                if (lowerValue === lowerQuery) {
+                  relevance += 10;
+                } else {
+                  // 根据匹配位置和长度给分
+                  const position = lowerValue.indexOf(lowerQuery);
+                  relevance += (10 - position * 0.1);
+                }
+              }
+            } else if (Array.isArray(value)) {
+              // 搜索数组中的每个元素
+              value.forEach(item => {
+                if (typeof item === 'string' && item.toLowerCase().includes(lowerQuery)) {
+                  relevance += 5;
+                } else if (typeof item === 'object' && item !== null) {
+                  // 递归搜索对象数组
+                  relevance += calculateRelevance(item, query) * 0.5;
+                }
+              });
+            } else if (typeof value === 'object' && value !== null) {
+              // 递归搜索嵌套对象
+              relevance += calculateRelevance(value, query) * 0.8;
+            }
+          }
+        }
+        
+        return relevance;
+      }
+      
+      // 计算所有元素的匹配度
+      const elementsWithRelevance = elementdata.Element.map(element => ({
+        element,
+        relevance: calculateRelevance(element, query)
+      }));
+      
+      // 过滤出有匹配度的元素并排序
+      const matchedElements = elementsWithRelevance
+        .filter(item => item.relevance > 0)
+        .sort((a, b) => b.relevance - a.relevance)
+        .slice(0, 5); // 取前5个
+      
+      // 显示结果
+      searchResults.innerHTML = '';
+      if (matchedElements.length > 0) {
+        matchedElements.forEach(item => {
+          const resultItem = document.createElement('div');
+          resultItem.className = 'search-result-item';
+          resultItem.textContent = item.element.name || '未命名元素';
+          resultItem.dataset.elementId = item.element.name;
+          
+          resultItem.addEventListener('click', () => {
+            // 选择该元素作为主要元素
+            setElementAsPrimary(item.element.name);
+            searchResults.classList.remove('show');
+            searchInput.value = '';
+          });
+          
+          searchResults.appendChild(resultItem);
+        });
+        searchResults.classList.add('show');
+      } else {
+        const noResult = document.createElement('div');
+        noResult.className = 'search-result-item';
+        noResult.textContent = '未找到匹配的元素';
+        noResult.style.cursor = 'default';
+        searchResults.appendChild(noResult);
+        searchResults.classList.add('show');
+      }
+    }
+    
+    // 设置元素为主要元素并居中
+    function setElementAsPrimary(elementId) {
+      // 移除所有现有主要元素的标记
+      nodes.forEach(node => {
+        if (node.isPrimary) {
+          node.isPrimary = false;
+          node.color = '#7a3de4';
+          node.size = 40;
+          node.info.状态 = '活跃';
+        }
+        
+        // 标记选中的元素为主要元素
+        if (node.id === elementId) {
+          node.isPrimary = true;
+          node.color = '#FF8C00';
+          node.size = 50;
+          node.info.状态 = '主要元素';
+        }
+      });
+      
+      // 重新绘制节点以更新样式
+      node.attr('r', d => d.size)
+          .style('fill', d => d.color);
+      
+      // 找到选中的节点并居中
+      const selectedNode = nodes.find(node => node.id === elementId);
+      if (selectedNode) {
+        // 计算需要移动的偏移量
+        const container = document.getElementById('canvas-container');
+        const canvasWidth = container.clientWidth;
+        const canvasHeight = container.clientHeight;
+        
+        const centerOffsetX = (canvasWidth / 2) - (selectedNode.x * viewState.scale + viewState.x);
+        const centerOffsetY = (canvasHeight / 2) - (selectedNode.y * viewState.scale + viewState.y);
+        
+        // 更新视图状态
+        viewState.x += centerOffsetX;
+        viewState.y += centerOffsetY;
+        
+        // 应用视图变换
+        updateViewTransform();
+      }
+    }
+    
+    // 添加搜索事件监听
+    searchButton.addEventListener('click', () => {
+      performSearch(searchInput.value);
+    });
+    
+    searchInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        performSearch(searchInput.value);
+      }
+    });
+    
+    // 点击页面其他地方关闭搜索结果
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.search-container')) {
+        searchResults.classList.remove('show');
+      }
+    });
+    
+    // 1. 基础配置
+    const getCanvasContainerDimensions = () => {
+      const container = document.getElementById('canvas-container');
+      return {
+        width: container.clientWidth,
+        height: container.clientHeight
+      };
+    };
+    
+    const { width, height } = getCanvasContainerDimensions();
+    const tooltip = d3.select(".tooltip");
+    
+    // 监听窗口大小变化，更新尺寸
+    window.addEventListener('resize', () => {
+      const container = document.getElementById('canvas-container');
+      const svg = d3.select("#canvas-container svg");
+      
+      // 更新SVG容器大小
+      svg.attr("width", container.clientWidth)
+         .attr("height", container.clientHeight);
+      
+      // 如果需要，这里可以更新虚拟画布相关的其他尺寸
+    });
+    const virtualWidth = width*10;
+    const virtualHeight = height*10;
+    
+    // 视图状态（平移和缩放）
+    let viewState = {
+      x: -(virtualWidth - width) / 2,
+      y: -(virtualHeight - height) / 2,
+      scale: 1
+    };
+    
+    // 细节模式状态
+    let detailMode = {
+      isActive: false,
+      selectedNode: null,
+      previousViewState: null
+    };
+    
+    // 2. 创建SVG容器和虚拟画布层
+    const container = d3.select("#canvas-container");
+    const svg = container.append("svg")
+      .attr("width", width)
+      .attr("height", height);
+      
+    // 虚拟画布层（所有元素都放在这个g元素中，通过transform控制视图）
+    const virtualCanvas = svg.append("g")
+      .attr("transform", `translate(${viewState.x}, ${viewState.y}) scale(${viewState.scale})`);
+      
+
+    
+    // 创建用于存储知识点和交付物的SVG组
+    const attributesGroup = svg.append("g")
+      .attr("class", "attributes-group")
+      .style("display", "none");
+    
+    // 创建知识点连接线组
+    const knowledgeLinksGroup = attributesGroup.append("g")
+      .attr("class", "knowledge-links-group");
+    
+    // 创建交付物连接线组
+    const deliverableLinksGroup = attributesGroup.append("g")
+      .attr("class", "deliverable-links-group");
+    
+    // 创建知识点文本组
+    const knowledgeTextsGroup = attributesGroup.append("g")
+      .attr("class", "knowledge-texts-group");
+    
+    // 创建交付物文本组
+    const deliverableTextsGroup = attributesGroup.append("g")
+      .attr("class", "deliverable-texts-group");
+    
+        // 创建细节模式的中央圆形元素（默认隐藏）
+    const detailModeCircle = svg.append("circle")
+      .attr("class", "detail-circle")
+      .attr("r", 50) // 固定半径为30
+      .attr("cx", width / 2) // 画布中心
+      .attr("cy", height / 2)
+      .attr("stroke", "rgba(255,255,255,0.8)")
+      .attr("stroke-width", 2)
+      .style("display", "none") // 默认隐藏
+      .style("cursor", "pointer")
+      .on("click", () => {
+        // 只有在细节模式下才响应点击，退出细节模式
+        if (detailMode.isActive) {
+          exitDetailMode();
+        }
+      });
+      
+    // 添加属性元素的CSS样式
+    d3.select("head").append("style").html(`
+      .attribute-text {
+        fill: #ffffff;
+        font-size: 14px;
+        font-weight: bold;
+        pointer-events: none;
+      }
+      .attribute-line {
+        stroke: #ffffff;
+        stroke-width: 1.5;
+        /* 移除虚线样式，改为实线 */
+      }
+      .attribute-underline {
+        stroke: #1E90FF;
+        stroke-width: 2;
+      }
+    `);
+      
+    // 为细节模式中央圆形和属性元素添加CSS样式，确保在最上层
+    d3.select("head").append("style").html(`
+    /* 确保属性组在最上层 */
+      .attributes-group {
+        z-index: 200;
+      }  
+    .detail-circle {
+        transition: opacity 0.3s ease;
+        z-index: 100;
+      }
+      .detail-circle:hover {
+        stroke: #ffffff;
+        stroke-width: 3;
+      }
+
+      /* 为浏览模式下的节点添加紫色阴影 */
+      .node {
+        filter: drop-shadow(0 0 4px rgba(128, 0, 128, 0.7));
+      }
+    `);
+
+    // 3. 从elementdata.js中获取节点数据
+    // 创建一个映射表，方便通过name查找节点
+    const elementMap = {};
+    
+    // 从elementdata.Element数组中创建节点数据
+    const nodes = elementdata.Element.map((element, index) => {
+      // 默认位置计算（尽量分散布局）
+      const angle = (index / elementdata.Element.length) * Math.PI * 2;
+      const radius = Math.min(virtualWidth, virtualHeight) * 0.4;
+      
+      // 检查是否为主要元素（isPrimary为yes）
+      const isPrimaryElement = element.isPrimary === 'YES';
+      
+      // 创建节点对象 - 正常计算位置，不强制居中
+      const node = {
+        id: element.name, // 使用元素名称作为ID
+        size: isPrimaryElement ? 50 : 40, // 根据要求设置半径为40
+        x: virtualWidth / 2 + Math.cos(angle) * radius, // 正常计算位置
+        y: virtualHeight / 2 + Math.sin(angle) * radius, // 正常计算位置
+        color: isPrimaryElement ? '#FF8C00' : '#7a3de4', // 主要元素为橙色
+        isPrimary: isPrimaryElement, // 标记是否为主要元素
+        // 添加详细信息
+        info: {
+          类别: element.domain,
+          描述: element.description || '',
+          状态: isPrimaryElement ? '主要元素' : '活跃',
+          专业: element.Metier
+        },
+        // 保留原始element数据，用于后续细节模式显示
+        elementData: element
+      };
+      
+      // 将节点添加到映射表中，便于后续创建连接
+      elementMap[element.name] = node;
+      return node;
+    });
+
+    // 4. 从elementdata中生成连接数据
+    const links = [];
+    
+    // 遍历所有元素，创建连接
+    elementdata.Element.forEach(element => {
+      // 获取当前元素对应的节点
+      const sourceNode = elementMap[element.name];
+      
+      // 如果没有找到源节点或没有目标节点，则跳过
+      if (!sourceNode || !element.to || element.to.length === 0) return;
+      
+      // 为每个目标创建连接
+      element.to.forEach(targetName => {
+        const targetNode = elementMap[targetName];
+        // 如果找到目标节点，则创建连接
+        if (targetNode) {
+          links.push({
+            source: sourceNode.id,
+            target: targetNode.id
+          });
+        }
+      });
+    });
+
+    // 5. 力导向布局（基于虚拟画布）
+    const simulation = d3.forceSimulation(nodes)
+      .force("link", d3.forceLink(links)
+        .id(d => d.id)
+        .distance(200) // 增加连接线的理想长度，让节点之间离得更远
+      )
+      .force("charge", d3.forceManyBody().strength(-500)) // 增加节点间的斥力强度（负值更大），使节点分散更开
+      .force("center", d3.forceCenter(virtualWidth / 2, virtualHeight / 2)) // 虚拟画布中心
+      .force("collide", d3.forceCollide().radius(d => d.size + 5).iterations(3))
+      .on("end", () => {
+        // 力导向布局完成后，检查是否有主要元素
+        const primaryElement = nodes.find(node => node.isPrimary);
+        if (primaryElement) {
+          // 计算需要移动的偏移量，使主要元素居中
+          const container = document.getElementById('canvas-container');
+          const canvasWidth = container.clientWidth;
+          const canvasHeight = container.clientHeight;
+          
+          const centerOffsetX = (canvasWidth / 2) - (primaryElement.x * viewState.scale + viewState.x);
+          const centerOffsetY = (canvasHeight / 2) - (primaryElement.y * viewState.scale + viewState.y);
+          
+          // 更新视图状态，移动画布
+          viewState.x += centerOffsetX;
+          viewState.y += centerOffsetY;
+          
+          // 应用视图变换
+          updateViewTransform();
+          
+          // 隐藏遮挡层，显示知识网络
+          setTimeout(() => {
+            document.getElementById('canvas-container-hidder').style.display = 'none';
+          }, 100);
+        }
+      });
+
+    // 6. 绘制连接线
+    const link = virtualCanvas.append("g")
+      .attr("class", "links")
+      .selectAll("line")
+      .data(links)
+      .enter()
+      .append("line")
+      .attr("class", "link")
+      .attr("stroke-width", 1)
+      .attr("stroke", "#ffffff")
+      .attr("stroke-opacity", 0.5);
+
+    // 7. 绘制节点
+    const node = virtualCanvas.append("g")
+      .attr("class", "nodes")
+      .selectAll("circle")
+      .data(nodes)
+      .enter()
+      .append("circle")
+      .attr("class", "node")
+      .attr("r", d => d.size)
+      .attr("fill", d => d.color)
+      .on("mouseover", (event, d) => {
+        // 在细节模式下不触发任何悬停效果
+        if (detailMode.isActive) return;
+        
+        // 细节模式下不显示tooltip
+      if (detailMode.isActive) return;
+      
+      // 构建详细信息的HTML内容
+      let tooltipContent = `<div class="tooltip-title">${d.id}</div>`;
+      for (const [key, value] of Object.entries(d.info)) {
+        // 只显示有值的字段
+        if (value && value.trim() !== '') {
+          tooltipContent += `<div class="tooltip-info"><span class="tooltip-label">${key}:</span>${value}</div>`;
+        }
+      }
+      
+      // 计算节点在屏幕上的实际位置（考虑当前缩放和平移）
+      const nodeScreenX = (d.x * viewState.scale) + viewState.x;
+      const nodeScreenY = (d.y * viewState.scale) + viewState.y;
+      
+      // 将tooltip定位在节点的右侧
+      const tooltipLeft = nodeScreenX + d.size * viewState.scale + 15; // 节点半径 + 间距
+      const tooltipTop = nodeScreenY - 15; // 大致居中对齐节点
+      
+      tooltip.html(tooltipContent)
+        .style("left", tooltipLeft + "px")
+        .style("top", tooltipTop + "px")
+        .style("opacity", 1);
+        
+        // 应用悬停效果","},{"old_str":
+          // 获取所有与当前节点直接相连的节点ID
+          const connectedNodeIds = new Set();
+          connectedNodeIds.add(d.id); // 包含当前节点自己
+          
+          // 找出所有与当前节点相连的线，并收集相连节点的ID
+          link.transition()
+              .duration(800) // 添加300ms的过渡动画
+              .style("stroke-opacity", l => {
+                const isConnected = l.source.id === d.id || l.target.id === d.id;
+                if (isConnected) {
+                  // 将相连的节点ID添加到集合中
+                  if (l.source.id !== d.id) connectedNodeIds.add(l.source.id);
+                  if (l.target.id !== d.id) connectedNodeIds.add(l.target.id);
+                  return 0.9; // 高亮连接线
+                }
+                return 0.05; // 降低其他连接线的透明度
+              });
+          
+          // 高亮当前节点和直接相连的节点，降低其他节点的透明度
+          node.transition()
+              .duration(800) // 添加300ms的过渡动画
+              .style("opacity", nodeD => {
+                if (connectedNodeIds.has(nodeD.id)) {
+                  return 1; // 完全不透明
+                }
+                return 0.05; // 降低其他节点的透明度
+              });
+          
+          // 同样处理标签
+          label.transition()
+              .duration(800) // 添加300ms的过渡动画
+              .style("opacity", nodeD => {
+                if (connectedNodeIds.has(nodeD.id)) {
+                  return 1; // 完全不透明
+                }
+                return 0.05; // 降低其他标签的透明度
+              });
+        }
+      )
+      .on("mouseout", () => {
+        tooltip.style("opacity", 0);
+        
+        // 只有在非细节模式下才恢复原始状态
+        if (!detailMode.isActive) {
+          // 恢复所有元素的原始透明度，添加平滑过渡
+          link.transition()
+              .duration(300) // 添加300ms的过渡动画
+              .style("stroke-opacity", 0.4);
+          node.transition()
+              .duration(300) // 添加300ms的过渡动画
+              .style("opacity", 1);
+          label.transition()
+              .duration(300) // 添加300ms的过渡动画
+              .style("opacity", 1);
+        }
+      })
+      .on("click", (event, d) => {
+        // 如果不是拖拽操作（通过检查是否有fx/fy设置）
+        if (!d.fx) {
+          if (!detailMode.isActive) {
+            // 阻止事件冒泡
+            event.stopPropagation();
+            enterDetailMode(d);
+          }
+          // 在细节模式下，只有中央圆形元素可以退出，这里不处理
+        }
+      })
+      .call(d3.drag()
+        .on("start", nodeDragStarted)
+        .on("drag", nodeDragged)
+        .on("end", nodeDragEnded));
+
+    // 8. 节点标签 - 放置在元素中央
+    const label = virtualCanvas.append("g")
+      .attr("class", "labels")
+      .selectAll("text")
+      .data(nodes)
+      .enter()
+      .append("text")
+      .attr("class", "label")
+      .text(d => d.id)
+      .attr("text-anchor", "middle") // 文本中心对齐
+      .attr("dy", ".3em"); // 垂直居中微调
+
+    // 9. 力导向动画更新
+    simulation.on("tick", () => {
+      // 限制节点在虚拟画布内
+      nodes.forEach(d => {
+        d.x = Math.max(d.size, Math.min(virtualWidth - d.size, d.x));
+        d.y = Math.max(d.size, Math.min(virtualHeight - d.size, d.y));
+      });
+
+      link
+        .attr("x1", d => d.source.x)
+        .attr("y1", d => d.source.y)
+        .attr("x2", d => d.target.x)
+        .attr("y2", d => d.target.y);
+
+      node
+        .attr("cx", d => d.x)
+        .attr("cy", d => d.y);
+
+      label
+        .attr("x", d => d.x)
+        .attr("y", d => d.y);
+    });
+
+    // 10. 节点拖拽函数
+    function nodeDragStarted(event, d) {
+      if (!event.active) simulation.alphaTarget(0.3).restart();
+      d.fx = d.x;
+      d.fy = d.y;
+    }
+    function nodeDragged(event, d) {
+      // 使用D3拖拽行为提供的位置信息，直接设置节点位置
+      // 无需手动转换坐标，因为D3的拖拽行为已经考虑了当前变换
+      d.fx = event.x;
+      d.fy = event.y;
+    }
+    function nodeDragEnded(event, d) {
+      if (!event.active) simulation.alphaTarget(0);
+      d.fx = null;
+      d.fy = null;
+    }
+
+    // 11. 画布拖拽（浏览虚拟画布）
+    let isDraggingCanvas = false;
+    let canvasDragStart = { x: 0, y: 0 };
+
+    // 画布容器拖拽事件
+    container
+      .on("mousedown", canvasDragStarted)
+      .on("mousemove", canvasDragged)
+      .on("mouseup", canvasDragEnded)
+      .on("mouseleave", canvasDragEnded);
+
+    // 阻止节点上的事件冒泡到画布
+    node.on("mousedown", event => event.stopPropagation());
+    label.on("mousedown", event => event.stopPropagation());
+    node.on("wheel", event => event.stopPropagation());
+    label.on("wheel", event => event.stopPropagation());
+
+    function canvasDragStarted(event) {
+      // 在细节模式下禁用画布拖拽
+      if (detailMode.isActive) return;
+      
+      isDraggingCanvas = true;
+      container.classed("dragging", true);
+      canvasDragStart = { x: event.x - viewState.x, y: event.y - viewState.y };
+    }
+
+    // 添加缩放功能
+    const zoom = d3.zoom()
+      .scaleExtent([0.1, 5])
+      .on("zoom", zoomed);
+
+    // 先应用缩放行为到SVG元素
+    svg.call(zoom);
+    
+    // 然后设置初始缩放变换状态，确保与当前视图状态一致
+    svg.call(zoom.transform, d3.zoomIdentity.translate(viewState.x, viewState.y).scale(viewState.scale));
+
+    function canvasDragged(event) {
+      if (!isDraggingCanvas) return;
+      // 计算新的视图偏移量
+      viewState.x = event.x - canvasDragStart.x;
+      viewState.y = event.y - canvasDragStart.y;
+      updateViewTransform();
+    }
+
+    function zoomed(event) {
+      // 在细节模式下禁用缩放
+      if (detailMode.isActive || isDraggingCanvas) return;
+      
+      viewState.x = event.transform.x;
+      viewState.y = event.transform.y;
+      viewState.scale = event.transform.k;
+      updateViewTransform();
+    }
+
+    function updateViewTransform() {
+      virtualCanvas.attr("transform", `translate(${viewState.x}, ${viewState.y}) scale(${viewState.scale})`);
+      // 更新缩放比例显示
+      updateScaleIndicator();
+    }
+    
+    function updateScaleIndicator() {
+      // 将缩放比例转换为百分比格式，保留一位小数
+      const scalePercent = Math.round(viewState.scale * 1000) / 10;
+      // 在比例尺文字左侧加上当前模式
+      const modeText = detailMode.isActive ? "[细节模式] " : "[浏览模式] ";
+      d3.select("#scale-indicator").text(`${modeText}缩放比例: ${scalePercent}%`);
+    }
+    
+    // 进入细节模式函数
+    function enterDetailMode(selectedNode) {
+      // 保存当前视图状态
+      detailMode.previousViewState = { ...viewState };
+      detailMode.selectedNode = selectedNode;
+      detailMode.isActive = true;
+      
+      // 暗化所有元素（包括被选中的元素），添加平滑过渡
+      link.transition()
+          .duration(300)
+          .style("stroke-opacity", 0.05);
+      node.transition()
+          .duration(300)
+          .style("opacity", 0.05);
+      label.transition()
+          .duration(300)
+          .style("opacity", 0.05);
+      
+      // 禁用力导向模拟
+      simulation.stop();
+      
+      // 计算被选中元素在屏幕上的实际位置（考虑当前缩放和平移）
+      const selectedNodeScreenX = (selectedNode.x * viewState.scale) + viewState.x;
+      const selectedNodeScreenY = (selectedNode.y * viewState.scale) + viewState.y;
+      
+      // 计算被选中元素在屏幕上的实际大小（考虑当前缩放）
+      const selectedNodeScreenRadius = selectedNode.size * viewState.scale;
+      
+      // 目标位置（画布中心）
+      const targetX = width / 2;
+      const targetY = height / 2;
+      
+      // 目标半径
+      const targetRadius = 50;
+      
+      // 外围圆半径（属性元素放置的圆）
+      const outerRadius = 300;
+      
+      // 设置中央圆形元素的初始状态
+      detailModeCircle
+        .attr("fill", selectedNode.color || '#7a3de4') // 如果节点没有颜色属性，默认为蓝色
+        .style("display", "block") // 显示中央圆形元素
+        .attr("cx", selectedNodeScreenX) // 起始位置：被选中元素的屏幕位置
+        .attr("cy", selectedNodeScreenY)
+        .attr("r", selectedNodeScreenRadius); // 起始大小：被选中元素的屏幕大小
+      
+      // 动画持续时间（毫秒）
+      const duration = 500; // 增加动画时间以获得更流畅的效果
+      
+      // 执行动画：从被选中元素的位置和大小移动并放大到中央固定大小
+      detailModeCircle
+        .transition()
+        .duration(duration)
+        .attr("cx", targetX) // 移动到中央
+        .attr("cy", targetY)
+        .attr("r", targetRadius); // 放大到目标半径
+      
+      // 创建中央元素的标签
+      // 先检查是否已存在标签，如果存在则移除
+      svg.select(".detail-mode-label").remove();
+      
+      // 创建新的标签元素
+      const detailLabel = svg.append("text")
+        .attr("class", "detail-mode-label")
+        .attr("x", targetX) // 与中央圆形位置相同
+        .attr("y", targetY)
+        .attr("dy", ".3em") // 垂直居中微调
+        .attr("text-anchor", "middle") // 文本中心对齐
+        .text(selectedNode.id) // 显示选中节点的ID
+        .style("fill", "#ffffff")
+        .style("font-size", "16px")
+        .style("font-weight", "bold")
+        .style("pointer-events", "none")
+        .style("display", "block")
+        .style("z-index", "101") // 确保在中央圆形上方
+        .attr("opacity", 0); // 初始透明，用于动画
+      
+      // 添加标签的淡入动画，与中央圆形的动画同步
+      detailLabel.transition()
+        .duration(duration)
+        .attr("opacity", 1);
+      
+      // 创建中央元素正下方的文字框
+      // 先检查是否已存在文字框，如果存在则移除
+      svg.select(".detail-mode-info-box").remove();
+      svg.select(".detail-mode-info-text").remove();
+      
+      // 文字框位置和内容
+      const boxY = targetY + targetRadius + 230; // 位于中央圆形下方30像素处
+      const boxPadding = 15; // 文字框内边距
+      // 使用节点的实际描述信息
+      const detailText = selectedNode.info.描述 || "该元素暂无详细描述信息。";
+      
+      // 创建背景矩形（文字框）
+      const textElement = svg.append("text")
+        .attr("class", "detail-mode-info-text")
+        .attr("x", targetX)
+        .attr("y", boxY)
+        .attr("text-anchor", "middle")
+        .attr("alignment-baseline", "middle")
+        .attr("font-family", "Arial, sans-serif")
+        .attr("font-size", "14px")
+        .attr("fill", "#ffffff")
+        .attr("pointer-events", "none")
+        .attr("opacity", 0)
+        .style("white-space", "pre-line")
+        .text(detailText);
+      
+      // 获取文本的边界框以确定文字框尺寸
+      const bbox = textElement.node().getBBox();
+      
+      // 创建文字框背景
+      const infoBox = svg.insert("rect", ".detail-mode-info-text")
+        .attr("class", "detail-mode-info-box")
+        .attr("x", targetX - (bbox.width / 2 + boxPadding))
+        .attr("y", boxY - (bbox.height / 2 + boxPadding))
+        .attr("width", bbox.width + boxPadding * 2)
+        .attr("height", bbox.height + boxPadding * 2)
+        .attr("rx", 8) // 圆角
+        .attr("fill", "rgba(0, 0, 0, 0.8)")
+        .attr("stroke", "rgba(255, 255, 255, 0.3)")
+        .attr("stroke-width", 1)
+        .attr("opacity", 0)
+        .style("pointer-events", "none")
+        .style("z-index", "102"); // 确保在中央圆形和标签上方
+      
+      // 添加文字框和文字的淡入动画
+      infoBox.transition()
+        .delay(duration) // 延迟到中央圆形动画结束后开始
+        .duration(300)
+        .attr("opacity", 1);
+      
+      textElement.transition()
+        .delay(duration)
+        .duration(300)
+        .attr("opacity", 1);
+      
+      // 从节点的elementData中获取知识点和交付物数据
+      const knowledgePoints = selectedNode.elementData.Property?.Knowledge || [];
+      const deliverables = selectedNode.elementData.Property?.Product || [];
+      
+      // 计算属性元素的位置并显示
+      const nodeColor = selectedNode.color || "#1E90FF";
+      
+      // 显示属性组
+      attributesGroup.style("display", "block");
+      
+      // 清空之前的属性元素
+      knowledgeLinksGroup.selectAll("*").remove();
+      deliverableLinksGroup.selectAll("*").remove();
+      knowledgeTextsGroup.selectAll("*").remove();
+      deliverableTextsGroup.selectAll("*").remove();
+      
+      // 计算知识点位置（右侧，对称摆放）
+  const knowledgeCount = knowledgePoints.length;
+  // 知识点角度计算：每两个元素之间的角度为20度，居中放置
+  const angleBetweenItems = 20 * Math.PI / 180; // 20度转换为弧度
+  const knowledgeTotalAngleRange = (knowledgeCount - 1) * angleBetweenItems; // 总覆盖角度范围
+  const knowledgeStartAngle = 2 * Math.PI - knowledgeTotalAngleRange / 2; // 0度减去一半角度范围（弧度制）
+  
+  knowledgePoints.forEach((text, index) => {
+    // 计算当前元素的角度
+    const angle = knowledgeStartAngle + index * angleBetweenItems;
+    const knowledgecolor = '#64f212'
+    // 计算圆上点的位置（知识点：左端点在圆上）
+    const circleX = targetX + Math.cos(angle) * outerRadius;
+    const circleY = targetY + Math.sin(angle) * outerRadius;
+        
+        // 创建文本元素（右侧的文本，左端点对齐圆上点）
+        const textElement = knowledgeTextsGroup.append("text")
+          .attr("class", "attribute-text")
+          .attr("x", circleX) // 左端点在圆上
+          .attr("y", circleY)
+          .attr("text-anchor", "start") // 文本左对齐
+          .text(text)
+          .attr("opacity", 0) // 初始透明，用于动画
+          .style("fill", knowledgecolor); // 紫色文字
+        
+        // 获取文本宽度
+        const textWidth = textElement.node().getComputedTextLength();
+        
+        // 创建下划线（放在文本下方）
+        knowledgeTextsGroup.append("line")
+          .attr("class", "attribute-underline")
+          .attr("x1", circleX)
+          .attr("y1", circleY + 4)
+          .attr("x2", circleX + textWidth)
+          .attr("y2", circleY + 4)
+          .style("stroke", knowledgecolor) // 紫色下划线
+          .style("stroke-width", "1") // 宽度调整为1
+          .attr("opacity", 0);
+        
+        // 计算连接线的目标点（下划线靠近中央的端点）
+        const linkEndX = circleX;
+        const linkEndY = circleY + 4;
+        
+        // 创建连接线
+        knowledgeLinksGroup.append("line")
+          .attr("class", "attribute-line")
+          .attr("x1", targetX)
+          .attr("y1", targetY)
+          .attr("x2", linkEndX)
+          .attr("y2", linkEndY)
+          .style("stroke", knowledgecolor) // 紫色实线
+          .style("stroke-width", "1") // 宽度调整为1
+          .attr("opacity", 0);
+        
+        // 添加动画效果
+        textElement.transition()
+          .delay(duration + index * 100)
+          .duration(300)
+          .attr("opacity", 1);
+        
+        // 为下划线添加动画
+        knowledgeTextsGroup.selectAll("line")
+          .filter(function() {
+            // 只选取最后添加的那条下划线（当前文本对应的下划线）
+            const lines = knowledgeTextsGroup.selectAll("line").nodes();
+            return this === lines[index];
+          })
+          .transition()
+          .delay(duration + index * 100)
+          .duration(300)
+          .attr("opacity", 1);
+        
+        // 为连接线添加动画
+        knowledgeLinksGroup.selectAll("line")
+          .filter(function() {
+            // 只选取最后添加的那条连接线（当前文本对应的连接线）
+            const lines = knowledgeLinksGroup.selectAll("line").nodes();
+            return this === lines[index];
+          })
+          .transition()
+          .delay(duration + index * 100)
+          .duration(300)
+          .attr("opacity", 1);
+      });
+      
+      // 计算交付物位置（左侧，对称摆放）
+  const deliverableCount = deliverables.length;
+  // 交付物角度计算：每两个元素之间的角度为20度，居中放置
+//   const angleBetweenItems = 20 * Math.PI / 180; // 20度转换为弧度
+  const deliverableTotalAngleRange = (deliverableCount - 1) * angleBetweenItems; // 总覆盖角度范围
+  const deliverableStartAngle = Math.PI - deliverableTotalAngleRange / 2; // 180度减去一半角度范围（弧度制）
+  
+  deliverables.forEach((text, index) => {
+    // 计算当前元素的角度
+    const angle = deliverableStartAngle + index * angleBetweenItems;
+    
+    // 计算圆上点的位置（交付物：右端点在圆上）
+    const circleX = targetX + Math.cos(angle) * outerRadius;
+    const circleY = targetY + Math.sin(angle) * outerRadius;
+        
+        // 创建文本元素（左侧的文本，右端点对齐圆上点）
+        const textElement = deliverableTextsGroup.append("text")
+          .attr("class", "attribute-text")
+          .attr("x", circleX) // 右端点在圆上
+          .attr("y", circleY)
+          .attr("text-anchor", "end") // 文本右对齐
+          .text(text)
+          .attr("opacity", 0) // 初始透明，用于动画
+          .style("fill", "#FFD700"); // 黄色文字
+        
+        // 获取文本宽度
+        const textWidth = textElement.node().getComputedTextLength();
+        
+        // 创建下划线（放在文本下方）
+        deliverableTextsGroup.append("line")
+          .attr("class", "attribute-underline")
+          .attr("x1", circleX - textWidth)
+          .attr("y1", circleY + 4)
+          .attr("x2", circleX)
+          .attr("y2", circleY + 4)
+          .style("stroke", "#FFD700") // 黄色下划线
+          .style("stroke-width", "1") // 宽度调整为1
+          .attr("opacity", 0);
+        
+        // 计算连接线的目标点（下划线靠近中央的端点）
+        const linkEndX = circleX;
+        const linkEndY = circleY + 4;
+        
+        // 创建连接线
+        deliverableLinksGroup.append("line")
+          .attr("class", "attribute-line")
+          .attr("x1", targetX)
+          .attr("y1", targetY)
+          .attr("x2", linkEndX)
+          .attr("y2", linkEndY)
+          .style("stroke", "#FFD700") // 黄色实线
+          .style("stroke-width", "1") // 宽度调整为1
+          .attr("opacity", 0);
+        
+        // 添加动画效果
+        textElement.transition()
+          .delay(duration + index * 100)
+          .duration(300)
+          .attr("opacity", 1);
+        
+        // 为下划线添加动画
+        deliverableTextsGroup.selectAll("line")
+          .filter(function() {
+            // 只选取最后添加的那条下划线（当前文本对应的下划线）
+            const lines = deliverableTextsGroup.selectAll("line").nodes();
+            return this === lines[index];
+          })
+          .transition()
+          .delay(duration + index * 100)
+          .duration(300)
+          .attr("opacity", 1);
+        
+        // 为连接线添加动画
+        deliverableLinksGroup.selectAll("line")
+          .filter(function() {
+            // 只选取最后添加的那条连接线（当前文本对应的连接线）
+            const lines = deliverableLinksGroup.selectAll("line").nodes();
+            return this === lines[index];
+          })
+          .transition()
+          .delay(duration + index * 100)
+          .duration(300)
+          .attr("opacity", 1);
+      });
+      
+      // 更新缩放指示器
+      updateScaleIndicator();
+    }
+    
+    // 退出细节模式函数
+    function exitDetailMode() {
+      if (!detailMode.isActive || !detailMode.selectedNode) return;
+      
+      // 获取被选中元素的信息
+      const selectedNode = detailMode.selectedNode;
+      
+      // 计算被选中元素在屏幕上的实际位置（考虑当前缩放和平移）
+      const selectedNodeScreenX = (selectedNode.x * viewState.scale) + viewState.x;
+      const selectedNodeScreenY = (selectedNode.y * viewState.scale) + viewState.y;
+      
+      // 计算被选中元素在屏幕上的实际大小（考虑当前缩放）
+      const selectedNodeScreenRadius = selectedNode.size * viewState.scale;
+      
+      // 动画持续时间（毫秒）
+      const duration = 500;
+      
+      // 先让属性元素淡出
+      const fadeOutDuration = 300;
+      
+      // 淡出知识点元素
+      knowledgeTextsGroup.selectAll("text, line")
+        .transition()
+        .duration(fadeOutDuration)
+        .attr("opacity", 0);
+      
+      knowledgeLinksGroup.selectAll("line")
+        .transition()
+        .duration(fadeOutDuration)
+        .attr("opacity", 0);
+      
+      // 淡出交付物元素
+      deliverableTextsGroup.selectAll("text, line")
+        .transition()
+        .duration(fadeOutDuration)
+        .attr("opacity", 0);
+      
+      deliverableLinksGroup.selectAll("line")
+        .transition()
+        .duration(fadeOutDuration)
+        .attr("opacity", 0);
+      
+      // 延迟开始中央圆形的退出动画
+      setTimeout(() => {
+        // 执行标签淡出动画
+        svg.select(".detail-mode-label")
+          .transition()
+          .duration(duration)
+          .attr("opacity", 0)
+          .on("end", function() {
+            d3.select(this).remove(); // 动画结束后移除文字框
+          });
+        
+        // 执行文字框和文字的淡出动画
+        svg.select(".detail-mode-info-box")
+          .transition()
+          .duration(300)
+          .attr("opacity", 0)
+          .on("end", function() {
+            d3.select(this).remove(); // 动画结束后移��文字框
+          });
+        
+        svg.select(".detail-mode-info-text")
+          .transition()
+          .duration(300)
+          .attr("opacity", 0)
+          .on("end", function() {
+            d3.select(this).remove(); // 动画结束后移除文字
+          });
+        
+        // 执行退出动画：从中央位置和大小返回到被选中元素的位置和大小
+        detailModeCircle
+          .transition()
+          .duration(duration)
+          .attr("cx", selectedNodeScreenX) // 移动回被选中元素的位置
+          .attr("cy", selectedNodeScreenY)
+          .attr("r", selectedNodeScreenRadius) // 缩小到被选中元素的大小
+          .on("end", () => {
+            detailModeCircle.style("display", "none");
+            
+            // 隐藏属性组
+            attributesGroup.style("display", "none");
+            
+            // 清空所有属性元素
+            knowledgeLinksGroup.selectAll("*").remove();
+            deliverableLinksGroup.selectAll("*").remove();
+            knowledgeTextsGroup.selectAll("*").remove();
+            deliverableTextsGroup.selectAll("*").remove();
+            
+            // 恢复所有元素的原始透明度，添加平滑过渡
+            link.transition()
+                .duration(300)
+                .style("stroke-opacity", 0.4);
+            node.transition()
+                .duration(300)
+                .style("opacity", 1);
+            label.transition()
+                .duration(300)
+                .style("opacity", 1);
+            
+            // 恢复原始状态
+            detailMode.isActive = false;
+            detailMode.selectedNode = null;
+            detailMode.previousViewState = null;
+            
+            // 重新启动力导向模拟
+            simulation.alpha(0.3).restart();
+            
+            // 更新缩放指示器
+            updateScaleIndicator();
+          });
+      }, fadeOutDuration);
+    }
+
+    function canvasDragEnded() {
+      isDraggingCanvas = false;
+      container.classed("dragging", false);
+    }
+
+    // 初始化缩放比例显示
+    updateScaleIndicator();
+    
+    // 12. 窗口大小适配
+    window.addEventListener("resize", () => {
+      const newWidth = window.innerWidth;
+      const newHeight = window.innerHeight;
+      svg.attr("width", newWidth).attr("height", newHeight);
+    });
+  </script>
+  <script src="../js/ipcontroller.js"></script>  
+  <script src="../js/load-components.js"></script>
+  <script src="../js/Visit_Monitor.js"></script>
+</body>
+</html>

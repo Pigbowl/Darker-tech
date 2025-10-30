@@ -1,11 +1,13 @@
 <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
 <script src="../js/ipcontroller.js"></script>  
+<script src="../js/conversion.js"></script>
+
 <!-- 动态虚拟助手 -->
 <div id="duckAssistant" style="position:fixed;bottom:150px;right:50px;display:flex;flex-direction:column;align-items:flex-end;z-index:9999;">
   <!-- 对话气泡 -->
      <!-- 对话气泡 -->
   <div id="chatBubble" style="width:280px;background:rgb(253, 229, 10);border-radius:15px;padding:12px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1);position:relative;">
-    <div id="bubbleContent" style="font-size:14px;color:rgb(0, 0, 0);line-height:1.5;">欢迎来到达客科技！</div>
+    <div id="bubbleContent" style="font-size:14px;color:rgb(0, 0, 0);line-height:1.5;">Hello,尊敬的用户</div>
       <div style="position:absolute;bottom:-5px;right:10px;width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:8px solid rgba(253, 229, 10);"></div>
   </div>
   <!-- 选项列表 -->
@@ -40,6 +42,10 @@
       <span style="color:rgb(0, 0, 0);font-size:14px;margin-right:8px;"><i class="fa fa-question-circle"></i></span>
       <span style="color:rgb(0, 0, 0);font-size:14px;">达客问答</span>
     </div>
+    <div class="option-item" style="border-radius:10px;padding:12px 20px;cursor:pointer;transition:background-color 0.2s;" data-action="subscribe">
+      <span style="color:rgb(0, 0, 0);font-size:14px;margin-right:8px;"><i class="fa fa-eye"></i></span>
+      <span style="color:rgb(0, 0, 0);font-size:14px;">订阅达客</span>
+    </div>
   </div>
 
   <!-- 动态图标（雪碧图实现） -->
@@ -59,26 +65,26 @@
   ></div> -->
 
   <video 
-  id="duckIcon" 
-  src="../PIC/duck_spin.mp4"
-  style="
-    width:80px; 
-    height:80px; 
-    border-radius:50%; 
-    cursor:pointer; 
-    display:none;  /* 默认隐藏 */
-  "
-  autoplay 
-  loop 
-  muted 
-  playsinline
-></video>
+    id="duckIcon" 
+    src="../PIC/duck_spin.mp4"
+    style="
+      width:80px; 
+      height:80px; 
+      border-radius:50%; 
+      cursor:pointer; 
+      display:none;  /* 默认隐藏 */
+    "
+    autoplay 
+    loop 
+    muted 
+    playsinline
+  ></video>
 <!-- 静止图（默认显示） -->
-<img 
-  id="duckStatic" 
-  src="../PIC/duck_action_0.png" 
-  style="width:80px; height:80px; border-radius:50%; cursor:pointer;"
->
+  <img 
+    id="duckStatic" 
+    src="../PIC/duck_action_0.png" 
+    style="width:80px; height:80px; border-radius:50%; cursor:pointer;"
+  >
 
   <!-- 聊天输入框 -->
   <div id="chatInputBox" style="display:none;width:1000px;background:rgb(255, 252, 61);border-radius:10px;padding:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1);margin-top:10px;position:relative;">
@@ -91,9 +97,46 @@
       <input type="text" id="userInput" placeholder="请输入你的问题..." style="flex:1;padding:8px;border:1px solid #ddd;border-radius:4px;">
       <button id="sendBtn" style="margin-left:10px;padding:8px 15px;border:none;border-radius:4px;background:#007bff;color:white;cursor:pointer;">发送</button>
     </div>
+  </div>
+  <!-- 订阅悬浮框 -->
+  <div id="subscribeModal" style="display:none;width:400px;background:rgb(255, 252, 61);border-radius:10px;padding:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1);margin-top:10px;position:relative;">
+    <h3 style="margin-top:0;color:#000000;font-size:16px;text-align:center;">订阅达客科技</h3>
+    <h3 style="margin-top:0;color:#000000;font-size:8px;text-align:center;">订阅后将第一时间告知您达客的最近动态，敬请期待</h3>
+    <div style="margin-bottom:15px;">
+      <label style="display:block;margin-bottom:5px;color:#000000;">用户名</label>
+      <input type="text" id="subscribeUsername" placeholder="请输入您的用户名" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;">
+    </div>
+    <div style="margin-bottom:15px;">
+      <label style="display:block;margin-bottom:5px;color:#000000;">邮箱地址</label>
+      <input type="email" id="subscribeEmail" placeholder="请输入您的邮箱地址" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;">
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button id="subscribeSubmitBtn" style="flex:1;padding:10px;border:none;border-radius:4px;background:#007bff;color:white;cursor:pointer;">订阅</button>
+      <button id="subscribeCancelBtn" style="flex:1;padding:10px;border:none;border-radius:4px;background:#6c757d;color:white;cursor:pointer;">取消</button>
+    </div>
+  </div>
 </div>
 
+  
+
 <script>
+  // 获取当前页面URL
+let parenthtml = window.parent.location.pathname;
+// 根据URL获取页面名称
+if (pagename[parenthtml]){
+  starttext = `欢迎来到${pagename[parenthtml]}页面！`
+}else{
+  starttext = '对不起。。。我。。。迷路了';
+}
+let introTexts = [];
+let user_number = 0;
+
+if (conversion_blog[parenthtml]){
+  introTexts = conversion_blog[parenthtml]
+}else{
+  introTexts = ['这不就尴尬了么？','我也不知道说哈呀!','给你唱一个？','啦啦啦啦啦啦啦啦~']
+}
+bubbleContent.textContent = starttext;
   // 点击交互（触发挥手动画+切换输入框）
 let isChatting = false;
 let introInterval;
@@ -107,14 +150,16 @@ const frameWidth = 100;  // 单帧宽度（与雪碧图单帧尺寸一致）
 const totalFrames = 6;  // 总帧数（6帧动画）
 const duckVideo = document.getElementById('duckIcon');
 const duckStatic = document.getElementById('duckStatic');
+const subscribeModal = document.getElementById('subscribeModal');
 let animationInterval = null;
 let animationTimeout = null; // 定义animationTimeout变量
-
+// chatBubble.innerHTML = pageName;
+getusernumber();
 // 自动播放动画（每5秒触发一次挥手，避免频繁动画）
 function startAutoAnimation() {
   setInterval(() => {
     playWaveAnimation();
-  }, 8000);
+  }, 10000);
 }
 function playWaveAnimation() {
   if (animationTimeout) clearTimeout(animationTimeout);
@@ -125,7 +170,7 @@ function playWaveAnimation() {
   animationTimeout = setTimeout(() => {
     duckVideo.style.display = "none";
     duckStatic.style.display = "block";
-  }, 5000);
+  }, 10000);
 }
 // function playWaveAnimation() {
 //   if (animationTimeout) clearTimeout(animationTimeout);
@@ -186,9 +231,32 @@ function hideOptions() {
   // 动画结束后隐藏元素
   setTimeout(() => {
     optionList.style.display = 'none';
+    chatBubble.style.display = 'block';
+    updateIframeSize();
   }, 300);
-  updateIframeSize();
+  
+  // setTimeout(() => {
+  //   x
+  // }, 30);
+  
 }
+
+  function getusernumber(){
+      command = ip + '/get_user_number'
+      fetch(command,{
+          method:'POST',
+          headers:{
+              'Content-Type':'application/json'
+          },
+          body:JSON.stringify({
+              'req':'none',
+              })
+      }).then(response=>response.json()).then(data=>{
+          if(data.success){
+              user_number = JSON.parse(data.output)+1;
+          }
+      })
+  }
 
 // 添加鼠标事件监听器
 duckIcon.addEventListener('mouseenter', showOptions);
@@ -240,6 +308,9 @@ function handleOptionClick(action) {
       // 理解达客功能
       window.parent.location.href = "../index.html#about";
       break;
+    case 'start':
+      // 理解达客功能
+      window.parent.location.href = "../Pages/ADAS_JOURNEY.html";
       break;
     case 'question':
       duckVideo.src = "../PIC/duck_keyboard.mp4";
@@ -256,13 +327,21 @@ function handleOptionClick(action) {
         isChatting = !isChatting;
         updateIframeSize();
       break;
+    case 'subscribe':
+      duckVideo.src = "../PIC/duck_like.mp4";
+      subscribeModal.style.display = 'block';
+  
+      // 重置输入框
+      document.getElementById('subscribeUsername').value = '';
+      document.getElementById('subscribeEmail').value = '';
+      updateIframeSize();
+      break;
   }
 }
 
 
 // 发送消息功能
 sendBtn.onclick = async () => {
-  console.log("Yes my friend, you clicked it")
   const question = userInput.value.trim();
   if (!question) return;
   // 添加用户消息到界面
@@ -284,17 +363,13 @@ sendBtn.onclick = async () => {
 
 // 自动介绍文本（保持不变）
 function startIntroAnimation() {
-  const introTexts = [
-    "欢迎了解ADAS仿真平台！",
-    "我可以帮你解答平台相关问题~",
-    "点击我开始对话吧！"
-  ];
+
   let currentIntroIndex = 0;
   introInterval = setInterval(() => {
     bubbleContent.textContent = introTexts[currentIntroIndex];
     currentIntroIndex = (currentIntroIndex + 1) % introTexts.length;
     updateIframeSize();
-  }, 2000);
+  }, 4000);
 }
 
 // 初始化
@@ -311,6 +386,91 @@ duckIcon.addEventListener('mouseleave', () => {
   duckIcon.style.transform = 'scale(1)';
 });
 
+// 显示订阅悬浮框
+function showSubscribeModal() {
+  const subscribeModal = document.getElementById('subscribeModal');
+  
+  subscribeModal.style.display = 'block';
+  
+  // 重置输入框
+  document.getElementById('subscribeUsername').value = '';
+  document.getElementById('subscribeEmail').value = '';
+}
+
+// 隐藏订阅悬浮框
+function hideSubscribeModal() {
+  const subscribeModal = document.getElementById('subscribeModal');
+  
+  subscribeModal.style.display = 'none';
+}
+
+// 处理订阅提交
+function handleSubscribe() {
+  const username = document.getElementById('subscribeUsername').value.trim();
+  const email = document.getElementById('subscribeEmail').value.trim();
+  
+  if (!username || !email) {
+    alert('请填写用户名和邮箱地址');
+    return;
+  }
+  
+  // 简单的邮箱验证
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    alert('请输入有效的邮箱地址');
+    return;
+  }
+  command = ip + '/add_user';
+  fetch(command, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:JSON.stringify({
+        'user':     {
+            "id": "USER-"+user_number,
+            "name": username,
+            "submit_time": new Date().toISOString(),
+            "submitter_email": email,
+            },
+        })
+  }).then(response=>response.json()).then(data=>{
+    if (data.success) {
+      subsreuslt = data.output;
+      if (subsreuslt == "success") {
+        alert('订阅成功！感谢您的关注，' + username + '！');
+      } else if (subsreuslt == "redandunt") {
+        alert('订阅失败：该邮箱已订阅过，无需重新订阅~。');
+      } else {
+        alert('订阅失败：' + subsreuslt);
+      }
+    } else {
+      alert('订阅失败：' + data.message);
+    }
+  })
+  .catch(error => {
+    console.error('订阅错误:', error);
+    alert('订阅过程中发生错误，请稍后重试。');
+  });
+  updateIframeSize();
+  
+  // 隐藏悬浮框
+  hideSubscribeModal();
+}
+
+// 初始化订阅相关事件监听
+function initSubscribeEvents() {
+  const subscribeSubmitBtn = document.getElementById('subscribeSubmitBtn');
+  const subscribeCancelBtn = document.getElementById('subscribeCancelBtn');
+  const modalOverlay = document.getElementById('modalOverlay');
+  
+  subscribeSubmitBtn.addEventListener('click', handleSubscribe);
+  subscribeCancelBtn.addEventListener('click', hideSubscribeModal);
+  
+  // 防止点击悬浮框内容时关闭悬浮框
+  document.getElementById('subscribeModal').addEventListener('click', function(e) {
+    e.stopPropagation();
+  });
+}
+
 // 宽高自适应
 function updateIframeSize() {
   const assistant = document.getElementById('duckAssistant');
@@ -320,4 +480,7 @@ function updateIframeSize() {
     height: assistant.offsetHeight
   }, '*');
 }
+
+// 初始化订阅事件
+initSubscribeEvents();
 </script>

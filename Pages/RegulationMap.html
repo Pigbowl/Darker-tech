@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Darker Tech - 法规/标准领域</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>    
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="../js/load-duck-assistant.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        /* 大洲地图样式 */
+        .continent {
+            fill: #3a4150;
+            stroke: #00f7ff;
+            stroke-width: 0.5;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .continent:hover {
+            fill: rgba(0, 247, 255, 0.3);
+            filter: drop-shadow(0 0 8px rgba(0, 247, 255, 0.5));
+        }
+        
+        .continent.selected {
+            fill: rgba(157, 78, 221, 0.6);
+            filter: drop-shadow(0 0 12px rgba(157, 78, 221, 0.8));
+        }
+        
+        /* 信息框样式 */
+        .info-box {
+            background: rgba(35, 40, 51, 0.95);
+            border: 1px solid #00f7ff;
+            border-radius: 6px;
+            padding: 15px;
+            max-width: 300px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .info-box h3 {
+            color: #00f7ff;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            text-shadow: 0 0 5px rgba(0, 247, 255, 0.7);
+        }
+        
+        .info-box p {
+            margin-bottom: 5px;
+            color: #e6e8eb;
+        }
+        
+        /* 选中大洲显示区域 */
+        .selected-continents {
+            background: rgba(35, 40, 51, 0.85);
+            border: 1px solid #3a4150;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .continent-tag {
+            display: inline-block;
+            background: rgba(157, 78, 221, 0.2);
+            border: 1px solid #9d4edd;
+            border-radius: 20px;
+            padding: 5px 12px;
+            margin: 5px;
+            color: #ffffff;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .continent-tag:hover {
+            background: rgba(157, 78, 221, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        /* 法规内容区域样式 */
+        .regulation-content {
+            background: rgba(35, 40, 51, 0.85);
+            border: 1px solid #3a4150;
+            border-radius: 6px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .regulation-card {
+            background: rgba(26, 26, 46, 0.85);
+            border: 1px solid #4a5568;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .regulation-card:hover {
+            border-color: #00f7ff;
+            box-shadow: 0 0 10px rgba(0, 247, 255, 0.3);
+        }
+        
+        .regulation-title {
+            color: #00f7ff;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .regulation-details {
+            color: #cbd5e0;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body class="bg-dark bg-grid text-gray-100 font-inter min-h-screen flex flex-col bg-grid w-full h-full p-0 m-0">
+    <!-- <div id="particles-js"></div> -->
+    <div class="content min-h-screen">
+
+        <!-- 导航栏容器 --> 
+        <div id="navbar-container"></div>
+
+        <!-- 页面特定内容 -->
+        <main class="content">
+            <div class="min-h-[1vh] flex flex-col justify-center items-center">
+                <div class="text-center mb-6 cyber-border p-1 mt-12">
+                    <!-- <h1 class="title-animate text-[clamp(2.5rem,6vw,5rem)] font-bold text-white neon-glow mb-4">
+                        法规/标准领域
+                    </h1> -->
+                </div>
+            </div>
+            
+            <div class="w-full relative">
+                <!-- 悬浮在左上角的区域选择面板 -->
+                <div class="fixed top-39 right-5 z-10 w-80 bg-dark-light/95 rounded-lg overflow-hidden border border-primary/30 cyber-border p-4 shadow-lg">
+                    <h3 class="text-lg font-bold text-white mb-3 neon-glow">区域选择</h3>
+                    <p class="text-gray-400 mb-4 text-sm">
+                        点击地图上的国家进行选择（支持多选），系统将根据所选区域显示相关法规。
+                    </p>
+                    
+                    <!-- 选中大洲显示 -->
+                    <div class="selected-continents">
+                        <h4 class="text-xs text-white mb-2">已选国家</h4>
+                        <div id="selected-countries-tags" class="flex flex-wrap max-h-24 overflow-y-auto">
+                            <!-- 选中的国家标签将在这里动态添加 -->
+                            <p class="text-gray-500 text-sm">暂无选中国家</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 选中大洲显示 -->
+                    <div class="selected-continents mt-3">
+                        <h4 class="text-xs text-white mb-2">已选大洲</h4>
+                        <div id="selected-continents-tags" class="flex flex-wrap">
+                            <!-- 选中的大洲标签将在这里动态添加 -->
+                            <p class="text-gray-500 text-sm">暂无选中大洲</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 操作按钮 -->
+                    <div class="flex gap-2 mt-4">
+                        <button id="clear-selection" class="cyber-btn w-1/2 bg-primary/20 hover:bg-primary/30 text-neon font-medium py-1.5 px-2 text-sm rounded transition-all">
+                            清除选择
+                        </button>
+                        <button id="apply-selection" class="cyber-btn w-1/2 bg-primary/40 hover:bg-primary/50 text-neon font-medium py-1.5 px-2 text-sm rounded transition-all">
+                            应用选择
+                        </button>
+                    </div>
+                </div>
+
+                
+                
+                <!-- 左侧法规列表面板 -->
+                <div id="regulation-container" class="fixed top-30 left-6 z-10 w-80 h-[calc(100vh-120px)] bg-dark-light/95 rounded-lg overflow-hidden border border-primary/30 cyber-border p-4 shadow-lg">
+                    <h3 class="text-lg font-bold text-white mb-3 neon-glow">相关法规</h3>
+                    <div id="regulation-list" class="flex flex-col gap-2 max-h-[calc(100%-40px)] overflow-y-auto">
+                        <!-- 法规项将动态生成在这里 -->
+                        <!-- 每项格式: <div class="flex items-center gap-2 p-2 bg-dark/50 rounded hover:bg-primary/10 transition-colors"><i class="fas fa-file-contract text-primary"></i><span>法规名称</span></div> -->
+                    </div>
+                </div>
+
+                <!-- 地图容器 -->
+                <div class="rounded-lg overflow-hidden border border-primary/30 cyber-border h-[calc(100vh-80px)]">
+                    <h3 class="text-xl font-bold text-white mb-2 neon-glow px-4">世界地图</h3>
+                    <div class="relative flex justify-center items-center" style="height: 80vh; min-height: 200px;">
+                                <!-- D3.js世界地图容器 -->
+                                <svg id="world-map" width="100%" height="100%"></svg>
+                                
+                                <!-- 信息提示框 -->
+                                <div id="info-tooltip" class="info-box hidden absolute z-10"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- 法规内容区域 -->
+                        <!-- <div id="regulation-container" class="regulation-content hidden">
+                            <h3 class="text-xl font-bold text-white mb-6 neon-glow">相关法规与评测标准</h3>
+                            <div id="regulation-list">
+
+                            </div>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- 页脚容器 -->
+        <div id="footer-container"></div>   
+    </div>
+    
+    <script src="../js/ipcontroller.js"></script>  
+    <script>
+        // 大洲数据映射
+        const continentInfo = {
+            "亚洲": "亚洲是最大的大洲，拥有多个ADAS法规发展迅速的国家，如中国、日本和韩国。",
+            "欧洲": "欧洲拥有严格的ADAS法规框架，欧盟积极推动自动驾驶技术标准化。",
+            "北美洲": "美国和加拿大在ADAS领域有各自的法规体系，美国各州也有不同的自动驾驶测试法规。",
+            "南美洲": "南美洲的ADAS法规正在发展中，巴西和智利等国家开始关注自动驾驶标准。",
+            "非洲": "非洲的ADAS法规发展相对滞后，但南非等国家正在逐步建立相关标准。",
+            "大洋洲": "澳大利亚和新西兰在ADAS领域有较为完善的法规体系，注重车辆安全测试。"
+        };
+        
+        // 国家到大洲的映射表
+        let countryToContinent = {};
+        // 大洲的国家集合
+        let continentCountries = {
+            "亚洲": new Set(),
+            "欧洲": new Set(),
+            "北美洲": new Set(),
+            "南美洲": new Set(),
+            "非洲": new Set(),
+            "大洋洲": new Set()
+        };
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // 模拟数据 - 实际应用中应从数据库获取
+            const regulationData = {
+                "亚洲": [
+                    { title: "中国GB/T 34590系列标准", details: "规定了智能网联汽车测试评价方法，包括ADAS功能测试、信息安全测试等。" },
+                    { title: "日本JASO T 101标准", details: "针对先进驾驶辅助系统的性能测试和评价标准。" },
+                    { title: "韩国KS R 9206标准", details: "韩国自动驾驶汽车安全标准，包括传感器性能和功能安全要求。" }
+                ],
+                "欧洲": [
+                    { title: "欧盟UN R152法规", details: "针对L3级别及以上自动驾驶系统的型式认证法规。" },
+                    { title: "欧盟NCAP测试标准", details: "欧洲新车安全评价规程，包含多项ADAS功能测试项目。" },
+                    { title: "ISO 26262标准", details: "道路车辆功能安全标准，适用于包含电子系统的汽车。" }
+                ],
+                "北美洲": [
+                    { title: "美国FMVSS 126法规", details: "电子稳定控制系统标准，包含部分ADAS相关要求。" },
+                    { title: "加拿大CMVSS标准", details: "加拿大机动车安全标准，包含ADAS系统相关测试要求。" },
+                    { title: "SAE J3016标准", details: "自动驾驶汽车分级标准，被广泛采用。" }
+                ],
+                "南美洲": [
+                    { title: "巴西ABNT NBR 16803标准", details: "巴西智能交通系统标准，包含部分ADAS功能要求。" },
+                    { title: "智利NCh 3265标准", details: "智利机动车安全标准，逐步纳入ADAS相关要求。" }
+                ],
+                "非洲": [
+                    { title: "南非SANS 1559标准", details: "南非机动车安全标准，开始关注ADAS技术要求。" }
+                ],
+                "大洋洲": [
+                    { title: "澳大利亚ADR 79/00标准", details: "澳大利亚设计规则，包含电子稳定控制等ADAS相关要求。" },
+                    { title: "新西兰ADR标准", details: "新西兰采用的澳大利亚设计规则，包含ADAS系统安全要求。" }
+                ]
+            };
+            
+            // 选中的大洲数组
+            let selectedContinents = [];
+            // 选中的国家数组
+            let selectedCountries = [];
+            
+            // 获取DOM元素
+            const infoTooltip = document.getElementById('info-tooltip');
+            const selectedCountriesTags = document.getElementById('selected-countries-tags');
+            const selectedContinentsTags = document.getElementById('selected-continents-tags');
+            const clearSelectionBtn = document.getElementById('clear-selection');
+            const applySelectionBtn = document.getElementById('apply-selection');
+            const regulationContainer = document.getElementById('regulation-container');
+            const regulationList = document.getElementById('regulation-list');
+            
+            // 初始化地图
+            initMap();
+            
+            // 加载大洲数据
+            function loadContinentData() {
+                return d3.json("../Doc/countries.json")
+                    .then(continentData => {
+                        // 构建国家-大洲映射表
+                        continentData.forEach(item => {
+                            // 使用常用名作为键
+                            countryToContinent[item.name.common] = item.region;
+                            // 根据region值映射到中文大洲名
+                            let chineseContinent = mapRegionToChineseContinent(item.region);
+                            if (chineseContinent && continentCountries[chineseContinent]) {
+                                continentCountries[chineseContinent].add(item.name.common);
+                            }
+                        });
+                        return true;
+                    })
+                    .catch(error => {
+                        console.error("大洲数据加载失败：", error);
+                        alert("大洲数据加载失败，请检查网络");
+                        return false;
+                    });
+            }
+            
+            // 将英文区域名映射为中文大洲名
+            function mapRegionToChineseContinent(region) {
+                const regionMap = {
+                    "Asia": "亚洲",
+                    "Europe": "欧洲",
+                    "Americas": "北美洲",
+                    "Americas": "南美洲",
+                    "Africa": "非洲",
+                    "Oceania": "大洋洲"
+                };
+                return regionMap[region] || null;
+            }
+            
+            // 初始化地图
+            function initMap() {
+                loadContinentData().then(success => {
+                    if (!success) return;
+                    
+                    const svg = d3.select("#world-map");
+                    // 清空现有内容，避免重复绘制
+                    svg.selectAll("*").remove();
+                    
+                    const width = svg.node().getBoundingClientRect().width;
+                    const height = svg.node().getBoundingClientRect().height;
+                    
+                    // 设置SVG视口以响应容器大小变化
+                    svg.attr("viewBox", `0 0 ${width} ${height}`)
+                       .attr("preserveAspectRatio", "xMidYMid meet");
+                    
+                    // 定义地图投影 - 调整比例尺和偏移量以确保地图完全显示在SVG内
+                    const projection = d3.geoMercator()
+                        .scale(width / 10)  // 减小比例，确保地图完全显示
+                        .translate([width / 2, height / 2+200]);  // 调整垂直居中
+                    
+                    const path = d3.geoPath().projection(projection);
+                    
+                    // 加载地图边界数据
+                    d3.json("../Doc/countries.geojson")
+                        .then(mapData => {
+                            svg.selectAll(".country")
+                                .data(mapData.features)
+                                .enter()
+                                .append("path")
+                                .attr("class", "continent")
+                                .attr("d", path)
+                                .attr("data-country", d => d.properties.name)
+                                .attr("data-continent", d => countryToContinent[d.properties.name] ? mapRegionToChineseContinent(countryToContinent[d.properties.name]) : "未知")
+                                .on("mouseover", handleMouseOver)
+                                .on("mousemove", handleMouseMove)
+                                .on("mouseout", handleMouseOut)
+                                .on("click", handleCountryClick);
+                        })
+                        .catch(error => {
+                            console.error("地图数据加载失败：", error);
+                            alert("地图数据加载失败，请检查网络");
+                        });
+                });
+            }
+            
+            // 处理鼠标悬停事件
+            function handleMouseOver(event, d) {
+                const countryName = d.properties.name;
+                const continentName = countryToContinent[countryName]
+                const continentInfoText = continentInfo[continentName] || "暂无相关信息";
+                
+                // 更新信息框内容
+                infoTooltip.innerHTML = `
+                    <h3>${countryName}</h3>
+                    <p>所属大洲：${continentName}</p>
+                    <p>${continentInfoText}</p>
+                `;
+                
+                // 显示信息框
+                infoTooltip.classList.remove('hidden');
+                
+                // 高亮当前国家
+                d3.select(this).style("fill", "rgba(0, 247, 255, 0.3)");
+            }
+            
+            // 处理鼠标移动事件
+            function handleMouseMove(event) {
+                const svgRect = document.getElementById('world-map').getBoundingClientRect();
+                const x = event.clientX - svgRect.left + 20;
+                const y = event.clientY - svgRect.top - 20;
+                
+                infoTooltip.style.left = x + 'px';
+                infoTooltip.style.top = y + 'px';
+            }
+            
+            // 处理鼠标离开事件
+            function handleMouseOut(event) {
+                infoTooltip.classList.add('hidden');
+                
+                // 恢复原始颜色或选中颜色
+                const country = d3.select(this);
+                const countryName = country.attr("data-country");
+                
+                // 确保window.selectedCountries存在
+                if (!window.selectedCountries) {
+                    window.selectedCountries = [];
+                }
+                
+                if (window.selectedCountries.includes(countryName)) {
+                    country.style("fill", "rgba(157, 78, 221, 0.6)");
+                } else {
+                    country.style("fill", "#3a4150");
+                }
+            }
+            
+            // 处理国家点击事件
+            function handleCountryClick(event, d) {
+                const countryName = d.properties.name;
+                const continentName = countryToContinent[countryName] ? mapRegionToChineseContinent(countryToContinent[countryName]) : "未知";
+                
+                // 确保window.selectedCountries存在
+                if (!window.selectedCountries) {
+                    window.selectedCountries = [];
+                }
+                
+                // 切换选中状态
+                const country = d3.select(this);
+                if (window.selectedCountries.includes(countryName)) {
+                    // 取消选中国家
+                    window.selectedCountries = window.selectedCountries.filter(item => item !== countryName);
+                    country.style("fill", "#3a4150");
+                    
+                    // 检查该大洲是否还有其他选中的国家
+                    const continentHasCountries = window.selectedCountries.some(country => {
+                        const countryContinent = countryToContinent[country] ? mapRegionToChineseContinent(countryToContinent[country]) : "未知";
+                        return countryContinent === continentName;
+                    });
+                    
+                    // 如果该大洲没有其他选中的国家，则从大洲列表中移除
+                    if (!continentHasCountries) {
+                        selectedContinents = selectedContinents.filter(item => item !== continentName);
+                    }
+                } else {
+                    // 选中国家
+                    window.selectedCountries.push(countryName);
+                    country.style("fill", "rgba(157, 78, 221, 0.6)");
+                    
+                    // 如果该大洲不在选中列表中，则添加
+                    if (!selectedContinents.includes(continentName)) {
+                        selectedContinents.push(continentName);
+                    }
+                }
+                
+                // 更新选中标签显示
+                updateSelectedTags();
+            }
+            
+
+            
+            // 更新选中标签显示和法规列表
+        function updateSelectedTags() {
+            // 确保selectedCountries和相关标签容器存在
+            if (!window.selectedCountries) {
+                window.selectedCountries = [];
+            }
+            
+            // 获取正确的标签容器
+            const selectedCountriesTags = document.getElementById('selected-countries-tags');
+            const selectedContinentsTags = document.getElementById('selected-continents-tags');
+            const regulationContainer = document.getElementById('regulation-list');
+            
+            // 检查元素是否存在
+            if (!selectedCountriesTags || !selectedContinentsTags) {
+                console.error('标签容器元素不存在');
+                return;
+            }
+
+            // 更新国家标签
+            if (window.selectedCountries.length === 0) {
+                selectedCountriesTags.innerHTML = '<p class="text-gray-500 text-sm">暂无选中国家</p>';
+            } else {
+                selectedCountriesTags.innerHTML = '';
+                window.selectedCountries.forEach(country => {
+                    const tag = document.createElement('div');
+                    tag.className = 'country-tag bg-primary/20 text-white text-xs px-2 py-1 rounded-full flex items-center mr-2 mb-2';
+                    tag.innerHTML = `
+                        ${country}
+                        <button class="ml-1 text-xs hover:text-red-400" data-country="${country}">×</button>
+                    `;
+                    selectedCountriesTags.appendChild(tag);
+                    
+                    // 点击标签删除
+                    tag.querySelector('button').addEventListener('click', function() {
+                        const name = this.getAttribute('data-country');
+                        // 从数组中移除
+                        window.selectedCountries = window.selectedCountries.filter(item => item !== name);
+                        // 重置该国家的颜色
+                        d3.selectAll(`[data-country="${name}"]`)
+                            .style("fill", "#3a4150");
+                        // 更新显示
+                        updateSelectedTags();
+                    });
+                });
+            }
+            
+            // 更新大洲标签
+            if (selectedContinents.length === 0) {
+                selectedContinentsTags.innerHTML = '<p class="text-gray-500 text-sm">暂无选中大洲</p>';
+            } else {
+                selectedContinentsTags.innerHTML = '';
+                selectedContinents.forEach(continent => {
+                    const tag = document.createElement('div');
+                    tag.className = 'continent-tag bg-primary/30 text-white text-xs px-2 py-1 rounded-full flex items-center mr-2 mb-2';
+                    tag.innerHTML = `
+                        ${continent}
+                        <button class="ml-1 text-xs hover:text-red-400" data-continent="${continent}">×</button>
+                    `;
+                    selectedContinentsTags.appendChild(tag);
+                    
+                    // 点击标签删除
+                    tag.querySelector('button').addEventListener('click', function() {
+                        const name = this.getAttribute('data-continent');
+                        // 从数组中移除
+                        selectedContinents = selectedContinents.filter(item => item !== name);
+                        // 重置该大洲所有国家的颜色
+                        d3.selectAll(`.continent[data-continent="${name}"]`)
+                            .style("fill", "#3a4150");
+                        // 更新显示
+                        updateSelectedTags();
+                    });
+                });
+            }
+            
+        }
+        
+        // 模拟生成法规数据
+        function generateSampleRegulations(selectedRegions) {
+            // 这里可以根据实际数据源获取法规
+            // 暂时返回模拟数据
+            const regulations = [];
+            
+            // 根据选中区域生成不同的法规
+            selectedRegions.forEach(region => {
+                // 模拟一些法规名称
+                const regionRegulations = [
+                    `${region}自动驾驶安全法规`,
+                    `${region}智能网联汽车技术标准`,
+                    `${region}数据安全管理条例`,
+                    `${region}车辆辅助系统认证要求`,
+                    `${region}车载信息系统规范`
+                ];
+                regulations.push(...regionRegulations);
+            });
+            
+            return regulations;
+        }
+            
+            // 清除选择按钮
+            clearSelectionBtn.addEventListener('click', function() {
+                // 重置所有国家的颜色
+                d3.selectAll(".continent")
+                    .style("fill", "#3a4150");
+                // 清空数组
+                selectedContinents = [];
+                if (window.selectedCountries) {
+                    window.selectedCountries = [];
+                }
+                // 更新显示
+                updateSelectedTags();
+                // 隐藏法规内容
+                // 如果有法规内容区域显示，则更新法规列表
+                if (!regulationList.classList.contains('hidden')) {
+                    applySelectionBtn.click(); // 重新应用选择以更新法规列表
+                }
+            },
+            
+            // 应用选择按钮
+            applySelectionBtn.addEventListener('click', function() {
+                if (selectedContinents.length === 0 && (!window.selectedCountries || window.selectedCountries.length === 0)) {
+                        alert('请至少选择一个国家或区域');
+                        return;
+                    }
+                
+                // 显示法规内容
+                // regulationContainer.classList.remove('hidden');
+                
+                // 清空现有内容
+                regulationList.innerHTML = '';
+                
+                // 加载选中区域的法规
+                selectedContinents.forEach(continent => {
+                    const continentData = regulationData[continent] || [];
+                    
+                    // 添加大洲标题
+                    const title = document.createElement('h4');
+                    title.className = 'text-lg font-semibold text-white mb-4 mt-6 first:mt-0';
+                    title.textContent = `${continent}相关法规`;
+                    regulationContainer.appendChild(title);
+                    
+                    // 添加法规卡片
+                    continentData.forEach(regulation => {
+                        const card = document.createElement('div');
+                        card.className = 'regulation-card';
+                        card.innerHTML = `
+                            <div class="regulation-title">${regulation.title}</div>
+                        `;
+                        regulationContainer.appendChild(card);
+                    });
+                });
+                
+                // 滚动到法规内容区域
+                regulationList.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }));
+            
+            // 输出选中大洲数组（供调试使用）
+            window.getSelectedContinents = function() {
+                console.log('选中的大洲:', selectedContinents);
+                return selectedContinents;
+            };
+            
+            // 窗口大小变化时重新调整地图
+            window.addEventListener('resize', function() {
+                // 重新绘制地图以适应新的大小
+                initMap();
+            });
+            
+            // 输出选中大洲数组（供调试使用）
+            window.getSelectedContinents = function() {
+                console.log('选中的大洲:', selectedContinents);
+                return selectedContinents;
+            };
+            
+            // 输出选中国家数组（供调试使用）
+            window.getSelectedCountries = function() {
+            console.log('选中的国家:', window.selectedCountries);
+            return window.selectedCountries;
+        };
+        });
+    </script>
+    <script src="../js/load-components.js"></script>
+    <script src="../js/Visit_Monitor.js"></script>
+</body>
+</html>

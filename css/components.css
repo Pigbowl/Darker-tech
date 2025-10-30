@@ -755,6 +755,24 @@ body {
     background-color: hsla(112, 83%, 49%, 0.791); /* 对比色的10%透明度 */
     border-color: rgba(34, 29, 29, 0.3); /* 对比色的30%透明度边框 */
 }
+
+/* 科技感按钮效果 */
+.tech-button {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+.tech-button::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(123, 97, 255, 0.2), transparent);
+    transform: rotate(45deg);
+    animation: shine 3s infinite;
+}
 /* 选项卡容器 */
 .tab-nav {
     display: flex;
@@ -825,4 +843,47 @@ div[onclick^="toggleEmbeddedContent"]:hover {
     border: 1px solid rgba(255, 255, 255, 0.2);
     margin-right: 20px;
     height: fit-content;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+.label { 
+    fill: #fff; 
+    font-size: 8px;
+    pointer-events: none; 
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+body {
+    background-color: #0A0E17;
+    color: #FFFFFF;
+    overflow-x: hidden;
+}
+/* 霓虹边框效果 */
+.neon-border {
+    box-shadow: 0 0 5px rgba(123, 97, 255, 0.5), 
+                0 0 10px rgba(123, 97, 255, 0.3),
+                inset 0 0 5px rgba(123, 97, 255, 0.5);
+    border: 1px solid rgba(123, 97, 255, 0.3);
+}
+/* 科技感按钮效果 */
+.tech-button {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+.tech-button::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(123, 97, 255, 0.2), transparent);
+    transform: rotate(45deg);
+    animation: shine 3s infinite;
+}
+@keyframes shine {
+    0% { transform: translateX(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) rotate(45deg); }
 }

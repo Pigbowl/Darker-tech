@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADAS 高级驾驶辅助系统 | 从认知到开发</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0a0e17;
+            color: #fff;
+        }
+        .page {
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+        /* 统一科技风背景 */
+        .tech-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(rgba(17, 24, 39, 0.8) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(17, 24, 39, 0.8) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: 0;
+            animation: gridMove 15s linear infinite;
+        }
+        .tech-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            filter: blur(80px);
+        }
+        /* 箭头样式（统一） */
+        .arrow {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: pointer;
+            animation: bounce 2s infinite;
+            z-index: 3;
+            opacity: 1;
+            transition: opacity 1s ease;
+        }
+        .arrow.down { bottom: 2rem; }
+        .arrow.up { bottom: 2rem; }
+        /* 阶段指示器（仅第二页显示） */
+        .stage-indicator {
+            position: absolute;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+            z-index: 3;
+        }
+        .indicator-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(148, 163, 184, 0.3);
+            transition: all 0.5s ease;
+        }
+        .indicator-dot.active {
+            background: #06b6d4;
+            box-shadow: 0 0 10px rgba(6, 182, 212, 0.6);
+            transform: scale(1.2);
+        }
+        /* 第一页：ADAS介绍样式（适配科技风） */
+        .intro-container {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 2;
+            width: 100%;
+            max-width: 800px;
+        }
+        .intro-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #06b6d4, #3b82f6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+        }
+        .intro-desc {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            line-height: 1.6;
+            padding: 0 2rem;
+        }
+        /* 功能小球（第一页） */
+        .features-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        .feature-ball {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            animation: float 6s ease-in-out infinite;
+            z-index: 1;
+        }
+        .feature-ball:hover {
+            background: rgba(6, 182, 212, 0.2);
+            border-color: rgba(6, 182, 212, 0.8);
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
+        }
+        .feature-icon {
+            font-size: 1.8rem;
+            color: #06b6d4;
+        }
+        .feature-tooltip {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.9);
+            color: #e2e8f0;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            white-space: nowrap;
+            border: 1px solid rgba(6, 182, 212, 0.3);
+        }
+        .feature-ball:hover .feature-tooltip {
+            opacity: 1;
+        }
+        /* 时间轴（第一页） */
+        .timeline-container {
+            position: absolute;
+            bottom: 8%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 1200px;
+            z-index: 2;
+        }
+        .timeline-title {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #3b82f6;
+            margin-bottom: 1.5rem;
+        }
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            padding: 0 2rem;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 2rem;
+            right: 2rem;
+            height: 2px;
+            background: linear-gradient(90deg, #06b6d4, #3b82f6);
+            transform: translateY(-50%);
+            border-radius: 1px;
+        }
+        .timeline-item {
+            position: relative;
+            text-align: center;
+            width: 20%;
+        }
+        .timeline-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #06b6d4;
+            margin: 0 auto 0.8rem;
+            border: 3px solid #0f172a;
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.6);
+            transition: all 0.5s ease;
+        }
+        .timeline-item:hover .timeline-dot {
+            transform: scale(1.3);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.8);
+        }
+        .timeline-date {
+            font-weight: 600;
+            color: #06b6d4;
+            margin-bottom: 0.3rem;
+        }
+        .timeline-content {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            line-height: 1.4;
+        }
+        /* 第二页：三阶段动画样式 */
+        .stage-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        /* 阶段1：零散开发标签 */
+        .tags-container {
+            position: relative;
+            width: 100%;
+            height: 60%;
+            max-width: 1200px;
+        }
+        .tag {
+            position: absolute;
+            background: rgba(6, 182, 212, 0.15);
+            border: 1px solid rgba(6, 182, 212, 0.4);
+            border-radius: 30px;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            color: #94a3b8;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            animation: floatRandom 8s ease-in-out infinite;
+            cursor: default;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.1);
+        }
+        .tag:hover {
+            background: rgba(6, 182, 212, 0.25);
+            border-color: rgba(6, 182, 212, 0.8);
+            color: #e0f2fe;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+        }
+        /* 阶段2：提出疑问 */
+        .question-container {
+            text-align: center;
+            max-width: 800px;
+            padding: 0 2rem;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1.5s ease;
+        }
+        .question-title {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #06b6d4, #3b82f6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1.5rem;
+        }
+        .question-desc {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            line-height: 1.8;
+        }
+        /* 阶段3：核心结论 */
+        .conclusion-container {
+            text-align: center;
+            max-width: 900px;
+            padding: 0 2rem;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1.5s ease;
+        }
+        .core-source {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(6, 182, 212, 0.2));
+            border: 1px solid rgba(6, 182, 212, 0.5);
+            border-radius: 50%;
+            width: 280px;
+            height: 280px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 2rem;
+            box-shadow: 0 0 40px rgba(6, 182, 212, 0.2);
+            animation: pulse 3s ease-in-out infinite;
+        }
+        .core-text {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #e0f2fe;
+            text-align: center;
+            line-height: 1.6;
+        }
+        .conclusion-desc {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            line-height: 1.8;
+            margin-top: 2rem;
+        }
+        .highlight {
+            color: #06b6d4;
+            font-weight: 600;
+        }
+        /* 所有动画定义 */
+        @keyframes gridMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 30px 30px; }
+        }
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+        @keyframes floatRandom {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(10px, -15px) rotate(2deg); }
+            50% { transform: translate(-10px, 10px) rotate(-2deg); }
+            75% { transform: translate(15px, 5px) rotate(1deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-15px); }
+            60% { transform: translateX(-50%) translateY(-8px); }
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 30px rgba(6, 182, 212, 0.2); }
+            50% { box-shadow: 0 0 50px rgba(6, 182, 212, 0.4); }
+            100% { box-shadow: 0 0 30px rgba(6, 182, 212, 0.2); }
+        }
+        /* 响应式调整（统一适配） */
+        @media (max-width: 1024px) {
+            .intro-title, .question-title { font-size: 2.8rem; }
+            .feature-ball { width: 70px; height: 70px; }
+            .core-source { width: 240px; height: 240px; }
+            .core-text { font-size: 1.5rem; }
+            .tag { padding: 0.6rem 1.2rem; font-size: 0.9rem; }
+            .timeline-content { font-size: 0.8rem; }
+        }
+        @media (max-width: 768px) {
+            .intro-title, .question-title { font-size: 2.2rem; }
+            .intro-desc, .question-desc, .conclusion-desc { font-size: 1rem; }
+            .feature-ball { width: 60px; height: 60px; }
+            .feature-icon { font-size: 1.5rem; }
+            .core-source { width: 200px; height: 200px; }
+            .core-text { font-size: 1.3rem; }
+            .tag { padding: 0.5rem 1rem; font-size: 0.8rem; }
+            .tags-container { height: 50%; }
+            .timeline { padding: 0 1rem; }
+            .timeline::before { left: 1rem; right: 1rem; }
+            .timeline-item { width: 25%; }
+            .timeline-date { font-size: 0.9rem; }
+            .timeline-content { font-size: 0.7rem; }
+        }
+        @media (max-width: 480px) {
+            .intro-title, .question-title { font-size: 1.8rem; }
+            .core-text { font-size: 1.1rem; }
+            .tag { padding: 0.4rem 0.8rem; font-size: 0.75rem; }
+            .feature-ball { width: 50px; height: 50px; }
+            .feature-icon { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 第一页：ADAS介绍（科技风统一版） -->
+    <section id="page1" class="page">
+        <!-- 科技背景 -->
+        <div class="tech-bg"></div>
+        <div class="tech-glow"></div>
+        
+        <!-- 中央引言区 -->
+        <div class="intro-container">
+            <h1 class="intro-title">什么是 ADAS？</h1>
+            <p class="intro-desc">
+                Advanced Driver Assistance Systems（高级驾驶辅助系统），通过传感器、控制器、执行器等硬件与智能算法，
+                实时监测驾驶环境，为驾驶员提供预警、辅助控制，显著提升驾驶安全性与舒适性的智能驾驶支撑系统。
+            </p>
+        </div>
+        
+        <!-- 功能小球区（10个核心功能） -->
+        <div class="features-container">
+            <div class="feature-ball" style="top: 30%; left: 15%; animation-delay: 0s;">
+                <i class="fa-solid fa-car-on feature-icon"></i>
+                <div class="feature-tooltip">自适应巡航（ACC）</div>
+            </div>
+            <div class="feature-ball" style="top: 25%; left: 30%; animation-delay: 0.5s;">
+                <i class="fa-solid fa-road feature-icon"></i>
+                <div class="feature-tooltip">车道偏离预警（LDW）</div>
+            </div>
+            <div class="feature-ball" style="top: 35%; left: 45%; animation-delay: 1s;">
+                <i class="fa-solid fa-circle-stop feature-icon"></i>
+                <div class="feature-tooltip">自动紧急制动（AEB）</div>
+            </div>
+            <div class="feature-ball" style="top: 20%; left: 60%; animation-delay: 1.5s;">
+                <i class="fa-solid fa-eye feature-icon"></i>
+                <div class="feature-tooltip">盲点监测（BSD）</div>
+            </div>
+            <div class="feature-ball" style="top: 30%; left: 75%; animation-delay: 2s;">
+                <i class="fa-solid fa-parking feature-icon"></i>
+                <div class="feature-tooltip">自动泊车（APA）</div>
+            </div>
+            <div class="feature-ball" style="top: 50%; left: 20%; animation-delay: 2.5s;">
+                <i class="fa-solid fa-lightbulb feature-icon"></i>
+                <div class="feature-tooltip">自适应远近光（AFS）</div>
+            </div>
+            <div class="feature-ball" style="top: 55%; left: 35%; animation-delay: 3s;">
+                <i class="fa-solid fa-triangle-exclamation feature-icon"></i>
+                <div class="feature-tooltip">前方碰撞预警（FCW）</div>
+            </div>
+            <div class="feature-ball" style="top: 45%; left: 65%; animation-delay: 3.5s;">
+                <i class="fa-solid fa-route feature-icon"></i>
+                <div class="feature-tooltip">车道保持辅助（LKA）</div>
+            </div>
+            <div class="feature-ball" style="top: 50%; left: 80%; animation-delay: 4s;">
+                <i class="fa-solid fa-car-burst feature-icon"></i>
+                <div class="feature-tooltip">胎压监测（TPMS）</div>
+            </div>
+            <div class="feature-ball" style="top: 40%; left: 10%; animation-delay: 4.5s;">
+                <i class="fa-solid fa-map-location-dot feature-icon"></i>
+                <div class="feature-tooltip">交通标志识别（TSR）</div>
+            </div>
+        </div>
+        
+        <!-- 时间轴（发展历程与趋势） -->
+        <div class="timeline-container">
+            <h2 class="timeline-title">发展历程与趋势</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">1980s</div>
+                    <div class="timeline-content">起源阶段：倒车雷达等简单预警功能</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">1990s</div>
+                    <div class="timeline-content">发展阶段：自适应巡航等主动控制功能出现</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">2010s</div>
+                    <div class="timeline-content">快速发展：多传感器融合技术成熟</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">2020s+</div>
+                    <div class="timeline-content">未来趋势：向L4级自动驾驶演进</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 切换到第二页箭头 -->
+        <div class="arrow down" onclick="scrollToPage('page2')">
+            <i class="fa-solid fa-chevron-down text-3xl text-blue-400"></i>
+        </div>
+    </section>
+
+    <!-- 第二页：ADAS开发三阶段动画（科技风统一版） -->
+    <section id="page2" class="page hidden">
+        <!-- 科技背景 -->
+        <div class="tech-bg"></div>
+        <div class="tech-glow"></div>
+        
+        <!-- 阶段指示器（三阶段） -->
+        <div class="stage-indicator">
+            <div class="indicator-dot active" id="dot1"></div>
+            <div class="indicator-dot" id="dot2"></div>
+            <div class="indicator-dot" id="dot3"></div>
+        </div>
+        
+        <!-- 核心内容容器 -->
+        <div class="stage-container">
+            <!-- 阶段1：零散复杂的开发内容 -->
+            <div class="tags-container" id="tagsContainer">
+                <div class="tag" style="top: 20%; left: 15%; animation-delay: 0s;">功能安全</div>
+                <div class="tag" style="top: 35%; left: 25%; animation-delay: 0.3s;">软件开发</div>
+                <div class="tag" style="top: 15%; left: 40%; animation-delay: 0.6s;">架构设计</div>
+                <div class="tag" style="top: 45%; left: 30%; animation-delay: 0.9s;">仿真在环</div>
+                <div class="tag" style="top: 25%; left: 55%; animation-delay: 1.2s;">SOC</div>
+                <div class="tag" style="top: 50%; left: 50%; animation-delay: 1.5s;">MCU</div>
+                <div class="tag" style="top: 30%; left: 70%; animation-delay: 1.8s;">大模型</div>
+                <div class="tag" style="top: 18%; left: 80%; animation-delay: 2.1s;">感知算法</div>
+                <div class="tag" style="top: 40%; left: 65%; animation-delay: 2.4s;">CAN总线</div>
+                <div class="tag" style="top: 55%; left: 75%; animation-delay: 2.7s;">以太网</div>
+                <div class="tag" style="top: 22%; left: 90%; animation-delay: 3s;">SOA</div>
+                <div class="tag" style="top: 38%; left: 85%; animation-delay: 3.3s;">中间件</div>
+                <div class="tag" style="top: 52%; left: 10%; animation-delay: 3.6s;">法律法规</div>
+                <div class="tag" style="top: 10%; left: 25%; animation-delay: 3.9s;">传感器融合</div>
+                <div class="tag" style="top: 60%; left: 40%; animation-delay: 4.2s;">标定测试</div>
+                <div class="tag" style="top: 45%; left: 80%; animation-delay: 4.5s;">决策规划</div>
+            </div>
+            
+            <!-- 阶段2：提出疑问 -->
+            <div class="question-container" id="questionContainer">
+                <h2 class="question-title">如何开始ADAS开发学习？</h2>
+                <p class="question-desc">
+                    功能安全、软件开发、架构设计、仿真在环、SOC/MCU、大模型、感知算法、CAN总线、以太网、SOA、中间件、法律法规...<br>
+                    面对零散复杂的开发模块，千头万绪，该从哪里着手？
+                </p>
+            </div>
+            
+            <!-- 阶段3：给出结论 -->
+            <div class="conclusion-container" id="conclusionContainer">
+                <div class="core-source">
+                    <div class="core-text">用户功能定义
+                        <a href="KnowledgeNet.html" class="block text-sm text-blue-300 hover:text-blue-200 mt-2">点击开始学习</a>
+                    </div>
+                </div>
+                <h2 class="question-title">ADAS开发的核心源头</h2>
+                <p class="conclusion-desc">
+                    所有复杂的技术实现与模块开发，都应围绕<span class="highlight">用户功能定义</span>展开。<br>
+                    明确“用户需要什么功能”，才能为后续的架构设计、算法开发、安全验证等环节<br>
+                    提供清晰的方向与依据——这正是ADAS开发的<span class="highlight">起点与核心</span>。
+                </p>
+            </div>
+        </div>
+        
+        <!-- 返回第一页箭头 -->
+        <div class="arrow up" id="backArrow" onclick="scrollToPage('page1')">
+            <i class="fa-solid fa-chevron-up text-3xl text-blue-400"></i>
+        </div>
+    </section>
+
+    <script>
+        // 页面切换核心函数
+        function scrollToPage(targetId) {
+            const page1 = document.getElementById('page1');
+            const page2 = document.getElementById('page2');
+            
+            if (targetId === 'page2') {
+                page1.classList.add('hidden');
+                page2.classList.remove('hidden');
+                // 启动第二页动画
+                setTimeout(initPage2Animation, 500);
+            } else {
+                page2.classList.add('hidden');
+                page1.classList.remove('hidden');
+                // 重置第二页动画状态
+                resetPage2Animation();
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 键盘上下箭头切换
+        document.addEventListener('keydown', function(e) {
+            const page1Visible = !document.getElementById('page1').classList.contains('hidden');
+            const page2Visible = !document.getElementById('page2').classList.contains('hidden');
+            
+            if (e.key === 'ArrowDown' && page1Visible) {
+                scrollToPage('page2');
+            } else if (e.key === 'ArrowUp' && page2Visible) {
+                scrollToPage('page1');
+            }
+        });
+
+        // 第一页功能小球自适应调整
+        function adjustFeatureBalls() {
+            const container = document.querySelector('.features-container');
+            const containerWidth = container.offsetWidth;
+            const containerHeight = container.offsetHeight;
+            const balls = document.querySelectorAll('.feature-ball');
+            
+            balls.forEach((ball, index) => {
+                const angle = (index / balls.length) * Math.PI * 2;
+                const radius = Math.min(containerWidth, containerHeight) * 0.25;
+                const centerX = containerWidth / 2;
+                const centerY = containerHeight / 3;
+                
+                const x = centerX + radius * Math.cos(angle) - 40;
+                const y = centerY + radius * Math.sin(angle) - 40;
+                
+                ball.style.left = `${x}px`;
+                ball.style.top = `${y}px`;
+            });
+        }
+        window.addEventListener('load', adjustFeatureBalls);
+        window.addEventListener('resize', adjustFeatureBalls);
+
+        // 第二页三阶段动画控制
+        const tagsContainer = document.getElementById('tagsContainer');
+        const questionContainer = document.getElementById('questionContainer');
+        const conclusionContainer = document.getElementById('conclusionContainer');
+        const dot1 = document.getElementById('dot1');
+        const dot2 = document.getElementById('dot2');
+        const dot3 = document.getElementById('dot3');
+        const backArrow = document.getElementById('backArrow');
+        const tags = document.querySelectorAll('.tag');
+
+        // 初始化第二页动画
+        function initPage2Animation() {
+            // 重置所有元素状态
+            tagsContainer.style.display = 'block';
+            tagsContainer.style.opacity = '1';
+            questionContainer.style.display = 'block';
+            questionContainer.style.opacity = '0';
+            questionContainer.style.transform = 'translateY(30px)';
+            conclusionContainer.style.display = 'block';
+            conclusionContainer.style.opacity = '0';
+            conclusionContainer.style.transform = 'translateY(30px)';
+            backArrow.style.opacity = '0';
+            
+            tags.forEach(tag => {
+                tag.style.animation = 'floatRandom 8s ease-in-out infinite';
+                tag.style.opacity = '1';
+                tag.style.transform = 'scale(1)';
+            });
+            
+            dot1.classList.add('active');
+            dot2.classList.remove('active');
+            dot3.classList.remove('active');
+
+            // 自动播放动画序列
+            setTimeout(goToStage2, 5000);  // 阶段1持续5秒
+            setTimeout(goToStage3, 5000 + 4000);  // 阶段2持续4秒
+        }
+
+        // 重置第二页动画状态
+        function resetPage2Animation() {
+            clearTimeout(window.stage2Timeout);
+            clearTimeout(window.stage3Timeout);
+        }
+
+        // 阶段1→阶段2：标签淡化，显示疑问
+        function goToStage2() {
+            tags.forEach(tag => {
+                tag.style.animation = 'none';
+                tag.style.opacity = '0.2';
+                tag.style.transform = 'scale(0.9)';
+            });
+            
+            setTimeout(() => {
+                tagsContainer.style.opacity = '0';
+                setTimeout(() => {
+                    tagsContainer.style.display = 'none';
+                    questionContainer.style.opacity = '1';
+                    questionContainer.style.transform = 'translateY(0)';
+                    dot1.classList.remove('active');
+                    dot2.classList.add('active');
+                }, 800);
+            }, 1000);
+        }
+
+        // 阶段2→阶段3：疑问淡化，显示结论
+        function goToStage3() {
+            questionContainer.style.opacity = '0';
+            questionContainer.style.transform = 'translateY(30px)';
+            
+            setTimeout(() => {
+                questionContainer.style.display = 'none';
+                conclusionContainer.style.opacity = '1';
+                conclusionContainer.style.transform = 'translateY(0)';
+                dot2.classList.remove('active');
+                dot3.classList.add('active');
+                
+                setTimeout(() => {
+                    backArrow.style.opacity = '1';
+                }, 1000);
+            }, 1500);
+        }
+
+        // 手动切换阶段（点击指示器）
+        dot1.addEventListener('click', function() {
+            tagsContainer.style.display = 'block';
+            setTimeout(() => { tagsContainer.style.opacity = '1'; }, 100);
+            
+            questionContainer.style.opacity = '0';
+            questionContainer.style.transform = 'translateY(30px)';
+            conclusionContainer.style.opacity = '0';
+            conclusionContainer.style.transform = 'translateY(30px)';
+            
+            tags.forEach(tag => {
+                tag.style.animation = '';
+                tag.style.opacity = '1';
+                tag.style.transform = 'scale(1)';
+                setTimeout(() => {
+                    tag.style.animation = 'floatRandom 8s ease-in-out infinite';
+                }, 100);
+            });
+            
+            dot1.classList.add('active');
+            dot2.classList.remove('active');
+            dot3.classList.remove('active');
+            backArrow.style.opacity = '0';
+        });
+
+        dot2.addEventListener('click', function() {
+            tagsContainer.style.display = 'block';
+            tagsContainer.style.opacity = '0';
+            
+            questionContainer.style.opacity = '1';
+            questionContainer.style.transform = 'translateY(0)';
+            conclusionContainer.style.opacity = '0';
+            conclusionContainer.style.transform = 'translateY(30px)';
+            
+            tags.forEach(tag => {
+                tag.style.animation = 'none';
+                tag.style.opacity = '0.2';
+                tag.style.transform = 'scale(0.9)';
+            });
+            
+            dot1.classList.remove('active');
+            dot2.classList.add('active');
+            dot3.classList.remove('active');
+            backArrow.style.opacity = '0';
+        });
+
+        dot3.addEventListener('click', function() {
+            tagsContainer.style.display = 'none';
+            questionContainer.style.display = 'none';
+            conclusionContainer.style.opacity = '1';
+            conclusionContainer.style.transform = 'translateY(0)';
+            
+            dot1.classList.remove('active');
+            dot2.classList.remove('active');
+            dot3.classList.add('active');
+            backArrow.style.opacity = '1';
+        });
+    </script>
+</body>
+</html>

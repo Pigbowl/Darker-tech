@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Darker Tech</title>
+    <title>Darker Tech - 架构查看</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>    
@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="../css/components.css">
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="../js/load-duck-assistant.js"></script>
+
 </head>
 
 
@@ -208,27 +210,8 @@
                 targetPage.style.display = 'block';
             }
             
-            // 更新导航栏的选中状态
-            document.querySelectorAll('nav button, .absolute a').forEach(item => {
-                item.classList.remove('bg-primary/30', 'text-neon');
-                item.classList.add('bg-primary/10', 'text-primary');
-                
-                // 如果是下拉菜单中的链接
-                if (item.classList.contains('block')) {
-                    item.classList.remove('bg-primary/20', 'text-white');
-                    item.classList.add('text-gray-300');
-                    
-                    // 如果是当前选中的页面
-                    if (item.textContent.trim().includes(pageName)) {
-                        item.classList.remove('text-gray-300');
-                        item.classList.add('bg-primary/20', 'text-white');
-                    }
-                }
-            });
-            
-            
             // 更新页面标题
-            document.title = `${pageName} - VALEO PRODUCT CONFIGURATOR`;
+            // document.title = `${pageName} - VALEO PRODUCT CONFIGURATOR`;
             
             if (pageName === '架构网络查看'){
                 if (netinitstatus ===0){
@@ -1467,6 +1450,6 @@
         // window.addEventListener('load', initnetwork);
     </script>
     <script src="../js/load-components.js"></script>
-    
+    <script src="../js/Visit_Monitor.js"></script>
 </body>
 </html>
