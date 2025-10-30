@@ -9,7 +9,7 @@ let conversion_blog ={
       "想要了解关于《达客科技》的更多信息吗？",
       "点击我聊天啊！:)"
   ],
-  "/pages/fov_build": [
+  "/pages/fov_build.html": [
       "你曾经因为绘制传感器图而苦恼么？",
       "那你来对地方了！",
       "我在这里给你提供一个工具",
@@ -19,7 +19,7 @@ let conversion_blog ={
       "2D不过瘾的话,我还有3D版本哦",
       "开始尝试吧！ ^o^"
   ],
-  "/pages/adas_benchmark": [
+  "/pages/adas_benchmark.html": [
       "你知道市面上有多少ADAS产品吗？",
       "你知道哪些车辆有什么ADAS功能么？",
       "你知道谁做得好谁做的不好么？",
@@ -28,7 +28,7 @@ let conversion_blog ={
       "ADAS对标库里具备海量的咨询和工具！，让你了解ADAS市场",
       "开整！"
   ],
-  "/pages/architecture_build": [
+  "/pages/architecture_build.html": [
       "恭喜您来到了神秘的“架构领域”",
       "听过架构吧？只是听过吧？（果然）",
       "那让我带你了解一下ADAS的架构",
@@ -36,44 +36,20 @@ let conversion_blog ={
       "还给你提供了工具能够让你自动生成架构哦",
       "GO GO GO！"
   ],
-  "/pages/configurator": [
+  "/pages/configurator.html": [
       "我要给客户一个ADAS产品/解决方案了！怎么办",
       "都有哪些方案？需要考虑哪些需求？我该怎么选？",
       "不要着急，跟着咱们得工具一步一步来！",
       "让你找到合适的产品，让你定义自己的产品",
       "GO GO GO！"
   ],
-  "/pages/learning_gallary": [
+  "/pages/learning_gallary.html": [
       "ADAS领域太庞大了！知识太多了！要是有个知识库就好了！",
       "嗯呢，那你来对地方了。",
       "东西都在这了，自己看吧。",
       "看完你就出师了",
   ],
-    "/pages/functionhall": [
-      "这里陈列了很多功能的介绍哦",
-      "你可以搜索你想要的关键词查询功能",
-      "或者干脆直接点击全部功能来查看！",
-      "学习起来吧",
-  ],
-      "/pages/hardwarehall": [
-      "这里陈列了很多硬件的介绍哦",
-      "你可以点击具体的芯片来看详情",
-      "还能通过条件进行筛选哦",
-      "学习起来吧",
-  ],
-        "/pages/sensorhall": [
-      "这里陈列了很多传感器的介绍哦",
-      "你可以点击具体的传感器来看详情",
-      "还能通过条件进行筛选哦",
-      "学习起来吧",
-  ],
-  "/pages/regulationmap": [
-      "看到世界地图了吗？",
-      "点击你感兴趣的国家，然后点击应用",
-      "你就可以得到该地区需要遵守的法规信息了哦",
-      "学习起来吧",
-  ],
-  "/pages/roadbuilder": [
+  "/pages/roadbuilder.html": [
       "你曾经因为绘制场景，道路而苦恼么？",
       "别苦恼了，这儿都有",
       "在这里你可以简单在画布上绘制道路，配置道路，哪些复杂道路的绘制不再是噩梦。",
@@ -81,20 +57,20 @@ let conversion_blog ={
       "最后还能生成导出3D环境模型哦，问我能干嘛？晚点告诉你",
       "尝试绘制你的环境吧！",
   ],
-  "/pages/sensor_simu": [
+  "/pages/sensor_simu.html": [
       "来了来了,3D的来了,炫酷的来了！",
       "这个页面给你提供了一个3D的视觉传感器仿真的地方",
       "想看你布置的摄像头能看到什么嘛？想看你的传感器组有没有盲区嘛？",
       "想尝试不用的传感器嘛？",
       "自己试试吧！"
   ],
-  "/pages/simulation_front": [
+  "/pages/simulation_front.html": [
       "这是一个完整的仿真工具和仿真框架",
       "你可以用这个工具验证的感知算法，规控算法，以及ADAS系统的整体性能",
       "这个框架提供简单易读的接口和架构，完整的算法部署环境。简单易上手",
       "不过还未上线哦，敬请期待！"
   ],
-    "/pages/knowledgenet": [
+    "/pages/knowledgenet.html": [
       "在这里你可以看到所有的ADAS开发的相关知识的网络",
       "我能给你提供所有需要做的事情，对应的知识点，相关的任务以及应有的产出",
       "点击任务可以进入细节模式哦~",
@@ -104,17 +80,14 @@ let conversion_blog ={
 
 let pagename = {
     "/":'达客科技主',
-    "/pages/knowledgenet":"ADAS知识网络",
-    "/pages/functionhall":"功能介绍",
-    "/pages/hardwarehall":"硬件介绍",
-    "/pages/sensorhall":"传感器介绍",
-    "/pages/regulationmap":"法规地图",
-    "/pages/architecture_build":"架构查看",
-    "/pages/configurator":"产品配置工具",
-    "/pages/fov_build":"传感器图生成工具",
-    "/pages/roadbuilder":"道路环境绘制工具",
-    "/pages/sensor_simu":"传感器模拟工具",
-    "/pages/simulation_front":"ADAS仿真环境",
-    "/pages/adas_benchmark":"ADAS对标库",
-    
+    "/pages/fov_build.html":'传感器图构建工具',
+    "/pages/learning_gallary.html":'学习智库',
+    "/pages/architecture_build.html":"架构查看",
+    "/pages/configurator.html":"产品配置工具",
+    "/pages/fov_build.html":"传感器图生成工具",
+    "/pages/roadbuilder.html":"道路环境绘制工具",
+    "/pages/sensor_simu.html":"传感器模拟工具",
+    "/pages/simulation_front.html":"ADAS仿真环境",
+    "/pages/adas_benchmark.html":"ADAS对标库",
+    "/pages/knowledgenet.html":"ADAS知识网络"
 }
