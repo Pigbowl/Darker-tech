@@ -115,6 +115,7 @@ tailwind.config = {
                 container:'#00ffea7a',
                 box:'#302b2b',
                 applybutton:'#165DFF',
+                tester:'#2bff00ff',
             },
             fontFamily: {
                 inter: ['Inter', 'sans-serif'],

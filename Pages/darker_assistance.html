@@ -46,6 +46,10 @@
       <span style="color:rgb(0, 0, 0);font-size:14px;margin-right:8px;"><i class="fa fa-eye"></i></span>
       <span style="color:rgb(0, 0, 0);font-size:14px;">订阅达客</span>
     </div>
+    <div class="option-item" style="border-radius:10px;padding:12px 20px;cursor:pointer;transition:background-color 0.2s;" data-action="mute">
+      <span style="color:rgb(0, 0, 0);font-size:14px;margin-right:8px;"><i class="fa fa-volume-off"></i></span>
+      <span style="color:rgb(0, 0, 0);font-size:14px;">别说话了</span>
+    </div>
   </div>
 
   <!-- 动态图标（雪碧图实现） -->
@@ -120,8 +124,10 @@
   
 
 <script>
+
   // 获取当前页面URL
 let parenthtml = window.parent.location.pathname;
+let istalking = true;
 // 根据URL获取页面名称
 if (pagename[parenthtml]){
   starttext = `欢迎来到${pagename[parenthtml]}页面！`
@@ -129,8 +135,7 @@ if (pagename[parenthtml]){
   starttext = '对不起。。。我。。。迷路了';
 }
 let introTexts = [];
-let user_number = 0;
-
+// let user_number = 0;
 if (conversion_blog[parenthtml]){
   introTexts = conversion_blog[parenthtml]
 }else{
@@ -154,7 +159,7 @@ const subscribeModal = document.getElementById('subscribeModal');
 let animationInterval = null;
 let animationTimeout = null; // 定义animationTimeout变量
 // chatBubble.innerHTML = pageName;
-getusernumber();
+// getusernumber();
 // 自动播放动画（每5秒触发一次挥手，避免频繁动画）
 function startAutoAnimation() {
   setInterval(() => {
@@ -220,7 +225,7 @@ duckIcon.onclick = () => {
 const closeChatBtn = document.getElementById('closeChatBtn');
 closeChatBtn.addEventListener('click', () => {
   chatInputBox.style.display = "none";
-  chatBubble.style.display = "block";
+  chatBubble.style.display = "none";
   startIntroAnimation();
   isChatting = false;
   updateIframeSize();
@@ -241,22 +246,22 @@ function hideOptions() {
   
 }
 
-  function getusernumber(){
-      command = ip + '/get_user_number'
-      fetch(command,{
-          method:'POST',
-          headers:{
-              'Content-Type':'application/json'
-          },
-          body:JSON.stringify({
-              'req':'none',
-              })
-      }).then(response=>response.json()).then(data=>{
-          if(data.success){
-              user_number = JSON.parse(data.output)+1;
-          }
-      })
-  }
+  // function getusernumber(){
+  //     command = ip + '/get_user_number'
+  //     fetch(command,{
+  //         method:'POST',
+  //         headers:{
+  //             'Content-Type':'application/json'
+  //         },
+  //         body:JSON.stringify({
+  //             'req':'none',
+  //             })
+  //     }).then(response=>response.json()).then(data=>{
+  //         if(data.success){
+  //             user_number = JSON.parse(data.output)+1;
+  //         }
+  //     })
+  // }
 
 // 添加鼠标事件监听器
 duckIcon.addEventListener('mouseenter', showOptions);
@@ -334,6 +339,19 @@ function handleOptionClick(action) {
       // 重置输入框
       document.getElementById('subscribeUsername').value = '';
       document.getElementById('subscribeEmail').value = '';
+      updateIframeSize();
+      break;
+    case 'mute':
+      
+      isChatting = !isChatting;
+      // console.log("shit is good",istalking)
+      // if(istalking){
+      //   chatBubble.style.display = 'block'
+      // }else{
+      //   // console.log("shut the fuck up")
+      //   chatBubble.style.display = 'none'
+      // }
+      
       updateIframeSize();
       break;
   }
@@ -425,8 +443,8 @@ function handleSubscribe() {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body:JSON.stringify({
-        'user':     {
-            "id": "USER-"+user_number,
+        'user': {
+            "id": "USER",
             "name": username,
             "submit_time": new Date().toISOString(),
             "submitter_email": email,
@@ -434,14 +452,18 @@ function handleSubscribe() {
         })
   }).then(response=>response.json()).then(data=>{
     if (data.success) {
-      subsreuslt = data.output;
-      if (subsreuslt == "success") {
+      manipresult = data.output;
+      if (manipresult.status) {
         alert('订阅成功！感谢您的关注，' + username + '！');
-      } else if (subsreuslt == "redandunt") {
-        alert('订阅失败：该邮箱已订阅过，无需重新订阅~。');
-      } else {
-        alert('订阅失败：' + subsreuslt);
-      }
+      }else{
+        if(manipresult.error == 1){
+          alert('订阅失败：该邮箱已订阅过，无需重新订阅~。')
+        }else if(manipresult.error ==2){
+          alert('订阅失败: 该邮箱已经被用户名 '+manipresult.name + "使用了")
+        }else if(manipresult.error == 3){
+          alert('订阅失败:该用户名'+manipresult.name+'已经存在')
+        }
+      } 
     } else {
       alert('订阅失败：' + data.message);
     }

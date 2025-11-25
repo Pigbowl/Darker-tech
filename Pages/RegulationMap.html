@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Darker Tech - 法规/标准领域</title>
+    <title>法规/标准领域-达客智驾领航员</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>    
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/components.css">
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="../js/ipcontroller.js"></script>  
     <script src="../js/load-duck-assistant.js"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
@@ -106,10 +107,10 @@
         }
         
         .regulation-title {
-            color: #00f7ff;
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-            font-weight: 600;
+            color: #00ff4c;
+            font-size: 0.8rem;
+            margin-bottom: 3px;
+            font-weight: 400;
         }
         
         .regulation-details {
@@ -211,7 +212,7 @@
         <div id="footer-container"></div>   
     </div>
     
-    <script src="../js/ipcontroller.js"></script>  
+
     <script>
         // 大洲数据映射
         const continentInfo = {
@@ -584,7 +585,7 @@
                     }
                 
                 // 显示法规内容
-                // regulationContainer.classList.remove('hidden');
+                regulationContainer.innerHTML = '';
                 
                 // 清空现有内容
                 regulationList.innerHTML = '';

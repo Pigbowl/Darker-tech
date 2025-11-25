@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>达客科技 - DarkerTech - ADAS开发服务者</title>
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../css/tailwind.css"></script>
+    
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
+    <script src="../js/ipcontroller.js"></script>   
     <script src="./js/load-duck-assistant.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
 
@@ -416,7 +418,7 @@
                             </div>
                         </div>
                     </div>
-                    <a href="../Pages/simulation_front.html" class="tech-button inline-block bg-logoup hover:bg-logoup/90 text-white font-medium px-6 py-3 rounded-lg transition duration-300">
+                    <a href="../Pages/SimulationPlatform.html" class="tech-button inline-block bg-logoup hover:bg-logoup/90 text-white font-medium px-6 py-3 rounded-lg transition duration-300">
                         体验仿真平台
                     </a>
                 </div>
@@ -717,11 +719,12 @@
                             alert('请输入有效的邮箱地址');
                             return;
                         }
-                        if (contactType === 'issue') {
-                            addnewissue(name,message,subject,email);
-                        }else if (contactType === 'suggestion') {
-                            addnewadvice(name,message,subject,email);
-                        }
+                        addnewissue(name,message,subject,email,contactType);
+                        // if (contactType === 'issue') {
+                        //     addnewissue(name,message,subject,email);
+                        // }else if (contactType === 'suggestion') {
+                        //     addnewadvice(name,message,subject,email);
+                        // }
                     
                     });
                     
@@ -773,29 +776,29 @@
             </div>
         </div>
     </footer>
-    <script src="../js/ipcontroller.js"></script>   
+
         <!-- 父页面添加监听脚本 -->
     <!-- JavaScript -->
     <script>
-        let issue_number = 0;
-        let advice_number = 0;
+        // let issue_number = 0;
+        // let advice_number = 0;
         // 移动端菜单切换
-        getissuecount();
-
-        
+        // getissuecount();
         // 导航栏滚动效果
         const header = document.querySelector('header');
         let lastScrollTop = 0;
         
         window.addEventListener('scroll', () => {
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            
-            if (scrollTop > 100) {
-                header.classList.add('py-2', 'shadow-lg');
-                header.classList.remove('py-3');
-            } else {
-                header.classList.add('py-3');
-                header.classList.remove('py-2', 'shadow-lg');
+            // 确保header元素存在再操作
+            if (header) {
+                if (scrollTop > 100) {
+                    header.classList.add('py-2', 'shadow-lg');
+                    header.classList.remove('py-3');
+                } else {
+                    header.classList.add('py-3');
+                    header.classList.remove('py-2', 'shadow-lg');
+                }
             }
             
             lastScrollTop = scrollTop;
@@ -825,7 +828,7 @@
         });
 
 
-        function addnewissue(name,message,subject,email){
+        function addnewissue(name,message,subject,email,contactType){
             command = ip + '/add_issue'
             fetch(command,{
                 method:'POST',
@@ -834,12 +837,13 @@
                 },
                 body:JSON.stringify({
                     'issue':     {
-                        "id": "ISSUE-"+issue_number,
+                        "id": "ISSUE-",
+                        "type": contactType,
                         "title": subject,
                         "description": message,
                         "submit_time": new Date().toISOString(),
                         "submit_email": email,
-                        "submitter_name": name,
+                        "submit_name": name,
                         },
                     })
             }).then(response=>response.json()).then(data=>{
@@ -877,38 +881,38 @@
         }
 
 
-        function getissuecount(){
-            command = ip + '/get_issue_number'
-            fetch(command,{
-                method:'POST',
-                headers:{
-                    'Content-Type':'application/json'
-                },
-                body:JSON.stringify({
-                    'req':'none',
-                    })
-            }).then(response=>response.json()).then(data=>{
-                if(data.success){
-                    issue_number = JSON.parse(data.output)+1;
-                }
-            })
-        }
-        function getadvicecount(){
-            command = ip + '/get_advice_number'
-            fetch(command,{
-                method:'POST',
-                headers:{
-                    'Content-Type':'application/json'
-                },
-                body:JSON.stringify({
-                    'req':'none',
-                    })
-            }).then(response=>response.json()).then(data=>{
-                if(data.success){
-                    advice_number = JSON.parse(data.output)+1;
-                }
-            })
-        }
+        // function getissuecount(){
+        //     command = ip + '/get_issue_number'
+        //     fetch(command,{
+        //         method:'POST',
+        //         headers:{
+        //             'Content-Type':'application/json'
+        //         },
+        //         body:JSON.stringify({
+        //             'req':'none',
+        //             })
+        //     }).then(response=>response.json()).then(data=>{
+        //         if(data.success){
+        //             issue_number = JSON.parse(data.output)+1;
+        //         }
+        //     })
+        // }
+        // function getadvicecount(){
+        //     command = ip + '/get_advice_number'
+        //     fetch(command,{
+        //         method:'POST',
+        //         headers:{
+        //             'Content-Type':'application/json'
+        //         },
+        //         body:JSON.stringify({
+        //             'req':'none',
+        //             })
+        //     }).then(response=>response.json()).then(data=>{
+        //         if(data.success){
+        //             advice_number = JSON.parse(data.output)+1;
+        //         }
+        //     })
+        // }
         // 页面加载动画
         document.addEventListener('DOMContentLoaded', () => {
             // 淡入效果

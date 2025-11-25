@@ -1,8 +1,14 @@
-// 加载达客虚拟助手组件
+
 function loadDuckAssistant() {
+
     let parenthtml = window.parent.location.pathname;
-    console.log(parenthtml);
-    if (parenthtml == '/'){
+    if (deploy_mode != 'full'){
+        mainpageaddress = '/index.html'
+    }else{
+        mainpageaddress = '/'
+    }
+
+    if (parenthtml == mainpageaddress){
         darkurl = './Pages/darker_assistance.html';
     }else{
         darkurl = 'darker_assistance.html';

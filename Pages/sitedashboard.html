@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>站点管理后台 - Darker-tech</title>
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../css/tailwind.css"></script>
+    <script src="../js/ipcontroller.js"></script>
     <!-- Font Awesome -->
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <!-- 配置Tailwind自定义颜色和字体 -->
@@ -123,14 +124,14 @@
                 
                 <div class="flex items-center space-x-4">
                     <a href="../../index.html" class="text-white hover:text-logobuttom transition-colors duration-300">首页</a>
+                    <a href="./DBManipTool.html" class="text-white hover:text-logobuttom transition-colors duration-300">数据库操作工具</a>
                     <div class="hidden md:flex items-center space-x-2 text-sm text-gray-400">
                         <i class="fa fa-user-circle-o text-neon"></i>
-                        <span>Admin</span>
+                        <span id="current-username">Admin</span>
                     </div>
                     <button id="logout-btn" class="text-gray-300 hover:text-neon transition-colors">
                         <i class="fa fa-sign-out text-xl"></i>
                     </button>
-                    
                 </div>
             </div>
         </header>
@@ -219,21 +220,20 @@
                     </div>
                     
                     <!-- 已解决问题卡片 -->
-                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02]">
+                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02] flex flex-col min-h-[180px]">
                         <div class="flex justify-between items-start">
                             <div>
-                                <p class="text-gray-400 text-sm">已解决问题</p>
-                                <h3 id="resolved-issues" class="text-3xl font-bold mt-2 text-green-400">--</h3>
+                                <p class="text-gray-400 text-sm">待处理的建议</p>
+                                <h3 id="pending-advice" class="text-3xl font-bold mt-2 text-green-400">--</h3>
                             </div>
                             <div class="p-3 bg-green-400/10 rounded-full">
                                 <i class="fa fa-check-circle text-green-400 text-xl"></i>
                             </div>
                         </div>
-                        <div class="mt-4 flex items-center text-sm">
+                        <div class="mt-auto flex items-center text-sm">
                             <span class="text-green-400 flex items-center">
-                                <i class="fa fa-arrow-up mr-1"></i> 8%
+                                <i class="fa fa-exclamation-triangle mr-1"></i> 需要处理
                             </span>
-                            <span class="text-gray-500 ml-2">相比上月</span>
                         </div>
                     </div>
                 </div>
@@ -579,8 +579,8 @@
     <div id="issue-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50 hidden">
         <div class="glass-effect rounded-lg p-6 w-full max-w-lg neon-border transform transition-all duration-300">
             <div class="flex justify-between items-center mb-6">
-                <h3 id="modal-title" class="text-xl font-bold text-white">添加问题</h3>
-                <button id="close-modal" class="text-gray-400 hover:text-neon transition-colors">
+                <h3 id="issue-modal-title" class="text-xl font-bold text-white">添加问题</h3>
+                <button id="issue-close-modal" class="text-gray-400 hover:text-neon transition-colors">
                     <i class="fa fa-times text-xl"></i>
                 </button>
             </div>
@@ -683,11 +683,9 @@
     </div>
     
     <!-- JavaScript -->
-    <script src="../js/ipcontroller.js"></script>
+
     <script>
-        // 认证信息
-        const VALID_USERNAME = 'Admin';
-        const VALID_PASSWORD = 'darkertech';
+        // 认证信息已移至后端验证
         
         // DOM元素
         const loginContainer = document.getElementById('login-container');
@@ -699,7 +697,7 @@
         const totalUserEl = document.getElementById('total-user');  
         const pendingIssuesEl = document.getElementById('pending-issues');
         const totalVisitorsEl = document.getElementById('total-visitors');
-        const resolvedIssuesEl = document.getElementById('resolved-issues');
+        const pendingAdviceEl = document.getElementById('pending-advice');
         const issuesTableBody = document.getElementById('issues-table-body');
         const showingRange = document.getElementById('showing-range');
         const totalItems = document.getElementById('total-items');
@@ -707,10 +705,10 @@
         const nextPageBtn = document.getElementById('next-page');
         // const addIssueBtn = document.getElementById('add-issue-btn');
         const issueModal = document.getElementById('issue-modal');
-        const closeModal = document.getElementById('close-modal');
+        const issuecloseModal = document.getElementById('issue-close-modal');
         const cancelIssue = document.getElementById('cancel-issue');
         const issueForm = document.getElementById('issue-form');
-        const modalTitle = document.getElementById('modal-title');
+        const issueModalTitle = document.getElementById('issue-modal-title');
         const toast = document.getElementById('toast');
         const toastIcon = document.getElementById('toast-icon');
         const toastMessage = document.getElementById('toast-message');
@@ -728,17 +726,7 @@
         const adviceModalTitle = document.getElementById('advice-modal-title');
         
         // 问题数据
-        let issues = [
-            { id: 1, name: '首页加载速度慢', description: '首页图片资源过多，导致加载时间过长', status: 'processing', createdAt: '2023-10-15T08:30:00' },
-            { id: 2, name: '导航栏在移动端显示异常', description: '在iPhone SE上导航栏菜单无法正常展开', status: 'pending', createdAt: '2023-10-14T14:20:00' },
-            { id: 3, name: '模拟平台无法导入JSON文件', description: '点击导入按钮后没有任何响应', status: 'resolved', createdAt: '2023-10-12T10:15:00' },
-            { id: 4, name: '知识库搜索功能不精确', description: '搜索关键词返回结果不相关', status: 'pending', createdAt: '2023-10-10T16:45:00' },
-            { id: 5, name: '对标库数据更新失败', description: '最新车型数据无法同步', status: 'resolved', createdAt: '2023-10-08T09:10:00' },
-            { id: 6, name: '配置工具保存功能异常', description: '用户配置无法正确保存到本地', status: 'processing', createdAt: '2023-10-06T11:30:00' },
-            { id: 7, name: '夜间模式下文字对比度低', description: '部分文本难以阅读', status: 'pending', createdAt: '2023-10-05T15:20:00' },
-            { id: 8, name: '联系我们表单提交失败', description: '表单数据无法正确发送', status: 'resolved', createdAt: '2023-10-03T13:40:00' }
-        ];
-        let issue_static = {};
+        let issues = [];
         let total_visit = 0;
         let total_user = 0;
         // 分页配置
@@ -783,9 +771,8 @@
             status: ['待处理', '处理中'] // 默认只显示待处理和处理中
         };
         let advice = [];
-        let advice_static = {};
         let user_number = 0;
-        
+        let statistics = {};
         // DOM筛选元素
         const filterToggle = document.getElementById('filter-toggle');
         const filterPanel = document.getElementById('filter-panel');
@@ -813,42 +800,32 @@
         const adviceDateEndInput = document.getElementById('advice-date-end');
         const adviceCustomDateRange = document.getElementById('advice-custom-date-range');
 
-        function getalladvice(){
-            command = ip + '/get_all_advice'
+        function get_all_recording(){
+            command = ip + '/get_all_recording'
             fetch(command,{
                 method:'POST',
                 headers:{
                     'Content-Type':'application/json'
                 },
                 body:JSON.stringify({
-                    'scriptName':'get_all_advice'
+                    'scriptName':'get_all_recording'
                 })
             }).then(response=>response.json()).then(data=>{
                 if(data.success){
-                    advice_object = JSON.parse(data.output);
-                    advice = advice_object.advice;
-                    advice_static = advice_object.statistics;
+
+                    recording_list = JSON.parse(data.output);
+                    advice = recording_list.advice;
+                    issues = recording_list.issue;
+                    statistics = recording_list.statistic;
+
                     renderAdvice();
+                    renderIssues();
+                    // showDashboard();
                 } else {
-                    // 模拟数据，用于演示
-                    advice = [
-                        { id: 1, title: '优化网站加载速度', description: '建议压缩图片资源并使用CDN加速', status: '待处理', submit_time: new Date().toISOString() },
-                        { id: 2, title: '增加暗黑模式', description: '希望网站支持暗黑模式切换', status: '处理中', submit_time: new Date(Date.now() - 86400000).toISOString() },
-                        { id: 3, title: '改进用户界面', description: '导航栏布局可以更加直观', status: '已采纳', submit_time: new Date(Date.now() - 172800000).toISOString() },
-                        { id: 4, title: '添加搜索功能', description: '建议增加全站搜索功能', status: '已拒绝', submit_time: new Date(Date.now() - 259200000).toISOString() }
-                    ];
-                    renderAdvice();
+                    console.log("Oh no, it's bad.")
                 }
             }).catch(error => {
                 console.error('获取建议数据失败:', error);
-                // 模拟数据，用于演示
-                advice = [
-                    { id: 1, title: '优化网站加载速度', description: '建议压缩图片资源并使用CDN加速', status: '待处理', submit_time: new Date().toISOString() },
-                    { id: 2, title: '增加暗黑模式', description: '希望网站支持暗黑模式切换', status: '处理中', submit_time: new Date(Date.now() - 86400000).toISOString() },
-                    { id: 3, title: '改进用户界面', description: '导航栏布局可以更加直观', status: '已采纳', submit_time: new Date(Date.now() - 172800000).toISOString() },
-                    { id: 4, title: '添加搜索功能', description: '建议增加全站搜索功能', status: '已拒绝', submit_time: new Date(Date.now() - 259200000).toISOString() }
-                ];
-                renderAdvice();
             });
         }
 
@@ -903,27 +880,27 @@
                         row.className = 'hover:bg-gray-800/40 transition-colors';
                         row.innerHTML = `
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-300">
-                                #${adviceItem.id}
+                                #${adviceItem.ID}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                                <div class="font-medium">${adviceItem.title || adviceItem.name || '未命名'}</div>
+                                <div class="font-medium">${adviceItem.Category || '未分类'}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                                <div class="text-xs text-gray-500 mt-1">${truncateText(adviceItem.description || '', 60)}</div>
+                                <div class="text-xs text-gray-500 mt-1">${truncateText(adviceItem.Description || '', 60)}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
-                                ${formatDate(adviceItem.submit_time || adviceItem.createdAt)}
+                                ${formatDate(adviceItem.Create_Time)}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                <span class="px-2 py-1 text-xs rounded-full ${getAdviceStatusClass(adviceItem.status)}">
-                                    ${getAdviceStatusText(adviceItem.status)}
+                                <span class="px-2 py-1 text-xs rounded-full ${getAdviceStatusClass(adviceItem.Status)}">
+                                    ${getAdviceStatusText(adviceItem.Status)}
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <button class="text-neon hover:text-primary mr-3 edit-advice" data-id="${adviceItem.id}">
+                                <button class="text-neon hover:text-primary mr-3 edit-advice" data-id="${adviceItem.ID}">
                                     <i class="fa fa-pencil mr-1"></i>编辑
                                 </button>
-                                <button class="text-red-400 hover:text-red-300 delete-advice" data-id="${adviceItem.id}">
+                                <button class="text-red-400 hover:text-red-300 delete-advice" data-id="${adviceItem.ID}">
                                     <i class="fa fa-trash mr-1"></i>删除
                                 </button>
                             </td>
@@ -959,14 +936,14 @@
                 }
                 
                 // 名称筛选
-                const adviceName = advice.title || advice.name || '';
+                const adviceName = advice.Category|| '';
                 if (adviceFilters.name && !adviceName.toLowerCase().includes(adviceFilters.name.toLowerCase())) {
                     return false;
                 }
                 
                 // 时间筛选
                 if (adviceFilters.time.ranges.length > 0 || adviceFilters.time.useCustom) {
-                    const adviceDate = new Date(advice.submit_time || advice.createdAt);
+                    const adviceDate = new Date(advice.Create_Time);
                     const today = new Date();
                     today.setHours(0, 0, 0, 0);
                     
@@ -1004,7 +981,7 @@
                 }
                 
                 // 状态筛选
-                if (adviceFilters.status.length > 0 && !adviceFilters.status.includes(advice.status)) {
+                if (adviceFilters.status.length > 0 && !adviceFilters.status.includes(advice.Status)) {
                     return false;
                 }
                 
@@ -1070,13 +1047,13 @@
         
         // 编辑建议
         function editAdvice(id) {
-            const adviceItem = advice.find(item => item.id == id);
+            const adviceItem = advice.find(item => item.ID == id);
             if (adviceItem && adviceModal && adviceForm) {
                 adviceModalTitle.textContent = '编辑建议';
-                document.getElementById('advice-id').value = adviceItem.id;
-                document.getElementById('advice-name').value = adviceItem.title || adviceItem.name || '';
-                document.getElementById('advice-status').value = adviceItem.status;
-                document.getElementById('advice-description').value = adviceItem.description || '';
+                document.getElementById('advice-id').value = adviceItem.ID;
+                document.getElementById('advice-name').value = adviceItem.Category || '';
+                document.getElementById('advice-status').value = adviceItem.Status;
+                document.getElementById('advice-description').value = adviceItem.Description || '';
                 adviceModal.classList.remove('hidden');
             }
         }
@@ -1084,16 +1061,16 @@
         // 删除建议
         function deleteAdvice(id) {
             if (confirm('确定要删除此建议吗？')) {
-                advice = advice.filter(item => item.id != id);
+                advice = advice.filter(item => item.ID != id);
+                deleteIssueinDatabase(id);
                 renderAdvice();
-                showToast('success', '建议已删除');
+                // showToast('success', '建议已删除');
             }
         }
         
         // 处理建议表单提交
         function handleAdviceSubmit(e) {
             e.preventDefault();
-            
             const id = document.getElementById('advice-id').value;
             const name = document.getElementById('advice-name').value.trim();
             const status = document.getElementById('advice-status').value;
@@ -1101,18 +1078,24 @@
             
             if (id) {
                 // 编辑现有建议
-                const index = advice.findIndex(item => item.id == id);
+                const index = advice.findIndex(item => item.ID == id);
                 if (index !== -1) {
                     advice[index] = {
                         ...advice[index],
-                        title: name,
-                        name: name, // 兼容旧数据结构
-                        status,
-                        description
+                        Category: name,
+                        Status: status,
+                        Description: description,
+                        Last_Modified: getBeijingTimeString()
                     };
+                    data = {
+                        Category: name,
+                        Status: status,
+                        Description: description,
+                        Last_Modified: getBeijingTimeString()
+                    }
                     showToast('success', '建议已更新');
                 }
-                modifyAdviceinDatabase(advice[index]);
+                modifyIssueinDatabase(data,id);
             } else {
                 // 添加新建议
                 const newId = advice.length > 0 ? Math.max(...advice.map(item => item.id)) + 1 : 1;
@@ -1143,15 +1126,15 @@
             }
         }
         
-        // 打开添加建议模态框
-        function openAddAdviceModal() {
-            if (adviceModal && adviceForm) {
-                adviceModalTitle.textContent = '添加建议';
-                adviceForm.reset();
-                document.getElementById('advice-id').value = '';
-                adviceModal.classList.remove('hidden');
-            }
-        }
+        // // 打开添加建议模态框
+        // function openAddAdviceModal() {
+        //     if (adviceModal && adviceForm) {
+        //         adviceModalTitle.textContent = '添加建议';
+        //         adviceForm.reset();
+        //         document.getElementById('advice-id').value = '';
+        //         adviceModal.classList.remove('hidden');
+        //     }
+        // }
         
         // 切换建议筛选面板
         function toggleAdviceFilterPanel() {
@@ -1241,40 +1224,13 @@
             adviceCurrentPage = 1;
             renderAdvice();
         }
-        
-        function getsitebasicinfo(){
-            command = ip + '/get_all_issue'
-            fetch(command,{
-                method:'POST',
-                headers:{
-                    'Content-Type':'application/json'
-                },
-                body:JSON.stringify({
-                    'scriptName':'get_site_basic_info'
-                })
-            }).then(response=>response.json()).then(data=>{
-                if(data.success){
-                    issues_object = JSON.parse(data.output);
-                    issues = issues_object.issues;
-                    issue_static = issues_object.statistics;
-                    showDashboard();
-                }
-            })
-
-        }
         // 初始化
         document.addEventListener('DOMContentLoaded', () => {
-            // 检查是否已登录
-            checkAuth();
-            getsitebasicinfo();
-            getalladvice(); // 获取建议数据
-            getusernumber();
-            getvisitstat();
             // 绑定事件
             loginForm.addEventListener('submit', handleLogin);
             logoutBtn.addEventListener('click', handleLogout);
             // addIssueBtn.addEventListener('click', openAddIssueModal);
-            closeModal.addEventListener('click', closeIssueModal);
+            issuecloseModal.addEventListener('click', closeIssueModal);
             cancelIssue.addEventListener('click', closeIssueModal);
             issueForm.addEventListener('submit', handleIssueSubmit);
             prevPageBtn.addEventListener('click', goToPrevPage);
@@ -1296,6 +1252,9 @@
             adviceFilterToggle?.addEventListener('click', toggleAdviceFilterPanel);
             adviceApplyFiltersBtn?.addEventListener('click', applyAdviceFilters);
             adviceClearFiltersBtn?.addEventListener('click', clearAdviceFilters);
+            
+            // 页面加载完成后立即检查认证状态
+            checkAuth();
             
             // 自定义ID范围切换
             const idCustomCheckbox = document.querySelector('.id-filter[value="custom"]');
@@ -1463,13 +1422,13 @@
                 }
                 
                 // 名称筛选
-                if (filters.name && !issue.title.toLowerCase().includes(filters.name.toLowerCase())) {
+                if (filters.name && !issue.Category.toLowerCase().includes(filters.name.toLowerCase())) {
                     return false;
                 }
                 
                 // 时间筛选
                 if (filters.time.ranges.length > 0 || filters.time.useCustom) {
-                    const issueDate = new Date(issue.submit_time);
+                    const issueDate = new Date(issue.Create_Time);
                     const today = new Date();
                     today.setHours(0, 0, 0, 0);
                     
@@ -1507,7 +1466,7 @@
                 }
                 
                 // 状态筛选
-                if (filters.status.length > 0 && !filters.status.includes(issue.status)) {
+                if (filters.status.length > 0 && !filters.status.includes(issue.Status)) {
                     return false;
                 }
                 
@@ -1517,12 +1476,67 @@
         
         // 检查认证状态
         function checkAuth() {
-            const isAuthenticated = localStorage.getItem('admin_authenticated') === 'true';
+            console.log('执行认证检查...');
+            const authStatus = sessionStorage.getItem('admin_authenticated');
+            const expiryTime = sessionStorage.getItem('admin_auth_expiry');
+            const currentTime = new Date().getTime();
+            
+            console.log('认证状态:', authStatus ? authStatus : '未设置');
+            console.log('过期时间:', expiryTime ? new Date(parseInt(expiryTime)).toLocaleString() : '无');
+            console.log('当前时间:', new Date(currentTime).toLocaleString());
+            
+            // 检查认证状态和是否过期
+            const isAuthenticated = authStatus === 'true' && 
+                                  expiryTime && 
+                                  currentTime < parseInt(expiryTime);
+                                  
             if (isAuthenticated) {
-                getsitebasicinfo();
+                console.log('认证有效，更新过期时间并显示仪表板');
+                // 更新过期时间（延长会话）
+                updateAuthExpiry();
+                getvisitstat();
+                get_all_recording();
+                get_user_info();
+                // 延迟 2 秒后再执行后续逻辑
+                setTimeout(() => {
+                    showDashboard();
+                    showToast('success', '登录成功');
+                }, 1000);
+                return true;
             } else {
+                console.log('认证无效或已过期，显示登录界面');
+                // 只有在认证无效时才显示登录界面，不自动清除认证信息
+                // 这样可以保持同一个会话中的状态，避免重复登录
                 showLogin();
+                return false;
             }
+        }
+        
+        // 更新认证过期时间
+        function updateAuthExpiry() {
+            const expiryTime = new Date().getTime() + (30 * 60 * 1000); // 30分钟后过期
+            sessionStorage.setItem('admin_auth_expiry', expiryTime.toString());
+        }
+        
+        // 清除认证信息
+        function clearAuth() {
+            console.log('清除认证信息...');
+            sessionStorage.removeItem('admin_authenticated');
+            sessionStorage.removeItem('admin_auth_expiry');
+            sessionStorage.removeItem('username');
+            // 清除权限相关信息
+            sessionStorage.removeItem('access_allright');
+            sessionStorage.removeItem('access_checking');
+            sessionStorage.removeItem('access_modification');
+            console.log('认证信息和权限信息已完全清除');
+        }
+        
+        // 获取北京时间字符串（格式：YYYY-MM-DDTHH:mm:ss）
+        function getBeijingTimeString() {
+            // 北京时间比UTC时间快8小时
+            const beijingTime = new Date(Date.now() + 8 * 60 * 60 * 1000);
+            // 转换为ISO格式并截取到秒级
+            return beijingTime.toISOString().slice(0, 19);
         }
         
         // 显示登录界面
@@ -1533,22 +1547,95 @@
         
         // 显示仪表板
         function showDashboard() {
+            console.log('显示仪表板...');
             loginContainer.classList.add('hidden');
             dashboardContainer.classList.remove('hidden');
             
+            // 更新显示的用户名
+            const username = sessionStorage.getItem('username') || 'Admin';
+            const usernameElement = document.getElementById('current-username');
+            if (usernameElement) {
+                usernameElement.textContent = username;
+            }
+            
             // 更新统计数据
             updateStatistics();
-            
-            // 渲染问题列表
-            renderIssues();
-            
-            // // 模拟加载访问次数（实际应用中应从后端获取）
-            // setTimeout(() => {
-            //     const mockVisitCount = Math.floor(Math.random() * 10000) + 5000;
-            //     visitCount.textContent = mockVisitCount.toLocaleString();
-            // }, 500);
+                    
         }
         
+
+        // 向后端发送登录验证请求
+        function loginverification(username, password) {
+            // 测试日志
+            // console.log('执行登录验证:', { username, password });
+            
+            return new Promise((resolve, reject) => {
+                const command = ip + '/manager_login';
+                
+                fetch(command, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        login: {
+                            name: username,
+                            password: password
+                        }
+                    })
+                })
+                .then(response => {
+                    // console.log('响应状态:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP错误: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // console.log('响应数据:', data);
+                    // 检查响应格式是否符合要求
+                    if (data && typeof data === 'object') {
+                        // 根据用户要求：success为True且Status为true时验证通过
+                        const isSuccess = data.success === true && data.output && data.output.status === true;
+                        console.log('验证结果:', isSuccess ? '通过' : '失败');
+                        
+                        resolve({
+                            success: isSuccess,
+                            data: data
+                        });
+                    } else {
+                        reject(new Error('无效的响应格式'));
+                    }
+                })
+                .catch(error => {
+                    console.error("登录验证过程中出错:", error);
+                    // 在开发环境中，如果后端服务未运行，可以添加模拟响应以便测试
+                    /* 模拟测试代码（可选，仅用于开发测试）
+                    if (error.message.includes('Network')) {
+                        console.log('使用模拟响应进行测试');
+                        // 模拟成功响应
+                        const mockSuccess = username === 'test' && password === 'test';
+                        const mockResponse = {
+                            success: mockSuccess,
+                            output: {
+                                status: mockSuccess,
+                                message: mockSuccess ? '验证成功' : '验证失败'
+                            }
+                        };
+                        resolve({
+                            success: mockSuccess,
+                            data: mockResponse
+                        });
+                    } else {
+                        reject(error);
+                    }
+                    */
+                    reject(error);
+                });
+            });
+        }
+
+
         // 处理登录
         function handleLogin(e) {
             e.preventDefault();
@@ -1556,40 +1643,107 @@
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value.trim();
             
-            if (username === VALID_USERNAME && password === VALID_PASSWORD) {
-                // 登录成功
-                localStorage.setItem('admin_authenticated', 'true');
-                getsitebasicinfo();
-                showToast('success', '登录成功');
-            } else {
-                // 登录失败
+            // 输入验证
+            if (!username || !password) {
+                errorMessage.textContent = '请输入用户名和密码';
                 errorMessage.classList.remove('hidden');
                 setTimeout(() => {
                     errorMessage.classList.add('hidden');
                 }, 3000);
+                return;
             }
+            
+            // 调用后端验证函数
+            loginverification(username, password)
+                .then(result => {
+                    if (result.success) {
+                        // 登录成功
+                        sessionStorage.setItem('admin_authenticated', 'true');
+                        sessionStorage.setItem('username', username); // 保存用户名
+                        
+                        // 存储权限信息到sessionStorage
+                        if (result.data && result.data.output && result.data.output.access) {
+                            const access = result.data.output.access;
+                            // 分别存储三个权限状态
+                            sessionStorage.setItem('access_allright', access.allright ? access.allright.toString() : '0');
+                            sessionStorage.setItem('adding', access.adding ? access.adding.toString() : '0');
+                            sessionStorage.setItem('access_modification', access.modification ? access.modification.toString() : '0');
+                            console.log('已存储权限信息:', {
+                                allright: access.allright,
+                                adding: access.adding,
+                                modification: access.modification
+                            });
+                        }
+                        
+                        updateAuthExpiry();
+                        // 登录成功后显示仪表板并加载数据
+                        getvisitstat();
+                        get_all_recording();
+                        get_user_info();
+                        // 延迟 2 秒后再执行后续逻辑
+                        setTimeout(() => {
+                            showDashboard();
+                            showToast('success', '登录成功');
+                        }, 1000);
+                    } else {
+                        if (result.data.output.error == 1){
+                            message = '用户名不存在，请重试'
+                        }else if (result.data.output.error == 2){
+                            message = '密码错误，请重试'
+                        }
+                        // 登录失败
+                        errorMessage.textContent = message;
+                        errorMessage.classList.remove('hidden');
+                        setTimeout(() => {
+                            errorMessage.classList.add('hidden');
+                        }, 3000);
+                    }
+                })
+                .catch(error => {
+                    // 处理验证过程中的错误
+                    console.error('登录验证失败:', error);
+                    errorMessage.textContent = '登录失败，请稍后重试';
+                    errorMessage.classList.remove('hidden');
+                    setTimeout(() => {
+                        errorMessage.classList.add('hidden');
+                    }, 3000);
+                });
         }
         
         // 处理登出
         function handleLogout() {
-            localStorage.removeItem('admin_authenticated');
+            // 清除所有认证相关数据
+            clearAuth();
+            
+            // 可选：清除其他可能的会话数据
+            // sessionStorage.removeItem('其他会话数据键名');
+            
+            // 重置所有页面数据
+            issues = [];
+            issue_static = { pending_issues: 0, solved_issues: 0 };
+            
+            // 显示登录界面
             showLogin();
-            // 重置表单
+            
+            // 重置登录表单
             loginForm.reset();
+            
+            // 显示登出成功提示
+            showToast('info', '已成功登出');
         }
         
         // 更新统计数据
         function updateStatistics() {
             const totaluser = user_number;
-            const pending = issue_static.pending_issues;
-            const resolved = issue_static.solved_issues;
+            const pending_issues = statistics.Unsolved_issue;
+            const prending_advice = statistics.Unsolved_advice;
             // const inwork = issue_static.in_progress_issues;
             const totalvisit = total_visit;
             const totalwatcher = total_user;
             
             totalUserEl.textContent = totaluser;
-            pendingIssuesEl.textContent = pending;
-            resolvedIssuesEl.textContent = resolved;
+            pendingIssuesEl.textContent = pending_issues;
+            pendingAdviceEl.textContent = prending_advice;
             // totalItems.textContent = total;
             totalVisitorsEl.textContent = totalwatcher;
             visitCount.textContent = totalvisit;
@@ -1599,7 +1753,6 @@
         function renderIssues() {
             // 应用筛选
             const filteredIssues = filterIssues(issues);
-            
             // 计算分页
             const startIndex = (currentPage - 1) * itemsPerPage;
             const endIndex = startIndex + itemsPerPage;
@@ -1637,27 +1790,27 @@
                     row.className = 'hover:bg-gray-800/40 transition-colors';
                     row.innerHTML = `
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-300">
-                            #${issue.id}
+                            #${issue.ID}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                            <div class="font-medium">${issue.title}</div>
+                            <div class="font-medium">${issue.Category}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                            <div class="text-xs text-gray-500 mt-1">${truncateText(issue.description, 60)}</div>
+                            <div class="text-xs text-gray-500 mt-1">${truncateText(issue.Description, 60)}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
-                            ${formatDate(issue.submit_time)}
+                            ${formatDate(issue.Create_Time)}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm">
-                            <span class="px-2 py-1 text-xs rounded-full ${getStatusClass(issue.status)}">
-                                ${getStatusText(issue.status)}
+                            <span class="px-2 py-1 text-xs rounded-full ${getStatusClass(issue.Status)}">
+                                ${getStatusText(issue.Status)}
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <button class="text-neon hover:text-primary mr-3 edit-issue" data-id="${issue.id}">
+                            <button class="text-neon hover:text-primary mr-3 edit-issue" data-id="${issue.ID}">
                                 <i class="fa fa-pencil mr-1"></i>编辑
                             </button>
-                            <button class="text-red-400 hover:text-red-300 delete-issue" data-id="${issue.id}">
+                            <button class="text-red-400 hover:text-red-300 delete-issue" data-id="${issue.ID}">
                                 <i class="fa fa-trash mr-1"></i>删除
                             </button>
                         </td>
@@ -1726,7 +1879,7 @@
         
         // 打开添加问题模态框
         function openAddIssueModal() {
-            modalTitle.textContent = '添加问题';
+            issuemodalTitle.textContent = '添加问题';
             issueForm.reset();
             document.getElementById('issue-id').value = '';
             issueModal.classList.remove('hidden');
@@ -1734,13 +1887,14 @@
         
         // 编辑问题
         function editIssue(id) {
-            const issue = issues.find(issue => issue.id === id);
-            if (issue) {
-                modalTitle.textContent = '编辑问题';
-                document.getElementById('issue-id').value = issue.id;
-                document.getElementById('issue-name').value = issue.title;
-                document.getElementById('issue-status').value = issue.status;
-                document.getElementById('issue-description').value = issue.description || '';
+            const issue = issues.find(issue => issue.ID == id);
+            
+            if (issue && issueModal && issueForm) {
+                issueModalTitle.textContent = '编辑问题';
+                document.getElementById('issue-id').value = issue.ID;
+                document.getElementById('issue-name').value = issue.Category;
+                document.getElementById('issue-status').value = issue.Status;
+                document.getElementById('issue-description').value = issue.Description;
                 issueModal.classList.remove('hidden');
             }
         }
@@ -1750,8 +1904,8 @@
             issueModal.classList.add('hidden');
         }
         
-        function getusernumber(){
-            command = ip + '/get_user_number'
+        function get_user_info(){
+            command = ip + '/get_user_info'
             fetch(command,{
                 method:'POST',
                 headers:{
@@ -1762,8 +1916,8 @@
                     })
             }).then(response=>response.json()).then(data=>{
                 if(data.success){
-                    user_number = JSON.parse(data.output);
-                    showDashboard();
+                    user_number = JSON.parse(data.output).Result.user_count;
+                    // showDashboard();
                 }
             })
         }
@@ -1780,41 +1934,32 @@
                     })
             }).then(response=>response.json()).then(data=>{
                 if(data.success){
-                    visit_stat = JSON.parse(data.output);
-                    total_visit = visit_stat.total_visits;
-                    total_user = visit_stat.unique_visitors;
-                    showDashboard();
+                    visit_stat = JSON.parse(data.output).Result;
+                    total_visit = visit_stat.visit_count;
+                    total_user = visit_stat.unique_user_count;
+                    // showDashboard();
                 }
             })
         }
 
-        function modifyIssueinDatabase(issue){
-            command = ip + '/manage_issue'
+        function modifyIssueinDatabase(data,id){
+            command = ip + '/update_recordings'
             fetch(command,{
                 method:'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(issue),
+                body: JSON.stringify({
+                    "ID": id,
+                    "to_update": data
+                }
+                ),
             }).then(response=>response.json()).then(data=>{
                 if(data.success){
+                    showToast('success', '问题已更新');
+                    resulting = JSON.parse(data.output)
+                    statistics = resulting.Result.statistic;
                     updateStatistics();
-                }
-            })
-        }
-
-        function modifyAdviceinDatabase(advice){
-            command = ip + '/manage_advice'
-            fetch(command,{
-                method:'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(advice),
-            }).then(response=>response.json()).then(data=>{
-                if(data.success){
-                    console.log("advice data", advice)
-                    // updateStatistics();
                 }
             })
         }
@@ -1822,23 +1967,29 @@
         // 处理问题表单提交
         function handleIssueSubmit(e) {
             e.preventDefault();
-            
             const id = document.getElementById('issue-id').value;
             const name = document.getElementById('issue-name').value.trim();
             const status = document.getElementById('issue-status').value;
             const description = document.getElementById('issue-description').value.trim();
-            
+
             if (id) {
                 // 编辑现有问题
-                const index = issues.findIndex(issue => issue.id === id);
+                const index = issues.findIndex(issue => issue.ID == id);
                 if (index !== -1) {
                     issues[index] = {
                         ...issues[index],
-                        name,
-                        status,
-                        description
+                        Category: name,
+                        Status: status,
+                        Description: description,
+                        Last_Modified: getBeijingTimeString()
                     };
-                    modifyIssueinDatabase(issues[index])
+                    data = {
+                        Category: name,
+                        Status: status,
+                        Description: description,
+                        Last_Modified: getBeijingTimeString()
+                    }
+                    modifyIssueinDatabase(data,id)
                     showToast('success', '问题已更新');
                     renderIssues();
                 }
@@ -1866,13 +2017,37 @@
         // 删除问题
         function deleteIssue(id) {
             if (confirm('确定要删除此问题吗？')) {
-                issues = issues.filter(issue => issue.id !== id);
-                updateStatistics();
+                issues = issues.filter(issue => issue.ID !== id);
+                // updateStatistics();
+                // renderIssues();
+                deleteIssueinDatabase(id);
                 renderIssues();
-                showToast('success', '问题已删除');
+                
             }
         }
         
+        function deleteIssueinDatabase(id){
+            command = ip + '/delete_recordings'
+            fetch(command,{
+                method:'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "ID": id,
+                }
+                ),
+            }).then(response=>response.json()).then(data=>{
+                if(data.success){
+                    // showToast('success', '问题已删除');
+                    statistics = JSON.parse(data.output).Result.statistic;
+                    updateStatistics();
+                    showToast('success', '问题已删除');
+                    // renderIssues();
+                }
+            })
+        }
+
         // 上一页
         function goToPrevPage() {
             if (currentPage > 1) {

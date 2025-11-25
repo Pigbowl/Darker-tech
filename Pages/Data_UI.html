@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>通用树状数据录入界面</title>
+  <!-- Tailwind CSS（美化样式，无需本地安装） -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../js/ipcontroller.js"></script>
+  <!-- Font Awesome（箭头/图标，可选） -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- 自定义样式（少量补充） -->
+  <style>
+    .tree-node {
+      transition: all 0.2s ease;
+    }
+    .tree-children {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    .tree-children.expanded {
+      max-height: 2000px; /* 足够容纳深层嵌套 */
+    }
+    .editable-input:focus {
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.5);
+    }
+    .alert {
+      padding: 0.75rem;          /* p-3 */
+      border-radius: 0.375rem;   /* rounded-md */
+      margin-bottom: 1rem;       /* mb-4 */
+      font-size: 0.875rem;       /* text-sm */
+    }
+    .alert-success {
+      background-color: #f0fdf4;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+    .alert-error {
+      background-color: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+    /* 分组标题样式（替代原中间文件夹） */
+    .group-title {
+      font-size: 1.125rem;        /* text-lg */
+      font-weight: 600;           /* font-semibold */
+      color: #1f2937;             /* text-gray-800 */
+      margin-top: 1.25rem;        /* mt-4 */
+      margin-bottom: 0.5rem;      /* mb-2 */
+      display: flex;
+      align-items: center;
+    }
+    .group-title:first-child {
+      margin-top: 0;
+    }
+    /* 接口/处理器字段缩进（区分不同条目） */
+    .item-fields {
+      padding-left: 1.5rem;        /* pl-6 */
+      border-left: 2px solid #e0e7ff; /* border-l-2 border-blue-100 */
+      margin-bottom: 1rem;         /* mb-4 */
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen p-6">
+
+  <div class="max-w-8xl mx-auto bg-white rounded-lg shadow-md p-6">
+    
+    <h1 id="main-title" class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+      <i class="fa-solid fa-folder-tree text-blue-500 mr-3"></i>
+      通用树状数据录入界面
+    </h1>
+    
+    <!-- 树状图容器（直接显示，无需隐藏） -->
+    <div id="tree-container" class="space-y-2"></div>
+    
+    <!-- 数据操作按钮 -->
+    <div class="mt-8">
+      <div class="flex gap-4 mb-4">
+        <button id="view-data-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md flex items-center">
+          <i class="fa-solid fa-eye mr-2"></i> 查看更新后的数据
+        </button>
+        <button id="download-data-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md flex items-center">
+        <i class="fa-solid fa-paper-plane mr-2"></i> 写入数据库
+        </button>
+      </div>
+      <pre id="data-preview" class="p-4 bg-gray-100 rounded-md overflow-x-auto hidden"></pre>
+    </div>
+  </div>
+
+  <script>
+    // 1. 从JSON文件加载数据
+    let currentData = null;
+    
+    // 2. 创建用于UI渲染的增强数据（不修改原始数据结构）
+    function createEnhancedDataForUI(originalNode) {
+      // 创建节点的深拷贝，避免修改原始数据
+      const enhancedNode = JSON.parse(JSON.stringify(originalNode));
+      
+      // 添加临时UI属性（以_开头），不修改原始数据的实际属性
+      if (!enhancedNode.id) enhancedNode.id = `node-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      enhancedNode._editableForUI = enhancedNode.editable !== undefined ? enhancedNode.editable : true;
+      enhancedNode._displayForUI = enhancedNode.display !== undefined ? enhancedNode.display : true;
+      enhancedNode._itemtypeForUI = enhancedNode.itemtype !== undefined ? enhancedNode.itemtype : "item";
+      enhancedNode._addingTypeForUI = enhancedNode.addingType !== undefined ? enhancedNode.addingType : false;
+      enhancedNode._itemlevelForUI = enhancedNode.itemlevel !== undefined ? enhancedNode.itemlevel : 'row';
+      
+      // 自动推断type（如果未指定）
+      if (!enhancedNode.type && !enhancedNode.children) {
+        const valueType = typeof enhancedNode.value;
+        enhancedNode._typeForUI = enhancedNode.type;
+        if (!enhancedNode._typeForUI) {
+          if (valueType === "number") {
+            enhancedNode._typeForUI = "number";
+          } else if (valueType === "boolean") {
+            enhancedNode._typeForUI = "boolean";
+          } else if (valueType === "string" && enhancedNode.value && enhancedNode.value.length > 100) {
+            enhancedNode._typeForUI = "textarea";
+          } else {
+            enhancedNode._typeForUI = "string";
+          }
+        }
+      } else {
+        enhancedNode._typeForUI = enhancedNode.type;
+      }
+      
+      // 递归处理子节点
+      if (enhancedNode.children && enhancedNode.children.length > 0) {
+        enhancedNode.children = enhancedNode.children.map(child => createEnhancedDataForUI(child));
+      }
+      
+      return enhancedNode;
+    }
+    
+
+    // 4. 判断节点是否需要扁平化（取消中间文件夹）
+    // 4. 判断节点是否需要扁平化（取消中间文件夹）
+    function isNeedFlatten(node) {
+      // 使用临时UI属性或原始属性进行判断
+      const id = node.id;
+      const addingType = node._addingTypeForUI || node.addingType || false;
+      
+      // 需要扁平化的节点规则：
+      // 1. 基本配置节点
+      // 2. 没有添加按钮的节点
+      return (
+        id === "基本配置" || id === "基本信息" 
+        // || 
+        // (!addingType && node.children && node.children.length > 0)
+      );
+    }
+
+    // 4. 递归渲染树状结构（通用化逻辑）
+    function renderTreeNode(node, parentElement, depth = 0, parentNodeId = "") {
+      // 给子节点添加父节点ID（用于判断是否需要扁平化）
+      node.parentId = parentNodeId;
+      // 为节点数据添加_id属性，用于查找
+      node._id = node.id;
+      
+      // 统一的删除按钮逻辑：适用于所有节点类型
+      // 条件：当前节点itemlevel为row且父对象addingtype为true
+      
+      // 检查当前节点是否为row级别
+      const isRowLevel = node.itemlevel === 'row';
+      // 查找父对象并检查其addingtype属性
+      let parentAddingType = false;
+      if (node.parentId) {
+
+        const parentNode = findNodeByParentId(node.parentId);
+        if (parentNode) {
+          parentAddingType = parentNode.addingType === true || parentNode.addingType === 'true';
+        }
+      }
+      
+      // 确定是否可删除
+      const isDeletable = isRowLevel && parentAddingType;
+      
+      // 详细调试信息
+      // console.log(`删除条件: isRowLevel=${isRowLevel}, parentAddingType=${parentAddingType}, isDeletable=${isDeletable}`);
+      
+      // 存储删除按钮容器，稍后添加到适当位置
+      let deleteButtonContainer = null;
+      
+      if (isDeletable) {
+        // 创建删除按钮容器
+        deleteButtonContainer = document.createElement("div");
+        deleteButtonContainer.className = "ml-2";
+        
+        const deleteButton = document.createElement("button");
+        deleteButton.className = "text-red-500 hover:text-red-700 focus:outline-none";
+        deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
+        deleteButton.title = "删除此项";
+        deleteMode = "none";
+        deleteButton.addEventListener("click", () => {
+          if (node.modifystate == "creation"){
+            deleteMode = "item"
+          }else{
+            deleteMode = "UI"
+          }
+          // 获取删除按钮的父元素（即deleteButtonContainer）
+          const deleteButtonParent = (deleteButton.parentElement).parentElement;
+
+          // 现在deleteButtonParent就是包含删除按钮的容器，可用于后续操作
+
+          deleteItem(node.id, node.parentId, deleteButtonParent, deleteButtonParent.parentNode,deleteMode);
+        });
+        
+        deleteButtonContainer.appendChild(deleteButton);
+      } else {
+        // console.log(`不为节点 ${node.id} 创建删除按钮，条件不满足`);
+      }
+      
+      // 使用临时UI属性或原始属性进行判断
+      const itemtype = node._itemtypeForUI || node.itemtype || "item";
+      
+      // 如果是template类型且不是作为添加模板使用，则不渲染
+      if (itemtype === "template" && depth > 0) {
+        return;
+      }
+      
+      // 1. 需要扁平化的节点：直接渲染其children，不创建自身文件夹
+      // 使用增强的数据进行判断，但不修改原始数据
+      if (isNeedFlatten(createEnhancedDataForUI(node))) {
+        // 渲染分组标题（替代原文件夹名称）
+        const groupTitle = document.createElement("div");
+        groupTitle.className = "group-title";
+        
+        // 根据节点ID使用不同图标
+        let iconHTML = '';
+        if (node.id.includes("配置") || node.id.includes("信息")) {
+          iconHTML = `<i class="fa-solid fa-cog text-blue-500 mr-2"></i>`;
+        } else if (node.id.includes("接口")) {
+          iconHTML = `<i class="fa-solid fa-plug text-green-500 mr-2"></i>`;
+        } else if (node.id.includes("处理器")) {
+          iconHTML = `<i class="fa-solid fa-microchip text-purple-500 mr-2"></i>`;
+        } else if (node.id.includes("Feature")) {
+          iconHTML = `<i class="fa-solid fa-star text-yellow-500 mr-2"></i>`;
+        } else {
+          iconHTML = `<i class="fa-solid fa-list text-gray-500 mr-2"></i>`;
+        }
+        
+        groupTitle.innerHTML = `${iconHTML} ${node.id}`;
+        parentElement.appendChild(groupTitle);
+
+        // 直接渲染子节点（无文件夹，字段缩进）
+        const fieldsContainer = document.createElement("div");
+        fieldsContainer.className = (node.id === "基本配置" || node.id === "基本信息") ? "space-y-2" : "item-fields space-y-2";
+        
+        // 为子项目添加折叠功能
+        if (node.parentId && node.addingType) {
+          fieldsContainer.style.maxHeight = "1000px";
+          fieldsContainer.style.overflow = "hidden";
+          fieldsContainer.style.transition = "maxHeight 0.3s ease";
+          
+          // 添加折叠/展开按钮
+          const toggleBtn = document.createElement("button");
+          toggleBtn.className = "text-gray-500 hover:text-blue-500 mr-2 mt-1 focus:outline-none mb-2";
+          toggleBtn.innerHTML = '<i class="fa-solid fa-chevron-down transition-transform duration-300"></i> 折叠详情';
+          toggleBtn.addEventListener("click", () => {
+            if (fieldsContainer.style.maxHeight === "1000px") {
+              fieldsContainer.style.maxHeight = "0";
+              toggleBtn.innerHTML = '<i class="fa-solid fa-chevron-right transition-transform duration-300"></i> 展开详情';
+            } else {
+              fieldsContainer.style.maxHeight = "1000px";
+              toggleBtn.innerHTML = '<i class="fa-solid fa-chevron-down transition-transform duration-300"></i> 折叠详情';
+            }
+          });
+          parentElement.appendChild(toggleBtn);
+        }
+        
+        parentElement.appendChild(fieldsContainer);
+
+        // 递归渲染子节点（深度+1保持缩进）
+        if (node.children) {
+          node.children.forEach(child => renderTreeNode(child, fieldsContainer, depth + 1, node.id));
+        }
+      }
+      // 2. 普通文件夹节点（需要保留，可添加新项）
+      else if (node.children && node.children.length > 0) {
+        const nodeDiv = document.createElement("div");
+        nodeDiv.className = "tree-node flex items-start";
+        nodeDiv.style.paddingLeft = `${depth * 16}px`; // 层级缩进
+
+        const toggleBtn = document.createElement("button");
+        toggleBtn.className = "text-gray-500 hover:text-blue-500 mr-2 mt-1 focus:outline-none";
+        toggleBtn.innerHTML = '<i class="fa-solid fa-chevron-right transition-transform duration-300"></i>';
+        
+            // 简化文件夹标题，不显示项目数量
+        let folderTitleText = node.id;
+        
+        const folderTitle = document.createElement("div");
+        folderTitle.className = "flex items-center font-medium text-gray-800 cursor-pointer";
+        
+        // 图标映射表：根据内容类型显示不同的图标
+        let iconHTML = '';
+        if (node.id.includes("接口")) {
+          // 接口相关使用插头图标（绿色）
+          iconHTML = `<i class="fa-solid fa-plug text-green-500 mr-2"></i>`;
+        } else if (node.id.includes("处理器")) {
+          // 处理器相关使用芯片图标（紫色）
+          iconHTML = `<i class="fa-solid fa-microchip text-purple-500 mr-2"></i>`;
+        } else if (node.id.includes("配置") || node.id.includes("信息")) {
+          // 配置相关使用齿轮图标（蓝色）
+          iconHTML = `<i class="fa-solid fa-cog text-blue-500 mr-2"></i>`;
+        } else if (node.id.includes("Feature")) {
+          // Feature相关使用星星图标（黄色）
+          iconHTML = `<i class="fa-solid fa-star text-yellow-500 mr-2"></i>`;
+        } else {
+          // 其他使用文件夹图标（黄色）
+          iconHTML = `<i class="fa-solid fa-folder text-yellow-500 mr-2"></i>`;
+        }
+        
+        folderTitle.innerHTML = `${iconHTML} ${folderTitleText}`;
+        
+        const childrenDiv = document.createElement("div");
+        childrenDiv.className = "tree-children ml-6 mt-1 space-y-2";
+        
+        // 通用添加按钮逻辑：基于addingType字段
+        let addButtonContainer = null;
+        const addingType = node._addingTypeForUI || node.addingType || false;
+        if (addingType) {
+          addButtonContainer = document.createElement("div");
+          addButtonContainer.className = "mt-2";
+          
+          const addButton = document.createElement("button");
+          addButton.className = "bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md flex items-center text-sm";
+          
+          // 查找template类型的子节点作为模板
+          const templateNode = node.children.find(child => (child._itemtypeForUI || child.itemtype || "item") === "template");
+          const addItemName = templateNode ? templateNode.id : "新项";
+          
+          addButton.innerHTML = `<i class="fa-solid fa-plus mr-1"></i> 添加新${addItemName}`;
+          addButton.addEventListener("click", () => {
+            addNewItem(node, childrenDiv, depth + 1);
+          });
+          
+          addButtonContainer.appendChild(addButton);
+        }
+        
+        // 统一的折叠/展开逻辑
+        toggleBtn.addEventListener("click", () => {
+          childrenDiv.classList.toggle("expanded");
+          toggleBtn.querySelector("i").classList.toggle("rotate-90");
+        });
+        
+        nodeDiv.appendChild(toggleBtn);
+        nodeDiv.appendChild(folderTitle);
+        // 添加删除按钮（如果有）
+        if (deleteButtonContainer) {
+          nodeDiv.appendChild(deleteButtonContainer);
+        }
+        parentElement.appendChild(nodeDiv);
+        parentElement.appendChild(childrenDiv);
+        // 递归渲染子节点
+        node.children.forEach(child => renderTreeNode(child, childrenDiv, depth + 1, node.id));
+        
+        // 将添加按钮添加到childrenDiv末尾
+        if (addButtonContainer) {
+          childrenDiv.appendChild(addButtonContainer);
+        }
+      }
+      // 3. 叶子节点（无children，直接渲染输入框/静态文本）
+      else {
+        // 使用临时UI属性进行判断（已在createEnhancedDataForUI中处理了默认值）
+        if (node._displayForUI === false || (node.name === 'modifystate' || node.id === 'modifystate')) {
+          return;
+        }
+        const nodeDiv = document.createElement("div");
+        nodeDiv.className = "tree-node flex items-start";
+        nodeDiv.style.paddingLeft = `${depth * 16}px`; // 层级缩进
+        
+        // 为节点添加ID属性，用于删除操作
+        nodeDiv.dataset.nodeId = node.id;
+        nodeDiv.dataset.parentNodeId = node.parentId;
+
+        const label = document.createElement("div");
+        label.className = "w-80 text-gray-700 mr-4";
+        label.textContent = node.id;
+
+        const valueContainer = document.createElement("div");
+        valueContainer.className = "flex-1";
+        
+        // 可修改字段
+        const editable = node._editableForUI || node.editable || false;
+        if (editable) {
+          const type = node._typeForUI || node.type || "string";
+          switch (type) {
+            case "string":
+              const input = document.createElement("input");
+              input.type = "text";
+              // 去除默认的空格值
+              input.value = (node.value === " ") ? "" : (node.value || "");
+              input.className = "editable-input w-full px-3 py-1 border border-gray-300 rounded-md";
+              input.addEventListener("input", (e) => {
+                node.value = e.target.value;
+                // 更新modifystate为change
+                node.modifystate = 'change';
+                // 找到当前 node 在 UI 树中的父节点（即包含它的父级节点对象）
+                parentInTree = findrowparent(node);
+                // 同步更新原始数据
+                const originalNode = findOriginalNodeById2(currentData,node.id,node.vectorindex);
+                const orgianlparentNode = findOriginalNodeById(currentData,parentInTree.id);
+                if (originalNode) {
+                  originalNode.value = e.target.value;
+                  originalNode.modifystate = 'change';
+                  // 检查并更新父节点状态
+                  checkAndUpdateParentModifystate(node);
+                }
+                if (orgianlparentNode) {
+                  if (orgianlparentNode.modifystate == 'creation') {
+                    orgianlparentNode.modifystate = 'creation';
+                  }else{
+                    orgianlparentNode.modifystate = 'change';
+                  }
+                }
+              });
+              valueContainer.appendChild(input);
+              break;
+            case "number":
+              const numberInput = document.createElement("input");
+              numberInput.type = "number";
+              numberInput.value = node.value || 0;
+              numberInput.className = "editable-input w-100 px-3 py-1 border border-gray-300 rounded-md";
+              numberInput.addEventListener("input", (e) => {
+                node.value = e.target.value;
+                // 更新modifystate为change
+                node.modifystate = 'change';
+                // 找到当前 node 在 UI 树中的父节点（即包含它的父级节点对象）
+                parentInTree = findrowparent(node);
+                // 同步更新原始数据
+                const originalNode = findOriginalNodeById2(currentData,node.id,node.vectorindex);
+                const orgianlparentNode = findOriginalNodeById(currentData,parentInTree.id);
+                if (originalNode) {
+
+                  originalNode.value = e.target.value;
+                  originalNode.modifystate = 'change';
+                  // 检查并更新父节点状态
+                  checkAndUpdateParentModifystate(node);
+                }
+                if (orgianlparentNode) {
+                  if (orgianlparentNode.modifystate == 'creation') {
+                    orgianlparentNode.modifystate = 'creation';
+                  }else{
+                    orgianlparentNode.modifystate = 'change';
+                  }
+                }
+              });
+              valueContainer.appendChild(numberInput);
+              break;
+            case "float":
+              const floatInput = document.createElement("input");
+              floatInput.type = "number";
+              floatInput.step = "any"; // 允许输入任意小数
+              floatInput.value = node.value || 0;
+              floatInput.className = "editable-input w-100 px-3 py-1 border border-gray-300 rounded-md";
+              floatInput.addEventListener("input", (e) => {
+                node.value = e.target.value;
+                // 更新modifystate为change
+                node.modifystate = 'change';
+                // 找到当前 node 在 UI 树中的父节点（即包含它的父级节点对象）
+                parentInTree = findrowparent(node);
+                // 同步更新原始数据
+                const originalNode = findOriginalNodeById2(currentData,node.id,node.vectorindex);
+                const orgianlparentNode = findOriginalNodeById(currentData,parentInTree.id);
+                if (originalNode) {
+                  originalNode.value = e.target.value;
+                  originalNode.modifystate = 'change';
+                  // 检查并更新父节点状态
+                  checkAndUpdateParentModifystate(node);
+                }
+                if (orgianlparentNode) {
+                  if (orgianlparentNode.modifystate == 'creation') {
+                    orgianlparentNode.modifystate = 'creation';
+                  }else{
+                    orgianlparentNode.modifystate = 'change';
+                  }
+                }
+              });
+              valueContainer.appendChild(floatInput);
+              break;
+            case "boolean":
+              const checkbox = document.createElement("input");
+              checkbox.type = "checkbox";
+              checkbox.checked = node.value || false;
+              checkbox.className = "editable-input mt-1";
+              checkbox.addEventListener("change", (e) => {
+                node.value = e.target.checked;
+
+                // 更新modifystate为change
+                node.modifystate = 'change';
+                // 找到当前 node 在 UI 树中的父节点（即包含它的父级节点对象）
+                parentInTree = findrowparent(node);
+                // 同步更新原始数据
+                const originalNode = findOriginalNodeById2(currentData,node.id,node.vectorindex);
+                const orgianlparentNode = findOriginalNodeById(currentData,parentInTree.id);
+                if (originalNode) {
+                  originalNode.value = e.target.checked;
+
+                  originalNode.modifystate = 'change';
+                  // 检查并更新父节点状态
+                  checkAndUpdateParentModifystate(node);
+                }
+                if (orgianlparentNode) {
+                  if (orgianlparentNode.modifystate == 'creation') {
+                    orgianlparentNode.modifystate = 'creation';
+                  }else{
+                    orgianlparentNode.modifystate = 'change';
+                  }
+                }
+              });
+              valueContainer.appendChild(checkbox);
+              break;
+            case "textarea":
+              const textarea = document.createElement("textarea");
+              // 去除默认的空格值
+              textarea.value = (node.value === " ") ? "" : (node.value || "");
+              textarea.className = "editable-input w-full px-3 py-1 border border-gray-300 rounded-md h-24 resize-none";
+              textarea.addEventListener("input", (e) => {
+                node.value = e.target.value;
+                // 更新modifystate为change
+                node.modifystate = 'change';
+                // 找到当前 node 在 UI 树中的父节点（即包含它的父级节点对象）
+                parentInTree = findrowparent(node);
+                // 同步更新原始数据
+                const originalNode = findOriginalNodeById2(currentData,node.id,node.vectorindex);
+                const orgianlparentNode = findOriginalNodeById(currentData,parentInTree.id);
+                if (originalNode) {
+                  originalNode.value = e.target.value;
+                  originalNode.modifystate = 'change';
+                  // 检查并更新父节点状态
+                  checkAndUpdateParentModifystate(node);
+                }
+                if (orgianlparentNode) {
+                  if (orgianlparentNode.modifystate == 'creation') {
+                    orgianlparentNode.modifystate = 'creation';
+                  }else{
+                    orgianlparentNode.modifystate = 'change';
+                  }
+                }
+              });
+              valueContainer.appendChild(textarea);
+              break;
+            case "enum":
+              const select = document.createElement("select");
+              select.className = "editable-input w-100 px-3 py-1 border border-gray-300 rounded-md";
+              select.dataset.nodeId = node.id;
+              select.dataset.parentId = node.parentId;
+              
+              // 添加选项
+              node.options.forEach(option => {
+                const optionElement = document.createElement("option");
+                optionElement.value = option;
+                optionElement.textContent = option;
+                optionElement.selected = option === node.value;
+                select.appendChild(optionElement);
+              });
+
+              select.addEventListener("change", (e) => {
+                node.value = e.target.value;
+                // 更新modifystate为change
+                node.modifystate = 'change';
+                // 找到当前 node 在 UI 树中的父节点（即包含它的父级节点对象）
+                parentInTree = findrowparent(node);
+                // 同步更新原始数据
+                const originalNode = findOriginalNodeById2(currentData,node.id,node.vectorindex);
+                const orgianlparentNode = findOriginalNodeById(currentData,parentInTree.id);
+                if (originalNode) {
+                  originalNode.value = e.target.value;
+                  originalNode.modifystate = 'change';
+                  // 检查并更新父节点状态
+                  checkAndUpdateParentModifystate(node);
+                }
+                if (orgianlparentNode) {
+                  if (orgianlparentNode.modifystate == 'creation') {
+                    orgianlparentNode.modifystate = 'creation';
+                  }else{
+                    orgianlparentNode.modifystate = 'change';
+                  }
+                }
+                
+                // 处理联动下拉菜单逻辑
+                handleDependentFields(node, e.target.value,node.vectorindex);
+              });
+              
+              valueContainer.appendChild(select);
+              break;
+          }
+        } 
+        // 不可修改字段
+        else {
+          const staticText = document.createElement("div");
+          staticText.className = "text-gray-500 bg-gray-50 px-3 py-1 border border-gray-200 rounded-md";
+          staticText.textContent = node.value || "无数据";
+          valueContainer.appendChild(staticText);
+        }
+
+        // 删除按钮逻辑已移到函数顶部，适用于所有节点类型
+        
+        nodeDiv.appendChild(label);
+        nodeDiv.appendChild(valueContainer);
+        // 添加删除按钮（如果有）
+        if (deleteButtonContainer) {
+          nodeDiv.appendChild(deleteButtonContainer);
+        }
+        parentElement.appendChild(nodeDiv);
+      }
+    }
+    function findrowparent(node){
+      let parentInTree = findNodeByParentId(node.parentId);
+
+      if (!parentInTree) {
+        console.error("未找到父节点，无法更新状态");
+        return;
+      }else if (parentInTree.itemlevel === "row") {
+        // 接口节点特殊处理：更新interface节点的modifystate
+        parentInTree.modifystate = 'change';
+        return parentInTree
+      }else{
+        parentInTree = findrowparent(parentInTree);
+        
+      }
+      return parentInTree;
+    }
+    // 通用添加新项的函数
+    function addNewItem(parentNode, parentElement, depth) {
+      // 查找template类型的子节点作为模板，使用临时UI属性或原始属性
+      const templateNode = parentNode.children.find(child => 
+        (child._itemtypeForUI || child.itemtype || "item") === "template"
+      );
+      
+      if (!templateNode) {
+        console.error("未找到模板节点，无法添加新项");
+        return;
+      }
+      
+      // 获取当前实际项目数量（排除template类型）
+      // 使用更可靠的方式计算已存在的项目数量，特别是针对interface节点
+      let itemCount = 0;
+      
+      // 方案1：统计具有类似ID模式的项目（更可靠）
+      const templateIdPrefix = templateNode.id.replace(/\d+$/, ''); // 移除可能的数字后缀，避免重复声明
+      for (let i = 0; i < parentNode.children.length; i++) {
+        const child = parentNode.children[i];
+        // 跳过模板节点
+        if ((child._itemtypeForUI || child.itemtype || "item") === "template") continue;
+        
+        // 检查是否是已存在的项目
+        if (child.id.startsWith(templateIdPrefix) && !isNaN(parseInt(child.id.replace(templateIdPrefix, '')))) {
+
+          // 提取数字部分并更新最大计数
+          const num = parseInt(child.id.replace(templateIdPrefix, ''));
+          itemCount = Math.max(itemCount, num);
+        } else {
+          // 不是数字后缀的项目，也计入总数
+          itemCount++;
+        }
+      }
+      
+      // 如果没有找到带数字后缀的项目，就使用过滤方式的计数
+      if (itemCount === 0) {
+        itemCount = parentNode.children.filter(child => 
+          (child._itemtypeForUI || child.itemtype || "item") !== "template"
+        ).length;
+      }
+      
+      // 深拷贝模板节点
+      const newItem = JSON.parse(JSON.stringify(templateNode));
+      
+      // 更新ID - 根据模板名称和生成的个数创建唯一ID
+      // 由于itemCount已经是最大的现有序号，直接加1
+      // const templateIdPrefix = templateNode.id.replace(/\d+$/, ''); // 移除可能的数字后缀
+
+      newItem.id = `${templateIdPrefix}${parentNode.children.length}`;
+      
+      // 仅在templateNode中存在itemtype字段时才设置，保持数据结构一致性
+      if (templateNode.hasOwnProperty('itemtype')) {
+        newItem.itemtype = "item";
+      }
+      
+      // 为新创建的对象设置modifystate为creation（业务需求字段）
+      newItem.modifystate = 'creation';
+      
+      // 更新ID字段的值
+      if (newItem.children) {
+        newItem.children.forEach(field => {
+          field.vectorindex = parentNode.children.length;
+          // 为ID字段生成新值，特别是INTERFACE_ID
+          // if (field.id === "INTERFACE_ID" || field.id.includes("ID") || field.id.includes("Id")) {
+          //   // 确保为interface创建基于索引的唯一ID，格式为：interface+序号
+          //   if (field.id === "INTERFACE_ID") {
+          //     const templateIdPrefix = templateNode.id.replace(/\d+$/, ''); // 移除可能的数字后缀
+          //     field.value = `${templateIdPrefix}${itemCount + 1}`;
+          //   } else {
+          //     // 其他ID字段保持数字递增
+          //     try {
+          //       field.value = Number(field.value) + itemCount;
+          //     } catch (e) {
+          //       // 如果无法转换为数字，则使用基于索引的新值
+          //       field.value = `${field.value || 'id'}${itemCount + 1}`;
+          //     }
+          //   }
+          // }
+          // 为子字段设置modifystate为creation（业务需求字段）
+          field.modifystate = 'creation';
+        });
+      }
+      
+      // 使用增强数据进行UI渲染，但不修改原始数据结构
+      const enhancedNewItem = createEnhancedDataForUI(newItem);
+      
+      // 添加到父节点的children数组（UI副本）
+      parentNode.children.push(newItem);
+
+      const originalParentNode = findOriginalNodeById(currentData, parentNode.id);
+      if (originalParentNode) {
+
+        originalParentNode.children.push(JSON.parse(JSON.stringify(newItem)));
+      } else {
+        console.error('未找到原始父节点，无法更新原始数据结构');
+      }
+      
+      // 创建新项的容器元素
+      const newItemDiv = document.createElement("div");
+      
+      // 获取添加按钮容器
+      const addButtonContainer = parentElement.lastElementChild;
+      
+      // 在添加按钮前插入新项
+      parentElement.insertBefore(newItemDiv, addButtonContainer);
+      
+      // 渲染新项，使用增强数据
+      renderTreeNode(enhancedNewItem, newItemDiv, depth, parentNode.id);
+      
+      // 更新文件夹标题
+      updateFolderTitle(parentNode, parentElement.parentNode.previousElementSibling);
+      
+      // 添加新项后刷新JSON展示栏
+      refreshJSONDisplay();
+    }
+    
+    // 刷新JSON展示栏的函数
+    function refreshJSONDisplay() {
+      console.log('刷新JSON展示栏...');
+      console.log('当前数据结构:', currentData);
+      
+      // 在函数内部获取preview元素，确保作用域正确
+      const previewElement = document.getElementById("data-preview");
+      
+      // 验证currentData和preview元素是否存在
+      if (currentData && previewElement) {
+        try {
+          // 直接使用JSON.stringify处理currentData，避免调用未定义的formatData函数
+          console.log('直接处理currentData');
+          previewElement.textContent = JSON.stringify(currentData, null, 2);
+        } catch (error) {
+          console.error('刷新JSON展示时出错:', error);
+          previewElement.textContent = '刷新JSON展示时出错: ' + error.message;
+        }
+      } else {
+        console.error('currentData未定义或找不到data-preview元素');
+        if (!currentData) console.log('currentData is:', currentData);
+        if (!previewElement) console.log('data-preview元素未找到');
+      }
+    }
+    
+    // 更新文件夹标题的函数
+    function updateFolderTitle(node, nodeDiv) {
+      if (nodeDiv) {
+        const folderTitle = nodeDiv.querySelector(".font-medium");
+        if (folderTitle) {
+          // 简化文件夹标题，不显示项目数量
+        const newTitleText = node.id.split('（')[0];
+          
+          // 使用图标映射表：根据内容类型显示不同的图标
+          let iconHTML = '';
+          if (node.id.includes("接口")) {
+            // 接口相关使用插头图标（绿色）
+            iconHTML = `<i class="fa-solid fa-plug text-green-500 mr-2"></i>`;
+          } else if (node.id.includes("处理器")) {
+            // 处理器相关使用芯片图标（紫色）
+            iconHTML = `<i class="fa-solid fa-microchip text-purple-500 mr-2"></i>`;
+          } else if (node.id.includes("配置") || node.id.includes("信息")) {
+            // 配置相关使用齿轮图标（蓝色）
+            iconHTML = `<i class="fa-solid fa-cog text-blue-500 mr-2"></i>`;
+          } else if (node.id.includes("Feature")) {
+            // Feature相关使用星星图标（黄色）
+            iconHTML = `<i class="fa-solid fa-star text-yellow-500 mr-2"></i>`;
+          } else {
+            // 其他使用文件夹图标（黄色）
+            iconHTML = `<i class="fa-solid fa-folder text-yellow-500 mr-2"></i>`;
+          }
+          
+          node.id = newTitleText; // 更新节点ID
+          folderTitle.innerHTML = `${iconHTML} ${newTitleText}`;
+        }
+      }
+    }
+    
+
+    // 在原始数据结构中递归查找节点，增强对interface数组的支持
+    function findOriginalNodeById2(node, targetId,targetVectorIndex) {
+      // 检查当前节点
+
+      if (node.id === targetId && node.vectorindex === targetVectorIndex) {
+        return node;
+      }
+      
+      // 特殊处理interface数组类型的数据结构
+      // 如果当前节点是一个对象数组，且其中包含INTERFACE_ID字段
+      if (Array.isArray(node)) {
+        for (let i = 0; i < node.length; i++) {
+          // 首先尝试通过直接匹配对象的id或_id
+          if (node[i].id === targetId || node[i]._id === targetId) {
+            return node[i];
+          }
+          // 然后检查是否有INTERFACE_ID字段并匹配
+          if (node[i].INTERFACE_ID === targetId) {
+            return node[i];
+          }
+          // 递归检查对象内部
+          const found = findOriginalNodeById(node[i], targetId);
+          if (found) {
+            return found;
+          }
+        }
+      }
+      // 检查对象的children数组
+      if (node.children && node.children.length > 0) {
+        for (let i = 0; i < node.children.length; i++) {
+          const found = findOriginalNodeById2(node.children[i], targetId,targetVectorIndex);
+          if (found) {
+            return found;
+          }
+        }
+      }
+      // 检查对象的interface数组（如果有）
+      if (node.interface && Array.isArray(node.interface)) {
+        for (let i = 0; i < node.interface.length; i++) {
+          // 优先通过INTERFACE_ID匹配
+          if (node.interface[i].INTERFACE_ID === targetId) {
+            return node.interface[i];
+          }
+          // 然后通过节点的id匹配
+          if (node.interface[i].id === targetId) {
+            return node.interface[i];
+          }
+          // 递归检查interface内部结构
+          const found = findOriginalNodeById(node.interface[i], targetId);
+          if (found) {
+            return found;
+          }
+        }
+      }
+      
+      // 检查对象的其他可能包含对象或数组的属性
+      for (const key in node) {
+        if (typeof node[key] === 'object' && node[key] !== null && key !== 'children' && key !== 'interface') {
+          const found = findOriginalNodeById(node[key], targetId);
+          if (found) {
+            return found;
+          }
+        }
+      }
+      
+      return null;
+    }
+    
+// 在原始数据结构中递归查找节点，增强对interface数组的支持
+    function findOriginalNodeById(node, targetId) {
+      // 检查当前节点
+
+      if (node.id === targetId) {
+        return node;
+      }
+      
+      // 特殊处理interface数组类型的数据结构
+      // 如果当前节点是一个对象数组，且其中包含INTERFACE_ID字段
+      if (Array.isArray(node)) {
+        for (let i = 0; i < node.length; i++) {
+          // 首先尝试通过直接匹配对象的id或_id
+          if (node[i].id === targetId || node[i]._id === targetId) {
+            return node[i];
+          }
+          // 然后检查是否有INTERFACE_ID字段并匹配
+          if (node[i].INTERFACE_ID === targetId) {
+            return node[i];
+          }
+          // 递归检查对象内部
+          const found = findOriginalNodeById(node[i], targetId);
+          if (found) {
+            return found;
+          }
+        }
+      }
+      // 检查对象的children数组
+      if (node.children && node.children.length > 0) {
+        for (let i = 0; i < node.children.length; i++) {
+          const found = findOriginalNodeById(node.children[i], targetId);
+          if (found) {
+            return found;
+          }
+        }
+      }
+      // 检查对象的interface数组（如果有）
+      if (node.interface && Array.isArray(node.interface)) {
+        for (let i = 0; i < node.interface.length; i++) {
+          // 优先通过INTERFACE_ID匹配
+          if (node.interface[i].INTERFACE_ID === targetId) {
+            return node.interface[i];
+          }
+          // 然后通过节点的id匹配
+          if (node.interface[i].id === targetId) {
+            return node.interface[i];
+          }
+          // 递归检查interface内部结构
+          const found = findOriginalNodeById(node.interface[i], targetId);
+          if (found) {
+            return found;
+          }
+        }
+      }
+      
+      // 检查对象的其他可能包含对象或数组的属性
+      for (const key in node) {
+        if (typeof node[key] === 'object' && node[key] !== null && key !== 'children' && key !== 'interface') {
+          const found = findOriginalNodeById(node[key], targetId);
+          if (found) {
+            return found;
+          }
+        }
+      }
+      
+      return null;
+    }
+    
+    // 根据父节点ID查找节点（用于UI数据）
+    // 查找父节点的函数，从enhancedData中递归查找
+    function findNodeByParentId(parentId) {
+      // 辅助递归函数
+      function searchNode(node) {
+        if (node.id === parentId) {
+          return node;
+        }
+        
+        if (node.children && node.children.length > 0) {
+          for (let i = 0; i < node.children.length; i++) {
+            const found = searchNode(node.children[i]);
+            if (found) {
+              return found;
+            }
+          }
+        }
+        
+        return null;
+      }
+      
+      // 从全局enhancedData中查找父节点
+      // console.log("Starting search in enhancedData",window.enhancedData)
+      const result = searchNode(window.enhancedData || {});
+      // console.log(`查找父节点: ${parentId}, 结果: ${result ? '找到' : '未找到'}`);
+      // console.log('查找父节点结果:', result);
+      return result;
+    }
+    
+    // 删除项目的函数
+    function deleteItem(nodeId, parentNodeId, nodeElement, parentElement,mode) {
+      // 显示确认对话框
+      if (confirm('确定要删除此项吗？此操作无法撤销。')) {
+        try {
+          console.log(`删除节点：${nodeId}，父节点：${parentNodeId}`);
+          
+          // 1. 从UI中移除元素
+          if (nodeElement && nodeElement.parentNode === parentElement) {
+            parentElement.removeChild(nodeElement);
+            console.log('从UI中删除节点成功');
+          }
+
+
+          
+            const originalParentNode = findOriginalNodeById(currentData, parentNodeId);
+            // 2. 从原始数据结构中删除节点
+            if (originalParentNode && originalParentNode.children) {
+              const nodeIndex = originalParentNode.children.findIndex(child => child.id === nodeId);
+              if (nodeIndex !== -1) {
+                const currentelement = originalParentNode.children[nodeIndex]
+                if (mode=="item"){
+                  originalParentNode.children.splice(nodeIndex, 1);
+
+                }else{
+                  currentelement.modifystate = "todelete"
+                }
+              } else {
+                console.error(`在原始数据结构中未找到节点：${nodeId}`);
+              }
+            } else {
+              console.error(`未找到原始父节点：${parentNodeId}`);
+            }
+          
+          // 3. 刷新JSON展示
+          refreshJSONDisplay();
+          
+          // 4. 更新文件夹标题（如果需要）
+          // 这里可以添加更新文件夹标题的逻辑
+          
+        } catch (error) {
+          console.error('删除节点时出错：', error);
+          alert('删除操作失败，请重试');
+        }
+      }
+    }
+  
+// 处理联动字段的函数
+function handleDependentFields(parentNode, selectedValue) {
+
+  // 查找当前节点所在的父容器
+  const parentContainer = findNodeByParentId(parentNode.parentId);
+  if (!parentContainer || !parentContainer.children) return;
+  // 遍历所有兄弟节点，查找依赖于当前节点的字段
+  parentContainer.children.forEach(childNode => {
+    // 检查子节点是否依赖于当前节点（通过parentField和parentValues配置）
+    if (childNode.parentField === parentNode.id && childNode.parentValues) {
+      // 获取当前选择值对应的选项列表
+      const dependentOptions = childNode.parentValues[selectedValue] || [];
+      
+      // 更新原始数据中的选项
+      childNode.options = dependentOptions;
+      
+      // 如果当前值不在新选项中，则设置为第一个选项或清空
+      if (dependentOptions.length > 0 && !dependentOptions.includes(childNode.value)) {
+        childNode.value = dependentOptions[0];
+        childNode.modifystate = 'change';
+        
+        // 更新原始数据中的值
+        const originalChildNode = findOriginalNodeById2(currentData, childNode.id, childNode.vectorindex);
+        if (originalChildNode) {
+          originalChildNode.value = dependentOptions[0];
+          originalChildNode.modifystate = 'change';
+          checkAndUpdateParentModifystate(childNode);
+        }
+      } else if (dependentOptions.length === 0) {
+        childNode.value = '';
+        childNode.modifystate = 'change';
+        
+        const originalChildNode = findOriginalNodeById2(currentData, childNode.id, childNode.vectorindex);
+        if (originalChildNode) {
+          originalChildNode.value = '';
+          originalChildNode.modifystate = 'change';
+          checkAndUpdateParentModifystate(childNode);
+        }
+      }
+      // 更新UI中的下拉选项
+      updateDependentSelectUI(childNode,parentContainer.id);
+    }
+  });
+}
+
+// 更新依赖字段的UI
+function updateDependentSelectUI(node,parentid) {
+  // 查找对应的select元素
+  const selectElements = document.querySelectorAll(`select[data-node-id="${node.id}"][data-parent-id="${parentid}"]`);
+  selectElements.forEach(select => {
+    // 清空现有选项
+    select.innerHTML = '';
+    
+    // 添加新选项
+    node.options.forEach(option => {
+      const optionElement = document.createElement("option");
+      optionElement.value = option;
+      optionElement.textContent = option;
+      optionElement.selected = option === node.value;
+      select.appendChild(optionElement);
+    });
+    
+    // 添加一些视觉反馈，显示选项已更新
+    select.classList.add('border-blue-400');
+    setTimeout(() => {
+      select.classList.remove('border-blue-400');
+    }, 500);
+  });
+}
+
+// 通过ID查找节点数据
+function findNodeById(nodeId) {
+    // 递归查找节点
+    function searchNode(node) {
+        if (node._id === nodeId) {
+            return node;
+        }
+        
+        if (node.children && node.children.length > 0) {
+            for (let i = 0; i < node.children.length; i++) {
+                const found = searchNode(node.children[i]);
+                if (found) {
+                    return found;
+                }
+            }
+        }
+        
+        return null;
+    }
+    
+    return searchNode(currentData);
+}
+
+// 查找节点的父节点
+function findParentNode(nodeId) {
+    // 递归查找父节点
+    function searchParent(parentNode) {
+        if (!parentNode.children || parentNode.children.length === 0) {
+            return null;
+        }
+        
+        for (let i = 0; i < parentNode.children.length; i++) {
+            if (parentNode.children[i]._id === nodeId) {
+                return parentNode;
+            }
+            
+            const found = searchParent(parentNode.children[i]);
+            if (found) {
+                return found;
+            }
+        }
+        
+        return null;
+    }
+    
+    return searchParent(currentData);
+}
+
+// 检查并更新父节点的modifystate
+function checkAndUpdateParentModifystate(childNode) {
+    const parentNode = findParentNode(childNode._id);
+    if (!parentNode) return;
+    
+    // 检查父节点的children是否仅包含itemtype为column的成员，使用临时UI属性或原始属性
+    const allAreColumns = parentNode.children.every(item => {
+        const itemlevel = item._itemlevelForUI || item.itemlevel || 'row';
+        const itemtype = item._itemtypeForUI || item.itemtype || 'item';
+        return itemlevel === 'column' || itemtype === 'template';
+    });
+    
+    if (allAreColumns) {
+        // 检查是否有子节点的modifystate为change
+        const hasChangedChild = parentNode.children.some(item => {
+            const itemlevel = item._itemlevelForUI || item.itemlevel || 'row';
+            return itemlevel === 'column' && item.modifystate === 'change';
+        });
+        
+        // 如果父节点modifystate为none或未定义，且有子节点modifystate为change，则更新父节点
+        if ((parentNode.modifystate === undefined || parentNode.modifystate === 'none') && hasChangedChild) {
+            parentNode.modifystate = 'change';
+            console.log(`更新父节点 ${parentNode._id} 的modifystate为: change`);
+            // 递归检查祖父节点
+            checkAndUpdateParentModifystate(parentNode);
+        }
+    }
+}
+
+// 更新节点数据
+function updateNodeData(nodeId, key, value) {
+    const node = findNodeById(nodeId);
+    if (node) {
+        node[key] = value;
+        console.log(`更新节点 ${nodeId} 的 ${key} 属性为:`, value);
+        
+        // 如果是更新modifystate为change，检查并更新父节点状态
+        if (key === 'modifystate' && value === 'change') {
+            checkAndUpdateParentModifystate(node);
+        }
+    } else {
+        console.error(`未找到节点: ${nodeId}`);
+    }
+}
+
+    // 5. 页面加载完成后初始化UI
+    document.addEventListener('DOMContentLoaded', initUI);
+    
+    // 初始化UI函数
+    async function initUI() {
+      try {
+        // 直接加载本地的联动下拉菜单示例数据
+        // 首先检查localStorage中是否有外部数据
+        const externalData = localStorage.getItem('externalData');
+        if (externalData) {
+                      // 使用外部数据
+          currentData = JSON.parse(externalData);
+          // 使用后删除数据，避免数据残留
+          localStorage.removeItem('externalData');
+          console.log('成功从localStorage加载外部数据');
+        } else {
+            const response = await fetch('linked_dropdown_example.json');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            currentData = await response.json();
+        }
+        console.log('成功加载联动下拉菜单示例数据');
+        
+        // 更新页面标题
+        document.getElementById("main-title").innerHTML = `
+          <i class="fa-solid fa-folder-tree text-blue-500 mr-3"></i>
+          ${currentData.id} - 树状数据录入界面
+        `;
+        
+        // 创建用于UI渲染的增强数据，但不修改原始数据结构
+        // 将enhancedData设置为全局变量，以便在findNodeByParentId函数中使用
+        window.enhancedData = createEnhancedDataForUI(currentData);
+        
+        // 渲染树状结构
+        const treeContainer = document.getElementById("tree-container");
+        renderTreeNode(window.enhancedData, treeContainer);
+        
+        // 初始化所有联动字段，确保子选项正确匹配父选项的默认值
+        initializeDependentFields();
+        
+      } catch (error) {
+        console.error('加载数据失败:', error);
+        // 显示错误信息给用户
+        const treeContainer = document.getElementById("tree-container");
+        treeContainer.innerHTML = `
+          <div class="alert alert-error">
+            <i class="fa-solid fa-circle-exclamation mr-2"></i>
+            数据加载失败: ${error.message}
+          </div>
+        `;
+        
+        // 使用默认数据作为后备方案
+        currentData = {
+          id: "默认数据",
+          children: [
+            {
+              addingType: false,
+              itemtype: "item",
+              id: "基本信息",
+              children: [
+                { id: "名称", value: "默认项目", editable: true, type: "string", display: true },
+                { id: "描述", value: "这是默认描述", editable: true, type: "string", display: true }
+              ]
+            }
+          ]
+        };
+        const enhancedData = createEnhancedDataForUI(currentData);
+        renderTreeNode(enhancedData, treeContainer);
+      }
+    }
+    
+    // 初始化联动字段，确保子选项正确匹配父选项的默认值
+    function initializeDependentFields() {
+      // 递归遍历所有节点，查找并处理依赖字段
+      function processNode(node) {
+        // 检查当前节点是否依赖于其他节点（即是否有parentField）
+        if (node.parentField && node.parentValues) {
+          // 查找父字段节点
+          const parentNode = findNodeByFieldId2(node.parentField,node.vectorindex);
+          if (parentNode && parentNode.value) {
+            // 获取当前选择值对应的选项列表
+            const dependentOptions = node.parentValues[parentNode.value] || [];
+            // 如果当前值不在新选项中，则设置为第一个选项或清空
+            if (dependentOptions.length > 0 && (!node.value || !dependentOptions.includes(node.value))) {
+              node.value = dependentOptions[0];
+              // 更新原始数据中的值
+              const originalNode = findOriginalNodeById2(currentData, node.id, node.vectorindex);
+              if (originalNode) {
+                originalNode.value = dependentOptions[0];
+              }
+            } else if (dependentOptions.length === 0) {
+              node.value = '';
+              const originalNode = findOriginalNodeById2(currentData, node.id, node.vectorindex);
+              if (originalNode) {
+                originalNode.value = '';
+              }
+            }
+
+            // 更新原始数据中的选项
+            node.options = dependentOptions;
+            const originalNode = findOriginalNodeById2(currentData, node.id, node.vectorindex);
+            if (originalNode) {
+              originalNode.value = node.value;
+              originalNode.options = dependentOptions;
+
+            }
+            // console.log("处理联动字段",node, dependentOptions)
+            // 更新UI中的下拉选项
+            updateDependentSelectUI(node,parentNode.parentId);
+          }
+        }
+        
+        // 递归处理子节点
+        if (node.children && Array.isArray(node.children)) {
+          node.children.forEach(child => processNode(child));
+        }
+      }
+      // 开始从根节点处理
+      processNode(window.enhancedData);
+    }
+    
+    // 根据字段ID查找节点
+    function findNodeByFieldId(fieldId) {
+      let foundNode = null;
+      
+      function searchInNode(node) {
+        if (node.id === fieldId) {
+          foundNode = node;
+          return true;
+        }
+        
+        if (node.children && Array.isArray(node.children)) {
+          for (const child of node.children) {
+            if (searchInNode(child)) {
+              return true;
+            }
+          }
+        }
+        
+        return false;
+      }
+      
+      searchInNode(window.enhancedData);
+      return foundNode;
+    }
+
+        // 根据字段ID查找节点
+    function findNodeByFieldId2(fieldId,vectorindex) {
+      let foundNode = null;
+      
+      function searchInNode(node) {
+        if (node.id === fieldId && node.vectorindex === vectorindex) {
+          foundNode = node;
+          return true;
+        }
+        
+        if (node.children && Array.isArray(node.children)) {
+          for (const child of node.children) {
+            if (searchInNode(child)) {
+              return true;
+            }
+          }
+        }
+        
+        return false;
+      }
+      
+      searchInNode(window.enhancedData);
+      return foundNode;
+    }
+
+    // 6. 格式化数据的辅助函数
+    function formatData(node) {
+      // 创建空对象，只复制原始存在的字段
+      const result = {};
+      
+      // 复制原始节点中存在的所有属性，不添加默认属性
+      for (const key in node) {
+        // 跳过临时UI属性和内部ID
+        if (key.startsWith('_')) {
+          continue;
+        }
+        
+        // 递归处理children
+        if (key === 'children' && Array.isArray(node[key])) {
+          // 保留所有类型的子节点，包括template类型
+          const filteredChildren = node[key]
+            .map(child => formatData(child));
+          
+          if (filteredChildren.length > 0) {
+            result[key] = filteredChildren;
+          }
+        } else if (typeof node[key] === 'object' && node[key] !== null) {
+          // 递归处理嵌套对象
+          const nestedResult = formatData(node[key]);
+          if (Object.keys(nestedResult).length > 0) {
+            result[key] = nestedResult;
+          }
+        } else {
+          // 复制基本类型值
+          result[key] = node[key];
+        }
+      }
+      
+      return result;
+    }
+    
+    // 查看更新后的数据
+    document.getElementById("view-data-btn").addEventListener("click", () => {
+      const preview = document.getElementById("data-preview");
+      preview.classList.toggle("hidden");
+      
+      // 使用全局的currentData变量，并在使用前进行验证
+      if (currentData) {
+        const formattedData = formatData(currentData);
+        preview.textContent = JSON.stringify(formattedData, null, 2);
+      } else {
+        preview.textContent = '暂无数据可显示';
+      }
+    });
+    
+    // 下载数据文件 - 修改为发送数据到后端
+    document.getElementById("download-data-btn").addEventListener("click", async () => {
+      // 使用全局的currentData变量，并在使用前进行验证
+      if (currentData) {
+        const formattedData = formatData(currentData);
+        command = ip + '/createnewsql';
+        // 发送数据到后端API
+        fetch(command, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formattedData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP错误: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+          const operationRecords = JSON.parse(data.output);
+          showOperationResults(operationRecords);
+        })
+        .catch(error => {
+            // console.error('生成新数据失败:', error);
+            console.error('生成新数据失败:', error);
+        });
+
+        } else {
+        alert('暂无数据可发送');
+      }
+    });
+    
+    // 保存数据到JSON文件
+    function saveDataToJsonFile(data, fileName) {
+      // 创建JSON字符串
+      const jsonString = JSON.stringify(data, null, 2);
+      
+      // 创建Blob对象
+      const blob = new Blob([jsonString], { type: 'application/json' });
+      
+      // 创建下载链接
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      
+      // 模拟点击下载
+      document.body.appendChild(link);
+      link.click();
+      
+      // 清理
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      console.log(`数据已保存到文件: ${fileName}`);
+    }
+  </script>
+
+  <!-- 操作结果悬浮窗 -->
+  <div id="operation-results-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[80vh] overflow-hidden">
+      <!-- 悬浮窗头部 -->
+      <div class="bg-gray-100 px-6 py-4 border-b flex justify-between items-center">
+        <h3 class="text-lg font-semibold text-gray-800">操作执行结果</h3>
+        <button id="close-modal" class="text-gray-500 hover:text-gray-700">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+      <!-- 悬浮窗内容 -->
+      <div class="px-6 py-4 overflow-y-auto max-h-[60vh]">
+        <div id="results-list" class="space-y-4">
+          <!-- 结果将在这里动态添加 -->
+        </div>
+      </div>
+      <!-- 悬浮窗底部 -->
+      <div class="bg-gray-50 px-6 py-4 border-t flex justify-end">
+        <button id="confirm-close" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition duration-200">
+          关闭
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+      // 显示操作结果悬浮窗
+      function showOperationResults(records) {
+        const resultsList = document.getElementById('results-list');
+        resultsList.innerHTML = '';
+
+        if (records.length === 0) {
+          resultsList.innerHTML = '<p class="text-gray-500 text-center py-4">暂无操作记录</p>';
+        } else {
+          records.forEach((record, index) => {
+            const resultItem = document.createElement('div');
+            resultItem.className = 'p-4 border rounded-lg transition-all hover:shadow-md';
+            
+            // 设置状态图标和颜色
+            const statusIcon = record.success 
+              ? '<i class="fas fa-check-circle text-green-500 text-xl mr-2"></i>'
+              : '<i class="fas fa-times-circle text-red-500 text-xl mr-2"></i>';
+            
+            // 格式化操作类型显示文本
+            const operationTypeText = {
+              'insert': '插入',
+              'update': '更新',
+              'delete': '删除'
+            }[record.operation_type] || record.operation_type;
+            
+            // 构建操作数据显示
+            let dataHtml = '<div class="text-sm mt-2 text-gray-600">';
+            dataHtml += '</div>';
+            
+            // 设置完整的HTML内容
+            resultItem.innerHTML = `
+              <div class="flex items-center mb-2">
+                ${statusIcon}
+                <span class="font-medium">${operationTypeText} ${record.table_name} 表</span>
+                ${record.success ? 
+                  '<span class="ml-auto text-green-500 text-sm">成功</span>' : 
+                  '<span class="ml-auto text-red-500 text-sm">失败</span>'
+                }
+              </div>
+              <div class="text-sm text-gray-500">行ID: ${record.row_id || 'N/A'}</div>
+              ${dataHtml}
+              ${record.error ? 
+                `<div class="mt-2 text-sm text-red-600">错误信息: ${record.error}</div>` : 
+                ''
+              }
+            `;
+            
+            resultsList.appendChild(resultItem);
+          });
+        }
+        
+        // 显示悬浮窗
+        const modal = document.getElementById('operation-results-modal');
+        modal.classList.remove('hidden');
+        
+        // 居中悬浮窗（如果需要）
+        centerModal();
+      }
+      
+      // 关闭悬浮窗
+      function closeModal() {
+        document.getElementById('operation-results-modal').classList.add('hidden');
+      }
+      
+      // 居中悬浮窗
+      function centerModal() {
+        // 这个函数可以根据需要调整悬浮窗的位置
+      }
+      
+      // 添加事件监听
+      document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('close-modal').addEventListener('click', closeModal);
+        document.getElementById('confirm-close').addEventListener('click', closeModal);
+        
+        // 点击背景关闭悬浮窗
+        document.getElementById('operation-results-modal').addEventListener('click', (e) => {
+          if (e.target === document.getElementById('operation-results-modal')) {
+            closeModal();
+          }
+        });
+      });
+    </script>
+</body>
+</html>

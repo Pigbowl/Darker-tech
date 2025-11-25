@@ -2,14 +2,17 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>虚拟大画布网络状图</title>
+  <title>知识网络-达客智驾领航员</title>
   <script src="https://d3js.org/d3.v7.min.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+  <script src="../js/ipcontroller.js"></script>
   <script src="../js/load-duck-assistant.js"></script>
-  <script src="../js/elementdata.js"></script>
+  <script src="../js/elementdata_loader.js"></script>
   <script src="../css/components.css"></script>
   <script src="../css/style.css"></script>
+  <script src="../css/tailwind.css"></script>
   <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
 
   <style>
     body { margin: 0; background: #000; /* 移除overflow:hidden，允许页面正常滚动 */ }
@@ -211,7 +214,7 @@
       .search-result-item:hover {
         background: rgba(255, 140, 0, 0.2);
       }
-  </style>
+    </style>
 </head>
 <body>
   
@@ -221,7 +224,7 @@
   <div style="height: calc(100vh - 80px); position: relative;">
         <div id="canvas-container-hidder">
             <!-- 加载动画元素 -->
-            <div class="loading-container">
+            <div class="loading-container hidden">
               <div class="loading-spinner"></div>
               <div class="loading-text">正在构建知识网络...</div>
             </div>
@@ -235,7 +238,7 @@
     </div>
   </div>
   <div id="scale-indicator">缩放比例: 100%</div>
-
+  
   <script>
     // 获取画布容器和搜索相关元素
     const canvasContainer = document.getElementById('canvas-container');
@@ -243,6 +246,23 @@
     const searchButton = document.getElementById('search-button');
     const searchResults = document.getElementById('search-results');
     
+    let primartElementid;
+    let prePrimaryElementid;
+    let primartSwitch = false;
+
+    function updateViewTransform() {
+      virtualCanvas.attr("transform", `translate(${viewState.x}, ${viewState.y}) scale(${viewState.scale})`);
+      // 更新缩放比例显示
+      updateScaleIndicator();
+    }
+    
+    function updateScaleIndicator() {
+      // 将缩放比例转换为百分比格式，保留一位小数
+      const scalePercent = Math.round(viewState.scale * 1000) / 10;
+      // 在比例尺文字左侧加上当前模式
+      const modeText = detailMode.isActive ? "[细节模式] " : "[浏览模式] ";
+      d3.select("#scale-indicator").text(`${modeText}缩放比例: ${scalePercent}%`);
+    }
     // 搜索功能实现
     function performSearch(query) {
       if (!query.trim()) {
@@ -311,12 +331,12 @@
         matchedElements.forEach(item => {
           const resultItem = document.createElement('div');
           resultItem.className = 'search-result-item';
-          resultItem.textContent = item.element.name || '未命名元素';
-          resultItem.dataset.elementId = item.element.name;
+          resultItem.textContent = item.element.Name || '未命名元素';
+          resultItem.dataset.elementId = item.element.Name;
           
           resultItem.addEventListener('click', () => {
             // 选择该元素作为主要元素
-            setElementAsPrimary(item.element.name);
+            setElementAsPrimary(item.element.Name);
             searchResults.classList.remove('show');
             searchInput.value = '';
           });
@@ -355,8 +375,14 @@
       });
       
       // 重新绘制节点以更新样式
-      node.attr('r', d => d.size)
+      try {
+        // 使用D3重新选择节点元素进行更新
+        d3.selectAll('.nodes circle')
+          .attr('r', d => d.size)
           .style('fill', d => d.color);
+      } catch (error) {
+        console.warn('无法更新节点样式:', error);
+      }
       
       // 找到选中的节点并居中
       const selectedNode = nodes.find(node => node.id === elementId);
@@ -436,6 +462,9 @@
       previousViewState: null
     };
     
+    // 全局虚拟画布变量
+    let virtualCanvas;
+    
     // 2. 创建SVG容器和虚拟画布层
     const container = d3.select("#canvas-container");
     const svg = container.append("svg")
@@ -443,7 +472,7 @@
       .attr("height", height);
       
     // 虚拟画布层（所有元素都放在这个g元素中，通过transform控制视图）
-    const virtualCanvas = svg.append("g")
+    virtualCanvas = svg.append("g")
       .attr("transform", `translate(${viewState.x}, ${viewState.y}) scale(${viewState.scale})`);
       
 
@@ -526,22 +555,42 @@
       }
     `);
 
-    // 3. 从elementdata.js中获取节点数据
-    // 创建一个映射表，方便通过name查找节点
-    const elementMap = {};
-    
-    // 从elementdata.Element数组中创建节点数据
-    const nodes = elementdata.Element.map((element, index) => {
+
+    // 3. 从elementdata中获取节点数据
+    // 等待elementdata加载完成后再执行代码
+    console.log('检查elementdata是否存在:', !!window.elementdata);
+    if (window.elementdata) {
+        // elementdata已存在，直接执行
+        console.log('直接执行initializeKnowledgeNet');
+        initializeKnowledgeNet();
+    } else {
+        console.log('elementdata不存在，等待elementDataLoaded事件');
+        // 监听elementDataLoaded事件，当数据加载完成时执行（注意：事件是在window上触发的）
+        window.addEventListener('elementDataLoaded', function(event) {
+            console.log('接收到elementDataLoaded事件，现在执行initializeKnowledgeNet');
+            initializeKnowledgeNet();
+        });
+    }
+    let nodes = [];
+    function initializeKnowledgeNet() {
+        // 创建一个映射表，方便通过name查找节点
+        const elementMap = {};
+        // 从elementdata.Element数组中创建节点数据
+        console.log(elementdata.Element)
+        nodes = elementdata.Element.map((element, index) => {
       // 默认位置计算（尽量分散布局）
       const angle = (index / elementdata.Element.length) * Math.PI * 2;
       const radius = Math.min(virtualWidth, virtualHeight) * 0.4;
       
       // 检查是否为主要元素（isPrimary为yes）
       const isPrimaryElement = element.isPrimary === 'YES';
-      
+      if(isPrimaryElement){
+        primartElementid = element.ID;
+        primartSwitch = true;
+      }
       // 创建节点对象 - 正常计算位置，不强制居中
       const node = {
-        id: element.name, // 使用元素名称作为ID
+        id: element.Name, // 使用元素名称作为ID
         size: isPrimaryElement ? 50 : 40, // 根据要求设置半径为40
         x: virtualWidth / 2 + Math.cos(angle) * radius, // 正常计算位置
         y: virtualHeight / 2 + Math.sin(angle) * radius, // 正常计算位置
@@ -549,17 +598,17 @@
         isPrimary: isPrimaryElement, // 标记是否为主要元素
         // 添加详细信息
         info: {
-          类别: element.domain,
-          描述: element.description || '',
+          类别: element.Subject,
+          描述: element.Description || '',
           状态: isPrimaryElement ? '主要元素' : '活跃',
-          专业: element.Metier
+          专业: element.Metiers
         },
         // 保留原始element数据，用于后续细节模式显示
         elementData: element
       };
       
       // 将节点添加到映射表中，便于后续创建连接
-      elementMap[element.name] = node;
+      elementMap[element.Name] = node;
       return node;
     });
 
@@ -569,7 +618,7 @@
     // 遍历所有元素，创建连接
     elementdata.Element.forEach(element => {
       // 获取当前元素对应的节点
-      const sourceNode = elementMap[element.name];
+      const sourceNode = elementMap[element.Name];
       
       // 如果没有找到源节点或没有目标节点，则跳过
       if (!sourceNode || !element.to || element.to.length === 0) return;
@@ -579,6 +628,7 @@
         const targetNode = elementMap[targetName];
         // 如果找到目标节点，则创建连接
         if (targetNode) {
+          console.log(sourceNode,targetNode.id)
           links.push({
             source: sourceNode.id,
             target: targetNode.id
@@ -599,7 +649,7 @@
       .on("end", () => {
         // 力导向布局完成后，检查是否有主要元素
         const primaryElement = nodes.find(node => node.isPrimary);
-        if (primaryElement) {
+        if (primaryElement && primartSwitch) {
           // 计算需要移动的偏移量，使主要元素居中
           const container = document.getElementById('canvas-container');
           const canvasWidth = container.clientWidth;
@@ -613,7 +663,11 @@
           viewState.y += centerOffsetY;
           
           // 应用视图变换
+
           updateViewTransform();
+          primartSwitch = false;
+          // 更新D3缩放行为的内部状态，使其与当前viewState同步
+          svg.call(zoom.transform, d3.zoomIdentity.translate(viewState.x, viewState.y).scale(viewState.scale));
           
           // 隐藏遮挡层，显示知识网络
           setTimeout(() => {
@@ -623,16 +677,53 @@
       });
 
     // 6. 绘制连接线
-    const link = virtualCanvas.append("g")
-      .attr("class", "links")
-      .selectAll("line")
+    const linksContainer = virtualCanvas.append("g")
+      .attr("class", "links");
+    
+    // 为每条连接创建一个组
+    const linkGroups = linksContainer.selectAll(".link-group")
       .data(links)
       .enter()
-      .append("line")
+      .append("g")
+      .attr("class", "link-group");
+    
+    // 基础连接线
+    const link = linkGroups.append("line")
       .attr("class", "link")
       .attr("stroke-width", 1)
       .attr("stroke", "#ffffff")
       .attr("stroke-opacity", 0.5);
+    
+    // 主电流动画线 - 默认隐藏
+    const currentLine = linkGroups.append("line")
+      .attr("class", "current-line")
+      .attr("stroke-width", 1.2)  // 加粗线条
+      .attr("stroke", "#2bff00ff")
+      .attr("stroke-opacity", 0)  // 默认完全透明，隐藏状态
+      .attr("stroke-linecap", "round");
+    
+    // 辅助电流线 - 增强视觉效果
+    const currentLine2 = linkGroups.append("line")
+      .attr("class", "current-line")
+      .attr("stroke-width", 0.8)
+      .attr("stroke", "#2bff00ff")
+      .attr("stroke-opacity", 0)  // 默认完全透明，隐藏状态
+      .attr("stroke-linecap", "round");
+    
+    // 添加CSS动画定义
+    const style = document.createElement("style");
+    style.textContent = `
+      /* 简化的电流流动动画 */
+      @keyframes current-flow {
+        0% { stroke-dashoffset: 30; }
+        100% { stroke-dashoffset: 0; }
+      }
+      .current-line.animate {
+        animation: current-flow 0.8s linear infinite;
+        stroke-linecap: round;
+      }
+    `;
+    document.head.appendChild(style);
 
     // 7. 绘制节点
     const node = virtualCanvas.append("g")
@@ -653,8 +744,14 @@
       
       // 构建详细信息的HTML内容
       let tooltipContent = `<div class="tooltip-title">${d.id}</div>`;
-      for (const [key, value] of Object.entries(d.info)) {
+
+      for (const [key, valuepre] of Object.entries(d.info)) {
         // 只显示有值的字段
+        if (typeof(valuepre)=="object"){
+          value = valuepre.Name
+        }else{
+          value = valuepre
+        } 
         if (value && value.trim() !== '') {
           tooltipContent += `<div class="tooltip-info"><span class="tooltip-label">${key}:</span>${value}</div>`;
         }
@@ -679,17 +776,46 @@
           connectedNodeIds.add(d.id); // 包含当前节点自己
           
           // 找出所有与当前节点相连的线，并收集相连节点的ID
-          link.transition()
-              .duration(800) // 添加300ms的过渡动画
+          linkGroups.transition()
+              .duration(800) // 添加过渡动画
+              .select(".link")
               .style("stroke-opacity", l => {
                 const isConnected = l.source.id === d.id || l.target.id === d.id;
                 if (isConnected) {
                   // 将相连的节点ID添加到集合中
                   if (l.source.id !== d.id) connectedNodeIds.add(l.source.id);
                   if (l.target.id !== d.id) connectedNodeIds.add(l.target.id);
-                  return 0.9; // 高亮连接线
+                  return 0; // 隐藏原始连接线，只显示动画线
                 }
                 return 0.05; // 降低其他连接线的透明度
+              });
+          
+          // 为高亮的连接线添加电流动画
+          linkGroups.selectAll(".current-line") // 使用selectAll选择所有电流线
+              .transition()
+              .duration(800)
+              .style("stroke-opacity", function(l) {
+                const isConnected = l.source.id === d.id || l.target.id === d.id;
+                if (isConnected) {
+                  // 计算线的长度来设置动画
+                  const dx = l.target.x - l.source.x;
+                  const dy = l.target.y - l.source.y;
+                  const length = Math.sqrt(dx * dx + dy * dy);
+                  
+                  // 设置动画参数，使用多段线条效果
+                  const segmentLength = Math.min(length / 5, 15); // 将线分成5段，每段不超过15像素
+                  const gapLength = Math.min(segmentLength / 2, 5); // 段间间隔为段长的一半，不超过5像素
+                  d3.select(this)
+                    .attr("stroke-dasharray", `${segmentLength} ${gapLength}`)
+                    .attr("stroke-dashoffset", length);
+                    
+                  return 1; // 显示电流线
+                }
+                return 0; // 隐藏其他电流线
+              })
+              .attr("class", function(l) {
+                const isConnected = l.source.id === d.id || l.target.id === d.id;
+                return isConnected ? "current-line animate" : "current-line"; // 添加/移除动画类
               });
           
           // 高亮当前节点和直接相连的节点，降低其他节点的透明度
@@ -719,9 +845,17 @@
         // 只有在非细节模式下才恢复原始状态
         if (!detailMode.isActive) {
           // 恢复所有元素的原始透明度，添加平滑过渡
-          link.transition()
-              .duration(300) // 添加300ms的过渡动画
-              .style("stroke-opacity", 0.4);
+          linkGroups.transition()
+              .duration(300) // 添加过渡动画
+              .select(".link")
+              .style("stroke-opacity", 0.5);
+          
+          // 移除电流动画
+          linkGroups.selectAll(".current-line") // 使用selectAll选择所有电流线
+              .transition()
+              .duration(300)
+              .style("stroke-opacity", 0)
+              .attr("class", "current-line"); // 移除动画类
           node.transition()
               .duration(300) // 添加300ms的过渡动画
               .style("opacity", 1);
@@ -766,7 +900,22 @@
         d.y = Math.max(d.size, Math.min(virtualHeight - d.size, d.y));
       });
 
+      // 更新连接线位置
       link
+        .attr("x1", d => d.source.x)
+        .attr("y1", d => d.source.y)
+        .attr("x2", d => d.target.x)
+        .attr("y2", d => d.target.y);
+      
+      // 更新电流线位置
+      currentLine
+        .attr("x1", d => d.source.x)
+        .attr("y1", d => d.source.y)
+        .attr("x2", d => d.target.x)
+        .attr("y2", d => d.target.y);
+      
+      // 更新辅助电流线位置
+      currentLine2
         .attr("x1", d => d.source.x)
         .attr("y1", d => d.source.y)
         .attr("x2", d => d.target.x)
@@ -854,19 +1003,7 @@
       updateViewTransform();
     }
 
-    function updateViewTransform() {
-      virtualCanvas.attr("transform", `translate(${viewState.x}, ${viewState.y}) scale(${viewState.scale})`);
-      // 更新缩放比例显示
-      updateScaleIndicator();
-    }
-    
-    function updateScaleIndicator() {
-      // 将缩放比例转换为百分比格式，保留一位小数
-      const scalePercent = Math.round(viewState.scale * 1000) / 10;
-      // 在比例尺文字左侧加上当前模式
-      const modeText = detailMode.isActive ? "[细节模式] " : "[浏览模式] ";
-      d3.select("#scale-indicator").text(`${modeText}缩放比例: ${scalePercent}%`);
-    }
+
     
     // 进入细节模式函数
     function enterDetailMode(selectedNode) {
@@ -879,6 +1016,12 @@
       link.transition()
           .duration(300)
           .style("stroke-opacity", 0.05);
+      // 隐藏电流动画线
+      linkGroups.selectAll(".current-line")
+          .transition()
+          .duration(300)
+          .style("stroke-opacity", 0)
+          .attr("class", "current-line"); // 移除动画类
       node.transition()
           .duration(300)
           .style("opacity", 0.05);
@@ -1004,10 +1147,9 @@
         .delay(duration)
         .duration(300)
         .attr("opacity", 1);
-      
       // 从节点的elementData中获取知识点和交付物数据
-      const knowledgePoints = selectedNode.elementData.Property?.Knowledge || [];
-      const deliverables = selectedNode.elementData.Property?.Product || [];
+      const knowledgePoints = selectedNode.elementData.knowledge;
+      const deliverables = selectedNode.elementData.deliverables;
       
       // 计算属性元素的位置并显示
       const nodeColor = selectedNode.color || "#1E90FF";
@@ -1021,12 +1163,13 @@
       knowledgeTextsGroup.selectAll("*").remove();
       deliverableTextsGroup.selectAll("*").remove();
       
+
       // 计算知识点位置（右侧，对称摆放）
-  const knowledgeCount = knowledgePoints.length;
-  // 知识点角度计算：每两个元素之间的角度为20度，居中放置
-  const angleBetweenItems = 20 * Math.PI / 180; // 20度转换为弧度
-  const knowledgeTotalAngleRange = (knowledgeCount - 1) * angleBetweenItems; // 总覆盖角度范围
-  const knowledgeStartAngle = 2 * Math.PI - knowledgeTotalAngleRange / 2; // 0度减去一半角度范围（弧度制）
+      const knowledgeCount = knowledgePoints.length;
+      // 知识点角度计算：每两个元素之间的角度为20度，居中放置
+      const angleBetweenItems = 20 * Math.PI / 180; // 20度转换为弧度
+      const knowledgeTotalAngleRange = (knowledgeCount - 1) * angleBetweenItems; // 总覆盖角度范围
+      const knowledgeStartAngle = 2 * Math.PI - knowledgeTotalAngleRange / 2; // 0度减去一半角度范围（弧度制）
   
   knowledgePoints.forEach((text, index) => {
     // 计算当前元素的角度
@@ -1042,9 +1185,35 @@
           .attr("x", circleX) // 左端点在圆上
           .attr("y", circleY)
           .attr("text-anchor", "start") // 文本左对齐
-          .text(text)
+          .text(text.Knowledge)
           .attr("opacity", 0) // 初始透明，用于动画
           .style("fill", knowledgecolor); // 紫色文字
+          
+        // 检查是否为"ADAS通用知识"，如果是则添加链接图标
+        if (text.Knowledge === "ADAS功能介绍") {
+          // 获取文本宽度，用于定位链接图标
+          const textWidth = textElement.node().getComputedTextLength();
+          
+          // 创建链接图标（使用SVG的a元素包装）
+          const linkGroup = knowledgeTextsGroup.append("a")
+            .attr("xlink:href", "/Pages/FunctionHall.html")
+            .attr("target", "_blank") // 可选：在新窗口打开
+            .attr("opacity", 0); // 初始透明，用于动画
+          
+          // 添加链接图标（使用SVG path绘制一个更标准的链接图标）
+          linkGroup.append("path")
+            .attr("d", `M ${circleX + textWidth + 5},${circleY - 6} h8 v5 h-8 v-5 z M ${circleX + textWidth + 13},${circleY - 3} l-3 3 l3 3`)
+            .attr("stroke", knowledgecolor)
+            .attr("stroke-width", 2)
+            .attr("fill", "none")
+            .style("cursor", "pointer");
+          
+          // 为链接图标添加动画
+          linkGroup.transition()
+            .delay(duration + index * 100)
+            .duration(300)
+            .attr("opacity", 1);
+        }
         
         // 获取文本宽度
         const textWidth = textElement.node().getComputedTextLength();
@@ -1115,6 +1284,7 @@
   
   deliverables.forEach((text, index) => {
     // 计算当前元素的角度
+    console.log(text,index)
     const angle = deliverableStartAngle + index * angleBetweenItems;
     
     // 计算圆上点的位置（交付物：右端点在圆上）
@@ -1127,7 +1297,7 @@
           .attr("x", circleX) // 右端点在圆上
           .attr("y", circleY)
           .attr("text-anchor", "end") // 文本右对齐
-          .text(text)
+          .text(text.Deliverable)
           .attr("opacity", 0) // 初始透明，用于动画
           .style("fill", "#FFD700"); // 黄色文字
         
@@ -1195,8 +1365,8 @@
       updateScaleIndicator();
     }
     
-    // 退出细节模式函数
-    function exitDetailMode() {
+    // 退出细节模式函数 - 定义为全局函数以便在任何地方都能访问
+    window.exitDetailMode = function() {
       if (!detailMode.isActive || !detailMode.selectedNode) return;
       
       // 获取被选中元素的信息
@@ -1288,6 +1458,12 @@
             link.transition()
                 .duration(300)
                 .style("stroke-opacity", 0.4);
+            // 确保电流动画线保持隐藏状态，直到鼠标悬停
+            linkGroups.selectAll(".current-line")
+                .transition()
+                .duration(300)
+                .style("stroke-opacity", 0)
+                .attr("class", "current-line"); // 确保移除动画类
             node.transition()
                 .duration(300)
                 .style("opacity", 1);
@@ -1317,6 +1493,8 @@
     // 初始化缩放比例显示
     updateScaleIndicator();
     
+    }
+    
     // 12. 窗口大小适配
     window.addEventListener("resize", () => {
       const newWidth = window.innerWidth;
@@ -1324,7 +1502,6 @@
       svg.attr("width", newWidth).attr("height", newHeight);
     });
   </script>
-  <script src="../js/ipcontroller.js"></script>  
   <script src="../js/load-components.js"></script>
   <script src="../js/Visit_Monitor.js"></script>
 </body>

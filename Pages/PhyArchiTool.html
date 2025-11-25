@@ -1,0 +1,2558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>物理架构大厅-达客智驾领航员</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="../js/ipcontroller.js"></script>  
+    <script src="../js/load-duck-assistant.js"></script>
+    <script src="../js/HwElementType.js"></script>
+    <style>
+        /* 内容区域样式调整 */
+        .main-content {
+            padding-top: 80px; /* 为固定定位的导航栏留出更多空间 */
+            height: 100vh;
+            box-sizing: border-box;
+        }
+        
+        .content-container {
+            height: calc(100vh - 80px); /* 减去导航栏高度 */
+        }
+        
+        /* 强制左右div使用正确的宽度 */
+        #architeah {
+            width: 30% !important;
+            min-width: 0;
+            overflow-wrap: break-word;
+            word-break: break-all;
+        }
+        
+        #archidemo {
+            width: 70% !important;
+            min-width: 0;
+        }
+    </style>
+</head>
+<body class="bg-dark bg-grid text-gray-100 font-inter min-h-screen flex flex-col bg-grid w-full h-full p-0 m-0">
+    <!-- 导航栏容器 --> 
+    <div id="navbar-container"></div>
+    
+    <!-- 主内容区域 -->
+    <div class="main-content w-full">
+        <!-- 内容容器 -->
+        <div class="content-container rounded-lg overflow-hidden border border-primary/30 cyber-border" id="archi-content">
+            <h3 class="text-xl font-bold text-white neon-glow px-4 py-2">物理架构小课堂</h3>
+            <div class="flex h-[calc(100%-48px)] flex-nowrap w-full">
+                <div id="architeah" class="h-full bg-dark-light border border-primary/30 p-3 overflow-y-auto">
+                    <div class="flex justify-between items-center mb-3">
+                        <h4 class="text-base font-bold text-white">元素属性</h4>
+                        <button id="apply-properties" class="bg-primary text-white px-4 py-2 rounded hover:bg-primary/80 transition-colors">应用属性修改</button>
+                    </div>
+                    <div id="no-selection" class="text-center text-gray-400 py-8">
+                        <p>请选择一个元素进行编辑</p>
+                    </div>
+                    <div id="element-properties" class="hidden">
+                        <div class="mb-4 flex items-center">
+                            <label class="text-sm font-medium text-gray-300 w-16">元素ID:</label>
+                            <span id="element-id" class="flex-1 bg-dark-light rounded p-2 text-sm text-gray-100"></span>
+                        </div>
+                        <div class="mb-4 flex items-center">
+                            <label class="text-sm font-medium text-gray-300 w-16">元素类型:</label>
+                            <span id="element-type" class="flex-1 bg-dark-light border rounded p-2 text-sm text-gray-100"></span>
+                        </div>
+                        <div class="mb-4 flex items-center">
+                            <label for="element-name" class="text-sm font-medium text-gray-300 w-16">元素名称:</label>
+                            <input id="element-name" type="text" class="flex-1 bg-dark border border-primary/30 rounded p-2 text-sm text-gray-100" placeholder="请输入元素名称">
+                        </div>
+                        <div class="mb-6 flex items-center">
+                            <label for="element-color" class="text-sm font-medium text-gray-300 w-16">元素颜色:</label>
+                            <input id="element-color" type="color" class="w-16 h-8 bg-dark border border-primary/30 rounded p-0">
+                        </div>
+
+                    </div>
+                    
+                    <!-- 连接线属性面板，预定义并保持与元素属性面板相同的样式 -->
+                    <div id="connection-properties" class="hidden">
+                        <div class="mb-4 flex items-center">
+                            <label class="text-sm font-medium text-gray-300 w-16">连接线ID:</label>
+                            <span id="connection-id" class="flex-1 bg-dark-light rounded p-2 text-sm text-gray-100"></span>
+                        </div>
+                        <div class="mb-4 flex items-center">
+                            <label class="text-sm font-medium text-gray-300 w-16">源元素ID:</label>
+                            <span id="connection-source" class="flex-1 bg-dark-light rounded p-2 text-sm text-gray-100"></span>
+                        </div>
+                        <div class="mb-4 flex items-center">
+                            <label class="text-sm font-medium text-gray-300 w-16">目标元素ID:</label>
+                            <span id="connection-target" class="flex-1 bg-dark-light rounded p-2 text-sm text-gray-100"></span>
+                        </div>
+                        <div class="mb-4 flex items-center">
+                            <label for="connection-direction" class="text-sm font-medium text-gray-300 w-16">方向:</label>
+                            <select id="connection-direction" class="flex-1 bg-dark border border-primary/30 rounded p-2 text-sm text-gray-100">
+                                <option value="单向">单向</option>
+                                <option value="双向">双向</option>
+                            </select>
+                        </div>
+                        <div class="mb-4 flex items-center">
+                            <label for="connection-color" class="text-sm font-medium text-gray-300 w-16">颜色:</label>
+                            <input id="connection-color" type="color" class="w-16 h-8 bg-dark border border-primary/30 rounded p-0" value="#6366f1">
+                        </div>
+                        <div class="mb-6 flex items-center">
+                            <label for="connection-type" class="text-sm font-medium text-gray-300 w-16">类型:</label>
+                            <input id="connection-type" type="text" class="flex-1 bg-dark border border-primary/30 rounded p-2 text-sm text-gray-100" value="GPIO">
+                        </div>
+                        <!-- <button id="apply-connection-properties" class="w-full bg-primary hover:bg-primary/80 text-white py-2 px-4 rounded-md transition-colors">
+                            应用属性
+                        </button> -->
+                    </div>
+                </div>
+
+                <div id="archidemo" class="h-full bg-transparent border border-primary/30 relative overflow-hidden">
+                    <!-- 虚拟画布容器 -->
+                    <div id="canvas-container" class="absolute top-0 left-0 w-[10000px] h-[10000px] bg-white">
+                        <!-- 网格背景将通过CSS实现 -->
+                    </div>
+                    
+                    <!-- 添加按钮 -->
+                <div id="add-button-container" class="absolute top-4 left-4 z-10">
+                    <div class="relative">
+                        <button id="add-button" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/80 transition-colors flex items-center gap-2">
+                            <i class="fa fa-plus"></i>
+                            <span>添加</span>
+                        </button>
+                        <div id="shape-menu" class="absolute top-full left-0 mt-1 bg-white text-gray-800 rounded-md shadow-lg hidden z-20">
+                            <!-- 元素类型选项将通过JavaScript动态生成 -->
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <style>
+                /* 网格背景 */
+                #canvas-container {
+                    background-image: linear-gradient(#e0e0e0 1px, transparent 1px),
+                                    linear-gradient(90deg, #e0e0e0 1px, transparent 1px);
+                    background-size: 20px 20px;
+                    transform-origin: 0 0;
+                }
+                
+                /* 画布视图 */
+                #archidemo {
+                    position: relative;
+                    width: 100%;
+                    height: 100%;
+                }
+                
+                /* 元素样式 */
+                .canvas-element {                        
+                    position: absolute;                        
+                    cursor: move;                        
+                    user-select: none;                        
+                    display: flex;                        
+                    align-items: center;                        
+                    justify-content: center;                        
+                    color: white;                        
+                    font-size: 10px;                        
+                    font-weight: bold;                    
+                }                    
+                
+                /* 元素ID标签 */
+                .element-id {
+                    position: absolute;
+                    top: 0px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    white-space: nowrap;
+                    pointer-events: none;
+                }
+                
+                /* 顶点控制点样式 */
+                .vertex-control {
+                    position: absolute;
+                    width: 10px;
+                    height: 10px;
+                    background-color: white;
+                    border: 1px solid #000;
+                    border-radius: 50%;
+                    transform: translate(-50%, -50%);
+                    cursor: pointer;
+                    z-index: 10;
+                }
+                
+                .vertex-control:hover {
+                    background-color: #ffaa00;
+                }
+            </style>
+                
+            <script>
+                // 页面加载是顺序执行
+                document.addEventListener('DOMContentLoaded', function() {
+                    // 获取DOM元素
+                    const archidemo = document.getElementById('archidemo');
+                    const canvasContainer = document.getElementById('canvas-container');
+                    const addButton = document.getElementById('add-button');
+                    const shapeMenu = document.getElementById('shape-menu');
+
+                    // 动态生成元素类型选项
+                    function generateElementTypesMenu() {
+                        // 清空菜单
+                        shapeMenu.innerHTML = '';
+                        // 遍历elementTypes对象生成选项
+                        for (const typeName in elementTypes) {
+                            if (elementTypes.hasOwnProperty(typeName)) {
+                                const typeInfo = elementTypes[typeName];
+                                
+                                // 检查是否有子选项
+                                if (typeInfo.subTypes) {
+                                    // 创建带有子菜单的父项目
+                                    const parentItem = document.createElement('div');
+                                    parentItem.id = `add-${typeName}`;
+                                    parentItem.className = 'px-4 py-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center';
+                                    
+                                    const textSpan = document.createElement('span');
+                                    textSpan.textContent = typeName;
+                                    parentItem.appendChild(textSpan);
+                                    
+                                    const arrowSpan = document.createElement('span');
+                                    arrowSpan.className = 'fa fa-chevron-right text-xs';
+                                    parentItem.appendChild(arrowSpan);
+                                    // 创建子菜单容器（二级菜单）
+                                    const subMenu = document.createElement('div');
+                                    subMenu.className = 'absolute left-full top-0 w-48 bg-white text-gray-800 rounded-md shadow-lg hidden z-30';
+                                    // 检查子选项是对象（三层菜单）还是数组（二层菜单）
+                                    if (typeof typeInfo.subTypes === 'object') {
+                                        // 三层菜单结构：处理对象格式的子选项
+                                        for (const secondLevelName in typeInfo.subTypes) {
+                                            if (typeInfo.subTypes.hasOwnProperty(secondLevelName)) {
+                                                const thirdLevelItems = typeInfo.subTypes[secondLevelName];
+                                                
+                                                // 创建二级菜单项
+                                                const secondLevelItem = document.createElement('div');
+                                                secondLevelItem.id = `add-${typeName}-${secondLevelName}`;
+                                                secondLevelItem.className = 'px-4 py-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center relative';
+                                                secondLevelItem.textContent = secondLevelName;
+                                                
+                                                // 添加向右箭头
+                                                const secondArrow = document.createElement('span');
+                                                secondArrow.className = 'fa fa-chevron-right text-xs';
+                                                secondLevelItem.appendChild(secondArrow);
+                                                
+                                                // 创建三级菜单容器
+                                                const thirdLevelMenu = document.createElement('div');
+                                                thirdLevelMenu.className = 'absolute left-full top-0 w-48 bg-white text-gray-800 rounded-md shadow-lg hidden z-40';
+                                                // 为每个三级选项创建条目
+                                                thirdLevelItems.forEach((thirdLevelItem, index) => {
+                                                    const thirdItem = document.createElement('div');
+                                                    const thirdLevelValue = thirdLevelItem.Name || `型号${index + 1}`; // 获取P属性值或使用默认值
+                                                    thirdItem.id = `add-${typeName}-${secondLevelName}-${thirdLevelValue}`;
+                                                    thirdItem.className = 'px-4 py-2 hover:bg-gray-100 cursor-pointer';
+                                                    thirdItem.textContent = thirdLevelValue;
+                                                    
+                                                    // 为三级选项添加点击事件处理
+                                                    thirdItem.addEventListener('click', function() {
+                                                        // 创建子类型的临时信息对象，继承父类型的所有属性
+                                                        const subTypeInfo = {...typeInfo};
+                                                        const elementcontent = typeInfo.subTypes[secondLevelName];
+                                                        elementcontent.forEach(element => {
+                                                            if (element.Name === thirdLevelValue) {
+                                                                subTypeInfo.properties = element;
+                                                                // 打印SoC的properties属性
+                                                                
+
+                                                                
+
+                                                                // subTypeinfo.delete(subTypes);
+                                                            }
+                                                        });
+                                                        // 根据形状生成元素
+                                                        const itemShape = typeInfo.shape;
+                                                        // console.log("third level", subTypeInfo)
+                                                        if (itemShape === 'circle') {
+                                                            generateCircle(subTypeInfo,3);
+                                                        } else if (itemShape === 'square') {
+                                                            generateSquare(subTypeInfo,3);
+                                                        } else if (itemShape === 'rectangle') {
+                                                            generateRectangle(subTypeInfo,3);
+                                                        }
+                                                        
+                                                        
+                                                        // 关闭所有菜单
+                                                        shapeMenu.classList.add('hidden');
+                                                        // 确保所有子菜单都关闭
+                                                        document.querySelectorAll('#shape-menu .hidden').forEach(menu => {
+                                                            menu.classList.add('hidden');
+                                                        });
+                                                    });
+                                                    
+                                                    thirdLevelMenu.appendChild(thirdItem);
+                                                });
+                                                
+                                                // 为二级菜单项添加点击事件以切换三级菜单显示
+                                                secondLevelItem.addEventListener('click', function(e) {
+                                                    e.stopPropagation();
+                                                    // 关闭其他所有三级菜单
+                                                    document.querySelectorAll('#shape-menu .z-40').forEach(menu => {
+                                                        if (menu !== thirdLevelMenu) {
+                                                            menu.classList.add('hidden');
+                                                        }
+                                                    });
+                                                    // 切换当前三级菜单显示状态
+                                                    thirdLevelMenu.classList.toggle('hidden');
+                                                });
+                                                
+                                                // 将三级菜单添加到二级菜单项中
+                                                secondLevelItem.appendChild(thirdLevelMenu);
+                                                subMenu.appendChild(secondLevelItem);
+                                            }
+                                        }
+                                    } else if (Array.isArray(typeInfo.subTypes)) {
+                                        // 二层菜单结构：处理数组格式的子选项
+                                        typeInfo.subTypes.forEach(subTypeName => {
+                                            const subItem = document.createElement('div');
+                                            subItem.id = `add-${typeName}-${subTypeName}`;
+                                            subItem.className = 'px-4 py-2 hover:bg-gray-100 cursor-pointer';
+                                            subItem.textContent = subTypeName;
+                                            
+                                            // 为子选项添加点击事件处理
+                                            subItem.addEventListener('click', function() {
+                                                // 创建子类型的临时信息对象，继承父类型的所有属性
+                                                const subTypeInfo = {...typeInfo};
+                                                
+                                                // 根据形状生成元素
+                                                const itemShape = typeInfo.shape;
+                                                if (itemShape === 'circle') {
+                                                    generateCircle(subTypeInfo,2);
+                                                } else if (itemShape === 'square') {
+                                                    
+                                                    generateSquare(subTypeInfo,2);
+                                                } else if (itemShape === 'rectangle') {
+                                                    generateRectangle(subTypeInfo,2);
+                                                }
+                                                                                                
+                                                // 关闭所有菜单
+                                                shapeMenu.classList.add('hidden');
+                                            });
+                                            
+                                            subMenu.appendChild(subItem);
+                                        });
+                                    }
+                                    
+                                    // 为父项添加点击事件以切换子菜单显示
+                                    parentItem.addEventListener('click', function(e) {
+                                        e.stopPropagation();
+                                        // 关闭其他所有二级菜单
+                                        document.querySelectorAll('#shape-menu .z-30').forEach(menu => {
+                                            if (menu !== subMenu) {
+                                                menu.classList.add('hidden');
+                                            }
+                                        });
+                                        // 关闭所有三级菜单
+                                        document.querySelectorAll('#shape-menu .z-40').forEach(menu => {
+                                            menu.classList.add('hidden');
+                                        });
+                                        // 切换当前子菜单显示状态
+                                        subMenu.classList.toggle('hidden');
+                                    });
+                                    
+                                    // 将子菜单添加到父项中
+                                    parentItem.appendChild(subMenu);
+                                    shapeMenu.appendChild(parentItem);
+                                } else {
+                                    // 没有子选项的普通项目
+                                    const typeItem = document.createElement('div');
+                                    typeItem.id = `add-${typeName}`;
+                                    typeItem.className = 'px-4 py-2 hover:bg-gray-100 cursor-pointer';
+                                    typeItem.textContent = typeName;
+                                    
+                                    // 添加点击事件处理
+                                    typeItem.addEventListener('click', function() {
+                                        const iteminfo = elementTypes[typeName];
+                                        const itemShape = elementTypes[typeName].shape;
+                                        if (itemShape === 'circle') {
+                                            generateCircle(iteminfo,1);
+                                        } else if (itemShape === 'square') {
+                                            generateSquare(iteminfo,1);
+                                        } else if (itemShape === 'rectangle') {
+                                            generateRectangle(iteminfo,1);
+                                        }
+                                        shapeMenu.classList.add('hidden');
+                                    });
+                                    
+                                    shapeMenu.appendChild(typeItem);
+                                }
+                            }
+                        }
+                    }
+                    
+                    // 设置初始画布位置和缩放
+                    let scale = 1;
+                    let offsetX = 0;
+                    let offsetY = 0;
+                    let isDragging = false; // 画布拖拽标志
+                    let isElementDragging = false; // 元素拖拽标志
+                    let dragStartX = 0;
+                    let dragStartY = 0;
+                    let elements = []; // 存储DOM元素
+                    let elementData = []; // 存储元素数据
+                    let activeElement = null;
+                    let activeElementData = null;
+                    let elementDragStartX = 0;
+                    let elementDragStartY = 0;
+                    let elementIdCounter = 1; // ID计数器
+                    let zIndexCounter = 100; // 全局z-index计数器，确保新元素总是在最上方
+                    
+                    // 更新画布变换
+                    function updateCanvasTransform() {
+                        canvasContainer.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+                    }
+                    
+                    // 初始化画布位置（居中显示一部分）
+                    function initializeCanvas() {
+                        const containerWidth = 500;
+                        const containerHeight = 500;
+                        offsetX = -4750 * scale + containerWidth / 2;
+                        offsetY = -4750 * scale + containerHeight / 2;
+                        updateCanvasTransform();
+                    }
+                    
+                    // 添加长方形元素
+                    function createRectangle(iteminfo,layer) {
+                        const interface_gap = 50;
+                        const interface_height = 20;
+                        const margin = 50;
+                        const rectangle = document.createElement('div');
+                        rectangle.className = 'canvas-element rectangle';
+                        const left = 5000 + 50; // 画布中央+横向偏移50,50
+                        const top = 5000 + 50;
+                        width = iteminfo.width; // 默认宽度
+                        height = iteminfo.height; // 默认高度
+
+                        // 创建元素数据
+                        const id = elementIdCounter++;
+
+                        if(layer === 1) {
+                            name = 'element'+id; // 默认名称为"element"加ID
+                            properties = {};
+                        } else if (layer === 2) {
+                            name = 'element'+id; // 默认名称为"element"加ID
+                            properties = {};
+                        }else if (layer === 3) {
+                            name = iteminfo.properties.Name; // 默认名称为"element"加ID
+                            properties = iteminfo.properties;
+                            const interface_number=iteminfo.properties.interface.VIDEO[0].Number;
+                            const interface_info = iteminfo.properties.interface.VIDEO[0].SubType;
+                            height = interface_height*interface_number + interface_gap*(interface_number-1)+2*margin;
+                        }
+
+                        rectangle.style.left = left + 'px';
+                        rectangle.style.top = top + 'px';
+                        rectangle.style.width = width + 'px';
+                        rectangle.style.height = height + 'px';
+                        rectangle.style.zIndex = zIndexCounter++; // 确保新元素在最上方
+                        console.log(iteminfo)
+                        const data = {
+                            id: id, // 顺序生成ID
+                            type: 'rectangle',
+                            ItemType: iteminfo.type,
+                            name: name,
+                            position: {
+                                x: left,
+                                y: top
+                            },
+                            properties: properties,
+                            relativePosition: null, // 相对父元素的位置，null表示无相对位置
+                            width: width,
+                            height: height,
+                            color: iteminfo.color, // 绿色
+                            children: [], // 子元素ID数组
+                            parent: '/' // 父元素ID，无父元素时为"/"
+                        };
+                        // 将数据与元素关联
+                                                // 将数据与元素关联
+                        rectangle.dataset.elementId = data.id;
+                        // 创建名称标签
+                        const idLabel = document.createElement('div');
+                        idLabel.className = 'element-id';
+                        idLabel.textContent = data.ItemType+":"+data.name;
+                        rectangle.appendChild(idLabel);
+                        canvasContainer.appendChild(rectangle);
+                        elements.push(rectangle);
+                        elementData.push(data);
+                         
+                        // 设置元素拖拽
+                        setupElementDrag(rectangle, data);
+                        // 设置顶点控制
+                        setupVertexControls(rectangle, data);
+                         
+                        // 当layer为3时，生成interface子元素
+                        if (layer === 3 && properties.interface && properties.interface.VIDEO && properties.interface.VIDEO[0]) {
+                            const interface_info = properties.interface.VIDEO[0];
+                            const interface_number = interface_info.Number;
+                            const interface_name = interface_info.SubType;
+                            
+                            // 计算第一个interface的Y坐标（距离父元素顶部margin）
+                            let current_y = margin;
+                            
+                            // 生成interface子元素
+                            for (let i = 0; i < interface_number; i++) {
+                                const interface_element = document.createElement('div');
+                                interface_element.className = 'interface-element';
+                                interface_element.style.position = 'absolute';
+                                interface_element.style.left = '0px'; // 与父元素左侧对齐
+                                interface_element.style.top = current_y + 'px';
+                                interface_element.style.width = '50px';
+                                interface_element.style.height = interface_height + 'px';
+                                interface_element.style.backgroundColor = 'white';
+                                interface_element.style.border = '1px solid #ccc';
+                                interface_element.style.zIndex = zIndexCounter++;
+                                
+                                // 创建interface的标签
+                                const interface_label = document.createElement('div');
+                                interface_label.className = 'interface-label';
+                                interface_label.textContent = interface_name;
+                                interface_label.style.color = 'black';
+                                interface_label.style.fontSize = '10px';
+                                interface_label.style.textAlign = 'center';
+                                interface_label.style.lineHeight = interface_height + 'px';
+                                
+                                interface_element.appendChild(interface_label);
+                                rectangle.appendChild(interface_element);
+                                
+                                // 更新下一个interface的Y坐标
+                                current_y += interface_height + interface_gap;
+                            }
+                        }
+                        
+                        // 新创建的元素自动选中
+                        activeElement = rectangle;
+                        activeElementData = data;
+                          
+                        return rectangle; // 返回创建的元素
+                    }
+                    
+                    // 添加圆形元素
+                    function createCircle(iteminfo,layer) {
+                        const circle = document.createElement('div');
+                        circle.className = 'canvas-element circle';
+                        const left = 5000 + 50; // 画布中央+横向偏移50,50
+                        const top = 5000 + 50;
+                        const radius = iteminfo.radius; // 默认半径
+                         
+                        circle.style.left = left + 'px';
+                        circle.style.top = top + 'px';
+                        circle.style.width = (radius * 2) + 'px';
+                        circle.style.height = (radius * 2) + 'px';
+                        circle.style.zIndex = zIndexCounter++; // 确保新元素在最上方
+                        // 创建元素数据
+                        const id = elementIdCounter++;
+                        if(layer === 1) {
+                            name = 'element'+id; // 默认名称为"element"加ID
+                            properties = {};
+                        } else if (layer === 2) {
+                            name = 'element'+id; // 默认名称为"element"加ID
+                            properties = {};
+                        }else if (layer === 3) {
+                            name = iteminfo.properties.Name; // 默认名称为"element"加ID
+                            properties = iteminfo.properties;
+                        }
+                        const data = {
+                            id: id, // 顺序生成ID
+                            type: 'circle',
+                            ItemType: iteminfo.type, 
+                            name: name, // 默认名称为"element"加ID
+                            position: {
+                                x: left,
+                                y: top
+                            },
+                            properties: properties,
+                            relativePosition: null, // 相对父元素的位置，null表示无相对位置
+                            radius: radius,
+                            color: iteminfo.color, // 蓝色
+                            children: [], // 子元素ID数组
+                            parent: '/' // 父元素ID，无父元素时为"/"
+                        };
+                         
+                        // 将数据与元素关联
+                        circle.dataset.elementId = data.id;
+                         
+                        // 设置拖拽事件
+                        setupElementDrag(circle, data);
+                         
+                        // 新创建的元素自动选中
+                        activeElement = circle;
+                        activeElementData = data;
+                        // 添加名称标签
+                        const idLabel = document.createElement('div');
+                        idLabel.className = 'element-id';
+                        idLabel.textContent = data.ItemType+":"+data.name;
+                        circle.appendChild(idLabel);
+                         
+                        // 添加顶点控制点
+                        setupVertexControls(circle, data);
+                         
+                        canvasContainer.appendChild(circle);
+                        elements.push(circle);
+                        elementData.push(data);
+                         
+                        return circle; // 返回创建的元素
+                    }
+                    
+                    // 添加方形元素
+                    function createSquare(iteminfo) {
+                        const square = document.createElement('div');
+                        square.className = 'canvas-element square';
+                        const left = 5000 + 50; // 画布中央+横向偏移50,50
+                        const top = 5000 + 50;
+                        const size = iteminfo.size; // 默认大小
+                         
+                        square.style.left = left + 'px';
+                        square.style.top = top + 'px';
+                        square.style.width = size + 'px';
+                        square.style.height = size + 'px';
+                        square.style.zIndex = zIndexCounter++; // 确保新元素在最上方
+                        
+                        // 创建元素数据
+                        const id = elementIdCounter++;
+                        const data = {
+                            id: id, // 顺序生成ID
+                            type: 'square',
+                            ItemType: iteminfo.type,
+                            name: iteminfo.properties.Name, // 默认名称为"element"加ID
+                            position: {
+                                x: left,
+                                y: top
+                            },
+                            properties: iteminfo.properties,
+                            relativePosition: null, // 相对父元素的位置，null表示无相对位置
+                            size: size,
+                            color: iteminfo.color, // 红色
+                            children: [], // 子元素ID数组
+                            parent: '/' // 父元素ID，无父元素时为"/"
+                        };
+                        
+                        // 将数据与元素关联
+                        square.dataset.elementId = data.id;
+                         
+                        // 设置拖拽事件
+                        setupElementDrag(square, data);
+                         
+                        // 新创建的元素自动选中
+                        activeElement = square;
+                        activeElementData = data;
+                         
+                        // 添加名称标签
+                        const idLabel = document.createElement('div');
+                        idLabel.className = 'element-id';
+                        idLabel.textContent = data.ItemType+":"+data.name;
+                        square.appendChild(idLabel);
+                         
+                        // 添加顶点控制点
+                        setupVertexControls(square, data);
+                         
+                        canvasContainer.appendChild(square);
+                        elements.push(square);
+                        elementData.push(data);
+                         
+                        return square; // 返回创建的元素
+                    }
+                    
+                    // 检查一个元素是否完全包含另一个元素
+                    function isElementFullyContained(childElement, childData, parentElement, parentData) {
+                        // 获取子元素的边界
+                        const childLeft = parseFloat(childElement.style.left || 0);
+                        const childTop = parseFloat(childElement.style.top || 0);
+                        let childRight, childBottom;
+                        
+                        // 根据子元素类型计算右下角坐标
+                        if (childData.type === 'circle') {
+                            childRight = childLeft + childData.radius * 2;
+                            childBottom = childTop + childData.radius * 2;
+                        } else if (childData.type === 'rectangle') {
+                            childRight = childLeft + childData.width;
+                            childBottom = childTop + childData.height;
+                        } else { // square
+                            childRight = childLeft + childData.size;
+                            childBottom = childTop + childData.size;
+                        }
+                        
+                        // 获取父元素的边界
+                        const parentLeft = parseFloat(parentElement.style.left || 0);
+                        const parentTop = parseFloat(parentElement.style.top || 0);
+                        let parentRight, parentBottom;
+                        
+                        // 根据父元素类型计算右下角坐标
+                        if (parentData.type === 'circle') {
+                            parentRight = parentLeft + parentData.radius * 2;
+                            parentBottom = parentTop + parentData.radius * 2;
+                        } else if (parentData.type === 'rectangle') {
+                            parentRight = parentLeft + parentData.width;
+                            parentBottom = parentTop + parentData.height;
+                        } else { // square
+                            parentRight = parentLeft + parentData.size;
+                            parentBottom = parentTop + parentData.size;
+                        }
+                        
+                        // 检查子元素是否完全在父元素内部
+                        return childLeft >= parentLeft && 
+                                childTop >= parentTop && 
+                                childRight <= parentRight && 
+                                childBottom <= parentBottom;
+                    }
+                    
+                    // 清除所有元素的紫色高亮
+                    function clearPurpleHighlights() {
+                        elements.forEach(el => {
+                            if (el.dataset.originalBorder) {
+                                el.style.border = el.dataset.originalBorder;
+                                delete el.dataset.originalBorder;
+                            }
+                        });
+                    }
+                    
+                    // 更新子元素位置函数（递归更新所有层级）
+                    function updateChildrenPositions(parentId) {
+                        const parentData = elementData.find(data => data.id === parentId);
+                        if (!parentData || !parentData.children || parentData.children.length === 0) {
+                            return;
+                        }
+                        
+                        // 计算父元素的中心点
+                        const parentElement = elements.find(el => parseInt(el.dataset.elementId) === parentId);
+                        if (!parentElement) return;
+                        
+                        const parentLeft = parseFloat(parentElement.style.left || 0);
+                        const parentTop = parseFloat(parentElement.style.top || 0);
+                        let parentCenterX, parentCenterY;
+                        
+                        if (parentData.type === 'circle') {
+                            parentCenterX = parentLeft + parentData.radius;
+                            parentCenterY = parentTop + parentData.radius;
+                        } else if (parentData.type === 'rectangle') {
+                            parentCenterX = parentLeft + parentData.width / 2;
+                            parentCenterY = parentTop + parentData.height / 2;
+                        } else { // square
+                            parentCenterX = parentLeft + parentData.size / 2;
+                            parentCenterY = parentTop + parentData.size / 2;
+                        }
+                        
+                        // 递归更新所有子元素的位置
+                        parentData.children.forEach(childId => {
+                            const childData = elementData.find(data => data.id === childId);
+                            const childElement = elements.find(el => parseInt(el.dataset.elementId) === childId);
+                            
+                            if (childData && childElement && childData.relativePosition) {
+                                // 根据相对位置计算新的子元素中心位置
+                                const newChildCenterX = parentCenterX + childData.relativePosition.x;
+                                const newChildCenterY = parentCenterY + childData.relativePosition.y;
+                                
+                                // 计算子元素的左上角位置
+                                let newChildLeft, newChildTop;
+                                if (childData.type === 'circle') {
+                                    newChildLeft = newChildCenterX - childData.radius;
+                                    newChildTop = newChildCenterY - childData.radius;
+                                } else if (childData.type === 'rectangle') {
+                                    newChildLeft = newChildCenterX - childData.width / 2;
+                                    newChildTop = newChildCenterY - childData.height / 2;
+                                } else { // square
+                                    newChildLeft = newChildCenterX - childData.size / 2;
+                                    newChildTop = newChildCenterY - childData.size / 2;
+                                }
+                                
+                                // 更新子元素位置
+                                childElement.style.left = newChildLeft + 'px';
+                                childElement.style.top = newChildTop + 'px';
+                                
+                                // 更新子元素数据
+                                childData.position.x = newChildLeft;
+                                childData.position.y = newChildTop;
+                            }
+                            
+                            // 递归更新子元素的子元素（直到最底层）
+                            updateChildrenPositions(childId);
+                        });
+                    }
+                    
+                    // 设置元素拖拽
+                        function setupElementDrag(element, data) {
+                            // 确保初始边框不是紫色
+                            if (!element.style.border) {
+                                element.style.border = '1px solid #000'; // 设置默认黑色边框
+                            }
+                            
+                            // 鼠标悬停时显示控制点
+                            element.addEventListener('mouseenter', function() {
+                                const controls = element.querySelectorAll('.vertex-control');
+                                controls.forEach(control => {
+                                    control.style.display = 'block';
+                                });
+                            });
+                            
+                        // 鼠标离开时隐藏控制点
+                        element.addEventListener('mouseleave', function() {
+                            // 如果没有正在拖拽控制点，则隐藏
+                            if (!element.classList.contains('dragging-control')) {
+                                const controls = element.querySelectorAll('.vertex-control');
+                                controls.forEach(control => {
+                                    control.style.display = 'none';
+                                });
+                            }
+                        });
+                            
+                        element.addEventListener('mousedown', function(e) {
+                        // 如果点击的是顶点控制点，不执行元素拖拽
+                        if (e.target.classList.contains('vertex-control')) {
+                            return;
+                        }
+                            
+                        // 连接模式相关变量 - 提升到更外层作用域
+                        let isConnectionMode = false;
+                        let connectionSourceId = null;
+                        let connectionPrompt = null;
+                        if (isConnectionMode) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            return;
+                        }
+                            
+                        // console.log('元素被按下，Ctrl键状态:', e.ctrlKey);
+                            
+                        // 检查是否是Ctrl+单击触发菜单
+                        if (e.ctrlKey) {
+                            // console.log('Ctrl+单击触发菜单');
+                            // 选中当前元素
+                            activeElement = element;
+                            activeElementData = data;
+                            // updatePropertyPanel();
+                            
+                            // 显示菜单
+                            const contextMenu = document.getElementById('element-context-menu');
+                            if (contextMenu) {
+                                contextMenu.style.left = e.clientX + 'px';
+                                contextMenu.style.top = e.clientY + 'px';
+                                contextMenu.classList.remove('hidden');
+                            } else {
+                                console.error('未找到菜单元素！');
+                            }
+                            
+                            // 阻止默认行为和事件冒泡
+                            e.preventDefault();
+                            e.stopPropagation();
+                            return; // 不执行后续的拖拽逻辑
+                        }
+                            
+                        e.stopPropagation(); // 阻止事件冒泡到画布
+                        activeElement = element;
+                        activeElementData = data;
+                        isElementDragging = true; // 设置元素拖拽标志
+                            
+                        // 获取元素当前位置（已考虑画布缩放和偏移）
+                        const currentLeft = parseFloat(element.style.left || 0);
+                        const currentTop = parseFloat(element.style.top || 0);
+                            
+                        // 计算鼠标相对于画布容器的位置（考虑缩放）
+                        const rect = archidemo.getBoundingClientRect();
+                        const mouseX = (e.clientX - rect.left - offsetX) / scale;
+                        const mouseY = (e.clientY - rect.top - offsetY) / scale;
+                            
+                        // 计算鼠标相对于元素左上角的偏移
+                        elementDragStartX = currentLeft - mouseX;
+                        elementDragStartY = currentTop - mouseY;
+                            
+                        // 添加选中样式
+                        element.style.opacity = '0.7';
+                        
+                    });
+                    }
+                    
+                    // 设置顶点控制
+                    function setupVertexControls(element, data) {
+                        // 先清除可能已存在的控制点
+                        const existingControls = element.querySelectorAll('.vertex-control');
+                        existingControls.forEach(control => control.remove());
+                            
+                        // 为圆形添加两个控制点（右侧和顶侧）
+                        if (data.type === 'circle') {
+                            const radius = data.radius || 20;
+                                
+                            // 右侧控制点
+                            const rightControl = document.createElement('div');
+                            rightControl.className = 'vertex-control';
+                            rightControl.dataset.handle = 'radius-x';
+                            rightControl.style.position = 'absolute';
+                            rightControl.style.width = '10px';
+                            rightControl.style.height = '10px';
+                            rightControl.style.backgroundColor = 'white';
+                            rightControl.style.border = '1px solid #000';
+                            rightControl.style.borderRadius = '50%';
+                            rightControl.style.left = '100%';
+                            rightControl.style.top = '50%';
+                            rightControl.style.transform = 'translate(-5px, -5px)'; // 修复右侧控制点位置，使其不超出圆形边界
+                            rightControl.style.cursor = 'ew-resize';
+                            rightControl.style.display = 'none'; // 初始隐藏
+                            rightControl.style.zIndex = '10';
+                                
+                            // 顶侧控制点
+                            const topControl = document.createElement('div');
+                            topControl.className = 'vertex-control';
+                            topControl.dataset.handle = 'radius-y';
+                            topControl.style.position = 'absolute';
+                            topControl.style.width = '10px';
+                            topControl.style.height = '10px';
+                            topControl.style.backgroundColor = 'white';
+                            topControl.style.border = '1px solid #000';
+                            topControl.style.borderRadius = '50%';
+                            topControl.style.left = '50%';
+                            topControl.style.top = '0';
+                            topControl.style.transform = 'translate(-5px, -5px)'; // 调整为正确的中心点位置
+                            topControl.style.cursor = 'ns-resize';
+                            topControl.style.display = 'none'; // 初始隐藏
+                            topControl.style.zIndex = '10';
+                                
+                            // 设置控制点拖拽
+                            setupVertexDrag(rightControl, element, data);
+                            setupVertexDrag(topControl, element, data);
+                                
+                            element.appendChild(rightControl);
+                            element.appendChild(topControl);
+                        }
+                        // 为方形和长方形添加四个角的控制点
+                        else if (data.type === 'square' || data.type === 'rectangle') {
+                            const handles = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
+                            
+                            handles.forEach(handle => {
+                                const control = document.createElement('div');
+                                control.className = 'vertex-control';
+                                control.dataset.handle = handle;
+                                control.style.position = 'absolute';
+                                control.style.width = '10px';
+                                control.style.height = '10px';
+                                control.style.backgroundColor = 'white';
+                                control.style.border = '1px solid #000';
+                                control.style.borderRadius = '50%';
+                                control.style.display = 'none'; // 初始隐藏
+                                control.style.zIndex = '10';
+                                
+                                // 设置控制点位置
+                                switch (handle) {
+                                    case 'top-left':
+                                        control.style.left = '0';
+                                        control.style.top = '0';
+                                        control.style.transform = 'translate(-5px, -5px)'; // 确保中心点在顶点
+                                        control.style.cursor = 'nwse-resize';
+                                        break;
+                                    case 'top-right':
+                                        control.style.right = '0';
+                                        control.style.top = '0';
+                                        control.style.transform = 'translate(5px, -5px)'; // 确保中心点在顶点
+                                        control.style.cursor = 'nesw-resize';
+                                        break;
+                                    case 'bottom-left':
+                                        control.style.left = '0';
+                                        control.style.bottom = '0';
+                                        control.style.transform = 'translate(-5px, 5px)'; // 确保中心点在顶点
+                                        control.style.cursor = 'nesw-resize';
+                                        break;
+                                    case 'bottom-right':
+                                        control.style.right = '0';
+                                        control.style.bottom = '0';
+                                        control.style.transform = 'translate(5px, 5px)'; // 确保中心点在顶点
+                                        control.style.cursor = 'nwse-resize';
+                                        break;
+                                }
+                                    
+                                // 设置控制点拖拽
+                                setupVertexDrag(control, element, data);
+                                element.appendChild(control);
+                            });
+                        }
+                    }
+                    
+                    // 设置顶点拖拽
+                    function setupVertexDrag(control, element, data) {
+                        control.addEventListener('mousedown', function(e) {
+                            e.stopPropagation(); // 阻止事件冒泡到元素和画布
+                                
+                            activeElement = element;
+                            activeElementData = data;
+                            const handle = control.dataset.handle;
+                                
+                            // 标记正在拖拽控制点
+                            element.classList.add('dragging-control');
+                                
+                            // 记录初始尺寸和中心点
+                            let centerX, centerY;
+                                
+                            if (data.type === 'circle') {
+                                // 计算圆心坐标（考虑元素位置和半径）
+                                centerX = parseFloat(element.style.left || 0) + data.radius;
+                                centerY = parseFloat(element.style.top || 0) + data.radius;
+                            } else if (data.type === 'rectangle') {
+                                // 计算长方形中心点
+                                centerX = parseFloat(element.style.left || 0) + data.width / 2;
+                                centerY = parseFloat(element.style.top || 0) + data.height / 2;
+                            } else {
+                                // 计算方形中心点
+                                centerX = parseFloat(element.style.left || 0) + data.size / 2;
+                                centerY = parseFloat(element.style.top || 0) + data.size / 2;
+                            }
+                                
+                            // 获取鼠标在画布上的位置（考虑缩放和偏移）
+                            const rect = archidemo.getBoundingClientRect();
+                            const startX = e.clientX;
+                            const startY = e.clientY;
+                                
+                            function onMouseMove(e) {
+                                e.preventDefault();
+                                    
+                                // 计算鼠标在画布上的位置（考虑缩放和偏移）
+                                const currentMouseX = (e.clientX - rect.left - offsetX) / scale;
+                                const currentMouseY = (e.clientY - rect.top - offsetY) / scale;
+                                    
+                                if (data.type === 'circle') {
+                                    // 根据不同的控制点调整尺寸
+                                    if (handle === 'radius-x') {
+                                        // 右侧控制点 - 水平方向调整
+                                        const newRadius = Math.max(5, Math.abs(currentMouseX - centerX));
+                                        data.radius = newRadius;
+                                    } else if (handle === 'radius-y') {
+                                        // 顶侧控制点 - 垂直方向调整
+                                        const newRadius = Math.max(5, Math.abs(centerY - currentMouseY));
+                                        data.radius = newRadius;
+                                    }
+                                        
+                                    // 保持中心点不变
+                                    const newLeft = centerX - data.radius;
+                                    const newTop = centerY - data.radius;
+                                        
+                                    // 更新元素样式
+                            element.style.width = (data.radius * 2) + 'px';
+                            element.style.height = (data.radius * 2) + 'px';
+                            element.style.left = newLeft + 'px';
+                            element.style.top = newTop + 'px';
+                            
+                            // 更新元素数据
+                            data.position.x = newLeft;
+                            data.position.y = newTop;
+                            
+                            // 如果当前修改的是父元素，更新所有子元素的位置
+                            if (data.children.length > 0) {
+                                updateChildrenPositions(data.id);
+                            }
+                                        
+                                    // 更新元素数据位置
+                                    data.position.x = newLeft;
+                                    data.position.y = newTop;
+                                }
+                                else {
+                                    // 对于方形和长方形
+                                    let newWidth, newHeight;
+                                        
+                                    if (data.type === 'rectangle') {
+                                        // 根据不同的控制点调整尺寸
+                                        switch (handle) {
+                                            case 'top-left':
+                                                newWidth = Math.max(5, (centerX + data.width / 2)- currentMouseX);
+                                                newHeight = Math.max(5, (centerY + data.height / 2) - currentMouseY);
+                                                break;
+                                            case 'top-right':
+                                                newWidth = Math.max(5, currentMouseX - (centerX - data.width / 2));
+                                                newHeight = Math.max(5, (centerY + data.height / 2) - currentMouseY);
+                                                break;
+
+                                            case 'bottom-left':
+                                                newWidth = Math.max(5, (centerX + data.width / 2)- currentMouseX);
+                                                newHeight = Math.max(5, currentMouseY - (centerY - data.height / 2));
+                                
+                                                break;
+                                            case 'bottom-right':
+                                                newWidth = Math.max(5, currentMouseX - (centerX - data.width / 2));
+                                                newHeight = Math.max(5, currentMouseY - (centerY - data.height / 2));
+                                        
+                                                break;
+
+                                        }
+                                    //     console.log(centerX, centerY,"centercoord");
+                                    //     console.log(currentMouseX, currentMouseY,"currentmousecoord");
+                                    //     console.log(newWidth, newHeight,"newsize");
+                                    } else {
+                                        // 方形处理逻辑
+                                        let newSize;
+                                        
+                                        switch (handle) {
+                                            case 'top-left':
+                                                newSize = Math.max(5, 2 * Math.sqrt(
+                                                    Math.pow(centerX - currentMouseX, 2) + 
+                                                    Math.pow(centerY - currentMouseY, 2)
+                                                ) / Math.sqrt(2)); // 除以sqrt(2)以补偿对角线长度
+
+                                                break;
+                                            case 'top-right':
+                                                newSize = Math.max(5, 2 * Math.sqrt(
+                                                    Math.pow(currentMouseX - centerX, 2) + 
+                                                    Math.pow(centerY - currentMouseY, 2)
+                                                ) / Math.sqrt(2));
+                                                break;
+                                            case 'bottom-left':
+                                                newSize = Math.max(5, 2 * Math.sqrt(
+                                                    Math.pow(centerX - currentMouseX, 2) + 
+                                                    Math.pow(currentMouseY - centerY, 2)
+                                                ) / Math.sqrt(2));
+                                                break;
+                                            case 'bottom-right':
+                                                newSize = Math.max(5, 2 * Math.sqrt(
+                                                    Math.pow(currentMouseX - centerX, 2) + 
+                                                    Math.pow(currentMouseY - centerY, 2)
+                                                ) / Math.sqrt(2));
+                                                break;
+                                        }
+                                        
+                                        // 保持中心点不变，计算新的位置
+                                        const newLeft = centerX - newSize / 2;
+                                        const newTop = centerY - newSize / 2;
+                                        
+                                        // 更新元素数据
+                            data.size = newSize;
+                            data.position.x = newLeft;
+                            data.position.y = newTop;
+                                
+                            // 更新元素样式
+                            element.style.width = newSize + 'px';
+                            element.style.height = newSize + 'px';
+                            element.style.left = newLeft + 'px';
+                            element.style.top = newTop + 'px';
+                            
+                            // 如果当前修改的是父元素，更新所有子元素的位置
+                            if (data.children.length > 0) {
+                                updateChildrenPositions(data.id);
+                            }
+                                    }
+                                    
+                                    if (data.type === 'rectangle') {
+                                        // 计算新的位置，保持中心点不变
+                                        const newLeft = centerX - newWidth / 2;
+                                        const newTop = centerY - newHeight / 2;
+                                        
+                                        // 更新元素数据
+                            data.width = newWidth;
+                            data.height = newHeight;
+                            data.position.x = newLeft;
+                            data.position.y = newTop;
+                                
+                            // 更新元素样式
+                            element.style.width = newWidth + 'px';
+                            element.style.height = newHeight + 'px';
+                            element.style.left = newLeft + 'px';
+                            element.style.top = newTop + 'px';
+                            
+                            // 如果当前修改的是父元素，更新所有子元素的位置
+                            if (data.children.length > 0) {
+                                updateChildrenPositions(data.id);
+                            }
+                                    }
+                                }
+                                    
+                                // console.log('元素修改后的数据:', data);
+                            }
+                                
+                            function onMouseUp() {
+                                document.removeEventListener('mousemove', onMouseMove);
+                                document.removeEventListener('mouseup', onMouseUp);
+                                    
+                                // 移除拖拽标记
+                                element.classList.remove('dragging-control');
+                                    
+                                // 如果鼠标不在元素上，隐藏控制点
+                                if (!element.matches(':hover')) {
+                                    const controls = element.querySelectorAll('.vertex-control');
+                                    controls.forEach(control => {
+                                        control.style.display = 'none';
+                                    });
+                                }
+                                    
+                                // 显示所有元素数据
+                            }
+                                
+                            document.addEventListener('mousemove', onMouseMove);
+                            document.addEventListener('mouseup', onMouseUp);
+                        });
+                    }
+                    
+                    // 显示/隐藏下拉菜单
+                    addButton.addEventListener('click', function(e) {
+                        e.stopPropagation(); // 阻止事件冒泡
+                        shapeMenu.classList.toggle('hidden');
+                    });
+                    
+                    // 更新属性面板函数
+                    function updatePropertyPanel() {
+                        
+                        const noSelection = document.getElementById('no-selection');
+                        const propertiesPanel = document.getElementById('element-properties');
+                        const connectionPanel = document.getElementById('connection-properties');
+                         
+                        if (activeElement && activeElementData) {
+                            // 显示属性面板，隐藏无选择提示
+                            noSelection.classList.add('hidden');
+                            
+                            // 判断是元素还是连接线
+                            if (activeElement.classList.contains('connection-line')) {
+                                // 连接线属性面板
+                                propertiesPanel.classList.add('hidden');
+                                if (connectionPanel) {
+                                    connectionPanel.classList.remove('hidden');
+                                    
+                                    // 更新连接线属性
+                                    document.getElementById('connection-id').textContent = activeElementData.id;
+                                    document.getElementById('connection-source').textContent = activeElementData.sourceId;
+                                    document.getElementById('connection-target').textContent = activeElementData.targetId;
+                                    document.getElementById('connection-direction').value = activeElementData.direction;
+                                    document.getElementById('connection-color').value = activeElementData.color;
+                                    document.getElementById('connection-type').value = activeElementData.type;
+                                }
+                            } else {
+                                // 元素属性面板
+                                propertiesPanel.classList.remove('hidden');
+                                if (connectionPanel) {
+                                    connectionPanel.classList.add('hidden');
+                                }
+                                // console.log(activeElementData)
+                                // 获取输入框元素
+                                const nameInput = document.getElementById('element-name');
+                                const colorInput = document.getElementById('element-color');
+                                 
+                                // 更新属性面板的值
+                                document.getElementById('element-id').textContent = activeElementData.id;
+                                document.getElementById('element-type').textContent = activeElementData.ItemType;
+                                // 只有当输入框未聚焦且用户未编辑时才更新名称输入框
+                                // 避免覆盖用户正在输入的内容
+                                if (!nameInput.matches(':focus')) {
+                                    nameInput.value = activeElementData.name;
+                                }
+                                 
+                                document.getElementById('element-color').value = activeElementData.color;
+                            }
+                        } else {
+                            // 隐藏属性面板，显示无选择提示
+                            noSelection.classList.remove('hidden');
+                            propertiesPanel.classList.add('hidden');
+                            if (connectionPanel) {
+                                connectionPanel.classList.add('hidden');
+                            }
+                        }
+                    }
+                    
+                    // 应用属性按钮点击事件
+                    document.getElementById('apply-properties').addEventListener('click', function() {
+                        if (!activeElement || !activeElementData) {
+                            console.log('没有选中元素');
+                            return;
+                        }
+                         
+                        // 判断是元素还是连接线
+                        if (activeElement.classList.contains('connection-line')) {
+                            // console.log("It's a fucking line")
+                            // 应用连接线属性
+                            const directionInput = document.getElementById('connection-direction');
+                            const colorInput = document.getElementById('connection-color');
+                            const typeInput = document.getElementById('connection-type');
+                             
+                            if (!directionInput || !colorInput || !typeInput) {
+                                console.log('未找到连接线属性输入元素');
+                                return;
+                            }
+
+                            // 更新连接数据
+                            activeElementData.direction = directionInput.value;
+                            activeElementData.color = colorInput.value;
+                            activeElementData.type = typeInput.value;
+                             
+                            // console.log(typeInput.value)
+                            // 同步更新全局连接数据
+                            if (window.connectionData) {
+                                const connIndex = window.connectionData.findIndex(conn => conn.id === activeElementData.id);
+                                if (connIndex !== -1) {
+                                    window.connectionData[connIndex] = { ...activeElementData };
+                                }
+                            }
+                             
+                            // 更新连接线样式
+                            activeElement.style.backgroundColor = activeElementData.color;
+                             
+                            // 更新连接线位置以应用颜色变化
+                            const sourceElement = document.querySelector(`[data-element-id="${activeElementData.sourceId}"]`);
+                            const targetElement = document.querySelector(`[data-element-id="${activeElementData.targetId}"]`);
+                            if (sourceElement && targetElement) {
+                                updateConnectionLine(activeElement, sourceElement, targetElement);
+                            }
+                            
+                            console.log('连接线属性已更新:', activeElementData);
+                        } else {
+                            // 应用元素属性
+                            const nameInput = document.getElementById('element-name');
+                            const colorInput = document.getElementById('element-color');
+                             
+                            // 添加额外的输入检查
+                            if (!nameInput || !colorInput) {
+                                console.log('未找到输入元素');
+                                return;
+                            }
+                             
+                            // 直接从input元素获取当前值
+                            const currentInputValue = nameInput.value;
+                             
+                            const name = currentInputValue.trim(); // 去除首尾空格
+                            const color = colorInput.value;
+                             
+                            // 确保名称不为空
+                            const finalName = name || `element${activeElementData.id}`;
+                             
+                            // 先直接更新activeElementData，再同步到elementData数组
+                            activeElementData.name = finalName;
+                            activeElementData.color = color;
+                             
+                            // 同步更新全局元素数据对象中的对应元素
+                            let found = false;
+                            for (let i = 0; i < elementData.length; i++) {
+                                if (elementData[i].id === activeElementData.id) {
+                                    // 更新全局数据
+                                    elementData[i].name = finalName;
+                                    elementData[i].color = color;
+                                    found = true;
+                                    break;
+                                }
+                            }
+                             
+                            // 更新元素样式
+                            if (activeElement) {
+                                activeElement.style.backgroundColor = color;
+                                 
+                                // 更新名称标签显示
+                                const idLabel = activeElement.querySelector('.element-id');
+                                if (idLabel) {
+                                    idLabel.textContent = activeElementData.ItemType+":"+finalName; // 只显示名称
+                                }
+                            }
+                            
+                            console.log('元素属性已更新:', activeElementData);
+                        }
+                         
+                        // 延迟刷新属性面板，确保DOM更新完成
+                        setTimeout(() => {
+                            updatePropertyPanel();
+                        }, 100);
+                    });
+                    
+                    // 添加连接线属性面板（如果不存在）
+                    function ensureConnectionPropertyPanel() {
+                        // 检查是否已存在连接属性面板
+                        if (document.getElementById('connection-properties')) {
+                            return;
+                        }
+                        
+                        // 连接线属性面板已经在HTML中预定义，这里不需要动态创建
+                        
+                        // 为应用按钮添加事件监听
+                        document.getElementById('apply-connection-properties').addEventListener('click', function() {
+                            // 触发主应用按钮的点击事件
+                            document.getElementById('apply-properties').click();
+                        });
+                    }
+                    
+                    // 初始化连接线属性面板
+                    ensureConnectionPropertyPanel();
+                    
+                    // 监听颜色选择变化，实时更新颜色值
+                    document.getElementById('element-color').addEventListener('input', function(e) {
+                        if (!activeElement || !activeElementData) return;
+                        
+                        // 立即更新颜色数据
+                        activeElementData.color = e.target.value;
+                        
+                        // 立即更新元素样式以显示预览
+                        activeElement.style.backgroundColor = e.target.value;
+                    });
+                    
+                    // 监听名称输入变化
+                    document.getElementById('element-name').addEventListener('input', function(e) {
+                        if (!activeElement || !activeElementData) return;
+                        
+                        // 获取当前输入框的完整值（不trim）
+                        const currentInputValue = e.target.value;
+                        // console.log('用户正在输入名称:', currentInputValue);
+                        
+                        // 可以选择在这里临时存储到activeElementData的临时属性中，以便应用按钮可以直接获取
+                        
+                        // 可以选择是否立即更新标签显示
+                        // 如果需要实时预览名称变化，可以取消下面注释
+                        /*
+                        const idLabel = activeElement.querySelector('.element-id');
+                        if (idLabel) {
+                            idLabel.textContent = inputName || `element${activeElementData.id}`;
+                        }
+                        */
+                    });
+                    
+                    // 点击其他地方关闭下拉菜单和菜单
+                    document.addEventListener('click', function(event) {
+                        // 获取添加按钮容器，用于检查点击位置
+                        const addButtonContainer = document.getElementById('add-button-container');
+                        
+                        if (!addButtonContainer || !addButtonContainer.contains(event.target)) {
+                            shapeMenu.classList.add('hidden');
+                        }
+                        
+                        // 关闭菜单
+                        const contextMenu = document.getElementById('element-context-menu');
+                        if (contextMenu && !contextMenu.contains(event.target)) {
+                            // 只有当不是Ctrl+单击元素时才关闭菜单
+                            if (!(event.target.closest('.canvas-element') && event.ctrlKey)) {
+                                contextMenu.classList.add('hidden');
+                            }
+                        }
+                        
+                        // 取消元素拖拽状态
+                        if (activeElement) {
+                            activeElement.style.opacity = '1';
+                            isElementDragging = false; // 取消元素拖拽标志
+                            // 不重置activeElement，保持选中状态直到点击其他元素
+                        }
+                    });
+                    
+                    // 防止菜单内部点击事件冒泡导致菜单关闭
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const contextMenu = document.getElementById('element-context-menu');
+                        if (contextMenu) {
+                            contextMenu.addEventListener('click', function(e) {
+                                e.stopPropagation();
+                            });
+                        }
+                    });
+                    
+                    // 添加圆形
+                    function generateCircle(iteminfo,layer) {
+                        const circle = createCircle(iteminfo,layer);
+                        shapeMenu.classList.add('hidden');
+                        // 选中新创建的元素但不更新属性面板
+                        activeElement = circle;
+                        activeElement.style.backgroundColor = iteminfo.color;
+                        activeElement.style.borderRadius = '50%';
+                        const circleData = elementData.find(data => data.id === parseInt(circle.dataset.elementId));
+                        activeElementData = circleData;
+                        // 不调用updatePropertyPanel，仅在用户点击元素时更新
+                        // 显示当前所有元素数据
+                        console.log('所有元素数据:', elementData);
+                    };
+                    
+                    // 添加方形
+                    function generateSquare(iteminfo,layer) {
+                        const square = createSquare(iteminfo,layer);
+                        shapeMenu.classList.add('hidden');
+                        // 选中新创建的元素但不更新属性面板
+                        activeElement = square;
+                        activeElement.style.backgroundColor = iteminfo.color;
+                        const squareData = elementData.find(data => data.id === parseInt(square.dataset.elementId));
+                        activeElementData = squareData;
+                        // 不调用updatePropertyPanel，仅在用户点击元素时更新
+                        // 显示当前所有元素数据
+                        console.log('所有元素数据:', elementData);
+                    };
+                    
+                    // 添加矩形
+                    function generateRectangle(iteminfo,layer) {
+                        const rectangle = createRectangle(iteminfo,layer);
+                        shapeMenu.classList.add('hidden');
+                        // 选中新创建的元素但不更新属性面板
+                        activeElement = rectangle;
+                        activeElement.style.backgroundColor = iteminfo.color;
+                        const rectangleData = elementData.find(data => data.id === parseInt(rectangle.dataset.elementId));
+                        activeElementData = rectangleData;
+                        // 不调用updatePropertyPanel，仅在用户点击元素时更新
+                        // 显示当前所有元素数据
+                        console.log('所有元素数据:', elementData);
+                    };
+                    
+                    // 画布拖拽和点击空白区域取消选中
+                        archidemo.addEventListener('mousedown', function(e) {
+                            // 关闭双击菜单
+                            const contextMenu = document.getElementById('element-context-menu');
+                            if (contextMenu && !contextMenu.classList.contains('hidden')) {
+                                contextMenu.classList.add('hidden');
+                            }
+                             
+                            // 如果点击的是画布空白区域（不是元素或连接线），取消选中状态
+                            if (e.target === canvasContainer || e.target === archidemo) {
+                                // 移除之前选中元素或连接线的选中样式
+                                if (activeElement) {
+                                    if (activeElement.classList.contains('connection-line')) {
+                                        activeElement.style.boxShadow = 'none';
+                                    }
+                                }
+                                activeElement = null;
+                                activeElementData = null;
+                                // updatePropertyPanel();
+                            }
+                        
+                        if (!activeElement) { // 只有当没有拖拽元素时才拖拽画布
+                            isDragging = true;
+                            dragStartX = e.clientX - offsetX;
+                            dragStartY = e.clientY - offsetY;
+                        }
+                    });
+                    
+                    // 鼠标移动
+                    document.addEventListener('mousemove', function(e) {
+                        if (isDragging) {
+                            // 拖拽画布
+                            offsetX = e.clientX - dragStartX;
+                            offsetY = e.clientY - dragStartY;
+                            updateCanvasTransform();
+                        } else if (activeElement && isElementDragging) { // 只有当拖拽标志为true时才执行元素拖拽
+                            // 拖拽元素
+
+                            const rect = archidemo.getBoundingClientRect();
+                            const mouseX = (e.clientX - rect.left - offsetX) / scale;
+                            const mouseY = (e.clientY - rect.top - offsetY) / scale;
+                            
+                            const elementX = mouseX + elementDragStartX;
+                            const elementY = mouseY + elementDragStartY;
+                            
+                            activeElement.style.left = elementX + 'px';
+                            activeElement.style.top = elementY + 'px';
+                            
+                            // 更新元素数据
+                            if (activeElementData) {
+                                activeElementData.position.x = elementX;
+                                activeElementData.position.y = elementY;
+                                // console.log(pdateAffectedConnectionLines)
+                                // 安全调用连接线更新函数
+                                if (typeof updateAffectedConnectionLines === 'function') {
+                                    updateAffectedConnectionLines(activeElementData.id);
+                                }
+                            }
+                            
+                            // 如果当前移动的是父元素，更新所有子元素的位置
+                            if (activeElementData && activeElementData.children.length > 0) {
+                                updateChildrenPositions(activeElementData.id);
+                            }
+                            
+                            // 清除之前的高亮
+                                clearPurpleHighlights();
+                                
+                                // 检查是否有其他元素完全包含当前拖拽的元素
+                                let containerElement = null;
+                                let containerData = null;
+                                
+                                elements.forEach(el => {
+                                    if (el !== activeElement) {
+                                        const elId = parseInt(el.dataset.elementId);
+                                        const elData = elementData.find(data => data.id === elId);
+                                        
+                                        if (elData && isElementFullyContained(activeElement, activeElementData, el, elData)) {
+                                            containerElement = el;
+                                            containerData = elData;
+                                        }
+                                    }
+                                });
+                                
+                                // 如果找到容器元素，设置紫色高亮
+                                if (containerElement && containerData) {
+                                    // 保存原始边框样式
+                                    if (!containerElement.dataset.originalBorder) {
+                                        containerElement.dataset.originalBorder = containerElement.style.border || '';
+                                    }
+                                
+                            // 菜单触发逻辑已整合到mousedown事件中
+                                    if (!activeElement.dataset.originalBorder) {
+                                        activeElement.dataset.originalBorder = activeElement.style.border || '';
+                                    }
+                                    
+                                    // 设置紫色高亮边框
+                                    containerElement.style.border = '2px solid purple';
+                                    activeElement.style.border = '2px solid purple';
+                                }
+                                
+                                // 检查是否需要解除父子关系（当子元素离开父容器时）
+                                if (activeElementData && activeElementData.parent !== '/') {
+                                    // 找到当前父元素
+                                    const parentElement = elements.find(el => parseInt(el.dataset.elementId) === activeElementData.parent);
+                                    const parentData = elementData.find(data => data.id === activeElementData.parent);
+                                    
+                                    // 检查子元素是否完全离开父容器
+                                    if (parentElement && parentData && !isElementFullyContained(activeElement, activeElementData, parentElement, parentData)) {
+                                        // 解除父子关系
+                                        // 从父元素的children数组中移除
+                                        if (parentData.children.includes(activeElementData.id)) {
+                                            parentData.children = parentData.children.filter(id => id !== activeElementData.id);
+                                        }
+                                        
+                                        // 重置子元素的parent和relativePosition
+                                        activeElementData.parent = '/';
+                                        activeElementData.relativePosition = null;
+                                        
+                                        // 重置z-index
+                                        activeElement.style.zIndex = '15'; // 恢复默认层级
+                                    }
+                                }
+                        }
+                    });
+                    
+                    // 鼠标释放
+                    document.addEventListener('mouseup', function(e) {
+                        // 检查鼠标是否在控制面板区域内
+                        const propertiesPanel = document.getElementById('element-properties');
+                        const noSelectionPanel = document.getElementById('no-selection');
+                        const controlPanelElements = [propertiesPanel, noSelectionPanel];
+                        
+                        let isInControlPanel = false;
+                        for (const panel of controlPanelElements) {
+                            if (panel && panel.contains(e.target)) {
+                                isInControlPanel = true;
+                                break;
+                            }
+                        }
+                        
+                        // 只有当鼠标不在控制面板区域时才重置拖拽标志
+                        if (!isInControlPanel) {
+                            isDragging = false;
+                            isElementDragging = false; // 取消元素拖拽标志
+                        }
+                             
+                        if (activeElement && activeElementData && !isInControlPanel) {
+                            activeElement.style.opacity = '1';
+                            
+                            // 检查是否有其他元素完全包含当前拖拽的元素
+                            let containerElement = null;
+                            let containerData = null;
+                            
+                            elements.forEach(el => {
+                                if (el !== activeElement) {
+                                    const elId = parseInt(el.dataset.elementId);
+                                    const elData = elementData.find(data => data.id === elId);
+                                    
+                                    if (elData && isElementFullyContained(activeElement, activeElementData, el, elData)) {
+                                        containerElement = el;
+                                        containerData = elData;
+                                    }
+                                }
+                            });
+                            
+                            // 如果找到容器元素，建立父子关系
+                            if (containerElement && containerData) {
+                                // 如果子元素之前有父元素，从之前父元素的children数组中移除
+                                if (activeElementData.parent !== '/') {
+                                    const oldParentData = elementData.find(data => data.id === activeElementData.parent);
+                                    if (oldParentData && oldParentData.children) {
+                                        oldParentData.children = oldParentData.children.filter(id => id !== activeElementData.id);
+                                    }
+                                }
+                                
+                                // 设置新的父子关系
+                                activeElementData.parent = containerData.id;
+                                if (!containerData.children.includes(activeElementData.id)) {
+                                    containerData.children.push(activeElementData.id);
+                                }
+                                
+                                // 计算子元素相对父元素的位置（子元素中心到父元素中心的位置）
+                                const childCenterX = parseFloat(activeElement.style.left || 0) + 
+                                                    (activeElementData.type === 'circle' ? activeElementData.radius : 
+                                                        activeElementData.type === 'rectangle' ? activeElementData.width / 2 : activeElementData.size / 2);
+                                const childCenterY = parseFloat(activeElement.style.top || 0) + 
+                                                    (activeElementData.type === 'circle' ? activeElementData.radius : 
+                                                        activeElementData.type === 'rectangle' ? activeElementData.height / 2 : activeElementData.size / 2);
+                                
+                                const parentCenterX = parseFloat(containerElement.style.left || 0) + 
+                                                    (containerData.type === 'circle' ? containerData.radius : 
+                                                        containerData.type === 'rectangle' ? containerData.width / 2 : containerData.size / 2);
+                                const parentCenterY = parseFloat(containerElement.style.top || 0) + 
+                                                    (containerData.type === 'circle' ? containerData.radius : 
+                                                        containerData.type === 'rectangle' ? containerData.height / 2 : containerData.size / 2);
+                                
+                                // 设置相对位置
+                                activeElementData.relativePosition = {
+                                    x: childCenterX - parentCenterX,
+                                    y: childCenterY - parentCenterY
+                                };
+                                
+                                // 确保子元素在父元素之上显示
+                                activeElement.style.zIndex = '20'; // 提高子元素层级
+                                containerElement.style.zIndex = '10'; // 保持父元素层级较低
+                                
+                                // console.log(`建立父子关系: 子元素 ${activeElementData.id} -> 父元素 ${containerData.id}`);
+                                // console.log('更新后的元素数据:', elementData);
+                            }
+                            
+                            // 清除高亮
+                            clearPurpleHighlights();
+                            if(!activeElementData.direction){
+                                updatePropertyPanel();
+                            }
+                            // 更新属性面板
+                            
+                        }
+                    });
+                    
+                    // 滚轮缩放
+                    archidemo.addEventListener('wheel', function(e) {
+                        e.preventDefault();
+                        
+                        // 计算缩放中心点
+                        const rect = archidemo.getBoundingClientRect();
+                        const mouseX = e.clientX - rect.left;
+                        const mouseY = e.clientY - rect.top;
+                        
+                        // 缩放前的鼠标位置在画布中的坐标
+                        const beforeZoomCanvasX = (mouseX - offsetX) / scale;
+                        const beforeZoomCanvasY = (mouseY - offsetY) / scale;
+                        
+                        // 应用缩放
+                        if (e.deltaY < 0) {
+                            scale = Math.min(scale * 1.1, 5); // 放大，最大5倍
+                        } else {
+                            scale = Math.max(scale / 1.1, 0.1); // 缩小，最小0.1倍
+                        }
+                        
+                        // 调整偏移量，使缩放中心点保持不变
+                        offsetX = mouseX - beforeZoomCanvasX * scale;
+                        offsetY = mouseY - beforeZoomCanvasY * scale;
+                        
+                        updateCanvasTransform();
+                    });
+                    
+                    // 添加键盘事件监听以支持删除功能
+                    document.addEventListener('keydown', function(event) {
+                        // 检查是否按下Delete键
+                        if (event.key === 'Delete' && activeElement) {
+                            // console.log("I am here")
+                            deleteSelectedElement();
+                        }
+                    });
+                    
+                    // 删除选中元素的函数
+                    function deleteSelectedElement() {
+                        if (!activeElement) return;
+                        if (activeElement.classList.contains('connection-line')){
+                            // 处理连接线的删除
+                            const connectionId = parseInt(activeElement.dataset.connectionId);
+                            const connectionDataIndex = connectionData.findIndex(data => data.id === connectionId);
+                            if (connectionDataIndex !== -1) {
+                                connectionData.splice(connectionDataIndex, 1);
+                                activeElement.remove();
+                                // 从elements数组中也移除
+                                const connectionLineIndex = elements.findIndex(el => el.classList.contains('connection-line') && parseInt(el.dataset.connectionId) === connectionId);
+                                if (connectionLineIndex !== -1) {
+                                    elements.splice(connectionLineIndex, 1);
+                                }
+                            }
+                            return;
+                        }
+                        const elementId = parseInt(activeElement.dataset.elementId);
+                        const elementDataIndex = elementData.findIndex(data => data.id === elementId);
+                        console.log(elementId,elementDataIndex)
+                        if (elementDataIndex !== -1) {
+                            const elementToDelete = elementData[elementDataIndex];
+
+                            // 处理子元素：如果被删除的元素是父元素，将其子元素的parent重置为'/'
+                            if (elementToDelete.children && elementToDelete.children.length > 0) {
+                                elementToDelete.children.forEach(childId => {
+                                    const childData = elementData.find(data => data.id === childId);
+                                    if (childData) {
+                                        childData.parent = '/';
+                                        childData.relativePosition = null;
+                                        
+                                        // 找到对应的DOM元素并重置z-index
+                                        const childElement = elements.find(el => parseInt(el.dataset.elementId) === childId);
+                                        if (childElement) {
+                                            childElement.style.zIndex = '15';
+                                        }
+                                    }
+                                });
+                            }
+                            
+                            // 从父元素的children数组中移除
+                            if (elementToDelete.parent !== '/') {
+                                const parentData = elementData.find(data => data.id === elementToDelete.parent);
+                                if (parentData && parentData.children) {
+                                    parentData.children = parentData.children.filter(id => id !== elementId);
+                                }
+                            }
+                            
+                            // 移除DOM元素
+                            activeElement.remove();
+                            
+                            // 从数组中移除
+                            elements = elements.filter(el => el !== activeElement);
+                            elementData.splice(elementDataIndex, 1);
+                            
+                            // 重置activeElement
+                            activeElement = null;
+                            activeElementData = null;
+                        }
+                    }
+                    
+                        // 初始化Ctrl+单击菜单
+                        function initializeCtrlClickMenu() {
+                            // console.log('初始化Ctrl+单击菜单');
+                            // 创建菜单HTML结构
+                            const contextMenu = document.createElement('div');
+                            contextMenu.id = 'element-context-menu';
+                            contextMenu.className = 'hidden fixed z-50 bg-white shadow-lg rounded-md p-2 w-40 border border-gray-200';
+                            contextMenu.innerHTML = `
+                                <div id="create-connection" class="px-4 py-2 hover:bg-gray-100 rounded cursor-pointer text-black">创建连接</div>
+                                <div id="create-star" class="px-4 py-2 hover:bg-gray-100 rounded cursor-pointer text-black">创建星标</div>
+                                <div id="show-details" class="px-4 py-2 hover:bg-gray-100 rounded cursor-pointer text-black">详细信息</div>
+                            `;
+                            document.body.appendChild(contextMenu);
+                            console.log('菜单元素已创建并添加到文档');
+                            
+                            // 创建连接选项点击事件
+                            document.getElementById('create-connection').addEventListener('click', function() {
+                                if (activeElement && activeElementData) {
+                                    console.log('开始创建连接:', activeElementData);
+                                    // 进入连接创建模式
+                                    enterConnectionMode(activeElementData.id);
+                                }
+                                document.getElementById('element-context-menu').classList.add('hidden');
+                            });
+                            
+                            // 创建星标选项点击事件
+                            document.getElementById('create-star').addEventListener('click', function() {
+                                if (activeElement && activeElementData) {
+                                    console.log('创建星标:', activeElementData);
+                                    // 标记元素为星标
+                                    activeElementData.isStarred = !activeElementData.isStarred;
+                                    
+                                    // 更新UI显示（添加或移除星标图标）
+                                    if (activeElementData.isStarred) {
+                                        let starIcon = activeElement.querySelector('.star-icon');
+                                        if (!starIcon) {
+                                            starIcon = document.createElement('div');
+                                            starIcon.className = 'star-icon absolute -top-6 -right-6 text-yellow-500';
+                                            starIcon.style.fontSize = '16px';
+                                            starIcon.style.pointerEvents = 'none';
+                                            starIcon.innerHTML = '⭐';
+                                            activeElement.appendChild(starIcon);
+                                        }
+                                        alert(`已将元素 ${activeElementData.name || '未命名'} 标记为星标`);
+                                    } else {
+                                        const starIcon = activeElement.querySelector('.star-icon');
+                                        if (starIcon) {
+                                            starIcon.remove();
+                                        }
+                                        alert(`已取消元素 ${activeElementData.name || '未命名'} 的星标标记`);
+                                    }
+                                }
+                                document.getElementById('element-context-menu').classList.add('hidden');
+                            });
+                            // 详细信息选项点击事件
+                            document.getElementById('show-details').addEventListener('click', function() {
+                                if (activeElement && activeElementData) {
+                                    console.log('显示详细信息:', activeElementData);
+                                    // 显示元素详细信息
+                                    showElementDetails(activeElementData);
+                                }
+                                document.getElementById('element-context-menu').classList.add('hidden');
+                            });
+                            // 显示元素详细信息的函数
+                        function showElementDetails(elementData) {
+                            // 移除已存在的详细信息窗口
+                            const existingDetails = document.getElementById('element-details-modal');
+                            if (existingDetails) {
+                                existingDetails.remove();
+                            }
+                            
+                            // 创建详细信息窗口
+                            const detailsModal = document.createElement('div');
+                            detailsModal.id = 'element-details-modal';
+                            detailsModal.className = 'fixed z-60 bg-white shadow-xl rounded-lg border border-gray-300 w-100 max-h-80 overflow-y-auto';
+                            detailsModal.style.left = '50%';
+                            detailsModal.style.top = '50%';
+                            detailsModal.style.transform = 'translate(-50%, -50%)';
+                            detailsModal.style.padding = '12px';
+                            detailsModal.style.color = '#000000';
+                            
+                            // 创建标题
+                            const title = document.createElement('div');
+                            title.className = 'font-bold text-lg mb-3 pb-2 border-b border-gray-200';
+                            title.textContent = `元素详细信息: ${elementData.name || '未命名'}`;
+                            detailsModal.appendChild(title);
+                            
+                            // 创建properties内容
+                            const propertiesSection = document.createElement('div');
+                            propertiesSection.className = 'space-y-2';
+                            
+                            if (elementData.properties && typeof elementData.properties === 'object') {
+                                // 使用递归函数展开所有嵌套对象
+                                expandObject(elementData.properties, '', propertiesSection);
+                            } else {
+                                const noProperties = document.createElement('div');
+                                noProperties.className = 'text-gray-500 italic';
+                                noProperties.textContent = '暂无详细属性信息';
+                                propertiesSection.appendChild(noProperties);
+                            }
+                            
+                            detailsModal.appendChild(propertiesSection);
+                            
+                            // 添加关闭按钮
+                            const closeButton = document.createElement('button');
+                            closeButton.className = 'mt-4 w-full bg-gray-200 hover:bg-gray-300 py-1 rounded text-black';
+                            closeButton.textContent = '关闭';
+                            closeButton.addEventListener('click', function() {
+                                detailsModal.remove();
+                            });
+                            detailsModal.appendChild(closeButton);
+                            
+                            // 点击模态框外部关闭
+                            detailsModal.addEventListener('click', function(e) {
+                                if (e.target === detailsModal) {
+                                    detailsModal.remove();
+                                }
+                            });
+                            
+                            document.body.appendChild(detailsModal);
+                        }
+                        // 递归展开对象的函数
+                        function expandObject(obj, prefix, container) {
+                            if (typeof obj !== 'object' || obj === null || Array.isArray(obj)) {
+                                return;
+                            }
+                            
+                            for (const [key, value] of Object.entries(obj)) {
+                                const fullKey = prefix ? `${prefix}.${key}` : key;
+                                
+                                if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                                    // 如果是空对象，直接显示
+                                    if (Object.keys(value).length === 0) {
+                                        const propertyItem = document.createElement('div');
+                                        propertyItem.className = 'flex justify-between';
+                                        
+                                        const propertyKey = document.createElement('span');
+                                        propertyKey.className = 'font-medium';
+                                        propertyKey.textContent = fullKey + ':';
+                                        
+                                        const propertyValue = document.createElement('span');
+                                        propertyValue.textContent = '{}';
+                                        
+                                        propertyItem.appendChild(propertyKey);
+                                        propertyItem.appendChild(propertyValue);
+                                        container.appendChild(propertyItem);
+                                    } else {
+                                        // 递归展开嵌套对象
+                                        expandObject(value, fullKey, container);
+                                    }
+                                } else {
+                                    // 显示叶子节点
+                                    const propertyItem = document.createElement('div');
+                                    propertyItem.className = 'flex justify-between';
+                                    
+                                    const propertyKey = document.createElement('span');
+                                    propertyKey.className = 'font-medium';
+                                    propertyKey.textContent = fullKey + ':';
+                                    
+                                    const propertyValue = document.createElement('span');
+                                    if (Array.isArray(value)) {
+                                        propertyValue.textContent = JSON.stringify(value);
+                                    } else if (value === null) {
+                                        propertyValue.textContent = 'null';
+                                    } else {
+                                        propertyValue.textContent = value;
+                                    }
+                                    
+                                    propertyItem.appendChild(propertyKey);
+                                    propertyItem.appendChild(propertyValue);
+                                    container.appendChild(propertyItem);
+                                }
+                            }
+                        }
+                        }
+                        
+                            // 如果处于连接创建模式，阻止默认的元素点击行为
+                        
+                        // 进入连接创建模式
+                        function enterConnectionMode(sourceId) {
+                            isConnectionMode = true;
+                            connectionSourceId = sourceId;
+                            
+                            // 创建提示信息
+                            connectionPrompt = document.createElement('div');
+                            connectionPrompt.className = 'fixed z-50 bg-blue-500 text-white px-4 py-2 rounded-md shadow-lg';
+                            connectionPrompt.textContent = '请点击另一个元素开始创建连接（按ESC取消）';
+                            connectionPrompt.style.top = '20px';
+                            connectionPrompt.style.left = '50%';
+                            connectionPrompt.style.transform = 'translateX(-50%)';
+                            document.body.appendChild(connectionPrompt);
+                            
+                            // 为画布添加临时点击事件以捕获目标元素
+                            archidemo.addEventListener('click', connectionModeClickHandler);
+                            
+                            console.log('已进入连接创建模式，源元素ID:', sourceId);
+                        }
+                        
+                        // 退出连接创建模式
+                        function exitConnectionMode() {
+                            isConnectionMode = false;
+                            connectionSourceId = null;
+                            
+                            // 移除提示信息
+                            if (connectionPrompt && connectionPrompt.parentNode) {
+                                connectionPrompt.parentNode.removeChild(connectionPrompt);
+                                connectionPrompt = null;
+                            }
+                            
+                            // 移除临时点击事件
+                            archidemo.removeEventListener('click', connectionModeClickHandler);
+                            
+                            console.log('已退出连接创建模式');
+                        }
+                        
+                        // 连接模式下的点击处理函数
+                        function connectionModeClickHandler(e) {
+
+                            
+                            // 修改选择器，尝试多种可能的元素类名
+                            const clickedElement = e.target.closest('.canvas-container, .element-container, .canvas-element');
+                            // console.log('找到的元素:', clickedElement);
+                            
+                            if (clickedElement) {
+                                
+                                const targetElementId = parseInt(clickedElement.dataset.elementId);
+                                const sourceElementData = elementData.find(data => data.id === connectionSourceId);
+                                const targetElementData = elementData.find(data => data.id === targetElementId);
+                                const sourceElement = document.querySelector(`[data-element-id="${connectionSourceId}"]`);
+                                const targetElement = document.querySelector(`[data-element-id="${targetElementId}"]`);
+
+
+                                if (sourceElementData && targetElementData) {
+
+                                    // 打印连接信息
+                                    console.log(`即将在元素 "${sourceElementData.name || '未命名'}" (ID: ${connectionSourceId}) 和元素 "${targetElementData.name || '未命名'}" (ID: ${targetElementId}) 之间创建连接`);
+
+                                    const sourceElementinterface = sourceElementData.properties.INTERFACE;
+                                    const targetElementinterface = targetElementData.properties.INTERFACE;
+                                    compareInterfaces(sourceElementinterface, targetElementinterface)
+                                        .then(selectedInterface => {                                 
+                                        if (selectedInterface) {
+                                            // 有兼容接口，执行连接操作
+                                            createConnectionBetweenElements(connectionSourceId, targetElementId,selectedInterface);
+                                        } else {
+                                            // 无兼容接口或用户取消
+                                            alert('无法连接：没有兼容的接口或操作被取消');
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('接口对比出错:', error);
+                                    });
+
+                                    if (!sourceElement || !targetElement) {
+                                        console.error('无法找到源元素或目标元素');
+                                        return;
+                                    }
+
+                                    // 创建连接线
+                                    // createConnectionBetweenElements(connectionSourceId, targetElementId);
+                                }
+                            }
+                            // 不再自动退出连接模式，只有ESC键可以退出
+                        }
+                        function compareInterfaces(componentA, componentB) {
+                            // 找出componentA中具备的接口
+                            
+                            const availableInterfacesA = Object.keys(componentA).filter(
+                                key => componentA[key] !== '/'
+                            );
+
+                            // 找出componentB中具备的接口
+                            const availableInterfacesB = Object.keys(componentB).filter(
+                                key => componentB[key] !== '/'
+                            );
+
+                            // 找出两个组件都具备的接口（交集）
+                            const commonInterfaces = availableInterfacesA.filter(
+                                interfaceName => availableInterfacesB.includes(interfaceName)
+                            );
+
+                            // 如果没有共同接口，返回null
+                            if (commonInterfaces.length === 0) {
+                                console.log("rien")
+                                return null;
+                            }
+                            
+                            // // 如果只有一个共同接口，直接返回该接口名
+                            // if (commonInterfaces.length === 1) {
+                            //     console.log(commonInterfaces[0])
+                            //     return commonInterfaces[0];
+                            // }
+                            
+                            // 有多个共同接口，显示弹窗让用户选择
+                            return new Promise((resolve) => {
+
+                                // 创建弹窗元素
+                            const modal = document.createElement('div');
+                            modal.className = 'interface-selector-modal';
+                            modal.style.cssText = `
+                                position: fixed;
+                                top: 0;
+                                left: 0;
+                                width: 100%;
+                                height: 100%;
+                                background: rgba(0, 0, 0, 0.5);
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                z-index: 1000;
+                                font-family: Arial, sans-serif;
+                                color: #000000; // 设置字体颜色为黑色
+                            `;
+                                
+                                // 创建弹窗内容
+                            const modalContent = document.createElement('div');
+                            modalContent.className = 'interface-selector-content';
+                            modalContent.style.cssText = `
+                                background: white;
+                                padding: 20px;
+                                border-radius: 8px;
+                                width: 400px;
+                                max-width: 90%;
+                                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                                color: #000000; // 设置字体颜色为黑色
+                            `;
+                                
+                                // 添加标题
+                            const title = document.createElement('h3');
+                            title.textContent = '选择连接接口';
+                            title.style.marginTop = '0';
+                            title.style.color = '#000000'; // 设置标题颜色为黑色
+                            modalContent.appendChild(title);
+                                
+                                // 添加提示文本
+                            const message = document.createElement('p');
+                            message.textContent = '发现多个兼容接口，请选择一个用于连接：';
+                            message.style.color = '#000000'; // 设置提示文本颜色为黑色
+                            modalContent.appendChild(message);
+                                
+                                // 添加接口选择列表
+                                const interfaceList = document.createElement('div');
+                                interfaceList.className = 'interface-options';
+                                interfaceList.style.margin = '15px 0';
+                                
+                                commonInterfaces.forEach(interfaceName => {
+                                    const option = document.createElement('button');
+                                    option.textContent = interfaceName;
+                            option.style.cssText = `
+                                display: block;
+                                width: 100%;
+                                padding: 10px;
+                                margin: 5px 0;
+                                border: 1px solid #ddd;
+                                background: #f9f9f9;
+                                text:#000000;
+                                border-radius: 4px;
+                                cursor: pointer;
+                                text-align: left;
+                                transition: background-color 0.2s;
+                                color: #000000; // 设置选项文本颜色为黑色
+                            `;
+                                    
+                                    option.onmouseover = () => {
+                                        option.style.background = '#e9e9e9';
+                                    };
+                                    
+                                    option.onmouseout = () => {
+                                        option.style.background = '#f9f9f9';
+                                    };
+                                    
+                                    option.onclick = () => {
+                                        document.body.removeChild(modal);
+                                        resolve(interfaceName);
+                                    };
+                                    
+                                    interfaceList.appendChild(option);
+                                });
+                                
+                                modalContent.appendChild(interfaceList);
+                                
+                                // 添加取消按钮
+                                const cancelButton = document.createElement('button');
+                                cancelButton.textContent = '取消';
+                                cancelButton.style.cssText = `
+                                    background: #6c757d;
+                                    color: white;
+                                    border: none;
+                                    padding: 8px 16px;
+                                    border-radius: 4px;
+                                    cursor: pointer;
+                                    float: right;
+                                    margin-top: 10px;
+                                `;
+                                
+                                cancelButton.onclick = () => {
+                                    document.body.removeChild(modal);
+                                    resolve(null);
+                                };
+                                
+                                modalContent.appendChild(cancelButton);
+                                
+                                // 防止点击弹窗内容时关闭弹窗
+                                modalContent.onclick = (e) => {
+                                    e.stopPropagation();
+                                };
+                                
+                                // 添加弹窗到页面
+                                modal.appendChild(modalContent);
+                                document.body.appendChild(modal);
+                                
+                                // 点击弹窗外部关闭弹窗
+                                modal.onclick = () => {
+                                    document.body.removeChild(modal);
+                                    resolve(null);
+                                };
+                            });
+                        }
+                        
+
+
+
+                        // 创建元素间连接线的函数
+                        function createConnectionBetweenElements(sourceId, targetId,interface) {
+                            console.log('创建连接线:', sourceId, '->', targetId);
+                             
+                            // 获取源元素和目标元素的DOM引用
+                            const sourceElement = document.querySelector(`[data-element-id="${sourceId}"]`);
+                            const targetElement = document.querySelector(`[data-element-id="${targetId}"]`);
+
+
+                             
+                            // 创建连接线元素
+                            const connectionLine = document.createElement('div');
+                            connectionLine.className = 'connection-line';
+                            connectionLine.dataset.connectionId = Date.now(); // 设置连接ID
+                            connectionLine.style.position = 'absolute';
+                            connectionLine.style.zIndex = zIndexCounter++; // 与其他元素使用相同的z-index管理
+                            connectionLine.style.pointerEvents = 'auto'; // 允许点击选中
+                            connectionLine.style.backgroundColor = '#6366f1'; // 连接线颜色
+                            connectionLine.style.opacity = '1'; // 确保完全不透明
+                            connectionLine.style.borderRadius = '1.5px'; // 添加圆角使线条更平滑
+                            connectionLine.style.height = '2px'; // 设置默认高度
+                            
+                            // 添加点击事件监听器以支持选中功能
+                            connectionLine.addEventListener('click', function(e) {
+                                e.stopPropagation(); // 阻止事件冒泡，避免触发画布点击
+                                selectConnectionLine(connectionLine);
+                            });
+                             
+                            // 将连接线添加到与其他元素相同的容器中
+                            canvasContainer.appendChild(connectionLine);
+                             
+                            // 计算并更新连接线的位置和样式
+                            updateConnectionLine(connectionLine, sourceElement, targetElement);
+                             
+                            // 添加完整的连接线数据
+                            const connectionData = {
+                                id: parseInt(connectionLine.dataset.connectionId),
+                                sourceId: sourceId,
+                                targetId: targetId,
+                                direction: '单向', // 默认单向
+                                color: '#6366f1', // 默认紫色
+                                type: interface, // 默认GPIO类型
+                                // 存储位置信息，用于后续更新
+                                sourcePosition: {
+                                    x: parseFloat(sourceElement.style.left || 0),
+                                    y: parseFloat(sourceElement.style.top || 0)
+                                },
+                                targetPosition: {
+                                    x: parseFloat(targetElement.style.left || 0),
+                                    y: parseFloat(targetElement.style.top || 0)
+                                }
+                            };
+                             
+                            // 存储连接数据
+                            if (!window.connectionData) {
+                                window.connectionData = [];
+                            }
+                            window.connectionData.push(connectionData);
+                            elements.push(connectionLine);
+                            elementData.push(connectionData);
+                            
+                            // 存储DOM引用以便快速访问
+                            connectionLine.connectionData = connectionData;
+                             
+                            // console.log('连接线创建成功:', connectionData);
+                            exitConnectionMode();
+                        }
+                        
+                        // 选中连接线的函数
+                        function selectConnectionLine(lineElement) {
+                            // 重置之前选中的元素
+                            if (activeElement) {
+                                // 移除元素选中样式
+                                if (activeElement.classList.contains('canvas-element')) {
+                                    // 元素的样式重置逻辑
+                                }
+                            }
+                            
+                            // 设置当前选中的连接线
+                            activeElement = lineElement;
+                            activeElementData = lineElement.connectionData;
+                            
+                            // 添加选中样式
+                            lineElement.style.boxShadow = '0 0 5px 2px rgba(99, 102, 241, 0.8)';
+                            // 更新属性面板
+                            updatePropertyPanel();
+                        }
+                        
+                        // 计算矩形边缘上距离另一个矩形最近的点
+                        function getNearestPointOnRect(rect1, rect2, canvasRect) {
+                            // 计算两个矩形的中心点
+                            const center1X = rect1.left + rect1.width / 2;
+                            const center1Y = rect1.top + rect1.height / 2;
+                            const center2X = rect2.left + rect2.width / 2;
+                            const center2Y = rect2.top + rect2.height / 2;
+                            
+                            // 计算从rect1中心指向rect2中心的向量
+                            const dx = center2X - center1X;
+                            const dy = center2Y - center1Y;
+                            
+                            // 计算这个向量与rect1边缘的交点
+                            // 首先计算向量在矩形边界上的比例因子
+                            let tX = Math.abs(rect1.width / 2 / dx) || Infinity;
+                            let tY = Math.abs(rect1.height / 2 / dy) || Infinity;
+                            
+                            // 选择较小的t值，确保交点在矩形的最近边缘上
+                            let t = Math.min(tX, tY);
+                            
+                            // 计算交点坐标
+                            let intersectionX = center1X + t * dx;
+                            let intersectionY = center1Y + t * dy;
+                            
+                            // 转换为相对于canvasContainer的坐标
+                            return {
+                                x: intersectionX - canvasRect.left,
+                                y: intersectionY - canvasRect.top
+                            };
+                        }
+                        
+                        // 更新连接线位置和样式的函数
+                        function updateConnectionLine(line, source, target) {
+                            // 获取元素数据
+                            const sourceId = parseInt(source.dataset.elementId);
+                            const targetId = parseInt(target.dataset.elementId);
+                            const sourceData = elementData.find(data => data.id === sourceId);
+                            const targetData = elementData.find(data => data.id === targetId);
+                            
+                            // 获取元素的样式位置（直接使用元素的style属性，不使用getBoundingClientRect）
+                            const sourceLeft = parseFloat(source.style.left || 0);
+                            const sourceTop = parseFloat(source.style.top || 0);
+                            const targetLeft = parseFloat(target.style.left || 0);
+                            const targetTop = parseFloat(target.style.top || 0);
+                            
+                            // 计算元素中心点（考虑元素类型）
+                            let sourceCenterX, sourceCenterY, targetCenterX, targetCenterY;
+                            
+                            if (sourceData.type === 'circle') {
+                                sourceCenterX = sourceLeft + sourceData.radius;
+                                sourceCenterY = sourceTop + sourceData.radius;
+                            } else if (sourceData.type === 'rectangle') {
+                                sourceCenterX = sourceLeft + sourceData.width / 2;
+                                sourceCenterY = sourceTop + sourceData.height / 2;
+                            } else if (sourceData.type === 'square') {
+                                sourceCenterX = sourceLeft + sourceData.size / 2;
+                                sourceCenterY = sourceTop + sourceData.size / 2;
+                            } else {
+                                // 默认处理
+                                sourceCenterX = sourceLeft + 50; // 默认宽度的一半
+                                sourceCenterY = sourceTop + 30; // 默认高度的一半
+                            }
+                            
+                            if (targetData.type === 'circle') {
+                                targetCenterX = targetLeft + targetData.radius;
+                                targetCenterY = targetTop + targetData.radius;
+                            } else if (targetData.type === 'rectangle') {
+                                targetCenterX = targetLeft + targetData.width / 2;
+                                targetCenterY = targetTop + targetData.height / 2;
+                            } else if (targetData.type === 'square') {
+                                targetCenterX = targetLeft + targetData.size / 2;
+                                targetCenterY = targetTop + targetData.size / 2;
+                            } else {
+                                // 默认处理
+                                targetCenterX = targetLeft + 50; // 默认宽度的一半
+                                targetCenterY = targetTop + 30; // 默认高度的一半
+                            }
+                            
+                            // 计算从源元素到目标元素的向量
+                            const dx = targetCenterX - sourceCenterX;
+                            const dy = targetCenterY - sourceCenterY;
+                            
+                            // 计算源元素边缘上的点
+                            let sourcePoint, targetPoint;
+                            
+                            if (sourceData.type === 'circle') {
+                                // 对于圆形，直接计算边缘点
+                                const distance = Math.sqrt(dx * dx + dy * dy);
+                                if (distance > 0) {
+                                    sourcePoint = {
+                                        x: sourceCenterX + (dx / distance) * sourceData.radius,
+                                        y: sourceCenterY + (dy / distance) * sourceData.radius
+                                    };
+                                } else {
+                                    sourcePoint = {x: sourceCenterX, y: sourceCenterY};
+                                }
+                            } else {
+                                // 对于矩形/方形，计算边缘上最近的点
+                                // 计算向量在矩形边界上的比例因子
+                                let tX = Math.abs(dx) > 0 ? ((sourceData.width || sourceData.size || 100) / 2) / Math.abs(dx) : Infinity;
+                                let tY = Math.abs(dy) > 0 ? ((sourceData.height || sourceData.size || 60) / 2) / Math.abs(dy) : Infinity;
+                                // 选择较小的t值，确保交点在矩形的最近边缘上
+                                let t = Math.min(tX, tY);
+                                sourcePoint = {
+                                    x: sourceCenterX + t * dx,
+                                    y: sourceCenterY + t * dy
+                                };
+                            }
+                            
+                            // 计算目标元素边缘上的点
+                            const targetDx = sourceCenterX - targetCenterX;
+                            const targetDy = sourceCenterY - targetCenterY;
+                            
+                            if (targetData.type === 'circle') {
+                                // 对于圆形，直接计算边缘点
+                                const distance = Math.sqrt(targetDx * targetDx + targetDy * targetDy);
+                                if (distance > 0) {
+                                    targetPoint = {
+                                        x: targetCenterX + (targetDx / distance) * targetData.radius,
+                                        y: targetCenterY + (targetDy / distance) * targetData.radius
+                                    };
+                                } else {
+                                    targetPoint = {x: targetCenterX, y: targetCenterY};
+                                }
+                            } else {
+                                // 对于矩形/方形，计算边缘上最近的点
+                                // 计算向量在矩形边界上的比例因子
+                                let tX = Math.abs(targetDx) > 0 ? ((targetData.width || targetData.size || 100) / 2) / Math.abs(targetDx) : Infinity;
+                                let tY = Math.abs(targetDy) > 0 ? ((targetData.height || targetData.size || 60) / 2) / Math.abs(targetDy) : Infinity;
+                                // 选择较小的t值，确保交点在矩形的最近边缘上
+                                let t = Math.min(tX, tY);
+                                targetPoint = {
+                                    x: targetCenterX + t * targetDx,
+                                    y: targetCenterY + t * targetDy
+                                };
+                            }
+                            
+                            // 计算两点之间的距离和角度
+                            const lineDx = targetPoint.x - sourcePoint.x;
+                            const lineDy = targetPoint.y - sourcePoint.y;
+                            const distance = Math.sqrt(lineDx * lineDx + lineDy * lineDy);
+                            const angle = Math.atan2(lineDy, lineDx) * 180 / Math.PI;
+                               
+                            // 获取连接数据以应用自定义颜色
+                            const connectionData = line.connectionData || 
+                                (window.connectionData ? window.connectionData.find(conn => conn.id === parseInt(line.dataset.connectionId)) : null);
+                            const lineColor = connectionData ? connectionData.color : '#6366f1';
+                               
+                            // 设置连接线的样式，增强可见性
+                            line.style.width = distance + 'px';
+                            line.style.height = '3px'; // 略微加粗
+                            line.style.left = sourcePoint.x + 'px';
+                            line.style.top = sourcePoint.y + 'px';
+                            line.style.transformOrigin = '0 50%';
+                            line.style.transform = `rotate(${angle}deg)`;
+                            line.style.backgroundColor = lineColor; // 使用连接数据中的颜色
+                            line.style.opacity = '1'; // 确保完全不透明
+                            line.style.borderRadius = '1.5px'; // 添加圆角使线条更平滑
+                            
+                            // 更新连接数据中的位置信息
+                            if (connectionData) {
+                                connectionData.sourcePosition = {
+                                    x: sourceLeft,
+                                    y: sourceTop
+                                };
+                                connectionData.targetPosition = {
+                                    x: targetLeft,
+                                    y: targetTop
+                                };
+                            }
+                        }
+                        
+                        // 更新所有受元素移动影响的连接线
+                        function updateAffectedConnectionLines(elementId) {
+                            if (!window.connectionData) return;
+                            
+                            // 查找与当前元素相关的所有连接线
+                            const affectedConnections = window.connectionData.filter(conn => 
+                                conn.sourceId === elementId || conn.targetId === elementId
+                            );
+                            
+                            affectedConnections.forEach(conn => {
+                                const lineElement = document.querySelector(`[data-connection-id="${conn.id}"]`);
+                                if (lineElement) {
+                                    const sourceElement = document.querySelector(`[data-element-id="${conn.sourceId}"]`);
+                                    const targetElement = document.querySelector(`[data-element-id="${conn.targetId}"]`);
+                                    if (sourceElement && targetElement) {
+                                        updateConnectionLine(lineElement, sourceElement, targetElement);
+                                    }
+                                }
+                            });
+                        }
+                        
+                        // 添加ESC键监听以退出连接模式
+                        document.addEventListener('keydown', function(event) {
+                            if (event.key === 'Escape' && isConnectionMode) {
+                                exitConnectionMode();
+                            }
+                        });
+                        
+                        // 添加窗口大小改变和元素移动时更新连接线的逻辑
+                        function updateAllConnectionLines() {
+                            if (!window.connectionData) return;
+                            
+                            const lines = document.querySelectorAll('.connection-line');
+                            lines.forEach((line, index) => {
+                                if (window.connectionData[index]) {
+                                    const { sourceId, targetId } = window.connectionData[index];
+                                    const sourceElement = document.querySelector(`[data-element-id="${sourceId}"]`);
+                                    const targetElement = document.querySelector(`[data-element-id="${targetId}"]`);
+                                    
+                                    if (sourceElement && targetElement) {
+                                        updateConnectionLine(line, sourceElement, targetElement);
+                                    }
+                                }
+                            });
+                        }
+                        
+                        // 监听窗口大小变化以更新连接线
+                        window.addEventListener('resize', updateAllConnectionLines);
+                        
+                        // 在元素移动结束后更新连接线
+                        // 将此函数添加到元素拖拽结束事件中
+                        document.addEventListener('mouseup', function() {
+                            if (isElementDragging) {
+                                updateAllConnectionLines();
+                            }
+                        });
+                        
+                        // 修改元素的mousedown事件处理，在连接模式下阻止默认行为
+                        
+                        
+                        // 初始化                    
+                        setTimeout(() => {
+                            generateElementTypesMenu(); // 生成元素类型菜单
+                            initializeCtrlClickMenu(); // 初始化Ctrl+单击菜单
+                            initializeCanvas();
+                            updatePropertyPanel(); // 更新属性面板显示
+                        }, 5000);
+
+                    });
+            </script>
+        </div>
+
+    </div>
+    
+    <!-- 页脚容器 -->
+    <div id="footer-container"></div>
+    
+    <script src="../js/load-components.js"></script>
+    <script src="../js/Visit_Monitor.js"></script>
+</body>
+</html>
