@@ -1,4 +1,4 @@
-    let deploy_mode = 'test'
+    let deploy_mode = ''full''
     let ip = '';
     // 调用API执行Python脚本
     if (deploy_mode == 'local'){ip = 'http://47.99.204.97:5000'}
