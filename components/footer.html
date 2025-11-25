@@ -1,10 +1,50 @@
 <footer class="bg-dark-light/80 backdrop-blur-md border-t border-primary/30 fixed bottom-0 left-0 right-0 z-50 m-0 p-2">
-    <div class="w-full flex justify-between items-center text-xs text-yellow-400">
+    <div class="w-full flex justify-between items-center text-xs text-white">
         <div>
-            <span>达客科技ADAS工具集合</span>
+            <span>达客智能驾驶领航员</span>
+        </div>
+        <div class="flex items-center space-x-2">
+            <span>版本号: 1.1.0</span>
+            <button id="version-detail-btn" class="px-2 py-0.5 bg-primary/30 hover:bg-primary/50 rounded text-white text-xs transition-all duration-200">
+                查看详情
+            </button>
         </div>
         <div>
-            <span>上次更新: 2025-07-10</span>
+            <span>上次更新: 2025-11-10</span>
+        </div>
+    </div>
+    
+    <!-- 版本详情浮窗 -->
+    <div id="version-detail-modal" class="fixed left-1/2 bottom-9 transform -translate-x-1/2 w-80 bg-dark-light/95 backdrop-blur-md border border-primary/30 rounded-lg p-4 text-white hidden">
+        <div class="flex justify-between items-center mb-2">
+            <h4 class="font-bold text-sm">版本 1.1.0 更新内容</h4>
+            <button id="close-modal-btn" class="text-white hover:text-yellow-400 transition-colors">×</button>
+        </div>
+        <div class="text-xs space-y-2 max-h-48 overflow-y-auto">
+            <div class="flex items-start">
+                <span class="text-green-400 mr-2">✓</span>
+                <span>新增ADAS驾驶辅助功能展示模块</span>
+            </div>
+            <div class="flex items-start">
+                <span class="text-green-400 mr-2">✓</span>
+                <span>优化传感器交互界面，提升用户体验</span>
+            </div>
+            <div class="flex items-start">
+                <span class="text-green-400 mr-2">✓</span>
+                <span>修复地图加载时的性能问题</span>
+            </div>
+            <div class="flex items-start">
+                <span class="text-green-400 mr-2">✓</span>
+                <span>更新硬件数据库，增加新的雷达型号</span>
+            </div>
+            <div class="flex items-start">
+                <span class="text-green-400 mr-2">✓</span>
+                <span>支持配置更多的智能驾驶场景</span>
+            </div>
+            <div class="flex items-start">
+                <span class="text-green-400 mr-2">✓</span>
+                <span>改进知识图谱可视化效果</span>
+            </div>
         </div>
     </div>
 </footer>

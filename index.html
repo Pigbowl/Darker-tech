@@ -776,15 +776,12 @@
             </div>
         </div>
     </footer>
+    <div id="footer-container"></div>   
 
         <!-- 父页面添加监听脚本 -->
     <!-- JavaScript -->
     <script>
-        // let issue_number = 0;
-        // let advice_number = 0;
-        // 移动端菜单切换
-        // getissuecount();
-        // 导航栏滚动效果
+
         const header = document.querySelector('header');
         let lastScrollTop = 0;
         
@@ -879,40 +876,6 @@
             })
 
         }
-
-
-        // function getissuecount(){
-        //     command = ip + '/get_issue_number'
-        //     fetch(command,{
-        //         method:'POST',
-        //         headers:{
-        //             'Content-Type':'application/json'
-        //         },
-        //         body:JSON.stringify({
-        //             'req':'none',
-        //             })
-        //     }).then(response=>response.json()).then(data=>{
-        //         if(data.success){
-        //             issue_number = JSON.parse(data.output)+1;
-        //         }
-        //     })
-        // }
-        // function getadvicecount(){
-        //     command = ip + '/get_advice_number'
-        //     fetch(command,{
-        //         method:'POST',
-        //         headers:{
-        //             'Content-Type':'application/json'
-        //         },
-        //         body:JSON.stringify({
-        //             'req':'none',
-        //             })
-        //     }).then(response=>response.json()).then(data=>{
-        //         if(data.success){
-        //             advice_number = JSON.parse(data.output)+1;
-        //         }
-        //     })
-        // }
         // 页面加载动画
         document.addEventListener('DOMContentLoaded', () => {
             // 淡入效果

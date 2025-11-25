@@ -9,6 +9,52 @@ async function loadComponent(elementId, componentPath) {
         const element = document.getElementById(elementId);
         if (element) {
             element.innerHTML = html;
+            
+            // 检查是否是footer组件，如果是，则尝试初始化交互
+            if (elementId === 'footer-container') {
+                // 页脚交互初始化
+                setTimeout(() => {
+                    console.log('初始化页脚交互');
+                    const modal = document.getElementById('version-detail-modal');
+                    const detailBtn = document.getElementById('version-detail-btn');
+                    const closeBtn = document.getElementById('close-modal-btn');
+                    
+                    if (modal && detailBtn && closeBtn) {
+                        console.log('找到页脚元素，绑定事件');
+                        
+                        // 移除可能存在的旧事件监听器
+                        const newDetailBtn = detailBtn.cloneNode(true);
+                        detailBtn.parentNode.replaceChild(newDetailBtn, detailBtn);
+                        
+                        const newCloseBtn = closeBtn.cloneNode(true);
+                        closeBtn.parentNode.replaceChild(newCloseBtn, closeBtn);
+                        
+                        // 绑定新的事件监听器
+                        newDetailBtn.addEventListener('click', function() {
+                            modal.classList.toggle('hidden');
+                            console.log('点击了查看详情按钮');
+                        });
+                        
+                        newCloseBtn.addEventListener('click', function() {
+                            modal.classList.add('hidden');
+                            console.log('点击了关闭按钮');
+                        });
+                        
+                        // 点击浮窗外部关闭浮窗
+                        const handleOutsideClick = function(event) {
+                            if (!modal.contains(event.target) && event.target !== newDetailBtn) {
+                                modal.classList.add('hidden');
+                                console.log('点击了浮窗外部');
+                            }
+                        };
+                        
+                        // 移除可能存在的旧监听器
+                        document.removeEventListener('click', handleOutsideClick);
+                        // 添加新监听器
+                        document.addEventListener('click', handleOutsideClick);
+                    }
+                }, 100);
+            }
         }
     } catch (error) {
         console.error(error);
