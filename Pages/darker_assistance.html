@@ -6,14 +6,14 @@
 <div id="duckAssistant" style="position:fixed;bottom:150px;right:50px;display:flex;flex-direction:column;align-items:flex-end;z-index:9999;">
   <!-- 对话气泡 -->
      <!-- 对话气泡 -->
-  <div id="chatBubble" style="width:280px;background:rgb(253, 229, 10);border-radius:15px;padding:12px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1);position:relative;">
+  <div id="chatBubble" style="width:280px;background:rgba(26, 219, 245, 0.95);border-radius:15px;padding:12px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1);position:relative;">
     <div id="bubbleContent" style="font-size:14px;color:rgb(0, 0, 0);line-height:1.5;">Hello,尊敬的用户</div>
-      <div style="position:absolute;bottom:-5px;right:10px;width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:8px solid rgba(253, 229, 10);"></div>
+      <div style="position:absolute;bottom:-5px;right:10px;width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:8px solid rgba(26, 219, 245, 0.95);"></div>
   </div>
   <!-- 选项列表 -->
   <div id="optionList" style="
     width:200px;
-    background:rgb(253, 229, 10);
+    background:rgba(26, 219, 245, 0.95);
     border-radius:15px;
     padding:8px 0;
     margin-bottom:10px;
@@ -143,24 +143,29 @@ if (conversion_blog[parenthtml]){
 }
 bubbleContent.textContent = starttext;
   // 点击交互（触发挥手动画+切换输入框）
-let isChatting = false;
-let introInterval;
-const chatBubble = document.getElementById('chatBubble');
-const duckIcon = document.getElementById('duckIcon');
-const chatInputBox = document.getElementById('chatInputBox');
-const chatContent = document.getElementById('chatContent');
-const userInput = document.getElementById('userInput');
-const sendBtn = document.getElementById('sendBtn');
-const frameWidth = 100;  // 单帧宽度（与雪碧图单帧尺寸一致）
-const totalFrames = 6;  // 总帧数（6帧动画）
-const duckVideo = document.getElementById('duckIcon');
-const duckStatic = document.getElementById('duckStatic');
-const subscribeModal = document.getElementById('subscribeModal');
-let animationInterval = null;
-let animationTimeout = null; // 定义animationTimeout变量
-// chatBubble.innerHTML = pageName;
-// getusernumber();
-// 自动播放动画（每5秒触发一次挥手，避免频繁动画）
+let isChatting = false; // 默认不显示聊天输入框
+let isMuted = false; // 默认不静音，显示chatbubble
+  let introInterval;
+  const chatBubble = document.getElementById('chatBubble');
+  const duckIcon = document.getElementById('duckIcon');
+  const chatInputBox = document.getElementById('chatInputBox');
+  const chatContent = document.getElementById('chatContent');
+  const userInput = document.getElementById('userInput');
+  const sendBtn = document.getElementById('sendBtn');
+  const frameWidth = 100;  // 单帧宽度（与雪碧图单帧尺寸一致）
+  const totalFrames = 6;  // 总帧数（6帧动画）
+  const duckVideo = document.getElementById('duckIcon');
+  const duckStatic = document.getElementById('duckStatic');
+  const subscribeModal = document.getElementById('subscribeModal');
+  let animationInterval = null;
+  let animationTimeout = null; // 定义animationTimeout变量
+  // 获取静音选项元素
+  const muteOption = document.querySelector('.option-item[data-action="mute"]');
+  const muteIcon = muteOption.querySelector('i');
+  const muteText = muteOption.querySelector('span:last-child');
+  // chatBubble.innerHTML = pageName;
+  // getusernumber();
+  // 自动播放动画（每5秒触发一次挥手，避免频繁动画）
 function startAutoAnimation() {
   setInterval(() => {
     playWaveAnimation();
@@ -204,7 +209,14 @@ const optionList = document.getElementById('optionList');
 const optionItems = document.querySelectorAll('.option-item');
 
 // 鼠标悬停事件处理
+let hoverTimer = null;
+
 function showOptions() {
+  // 清除可能存在的延时计时器
+  if (hoverTimer) {
+    clearTimeout(hoverTimer);
+    hoverTimer = null;
+  }
   duckVideo.src = "../PIC/duck_move.mp4";
   playWaveAnimation(); // 显示选项时播放挥手动画
   optionList.style.display = 'block';
@@ -216,18 +228,27 @@ function showOptions() {
   updateIframeSize();
 }
 
+// 为动态视频和静态图片添加点击事件
 duckIcon.onclick = () => {
-  playWaveAnimation();  // 点击时播放挥手动画
+    playWaveAnimation();  // 点击时播放挥手动画
 
-};
+  };
+
+duckStatic.onclick = () => {
+    playWaveAnimation();  // 点击时播放挥手动画
+
+  };
 
 // 关闭聊天框功能
 const closeChatBtn = document.getElementById('closeChatBtn');
 closeChatBtn.addEventListener('click', () => {
   chatInputBox.style.display = "none";
-  chatBubble.style.display = "none";
+  // 只有当isMuted为false时才显示chatbubble
+  if (!isMuted) {
+    chatBubble.style.display = "block";
+  }
   startIntroAnimation();
-  isChatting = false;
+  isChatting = false; // 重置聊天状态
   updateIframeSize();
 });
 
@@ -236,49 +257,51 @@ function hideOptions() {
   // 动画结束后隐藏元素
   setTimeout(() => {
     optionList.style.display = 'none';
-    chatBubble.style.display = 'block';
+    // 只有当isMuted为false时才显示chatbubble
+    if (!isMuted) {
+      chatBubble.style.display = 'block';
+    }
     updateIframeSize();
   }, 300);
-  
-  // setTimeout(() => {
-  //   x
-  // }, 30);
-  
 }
 
-  // function getusernumber(){
-  //     command = ip + '/get_user_number'
-  //     fetch(command,{
-  //         method:'POST',
-  //         headers:{
-  //             'Content-Type':'application/json'
-  //         },
-  //         body:JSON.stringify({
-  //             'req':'none',
-  //             })
-  //     }).then(response=>response.json()).then(data=>{
-  //         if(data.success){
-  //             user_number = JSON.parse(data.output)+1;
-  //         }
-  //     })
-  // }
+// 延时隐藏选项栏
+function scheduleHideOptions() {
+  hoverTimer = setTimeout(() => {
+    hideOptions();
+    hoverTimer = null;
+  }, 500);
+}
 
 // 添加鼠标事件监听器
-duckIcon.addEventListener('mouseenter', showOptions);
-// 移除duckIcon的mouseleave事件，防止用户从图标移动到选项列表时选项列表消失
-// duckIcon.addEventListener('mouseleave', hideOptions);
+  duckIcon.addEventListener('mouseenter', showOptions);
+  duckStatic.addEventListener('mouseenter', showOptions);
+  
+  // 鼠标离开形象时，延时1000ms收起选项栏
+  duckIcon.addEventListener('mouseleave', scheduleHideOptions);
+  duckStatic.addEventListener('mouseleave', scheduleHideOptions);
 
 // 为了防止鼠标从图标移动到选项列表时选项列表消失，给选项列表也添加事件监听
 optionList.addEventListener('mouseenter', () => {
+  // 清除延时计时器
+  if (hoverTimer) {
+    clearTimeout(hoverTimer);
+    hoverTimer = null;
+  }
   optionList.style.display = 'block';
   optionList.style.transform = 'scaleY(1)';
 });
 
-optionList.addEventListener('mouseleave', hideOptions);
+optionList.addEventListener('mouseleave', scheduleHideOptions);
 
 // 为选项添加点击事件处理
 optionItems.forEach(item => {
   item.addEventListener('mouseenter', () => {
+    // 清除延时计时器
+    if (hoverTimer) {
+      clearTimeout(hoverTimer);
+      hoverTimer = null;
+    }
     item.style.backgroundColor = '#fffc3d';
   });
   
@@ -287,6 +310,11 @@ optionItems.forEach(item => {
   });
   
   item.addEventListener('click', () => {
+    // 清除延时计时器
+    if (hoverTimer) {
+      clearTimeout(hoverTimer);
+      hoverTimer = null;
+    }
     const action = item.getAttribute('data-action');
     handleOptionClick(action);
     hideOptions();
@@ -295,8 +323,13 @@ optionItems.forEach(item => {
 
 // 添加点击页面其他区域隐藏选项列表的功能
 document.addEventListener('click', (event) => {
-  // 检查点击目标是否是duckIcon或optionList及其子元素
-  if (!duckIcon.contains(event.target) && !optionList.contains(event.target)) {
+  // 检查点击目标是否是duckIcon、duckStatic或optionList及其子元素
+  if (!duckIcon.contains(event.target) && !duckStatic.contains(event.target) && !optionList.contains(event.target)) {
+    // 立即隐藏选项栏，清除可能存在的延时计时器
+    if (hoverTimer) {
+      clearTimeout(hoverTimer);
+      hoverTimer = null;
+    }
     hideOptions();
   }
 });
@@ -329,7 +362,7 @@ function handleOptionClick(action) {
           chatInputBox.style.display = "none";
           startIntroAnimation();
         }
-        isChatting = !isChatting;
+        isChatting = !isChatting; // 切换聊天状态
         updateIframeSize();
       break;
     case 'subscribe':
@@ -342,17 +375,31 @@ function handleOptionClick(action) {
       updateIframeSize();
       break;
     case 'mute':
+      isMuted = !isMuted;
       
-      isChatting = !isChatting;
-      // console.log("shit is good",istalking)
-      // if(istalking){
-      //   chatBubble.style.display = 'block'
-      // }else{
-      //   // console.log("shut the fuck up")
-      //   chatBubble.style.display = 'none'
-      // }
+      // 立即隐藏选项列表，避免高度计算异常
+      optionList.style.display = 'none';
+      optionList.style.transform = 'scaleY(0)';
       
-      updateIframeSize();
+      // 根据isMuted状态切换选项文字和图标
+      if (isMuted) {
+        // 静音状态：隐藏chatbubble
+        muteIcon.className = 'fa fa-volume-up';
+        muteText.textContent = '为我介绍';
+        chatBubble.style.display = 'none'; // 立即隐藏chatbubble
+      } else {
+        // 非静音状态：显示chatbubble
+        muteIcon.className = 'fa fa-volume-off';
+        muteText.textContent = '别说话了';
+        // 确保chatBubble的样式正确，特别是margin
+        chatBubble.style.marginBottom = '10px';
+        chatBubble.style.display = 'block'; // 立即显示chatbubble
+      }
+      
+      // 延迟调用updateIframeSize，确保所有样式更新完成
+      setTimeout(() => {
+        updateIframeSize();
+      }, 50);
       break;
   }
 }
@@ -385,6 +432,10 @@ function startIntroAnimation() {
   let currentIntroIndex = 0;
   introInterval = setInterval(() => {
     bubbleContent.textContent = introTexts[currentIntroIndex];
+    // 只有当isMuted为false且选项列表不显示时才显示chatbubble
+    if (!isMuted && optionList.style.display !== 'block') {
+      chatBubble.style.display = 'block';
+    }
     currentIntroIndex = (currentIntroIndex + 1) % introTexts.length;
     updateIframeSize();
   }, 4000);
@@ -396,13 +447,22 @@ startIntroAnimation();
 startAutoAnimation();
 
 // 图标悬停时添加缩放效果
-duckIcon.addEventListener('mouseenter', () => {
-  duckIcon.style.transform = 'scale(1.05)';
-});
+  duckIcon.addEventListener('mouseenter', () => {
+    duckIcon.style.transform = 'scale(1.05)';
+  });
 
-duckIcon.addEventListener('mouseleave', () => {
-  duckIcon.style.transform = 'scale(1)';
-});
+  duckIcon.addEventListener('mouseleave', () => {
+    duckIcon.style.transform = 'scale(1)';
+  });
+  
+  // 静态图片悬停时添加缩放效果
+  duckStatic.addEventListener('mouseenter', () => {
+    duckStatic.style.transform = 'scale(1.05)';
+  });
+
+  duckStatic.addEventListener('mouseleave', () => {
+    duckStatic.style.transform = 'scale(1)';
+  });
 
 // 显示订阅悬浮框
 function showSubscribeModal() {
@@ -438,6 +498,18 @@ function handleSubscribe() {
     alert('请输入有效的邮箱地址');
     return;
   }
+
+  // command = ip + '/confirm_subscribe';
+  // fetch(command,{
+  //   method: 'POST',
+  //   headers: { 'Content-Type': 'application/json' },
+  //   body:JSON.stringify({
+  //           "type": "subscription_confirm",
+  //           "name": username,
+  //           "submit_time": new Date().toISOString(),
+  //           "to_email": email,
+  //       })
+  // })
   command = ip + '/add_user';
   fetch(command, {
     method: 'POST',
@@ -496,11 +568,14 @@ function initSubscribeEvents() {
 // 宽高自适应
 function updateIframeSize() {
   const assistant = document.getElementById('duckAssistant');
-  window.parent.postMessage({
-    type: 'updateDuckSize',
-    width: assistant.offsetWidth,
-    height: assistant.offsetHeight
-  }, '*');
+  // 使用requestAnimationFrame确保在浏览器下一次重绘前执行
+  requestAnimationFrame(() => {
+    window.parent.postMessage({
+      type: 'updateDuckSize',
+      width: assistant.offsetWidth,
+      height: assistant.offsetHeight
+    }, '*');
+  });
 }
 
 // 初始化订阅事件

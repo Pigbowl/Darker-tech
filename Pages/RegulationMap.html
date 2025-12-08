@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>法规/标准领域-达客智驾领航员</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../css/tailwind.css"></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>    
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/components.css">
@@ -96,9 +96,65 @@
             background: rgba(26, 26, 46, 0.85);
             border: 1px solid #4a5568;
             border-radius: 6px;
-            padding: 15px;
-            margin-bottom: 15px;
+            padding: 0 10px;
+            margin-bottom: 1px;
+            height: 40px;
+            flex-shrink: 0;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        
+        .regulation-title {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        
+        /* 悬浮框样式 */
+        .regulation-tooltip {
+            position: fixed;
+            background: rgba(10, 14, 23, 0.95);
+            border: 1px solid #4a5568;
+            border-radius: 6px;
+            padding: 15px;
+            z-index: 10000;
+            min-width: 300px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: none;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .regulation-tooltip::before {
+            content: '';
+            position: absolute;
+            right: 100%;
+            top: 15px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent #4a5568 transparent transparent;
+        }
+        
+        .regulation-tooltip-item {
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+        
+        .regulation-tooltip-label {
+            color: #00f7ff;
+            font-weight: 500;
+            margin-right: 8px;
+        }
+        
+        .regulation-tooltip-value {
+            color: #cbd5e0;
         }
         
         .regulation-card:hover {
@@ -176,11 +232,119 @@
                 
                 
                 <!-- 左侧法规列表面板 -->
-                <div id="regulation-container" class="fixed top-30 left-6 z-10 w-80 h-[calc(100vh-120px)] bg-dark-light/95 rounded-lg overflow-hidden border border-primary/30 cyber-border p-4 shadow-lg">
-                    <h3 class="text-lg font-bold text-white mb-3 neon-glow">相关法规</h3>
-                    <div id="regulation-list" class="flex flex-col gap-2 max-h-[calc(100%-40px)] overflow-y-auto">
-                        <!-- 法规项将动态生成在这里 -->
-                        <!-- 每项格式: <div class="flex items-center gap-2 p-2 bg-dark/50 rounded hover:bg-primary/10 transition-colors"><i class="fas fa-file-contract text-primary"></i><span>法规名称</span></div> -->
+                <div id="regulation-container" class="fixed top-30 left-6 z-10 w-80 h-[calc(100vh-120px)] bg-dark-light/95 rounded-lg overflow-y-auto overflow-x-hidden border border-primary/30 cyber-border p-4 shadow-lg flex flex-col">
+                    <h3 class="text-lg font-bold text-white neon-glow">相关法规</h3>
+                    
+                    <!-- 查看详情按钮容器 -->
+                    <div id="view-details-container" class="mt-2 mb-2">
+                        <button id="view-details-btn" class="w-full bg-primary hover:bg-primary/90 text-white font-medium py-2 px-4 rounded-lg transition-all">
+                            <i class="fa fa-eye mr-2"></i>查看详情
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 详情页面容器 -->
+                <div id="details-page" class="fixed inset-0 bg-dark z-50 transform translate-y-full transition-transform duration-500 ease-in-out overflow-hidden">
+
+                    
+                    <!-- 顶部关闭按钮 -->
+                    <div class="absolute top-4 right-4 z-10">
+                        <button id="close-details-btn" class="bg-primary/20 hover:bg-primary/30 text-white p-2 rounded-full transition-all">
+                            <i class="fa fa-times text-xl"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- 三栏布局 -->
+                    <div class="h-full flex flex-col md:flex-row">
+                        <!-- 左侧区域 (30%) -->
+                        <div class="w-full md:w-[27.27%] h-full bg-dark-light/95 p-6 overflow-y-auto">
+                            <h3 class="text-xl font-bold text-white mb-4 neon-glow">法规筛选</h3>
+                            <!-- 顶部返回按钮 -->
+
+                            <button id="back-to-map-btn" class="mb-4 bg-primary hover:bg-primary/90 text-white font-medium py-2 px-4 rounded-lg transition-all flex items-center gap-2">
+                                <i class="fa fa-arrow-left"></i>
+                                <span>返回地图</span>
+                            </button>
+
+                            <!-- 筛选器 -->
+                            <div class="mb-6">
+                                <h4 class="text-xs font-semibold text-white mb-2">筛选条件</h4>
+                                
+                                <!-- 三个筛选器在同一行 -->
+                                <div class="flex gap-2 mb-3 flex-wrap">
+                                    <!-- 车型筛选 -->
+                                    <div class="flex-1 min-w-[120px]">
+                                        <label class="block text-xs text-gray-300 mb-1">车型</label>
+                                        <select id="vehicle-type" class="w-full bg-dark/50 border border-primary/30 text-white rounded-md px-2 py-1 text-sm">
+                                            <option value="">请选择车型</option>
+                                            <option value="M1">M1</option>
+                                            <option value="M2">M2</option>
+                                            <option value="M3">M3</option>
+                                            <option value="N1">N1</option>
+                                            <option value="N2">N2</option>
+                                            <option value="N3">N3</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- 第二个筛选条件（预留） -->
+                                    <div class="flex-1 min-w-[120px]">
+                                        <label class="block text-xs text-gray-300 mb-1">筛选条件2</label>
+                                        <select id="filter-2" class="w-full bg-dark/50 border border-primary/30 text-white rounded-md px-2 py-1 text-sm">
+                                            <option value="">请选择</option>
+                                            <option value="option1">选项1</option>
+                                            <option value="option2">选项2</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- SAE功能级别 -->
+                                    <div class="flex-1 min-w-[120px]">
+                                        <label class="block text-xs text-gray-300 mb-1">SAE功能级别</label>
+                                        <select id="sae-level" class="w-full bg-dark/50 border border-primary/30 text-white rounded-md px-2 py-1 text-sm">
+                                            <option value="">请选择SAE级别</option>
+                                            <option value="L0">L0</option>
+                                            <option value="L1">L1</option>
+                                            <option value="L2">L2</option>
+                                            <option value="L3">L3</option>
+                                            <option value="L4">L4</option>
+                                            <option value="L5">L5</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <!-- 筛选按钮 -->
+                                <button id="apply-filters" class="w-full bg-primary hover:bg-primary/90 text-white font-medium py-1.5 px-3 rounded-md transition-all text-sm">
+                                    <i class="fa fa-filter mr-1"></i>应用筛选
+                                </button>
+                            </div>
+                            
+                            <!-- 法规卡片列表 -->
+                            <h4 class="text-sm font-semibold text-white mb-3">法规列表</h4>
+                            <div id="details-regulation-list" class="grid grid-cols-3 gap-2">
+                                <!-- 法规卡片将动态生成 -->
+                            </div>
+                        </div>
+                        
+                        <!-- 中间区域 (40%) -->
+                        <div class="w-full md:w-[36.36%] h-full bg-dark/90 p-6 overflow-y-auto border-x border-primary/30">
+                            <h3 class="text-xl font-bold text-white mb-4 neon-glow">BD文件预览</h3>
+                            <div id="pdf-preview-bd" class="text-gray-300 h-[calc(100%-60px)]">
+                                <div class="flex flex-col items-center justify-center h-full text-gray-500">
+                                    <i class="fa fa-file-pdf-o text-4xl mb-3"></i>
+                                    <p>请点选法规以查看BD文件</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 右侧区域 (40%) -->
+                        <div class="w-full md:w-[36.36%] h-full bg-dark/90 p-6 overflow-hidden">
+                            <h3 class="text-xl font-bold text-white mb-4 neon-glow">原文预览</h3>
+                            <div id="pdf-preview" class="text-gray-300 h-[calc(100%-60px)]">
+                                <div class="flex flex-col items-center justify-center h-full text-gray-500">
+                                    <i class="fa fa-file-pdf-o text-4xl mb-3"></i>
+                                    <p>请点选法规以查看原文</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -195,14 +359,6 @@
                                 <div id="info-tooltip" class="info-box hidden absolute z-10"></div>
                             </div>
                         </div>
-                        
-                        <!-- 法规内容区域 -->
-                        <!-- <div id="regulation-container" class="regulation-content hidden">
-                            <h3 class="text-xl font-bold text-white mb-6 neon-glow">相关法规与评测标准</h3>
-                            <div id="regulation-list">
-
-                            </div>
-                        </div> -->
                     </div>
                 </div>
             </div>
@@ -279,7 +435,7 @@
             const clearSelectionBtn = document.getElementById('clear-selection');
             const applySelectionBtn = document.getElementById('apply-selection');
             const regulationContainer = document.getElementById('regulation-container');
-            const regulationList = document.getElementById('regulation-list');
+            // regulationList变量已移除，直接使用regulationContainer
             
             // 初始化地图
             initMap();
@@ -571,11 +727,9 @@
                 // 更新显示
                 updateSelectedTags();
                 // 隐藏法规内容
-                // 如果有法规内容区域显示，则更新法规列表
-                if (!regulationList.classList.contains('hidden')) {
-                    applySelectionBtn.click(); // 重新应用选择以更新法规列表
-                }
-            },
+                // 直接更新法规列表
+                applySelectionBtn.click(); // 重新应用选择以更新法规列表
+            });
             
             // 应用选择按钮
             applySelectionBtn.addEventListener('click', function() {
@@ -585,35 +739,103 @@
                     }
                 
                 // 显示法规内容
-                regulationContainer.innerHTML = '';
-                
-                // 清空现有内容
-                regulationList.innerHTML = '';
-                
-                // 加载选中区域的法规
-                selectedContinents.forEach(continent => {
-                    const continentData = regulationData[continent] || [];
-                    
-                    // 添加大洲标题
-                    const title = document.createElement('h4');
-                    title.className = 'text-lg font-semibold text-white mb-4 mt-6 first:mt-0';
-                    title.textContent = `${continent}相关法规`;
-                    regulationContainer.appendChild(title);
-                    
-                    // 添加法规卡片
-                    continentData.forEach(regulation => {
-                        const card = document.createElement('div');
-                        card.className = 'regulation-card';
-                        card.innerHTML = `
-                            <div class="regulation-title">${regulation.title}</div>
-                        `;
-                        regulationContainer.appendChild(card);
-                    });
+                // 清空之前的tooltip元素
+                document.querySelectorAll('.regulation-tooltip').forEach(tooltip => {
+                    tooltip.remove();
                 });
                 
+                // 保留前3个元素（主标题、查看详情按钮容器、查看详情按钮），只清空动态生成的内容
+                while (regulationContainer.children.length > 2) {
+                    regulationContainer.removeChild(regulationContainer.lastChild);
+                }
+                command = ip + '/get_regulation';
+                fetch(command,{
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body:JSON.stringify({
+                        "type": "get_regulation",
+                        "continents": selectedContinents,
+                        "countries": window.selectedCountries,
+                    })
+                }).then(response => response.json()).then(data => {
+                    regulationgroup = JSON.parse(data.output)
+
+                    // 遍历所有法规组
+                    Object.keys(regulationgroup).forEach(group => {
+                        // 创建并添加标题
+                        const title = document.createElement('h4');
+                        title.className = 'font-semibold text-white first:mt-0 whitespace-nowrap text-ellipsis';
+                        title.textContent = `${group}相关法规`;
+                        
+                        // 创建并添加副标题
+                        const subtitle = document.createElement('p');
+                        subtitle.className = 'text-sm text-gray-300 mb-2 whitespace-nowrap text-ellipsis';
+                        subtitle.textContent = `包含(${regulationgroup[group].country.join(', ')})`;
+
+                        regulationContainer.appendChild(title);
+                        regulationContainer.appendChild(subtitle);
+                        
+                        // 生成法规卡片
+                        regulationgroup[group].regulation.forEach(regulation => {
+                            const card = document.createElement('div');
+                            card.className = 'regulation-card';
+                            card.innerHTML = `
+                                <div class="regulation-title">${regulation.Name}</div>
+                            `;
+                            regulationContainer.appendChild(card);
+                            
+                            // 创建悬浮框元素并添加到body中
+                            const tooltip = document.createElement('div');
+                            tooltip.className = 'regulation-tooltip';
+                            tooltip.id = `tooltip-${regulation.Name.replace(/\s+/g, '-')}`;
+                            
+                            // 生成悬浮框内容
+                            let tooltipContent = '';
+                            for (const [key, value] of Object.entries(regulation)) {
+                                // 跳过ID和Region_Name字段
+                                if (key !== 'ID' && key !== 'Region_Name') {
+                                    tooltipContent += `
+                                        <div class="regulation-tooltip-item">
+                                            <span class="regulation-tooltip-label">${key}:</span>
+                                            <span class="regulation-tooltip-value">${value}</span>
+                                        </div>
+                                    `;
+                                }
+                            }
+                            tooltip.innerHTML = tooltipContent;
+                            
+                            // 添加到body中
+                            document.body.appendChild(tooltip);
+                            
+                            // 添加鼠标事件监听器
+                            card.addEventListener('mouseenter', function(e) {
+                                const tooltip = document.getElementById(`tooltip-${regulation.Name.replace(/\s+/g, '-')}`);
+                                if (tooltip) {
+                                    // 获取卡片的位置信息
+                                    const rect = this.getBoundingClientRect();
+                                    // 设置悬浮框位置
+                                    tooltip.style.display = 'block';
+                                    tooltip.style.left = `${rect.right + 5}px`;
+                                    tooltip.style.top = `${rect.top}px`;
+                                }
+                            });
+                            
+                            card.addEventListener('mouseleave', function() {
+                                const tooltip = document.getElementById(`tooltip-${regulation.Name.replace(/\s+/g, '-')}`);
+                                if (tooltip) {
+                                    tooltip.style.display = 'none';
+                                }
+                            });
+                            
+                            regulationContainer.appendChild(card);
+                        });
+                    });
+                });
+
+                
                 // 滚动到法规内容区域
-                regulationList.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }));
+                regulationContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
             
             // 输出选中大洲数组（供调试使用）
             window.getSelectedContinents = function() {
@@ -638,9 +860,181 @@
             console.log('选中的国家:', window.selectedCountries);
             return window.selectedCountries;
         };
+        
+        // 详情页面功能
+        const viewDetailsBtn = document.getElementById('view-details-btn');
+        const detailsPage = document.getElementById('details-page');
+        const closeDetailsBtn = document.getElementById('close-details-btn');
+        const backToMapBtn = document.getElementById('back-to-map-btn');
+        const applyFiltersBtn = document.getElementById('apply-filters');
+        const detailsRegulationList = document.getElementById('details-regulation-list');
+        const pdfPreview = document.getElementById('pdf-preview');
+        const pdfPreviewBd = document.getElementById('pdf-preview-bd');
+        
+        // 查看详情按钮点击事件
+        viewDetailsBtn.addEventListener('click', function() {
+            detailsPage.style.transform = 'translateY(0)';
+            // 生成详情页面的法规卡片
+            generateDetailsRegulationCards();
+        });
+        
+        // 应用筛选按钮点击事件
+        applyFiltersBtn.addEventListener('click', function() {
+            generateDetailsRegulationCards();
+        });
+        
+        // 关闭详情页面按钮点击事件
+        closeDetailsBtn.addEventListener('click', function() {
+            detailsPage.style.transform = 'translateY(100%)';
+        });
+        
+        // 返回地图按钮点击事件
+        backToMapBtn.addEventListener('click', function() {
+            detailsPage.style.transform = 'translateY(100%)';
+        });
+        
+        // 生成详情页面的法规卡片
+        function generateDetailsRegulationCards() {
+            if (!detailsRegulationList) return;
+            detailsRegulationList.innerHTML = '';
+            
+            // 获取选中的车型
+            const selectedVehicleType = document.getElementById('vehicle-type').value;
+            
+            // 遍历所有法规组
+            if (typeof regulationgroup !== 'undefined' && regulationgroup) {
+                Object.keys(regulationgroup).forEach(group => {
+                    if (regulationgroup[group] && regulationgroup[group].regulation) {
+                        regulationgroup[group].regulation.forEach(regulation => {
+                            // 车型筛选逻辑
+                            let showCard = true;
+                            if (selectedVehicleType) {
+                                // 检查法规是否适用于选中的车型
+                                const vehicleValue = regulation[selectedVehicleType];
+                                // 只有当值为'M'（必选）或'O'（可选）时才显示
+                                showCard = vehicleValue === 'M' || vehicleValue === 'O';
+                            }
+                            
+                            if (showCard) {
+                                const card = document.createElement('div');
+                                card.className = 'regulation-card cursor-pointer hover:border-primary/50 transition-all';
+                                card.style.height = '40px';
+                                card.style.width = '100%';
+                                card.dataset.regulation = JSON.stringify(regulation);
+                                card.innerHTML = `
+                                    <div class="regulation-title">${regulation.Name}</div>
+                                `;
+                                
+                                // 添加点击事件
+                            card.addEventListener('click', function() {
+                                // 移除其他卡片的选中状态
+                                document.querySelectorAll('.regulation-card').forEach(c => {
+                                    c.classList.remove('border-primary', 'bg-primary/10');
+                                });
+                                // 添加当前卡片的选中状态
+                                this.classList.add('border-primary', 'bg-primary/10');
+                                // 更新PDF预览
+                                updatePdfPreview(regulation.Name);
+                                updatePdfPreviewBd(regulation.Name);
+                            });
+                                
+                                detailsRegulationList.appendChild(card);
+                            }
+                        });
+                    }
+                });
+            }
+        }
+        
+        // 更新法规详情
+        function updateRegulationDetails(regulation) {
+            if (!regulationDetails) return;
+            
+            let detailsHtml = '';
+            for (const [key, value] of Object.entries(regulation)) {
+                detailsHtml += `
+                    <div class="mb-3">
+                        <span class="font-semibold text-white">${key}:</span>
+                        <span class="ml-2">${value}</span>
+                    </div>
+                `;
+            }
+            regulationDetails.innerHTML = detailsHtml;
+        }
+        
+        // 更新PDF预览
+        function updatePdfPreview(regulationName) {
+            if (!pdfPreview) return;
+            
+            const pdfPath = `../Doc/${regulationName}.pdf`;
+            
+            // 检查文件是否存在
+            fetch(pdfPath, {
+                method: 'HEAD'
+            }).then(response => {
+                if (response.ok) {
+                    // 文件存在，显示PDF预览
+                    pdfPreview.innerHTML = `
+                        <iframe src="${pdfPath}#toolbar=0" width="100%" height="100%" frameborder="0"></iframe>
+                    `;
+                } else {
+                    // 文件不存在，显示提示
+                    pdfPreview.innerHTML = `
+                        <div class="flex flex-col items-center justify-center h-full text-gray-500">
+                            <i class="fa fa-exclamation-circle text-4xl mb-3"></i>
+                            <p>文件暂不可用</p>
+                        </div>
+                    `;
+                }
+            }).catch(error => {
+                // 请求失败，显示提示
+                pdfPreview.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full text-gray-500">
+                        <i class="fa fa-exclamation-circle text-4xl mb-3"></i>
+                        <p>文件暂不可用</p>
+                    </div>
+                `;
+            });
+        }
+        
+        // 更新BD文件PDF预览
+        function updatePdfPreviewBd(regulationName) {
+            if (!pdfPreviewBd) return;
+            
+            const pdfPath = `../Doc/${regulationName}_BD.pdf`;
+            
+            // 检查文件是否存在
+            fetch(pdfPath, {
+                method: 'HEAD'
+            }).then(response => {
+                if (response.ok) {
+                    // 文件存在，显示PDF预览
+                    pdfPreviewBd.innerHTML = `
+                        <iframe src="${pdfPath}#toolbar=0" width="100%" height="100%" frameborder="0"></iframe>
+                    `;
+                } else {
+                    // 文件不存在，显示提示
+                    pdfPreviewBd.innerHTML = `
+                        <div class="flex flex-col items-center justify-center h-full text-gray-500">
+                            <i class="fa fa-exclamation-circle text-4xl mb-3"></i>
+                            <p>BD文件暂不可用</p>
+                        </div>
+                    `;
+                }
+            }).catch(error => {
+                // 请求失败，显示提示
+                pdfPreviewBd.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full text-gray-500">
+                        <i class="fa fa-exclamation-circle text-4xl mb-3"></i>
+                        <p>BD文件暂不可用</p>
+                    </div>
+                `;
+            });
+        }
         });
     </script>
     <script src="../js/load-components.js"></script>
+    <script src="../js/function-link-manager.js"></script>
     <script src="../js/Visit_Monitor.js"></script>
 </body>
 </html>

@@ -192,7 +192,7 @@
                             <div class="sensor-type-card" data-type="RADAR">
                                 <div class="card-inner">
                                     <div class="card-front">
-                                        <img src="../PIC/RADAR.png" alt="RADAR" class="w-full h-full object-contain">
+                                        <img src="../PIC/Component/RADAR.png" alt="RADAR" class="w-full h-full object-contain">
                                         <h3>RADAR</h3>
                                         <p>毫米波雷达</p>
                                     </div>
@@ -206,7 +206,7 @@
                             <div class="sensor-type-card" data-type="CAMERA">
                                 <div class="card-inner">
                                     <div class="card-front">
-                                        <img src="../PIC/CAMERA.png" alt="CAMERA" class="w-full h-full object-contain">
+                                        <img src="../PIC/Component/CAMERA.png" alt="CAMERA" class="w-full h-full object-contain">
                                         
                                         <h3>CAMERA</h3>
                                         <p>摄像头</p>
@@ -221,7 +221,7 @@
                             <div class="sensor-type-card" data-type="LIDAR">
                                 <div class="card-inner">
                                     <div class="card-front">
-                                        <img src="../PIC/LIDAR.png" alt="LIDAR" class="w-full h-full object-contain">
+                                        <img src="../PIC/Component/LIDAR.png" alt="LIDAR" class="w-full h-full object-contain">
                                         
                                         <h3>LIDAR</h3>
                                         <p>激光雷达</p>
@@ -236,7 +236,7 @@
                             <div class="sensor-type-card" data-type="USS">
                                 <div class="card-inner">
                                     <div class="card-front">
-                                        <img src="../PIC/USS.png" alt="USS" class="w-full h-full object-contain">
+                                        <img src="../PIC/Component/USS.png" alt="USS" class="w-full h-full object-contain">
                                         
                                         <h3>USS</h3>
                                         <p>超声波雷达</p>
@@ -259,7 +259,7 @@
                             const sensorData = {
                                 RADAR: {
                                     title: "毫米波雷达 (RADAR)",
-                                    image: "../PIC/RADAR.png",
+                                    image: "../PIC/Component/RADAR.png",
                                     description: "毫米波雷达是自动驾驶系统中的核心传感器之一，能够通过发射和接收毫米波来探测周围物体的距离、速度和角度。",
                                     features: [
                                         "工作频率：76-81 GHz，抗干扰能力强",
@@ -270,7 +270,7 @@
                                 },
                                 CAMERA: {
                                     title: "摄像头 (CAMERA)",
-                                    image: "../PIC/CAMERA.png",
+                                    image: "../PIC/Component/CAMERA.png",
                                     description: "摄像头是自动驾驶系统中的视觉传感器，能够捕捉周围环境的图像信息，通过计算机视觉算法进行目标识别和场景理解。",
                                     features: [
                                         "高分辨率图像采集，提供丰富的环境细节",
@@ -281,7 +281,7 @@
                                 },
                                 LIDAR: {
                                     title: "激光雷达 (LIDAR)",
-                                    image: "../PIC/LIDAR.png",
+                                    image: "../PIC/Component/LIDAR.png",
                                     description: "激光雷达通过发射激光束并测量反射时间来创建精确的3D环境地图，为自动驾驶系统提供高精度的空间感知能力。",
                                     features: [
                                         "厘米级精度的3D点云数据",
@@ -292,7 +292,7 @@
                                 },
                                 USS: {
                                     title: "超声波雷达 (USS)",
-                                    image: "../PIC/USS.png",
+                                    image: "../PIC/Component/USS.png",
                                     description: "超声波雷达主要用于近距离物体检测，是自动驾驶系统中泊车辅助功能的重要组成部分。",
                                     features: [
                                         "工作距离：通常0.1-5米",
@@ -313,17 +313,24 @@
                                     if (sensorData[sensorType]) {
                                         const data = sensorData[sensorType];
                                         introContainer.innerHTML = `
-                                            <div class="flex flex-col h-full">
-                                                <div class="flex items-center mb-6">
-                                                    <img src="${data.image}" alt="${data.title}" class="w-16 h-16 object-contain mr-4">
-                                                    <h2 class="text-2xl text-black font-bold">${data.title}</h2>
+                                            <div class="flex flex-row h-full gap-6">
+                                                <!-- 左侧文本内容，占40% -->
+                                                <div class="w-2/5 flex flex-col">
+                                                    <div class="flex items-center mb-6">
+                                                        <img src="${data.image}" alt="${data.title}" class="w-16 h-16 object-contain mr-4">
+                                                        <h2 class="text-2xl text-black font-bold">${data.title}</h2>
+                                                    </div>
+                                                    <p class="text-black mb-4 text-lg">${data.description}</p>
+                                                    <div class="mt-4">
+                                                        <h3 class="text-xl font-semibold text-gray-700 mb-2">核心特性：</h3>
+                                                        <ul class="list-disc pl-6 space-y-1 text-black">
+                                                            ${data.features.map(feature => `<li>${feature}</li>`).join('')}
+                                                        </ul>
+                                                    </div>
                                                 </div>
-                                                <p class="text-black mb-4 text-lg">${data.description}</p>
-                                                <div class="mt-4">
-                                                    <h3 class="text-xl font-semibold text-gray-700 mb-2">核心特性：</h3>
-                                                    <ul class="list-disc pl-6 space-y-1 text-black">
-                                                        ${data.features.map(feature => `<li>${feature}</li>`).join('')}
-                                                    </ul>
+                                                <!-- 右侧图片，占60% -->
+                                                <div class="w-3/5">
+                                                    <img id="manualImage" src="../PIC/RadarIntroduction.png" alt="手动插入图片" class="w-full h-full object-cover rounded-lg shadow-md">
                                                 </div>
                                             </div>
                                         `;
@@ -461,27 +468,35 @@
                                     <div id="product-tags" class="flex flex-wrap gap-2 mb-4"></div>
                                 </div>
 
-                                <div class="space-y-4 text-sm">
+                            <div class="space-y-4 text-sm">
+                                <div class="bg-tech-dark/50 rounded-lg p-3">
+                                <div class="flex gap-2 mb-2">
+                                    <button onclick="showSpecs('spec-view-keyspec')" id = "spec-view-keyspec-btn" class="spec-view-btn font-medium text-white flex items-center hover:text-tech-accent/80 transition-colors">
+                                        <i class="fa fa-cogs mr-2"></i>技术规格
+                                    </button>
+                                    <span class="text-gray-500">|</span>
+                                    <button onclick="showSpecs('spec-view-interface')" id = "spec-view-interface-btn" class="spec-view-btn font-medium text-white flex items-center hover:text-tech-accent/80 transition-colors">
+                                        <i class="fa fa-plug mr-2"></i>接口信息
+                                    </button>
+                                    <span class="text-gray-500">|</span>
+                                    <button onclick="showSpecs('spec-view-processor')" id = "spec-view-processor-btn" class="spec-view-btn font-medium text-white flex items-center hover:text-tech-accent/80 transition-colors">
+                                        <i class="fa fa-microchip mr-2"></i>处理器信息
+                                    </button>
+                                </div>
+                                    <ul class="space-y-2 text-sm" id="product-specs">
+                                        <!-- 动态填充规格 -->
+                                    </ul>
+                                </div>
 
-                                    <div class="bg-tech-dark/50 rounded-lg p-3">
-                                        <h4 class="font-medium text-tech-accent mb-2 flex items-center"><i class="fa fa-info-circle mr-2"></i>产品描述</h4>
-                                        <p id="product-description" class="text-gray-300 text-sm"></p>
-                                    </div>
-
-                                    <div class="bg-tech-dark/50 rounded-lg p-3">
-                                        <h4 class="font-medium text-tech-accent mb-2 flex items-center"><i class="fa fa-cogs mr-2"></i>技术规格</h4>
-                                        <ul class="space-y-2 text-sm" id="product-specs">
-                                            <!-- 动态填充规格 -->
-                                        </ul>
-                                    </div>
-
-                                    <div class="bg-tech-dark/50 rounded-lg p-3">
-                                        <h4 class="font-medium text-tech-accent mb-2 flex items-center"><i class="fa fa-line-chart mr-2"></i>性能参数</h4>
-                                        <div class="grid grid-cols-2 gap-2 text-sm" id="product-performance">
-                                            <!-- 动态填充性能参数 -->
-                                        </div>
+                                <div class="bg-tech-dark/50 rounded-lg p-3">
+                                    <h4 class="font-medium text-tech-accent mb-2 flex items-center"><i class="fa fa-line-chart mr-2"></i>性能参数</h4>
+                                    <div class="grid grid-cols-2 gap-2 text-sm" id="product-performance">
+                                        <!-- 动态填充性能参数 -->
                                     </div>
                                 </div>
+                            </div>
+
+
                             </div>
                         </div>
                     </div>
@@ -514,6 +529,10 @@
             let sensorData = {};
             let sensorbttypeData = {};
             let sensorbttypeData_init = {};
+            let componentpicpath = "../PIC/Component/";
+            let supplierpicpath = "../PIC/Company/"
+            let keyattribute = {"RADAR":["Maximum_Instrument_Range","Array Aperture","Azimuth_FOV","Atenna_Info"],'CAMERA':[],'LIDAR':[],'USS':[]}
+            // let radarkeyattribute = 
             const productDetailEmpty = document.getElementById('product-detail-empty');
             const productDetailContent = document.getElementById('product-detail-content');
             const productImage = document.getElementById('product-image');
@@ -540,7 +559,7 @@
                 manufacturerData = {};
                 Object.keys(productINFO).forEach(key => {
                     product = productINFO[key]
-                    const manufacturer = product.Supplier_Name || '未知厂商';
+                    const manufacturer = product.Supplier_Name.Name || '未知厂商';
                     if (!manufacturerData[manufacturer]) {
                         manufacturerData[manufacturer] = [];
                     }
@@ -602,6 +621,14 @@
             // 存储选中的传感器类型
             window.selectedSensorType = null;
             
+            // 定义全局keyattribute对象，用于存储不同传感器类型需要显示的属性键名
+            window.keyattribute = {
+                'CAMERA': ['Type', 'Image_Sensor', 'Lens', 'Resolution', 'FOV', 'Frame_Rate', 'Power', 'Weight'],
+                'RADAR': ['Type', 'Frequency', 'Azimuth_FOV', 'Maximum_Instrument_Range', 'Range_Resolution', 'Power', 'Weight'],
+                'LIDAR': ['Type', 'Laser_Length', 'Horizontal_FOV', 'Max_Detection_Range', 'Horizontal_Resolution', 'Power', 'Weight'],
+                'USS': ['Type', 'Distance_Precision', 'Horizontal_FOV', 'Max_Detection_Range', 'Frequency', 'Power', 'Weight']
+            };
+            
             sensorCards.forEach(card => {
                 card.addEventListener('click', function() {
                     // 获取传感器类型
@@ -616,6 +643,31 @@
                         sensorTypeSelection.classList.add('hidden');
                         document.getElementById('传感器搜索-page').classList.remove('hidden');
                         sensortypetext = sensorType.toLowerCase();
+                        
+                        // 更新状态指示器文字，将英文sensorType转换为对应的中文
+                        const statusIndicator = document.querySelector('#传感器搜索-page .text-shadow-glow');
+                        if (statusIndicator) {
+                            // 转换英文到中文的映射
+                            let sensorTypeName;
+                            switch(sensorType.toLowerCase()) {
+                                case 'camera':
+                                    sensorTypeName = '摄像头';
+                                    break;
+                                case 'radar':
+                                    sensorTypeName = '毫米波雷达';
+                                    break;
+                                case 'lidar':
+                                    sensorTypeName = '激光雷达';
+                                    break;
+                                case 'uss':
+                                    sensorTypeName = '超声波雷达';
+                                    break;
+                                default:
+                                    sensorTypeName = sensorType;
+                            }
+                            statusIndicator.textContent = sensorTypeName;
+                        }
+                        
                         // 触发后台数据请求
                         getcomponent(sensortypetext)
                     }, 200);
@@ -628,7 +680,7 @@
                 manufacturerData = {};
                 Object.keys(productINFO).forEach(key => {
                     product = productINFO[key]
-                    const manufacturer = product.Supplier_Name || '未知厂商';
+                    const manufacturer = product.Supplier_Name.Name || '未知厂商';
                     if (!manufacturerData[manufacturer]) {
                         manufacturerData[manufacturer] = [];
                     }
@@ -671,42 +723,177 @@
                 componentsearchInput.addEventListener('input',filterProducts);
             }
 
+            // 显示产品详情
+            function showProductDetail(productId) {
+                const product = productData.Catalogue[productId];
+                if (!product) return;
+
+                productDetailEmpty.classList.add('hidden');
+                productDetailContent.classList.remove('hidden');
+
+                productImage.src = componentpicpath+product.Name+".png";
+                productTitle.textContent = product.Name;
+
+            // 渲染规格
+                // 清空旧内容并准备 3 个同级容器
+                productSpecs.innerHTML = `
+                    <div id="spec-view-keyspec" class="spec-view hidden"></div>
+                    <div id="spec-view-interface" class="spec-view hidden"></div>
+                    <div id="spec-view-processor" class="spec-view hidden"></div>
+                `;
+                
+                document.querySelectorAll('.spec-view').forEach(v => v.classList.add('hidden'));
+                // 根据 processor 类型填充对应容器
+                const processorView = document.getElementById(`spec-view-processor`);
+                // console.log(product.processor_group)
+                // Object.keys(product.processor_group).forEach(processorType => {
+                //     if (!processorView) return; // 防止意外类型 
+                //     product.processor_group[processorType].forEach(element => {
+                //         const elementDiv = document.createElement('div');
+                //         elementDiv.className = 'element-info-container bg-tech-dark/30 border border-gray-600 rounded-lg p-3 mb-2';
+
+                //         // 添加 Type 标题
+                //         const typeTitle = document.createElement('h5');
+                //         typeTitle.className = 'text-tech-accent font-semibold mb-2';
+                //         typeTitle.textContent = element.Type || '未知类型';
+                //         elementDiv.appendChild(typeTitle);
+
+                //         // 仅渲染 Power、Name
+                //         ['Power', 'Name'].forEach(key => {
+                //             if (element.hasOwnProperty(key)) {
+                //                 if (key === 'Name') {
+                //                     const infoItem = document.createElement('div');
+                //                     infoItem.className = 'flex justify-between text-sm';
+                //                     infoItem.innerHTML = `<span class="text-white font-medium">${element[key]} * ${element.Number}</span>`;
+                //                     elementDiv.appendChild(infoItem);
+                //                 } else if (key === 'Power') {
+                //                     const infoItem = document.createElement('div');
+                //                     infoItem.className = 'flex justify-between text-sm';
+                //                     infoItem.innerHTML = `<span class="text-white font-medium">${element[key]} ${element.Unit}</span>`;
+                //                     elementDiv.appendChild(infoItem);
+                //                 }
+                //             }
+                //         });
+
+                //         processorView.appendChild(elementDiv);
+                //     });
+                // });
+
+                //             // 根据 interface 类型填充对应容器
+                const interfaceView = document.getElementById(`spec-view-interface`);
+                // Object.keys(product.interface_group).forEach(interfaceType => {
+                //     if (!interfaceView) return; // 防止意外类型
+                //     const elementDiv = document.createElement('div');
+                //     elementDiv.className = 'element-info-container bg-tech-dark/30 border border-gray-600 rounded-lg p-3 mb-2';
+                //     // 添加 Type 标题
+                //     const typeTitle = document.createElement('h5');
+                //     typeTitle.className = 'text-tech-accent font-semibold mb-2';
+                //     typeTitle.textContent = interfaceType || '未知类型';
+                //     elementDiv.appendChild(typeTitle);
+                //     product.interface_group[interfaceType].forEach(element => {
+                //         // 仅渲染 Power、Name
+                //         ['Power', 'SubType'].forEach(key => {
+                //             if (element.hasOwnProperty(key)) {
+                //                 if (key === 'SubType') {
+                //                     const infoItem = document.createElement('div');
+                //                     infoItem.className = 'flex justify-between text-sm';
+                //                     infoItem.innerHTML = `<span class="text-white font-medium">${element[key]} * ${element.Number}</span>`;
+                //                     elementDiv.appendChild(infoItem);
+                //                 } else if (key === 'Power') {
+                //                     const infoItem = document.createElement('div');
+                //                     infoItem.className = 'flex justify-between text-sm';
+                //                     infoItem.innerHTML = `<span class="text-white font-medium">${element[key]}</span>`;
+                //                     elementDiv.appendChild(infoItem);
+                //                 }
+                //             }
+                //         });
+                //         interfaceView.appendChild(elementDiv);
+                //     });
+                // });
+                sensorkeyattribute = window.keyattribute[window.selectedSensorType]
+
+                const defaultView = document.querySelector('#spec-view-keyspec');
+                Object.keys(product).forEach(key => {
+                    if (key && typeof(product[key])!=='object' && sensorkeyattribute.includes(key)){
+                    // 为 element 创建一个 div 容器，用于放置其内部信息
+                        elementDiv = document.createElement('div');
+                        elementDiv.className = 'element-info-container bg-tech-dark/30 border border-gray-600 rounded-lg p-3 mb-2';
+                    
+                        // 添加 Type 标题
+                        const typeTitle = document.createElement('h5');
+                        typeTitle.className = 'text-tech-accent font-semibold mb-2';
+                        typeTitle.textContent = key || '未知类型';
+                        elementDiv.appendChild(typeTitle);
+
+                        // console.log(key,product[key])
+                        const infoItem = document.createElement('div');
+                        infoItem.className = 'flex justify-between text-sm';
+                        infoItem.innerHTML = `
+                            <span class="text-white font-medium">${product[key]}</span>
+                    `;
+                    elementDiv.appendChild(infoItem);
+
+                    // 将生成的 div 添加到需要显示的父容器中
+                    defaultView.appendChild(elementDiv);}
+                });
+
+                defaultView.classList.remove('hidden');
+                document.getElementById("spec-view-keyspec-btn").classList.remove('text-white');
+                document.getElementById("spec-view-keyspec-btn").classList.add('text-tech-accent');
+            }
+
+            // 将showSpecs函数暴露到全局作用域，使HTML按钮可以访问
+            window.showSpecs = function(viewId){
+                const specViews = document.querySelectorAll('.spec-view');
+                specViews.forEach(view => {
+                    view.classList.add('hidden');
+                });
+                
+                document.getElementById(viewId).classList.remove('hidden');
+                // 更新按钮状态
+                document.querySelectorAll('.spec-view-btn').forEach(btn => {
+                    btn.classList.add('text-white');
+                });
+                document.getElementById(`${viewId}-btn`).classList.remove('text-white');
+                document.getElementById(`${viewId}-btn`).classList.add('text-tech-accent');
+            };
 
             function filterProducts() {
-                let visibleCount = Object.keys(productData.chipset_catalogue).length;
+                let visibleCount = Object.keys(productData.Catalogue).length;
                 const chipCards = document.querySelectorAll('.chip-card');
                 // 获取所有选中的筛选条件
+
                 const selectedManufacturers = Array.from(document.querySelectorAll('#manufacturer-options input:checked'))
                     .map(input => input.value);
                 const selectedTypes = Array.from(document.querySelectorAll('#type-options input:checked'))
                     .map(input => input.value);
                 const selectedApplications = Array.from(document.querySelectorAll('#application-options input:checked'))
                     .map(input => input.value);
-                
-                const searchTerm = document.getElementById('hwsearch-input').value.toLowerCase();
-                
 
-                const productsArray = Object.values(productData.chipset_catalogue);
+                const searchTerm = document.getElementById('search-input').value.toLowerCase();
+                
+                console.log(productData)
+                const productsArray = Object.values(productData.Catalogue);
                 const filteredProducts = productsArray.filter(product => {
-                    const matchesManufacturer = selectedManufacturers.includes(product.SUPPLIER);
-                    const matchesType = selectedTypes.includes(product.TYPE);
-                    // const matchesApplication = selectedApplications.includes(product.application);
-                    const matchesSearch = product.P.toLowerCase().includes(searchTerm) || 
-                                        JSON.stringify(product.PROCESSOR).toLowerCase().includes(searchTerm) ||
-                                        product.SUPPLIER.toLowerCase().includes(searchTerm);
-                                        JSON.stringify(product.DOMAIN).toLowerCase().includes(searchTerm);
-                    const result = matchesManufacturer && matchesType && matchesSearch
+                    const matchesManufacturer = selectedManufacturers.includes(product.Supplier_Name.Name);
+                    const matchesType = selectedTypes.includes(product.Type);
+                    const matchesApplication = selectedApplications.includes(product.application);
+                    // const matchesSearch = product.P.toLowerCase().includes(searchTerm) || 
+                    //                     JSON.stringify(product.PROCESSOR).toLowerCase().includes(searchTerm) ||
+                    //                     product.SUPPLIER.toLowerCase().includes(searchTerm);
+                    //                     JSON.stringify(product.DOMAIN).toLowerCase().includes(searchTerm);
+                    const result = matchesManufacturer && matchesType
 
                     if (result == false){
-                        card = Array.from(chipCards).find(node => node.getAttribute('data-id')===product.P);
+                        card = Array.from(chipCards).find(node => node.getAttribute('data-id')===product.Name);
                         card.classList.add('hidden');
                         visibleCount--;
                     }else{
-                        card = Array.from(chipCards).find(node => node.getAttribute('data-id')===product.P);
+                        card = Array.from(chipCards).find(node => node.getAttribute('data-id')===product.Name);
                         card.classList.remove('hidden');
                         visibleCount++;
                     }
-                    return matchesManufacturer && matchesType && matchesSearch;
+                    return matchesManufacturer && matchesType;
                 });
 
                 const manufacturerGroups = document.querySelectorAll('.manufacturer-group');
@@ -743,7 +930,7 @@
                         <div class="manufacturer-header flex items-center justify-between mb-4 cursor-pointer">
                             <h3 class="text-lg font-semibold flex items-center">
                                 <i class="fa fa-chevron-down text-tech-accent mr-2 transition-transform duration-300"></i>
-                                <img src="../PIC/${manufacturer}.png" alt="${manufacturer} Logo" class="w-16 h-6 mr-2">
+                                <img src="${supplierpicpath}${manufacturer}.png" alt="${manufacturer} Logo" class="h-9 mr-2">
                                 ${manufacturer}
                             </h3>
                             <span class="supplier-count text-sm bg-tech-light/50 px-2 py-1 rounded-full">${products.length} 个产品</span>
@@ -759,6 +946,8 @@
                         card = null;
                         if(sensortypetext == "camera"){card = createCameraCard(product);}
                         else if(sensortypetext == "radar"){card = createRadarCard(product);}
+                        else if(sensortypetext == "lidar"){card = createLidarCard(product);}
+                        else if(sensortypetext == "uss"){card = createUssCard(product);}
                         
                         productsContainer.appendChild(card);
                     });
@@ -788,7 +977,7 @@
                         <h4 class="font-semibold text-white">${product.Name}</h4>
                         <span class="text-xs bg-tech-accent/20 text-tech-accent px-2 py-0.5 rounded-full">${product.TYPE || '标准级'}</span>
                     </div>
-                    <p class="text-sm text-gray-400 mb-2">${product.Supplier_Name || '未知算力'} | ${product.Image_Sensor.Supplier || '未知核心数'} | ${product.Serializer.Name|| '未知核心数'}</p>
+                    <p class="text-sm text-gray-400 mb-2">${product.Supplier_Name.Name || '未知算力'} | ${product.Image_Sensor.Supplier || '未知核心数'} | ${product.Serializer.Name|| '未知核心数'}</p>
                     <div class="flex flex-wrap gap-1 mt-3">
                         ${tags ? tags.map(tag => `<span class="text-xs bg-tech-light/30 px-2 py-0.5 rounded">${tag}</span>`).join('') : ''}
                     </div>
@@ -807,14 +996,14 @@
                 card.dataset.type = product.Type.toLowerCase();
                 // card.dataset.resolution = product.RESOLUTION || 'unknown';
                 
-                const tags = [product.Calculator.Name,product.Azimuth_FOV_max,product.Azimuth_FOV_min]
+                const tags = [product.Calculator.Name,product.Azimuth_FOV,product.Maximum_Instrument_Range+'m',product.Atenna_Info]
 
                 card.innerHTML = `
                     <div class="flex justify-between items-start mb-2">
                         <h4 class="font-semibold text-white">${product.Name}</h4>
-                        <span class="text-xs bg-tech-accent/20 text-tech-accent px-2 py-0.5 rounded-full">${product.TYPE || '标准级'}</span>
+                        <span class="text-xs bg-tech-accent/20 text-tech-accent px-2 py-0.5 rounded-full">${product.Type || '标准级'}</span>
                     </div>
-                    <p class="text-sm text-gray-400 mb-2">${product.Supplier_Name || '未知算力'}}</p>
+                    <p class="text-sm text-gray-400 mb-2">${product.Supplier_Name.Name|| '未知算力'}</p>
                     <div class="flex flex-wrap gap-1 mt-3">
                         ${tags ? tags.map(tag => `<span class="text-xs bg-tech-light/30 px-2 py-0.5 rounded">${tag}</span>`).join('') : ''}
                     </div>
@@ -823,6 +1012,54 @@
                 return card;
             }
 
+            function createLidarCard(product) {
+                const card = document.createElement('div');
+                const productId = product.Name;
+                
+                card.className = 'chip-card bg-tech-dark border border-gray-700 rounded-lg p-3';
+                card.dataset.id = productId;
+                card.dataset.type = product.Type.toLowerCase();
+                // card.dataset.resolution = product.RESOLUTION || 'unknown';
+                
+                 const tags = [product.Laser_Length+'nm',product.Horizontal_FOV+'°',product.Max_Detection_Range+'m',product.Horizontal_Resolution+'°']
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-semibold text-white">${product.Name}</h4>
+                        <span class="text-xs bg-tech-accent/20 text-tech-accent px-2 py-0.5 rounded-full">${product.Type || '标准级'}</span>
+                    </div>
+                    <p class="text-sm text-gray-400 mb-2">${product.Type|| '未知算力'}</p>
+                    <div class="flex flex-wrap gap-1 mt-3">
+                        ${tags ? tags.map(tag => `<span class="text-xs bg-tech-light/30 px-2 py-0.5 rounded">${tag}</span>`).join('') : ''}
+                    </div>
+                `;
+                
+                return card;
+            }
+            function createUssCard(product) {
+                const card = document.createElement('div');
+                const productId = product.Name;
+                
+                card.className = 'chip-card bg-tech-dark border border-gray-700 rounded-lg p-3';
+                card.dataset.id = productId;
+                card.dataset.type = product.Type.toLowerCase();
+                // card.dataset.resolution = product.RESOLUTION || 'unknown';
+                
+                 const tags = [product.Distance_Precision+'nm',product.Horizontal_FOV+'°',product.Max_Detection_Range+'m',product.Frequency+' Hz']
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-semibold text-white">${product.Name}</h4>
+                        <span class="text-xs bg-tech-accent/20 text-tech-accent px-2 py-0.5 rounded-full">${product.Type || '标准级'}</span>
+                    </div>
+                    <p class="text-sm text-gray-400 mb-2">${product.Type|| '未知算力'}</p>
+                    <div class="flex flex-wrap gap-1 mt-3">
+                        ${tags ? tags.map(tag => `<span class="text-xs bg-tech-light/30 px-2 py-0.5 rounded">${tag}</span>`).join('') : ''}
+                    </div>
+                `;
+                
+                return card;
+            }
             // 添加厂商分组折叠事件
             function attachManufacturerToggleEvents() {
                 document.querySelectorAll('.manufacturer-header').forEach(header => {
@@ -928,6 +1165,7 @@
             });
     </script>
     <script src="../js/load-components.js"></script>
+    <script src="../js/function-link-manager.js"></script>
     <script src="../js/Visit_Monitor.js"></script>
 </div><!-- 关闭主内容区域 -->
 </body>

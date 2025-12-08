@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>论坛 - 达客智驾领航员</title>
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+    <script src="../css/tailwind.css"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="../js/ipcontroller.js"></script>
+    <script src="../js/load-duck-assistant.js"></script>
+
+</head>
+
+
+<body class="bg-dark text-gray-100 font-inter min-h-screen flex flex-col bg-grid">
+    <div id="particles-js"></div>
+    <div class="content min-h-screen">
+        <div id="navbar-container"></div>
+        <!-- 主要内容 -->
+        <main class="content">
+            <div class="container mx-auto px-4 py-8 pt-16">
+                <!-- 论坛页面 -->
+                <div class="page-content">
+                    <header class="mb-6 text-center">
+                        <h1 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-white mb-0">智驾论坛</h1>
+                        <p class="text-logotext mt-2">分享知识，交流经验，共同成长</p>
+                    </header>
+                    
+                    <!-- 论坛主体内容 -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- 左侧：论坛分类 -->
+                        <div class="lg:col-span-1">
+                            <div class="bg-gradient-to-t from-light-blue/40 to-dark rounded-xl p-4 shadow-sm">
+                                <h2 class="text-lg font-bold text-white mb-4">论坛分类</h2>
+                                <div class="space-y-2">
+                                    <a href="#" class="block p-3 bg-gray-903 rounded-lg hover:bg-gray-905 transition-colors text-white">
+                                        <div class="flex items-center justify-between">
+                                            <span>ADAS功能讨论</span>
+                                            <span class="bg-primary/20 text-primary text-xs px-2 py-0.5 rounded-full">24</span>
+                                        </div>
+                                    </a>
+                                    <a href="#" class="block p-3 bg-gray-903 rounded-lg hover:bg-gray-905 transition-colors text-white">
+                                        <div class="flex items-center justify-between">
+                                            <span>传感器技术</span>
+                                            <span class="bg-primary/20 text-primary text-xs px-2 py-0.5 rounded-full">18</span>
+                                        </div>
+                                    </a>
+                                    <a href="#" class="block p-3 bg-gray-903 rounded-lg hover:bg-gray-905 transition-colors text-white">
+                                        <div class="flex items-center justify-between">
+                                            <span>计算平台</span>
+                                            <span class="bg-primary/20 text-primary text-xs px-2 py-0.5 rounded-full">12</span>
+                                        </div>
+                                    </a>
+                                    <a href="#" class="block p-3 bg-gray-903 rounded-lg hover:bg-gray-905 transition-colors text-white">
+                                        <div class="flex items-center justify-between">
+                                            <span>法规标准</span>
+                                            <span class="bg-primary/20 text-primary text-xs px-2 py-0.5 rounded-full">9</span>
+                                        </div>
+                                    </a>
+                                    <a href="#" class="block p-3 bg-gray-903 rounded-lg hover:bg-gray-905 transition-colors text-white">
+                                        <div class="flex items-center justify-between">
+                                            <span>行业动态</span>
+                                            <span class="bg-primary/20 text-primary text-xs px-2 py-0.5 rounded-full">31</span>
+                                        </div>
+                                    </a>
+                                    <a href="#" class="block p-3 bg-gray-903 rounded-lg hover:bg-gray-905 transition-colors text-white">
+                                        <div class="flex items-center justify-between">
+                                            <span>求职招聘</span>
+                                            <span class="bg-primary/20 text-primary text-xs px-2 py-0.5 rounded-full">7</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <!-- 热门话题 -->
+                            <div class="bg-gradient-to-t from-light-blue/40 to-dark rounded-xl p-4 shadow-sm mt-6">
+                                <h2 class="text-lg font-bold text-white mb-4">热门话题</h2>
+                                <div class="space-y-3">
+                                    <a href="#" class="block text-sm text-white hover:text-primary transition-colors">
+                                        <div class="line-clamp-2">L2+级自动驾驶的未来发展方向</div>
+                                        <div class="text-logotext text-xs mt-1">23回复 · 567浏览</div>
+                                    </a>
+                                    <a href="#" class="block text-sm text-white hover:text-primary transition-colors">
+                                        <div class="line-clamp-2">激光雷达与摄像头融合方案探讨</div>
+                                        <div class="text-logotext text-xs mt-1">17回复 · 423浏览</div>
+                                    </a>
+                                    <a href="#" class="block text-sm text-white hover:text-primary transition-colors">
+                                        <div class="line-clamp-2">最新ADAS法规解读</div>
+                                        <div class="text-logotext text-xs mt-1">12回复 · 389浏览</div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 中间：帖子列表 -->
+                        <div class="lg:col-span-2">
+                            <!-- 发帖按钮 -->
+                            <div class="bg-gradient-to-t from-light-blue/40 to-dark rounded-xl p-4 shadow-sm mb-6">
+                                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                                    <div class="text-white">
+                                        <h3 class="font-bold">欢迎来到智驾论坛</h3>
+                                        <p class="text-sm text-logotext">分享你的知识和经验，与行业专家交流</p>
+                                    </div>
+                                    <button class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2">
+                                        <i class="fa fa-plus"></i>
+                                        <span>发布新帖</span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- 帖子列表 -->
+                            <div class="space-y-4">
+                                <!-- 帖子卡片 -->
+                                <div class="bg-gradient-to-t from-light-blue/40 to-dark rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+                                    <div class="flex gap-4">
+                                        <div class="w-10 h-10 rounded-full bg-gray-903 flex items-center justify-center text-white font-bold">
+                                            A
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex items-center gap-2 mb-1">
+                                                <span class="text-white font-semibold">Automan</span>
+                                                <span class="text-logotext text-xs">2024-01-15 14:30</span>
+                                                <span class="bg-primary/20 text-primary text-xs px-2 py-0.5 rounded-full">ADAS功能</span>
+                                            </div>
+                                            <h3 class="text-lg font-bold text-white hover:text-primary transition-colors mb-2">
+                                                <a href="#">L2+级自动驾驶的未来发展方向</a>
+                                            </h3>
+                                            <p class="text-white/80 text-sm mb-3 line-clamp-2">
+                                                随着技术的不断发展，L2+级自动驾驶已经成为市场的主流。本文将探讨L2+级自动驾驶的未来发展方向，包括传感器融合、AI算法、法规标准等方面的趋势...
+                                            </p>
+                                            <div class="flex items-center justify-between text-logotext text-sm">
+                                                <div class="flex items-center gap-4">
+                                                    <span class="flex items-center gap-1">
+                                                        <i class="fa fa-eye"></i>
+                                                        567
+                                                    </span>
+                                                    <span class="flex items-center gap-1">
+                                                        <i class="fa fa-comment"></i>
+                                                        23
+                                                    </span>
+                                                    <span class="flex items-center gap-1">
+                                                        <i class="fa fa-thumbs-up"></i>
+                                                        45
+                                                    </span>
+                                                </div>
+                                                <span>最后回复：2小时前</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 帖子卡片 -->
+                                <div class="bg-gradient-to-t from-light-blue/40 to-dark rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+                                    <div class="flex gap-4">
+                                        <div class="w-10 h-10 rounded-full bg-gray-903 flex items-center justify-center text-white font-bold">
+                                            S
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex items-center gap-2 mb-1">
+                                                <span class="text-white font-semibold">SensorPro</span>
+                                                <span class="text-logotext text-xs">2024-01-14 10:15</span>
+                                                <span class="bg-primary/20 text-primary text-xs px-2 py-0.5 rounded-full">传感器技术</span>
+                                            </div>
+                                            <h3 class="text-lg font-bold text-white hover:text-primary transition-colors mb-2">
+                                                <a href="#">激光雷达与摄像头融合方案探讨</a>
+                                            </h3>
+                                            <p class="text-white/80 text-sm mb-3 line-clamp-2">
+                                                激光雷达和摄像头是自动驾驶系统中最重要的两种传感器，它们各有优缺点。本文将探讨激光雷达与摄像头融合的技术方案，包括数据融合、时间同步、坐标系转换等关键技术...
+                                            </p>
+                                            <div class="flex items-center justify-between text-logotext text-sm">
+                                                <div class="flex items-center gap-4">
+                                                    <span class="flex items-center gap-1">
+                                                        <i class="fa fa-eye"></i>
+                                                        423
+                                                    </span>
+                                                    <span class="flex items-center gap-1">
+                                                        <i class="fa fa-comment"></i>
+                                                        17
+                                                    </span>
+                                                    <span class="flex items-center gap-1">
+                                                        <i class="fa fa-thumbs-up"></i>
+                                                        38
+                                                    </span>
+                                                </div>
+                                                <span>最后回复：5小时前</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 帖子卡片 -->
+                                <div class="bg-gradient-to-t from-light-blue/40 to-dark rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+                                    <div class="flex gap-4">
+                                        <div class="w-10 h-10 rounded-full bg-gray-903 flex items-center justify-center text-white font-bold">
+                                            R
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex items-center gap-2 mb-1">
+                                                <span class="text-white font-semibold">RegExpert</span>
+                                                <span class="text-logotext text-xs">2024-01-13 16:45</span>
+                                                <span class="bg-primary/20 text-primary text-xs px-2 py-0.5 rounded-full">法规标准</span>
+                                            </div>
+                                            <h3 class="text-lg font-bold text-white hover:text-primary transition-colors mb-2">
+                                                <a href="#">最新ADAS法规解读</a>
+                                            </h3>
+                                            <p class="text-white/80 text-sm mb-3 line-clamp-2">
+                                                近期，国内外发布了多项ADAS相关的法规和标准，对自动驾驶行业产生了重要影响。本文将对这些法规进行解读，分析其对行业的影响和应对策略...
+                                            </p>
+                                            <div class="flex items-center justify-between text-logotext text-sm">
+                                                <div class="flex items-center gap-4">
+                                                    <span class="flex items-center gap-1">
+                                                        <i class="fa fa-eye"></i>
+                                                        389
+                                                    </span>
+                                                    <span class="flex items-center gap-1">
+                                                        <i class="fa fa-comment"></i>
+                                                        12
+                                                    </span>
+                                                    <span class="flex items-center gap-1">
+                                                        <i class="fa fa-thumbs-up"></i>
+                                                        32
+                                                    </span>
+                                                </div>
+                                                <span>最后回复：昨天 19:20</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 分页 -->
+                            <div class="mt-6 flex justify-center">
+                                <div class="flex items-center gap-2">
+                                    <button class="bg-gray-903 text-white px-4 py-2 rounded-lg hover:bg-gray-905 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                        <i class="fa fa-chevron-left"></i>
+                                    </button>
+                                    <button class="bg-primary text-white px-4 py-2 rounded-lg">1</button>
+                                    <button class="bg-gray-903 text-white px-4 py-2 rounded-lg hover:bg-gray-905 transition-colors">2</button>
+                                    <button class="bg-gray-903 text-white px-4 py-2 rounded-lg hover:bg-gray-905 transition-colors">3</button>
+                                    <button class="bg-gray-903 text-white px-4 py-2 rounded-lg hover:bg-gray-905 transition-colors">4</button>
+                                    <button class="bg-gray-903 text-white px-4 py-2 rounded-lg hover:bg-gray-905 transition-colors">5</button>
+                                    <button class="bg-gray-903 text-white px-4 py-2 rounded-lg hover:bg-gray-905 transition-colors">
+                                        <i class="fa fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 页脚容器 -->
+        <div id="footer-container"></div>   
+    </div>
+            
+    <!-- 粒子背景脚本 -->
+
+    <script>    
+        // 粒子背景配置
+        particlesJS({
+            particles: {
+                number: {
+                    value: 80,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                color: {
+                    value: "#ffffff"
+                },
+                shape: {
+                    type: "circle",
+                    stroke: {
+                        width: 0,
+                        color: "#000000"
+                    },
+                    polygon: {
+                        nb_sides: 5
+                    },
+                    image: {
+                        src: "img/github.svg",
+                        width: 100,
+                        height: 100
+                    }
+                },
+                opacity: {
+                    value: 0.5,
+                    random: false,
+                    anim: {
+                        enable: false,
+                        speed: 1,
+                        opacity_min: 0.1,
+                        sync: false
+                    }
+                },
+                size: {
+                    value: 3,
+                    random: true,
+                    anim: {
+                        enable: false,
+                        speed: 40,
+                        size_min: 0.1,
+                        sync: false
+                    }
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: "#ffffff",
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 6,
+                    direction: "none",
+                    random: false,
+                    straight: false,
+                    out_mode: "out",
+                    bounce: false,
+                    attract: {
+                        enable: false,
+                        rotateX: 600,
+                        rotateY: 1200
+                    }
+                }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: "repulse"
+                    },
+                    onclick: {
+                        enable: true,
+                        mode: "push"
+                    },
+                    resize: true
+                },
+                modes: {
+                    grab: {
+                        distance: 400,
+                        line_linked: {
+                            opacity: 1
+                        }
+                    },
+                    bubble: {
+                        distance: 400,
+                        size: 40,
+                        duration: 2,
+                        opacity: 8,
+                        speed: 3
+                    },
+                    repulse: {
+                        distance: 200,
+                        duration: 0.4
+                    },
+                    push: {
+                        particles_nb: 4
+                    },
+                    remove: {
+                        particles_nb: 2
+                    }
+                }
+            },
+            retina_detect: true
+        });
+    </script>
+    
+    <script src="../js/load-components.js"></script>
+    <script src="../js/function-link-manager.js"></script>
+    <script src="../js/Visit_Monitor.js"></script>
+</body>
+</html>

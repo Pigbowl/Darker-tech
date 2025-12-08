@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>功能领域-达客智驾领航员</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+    <script src="../css/tailwind.css"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>    
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
@@ -103,6 +104,10 @@
                         >
                         您的浏览器不支持直接查看PDF，请下载后查看。
                         </iframe>
+                        <div id="pdfError" class="absolute inset-0 bg-gray-100 flex flex-col items-center justify-center text-gray-500 hidden">
+                            <i class="fa fa-exclamation-circle text-4xl mb-3"></i>
+                            <p>无法读取PDF文件</p>
+                        </div>
                     </div>
                     <div class="mt-4 text-center">
                         <button 
@@ -124,6 +129,27 @@
     </div>    
     <!-- 加载组件的脚本 -->
     <script>
+        // 图片加载错误处理
+        function handleImageError(img) {
+            img.onerror = null; // 防止无限循环
+            img.src = '../PIC/Function/default.gif'; // 默认图片
+        }
+        
+        // PDF加载成功处理
+        function handlePdfLoad() {
+            const pdfError = document.getElementById('pdfError');
+            pdfError.classList.add('hidden');
+        }
+        
+        // PDF加载错误处理
+        function handlePdfError() {
+            const pdfIframe = document.getElementById('pdfIframe');
+            const pdfError = document.getElementById('pdfError');
+            // 隐藏iframe内容
+            pdfIframe.style.display = 'none';
+            // 显示错误提示
+            pdfError.classList.remove('hidden');
+        }
 
         document.addEventListener('DOMContentLoaded', () => {     //ADAS 功能搜索
                
@@ -134,10 +160,15 @@
             const hoverInfoTitle = document.getElementById('hoverInfoTitle');
             const hoverInfoContent = document.getElementById('hoverInfoContent');
             const showbutton = document.getElementById('allfunction');
+            const pdfIframe = document.getElementById('pdfIframe');
+            
+            // 添加PDF加载事件监听器
+            pdfIframe.addEventListener('load', handlePdfLoad);
+            pdfIframe.addEventListener('error', handlePdfError);
 
               // 当前显示的卡片数据
             let currentCards = [];
-
+            let functionpicpath = "../PIC/Function/";
             
         
             // 绑定搜索按钮点击事件
@@ -200,16 +231,17 @@
                 }
                 return response.json();
             })
-            .then(data => {
+            .then(async data => {
                 // 显示执行结果
                 if (data.success) {
                     data_group = JSON.parse(data.output);
+                    console.log(data_group);
                     // 根据结果数量决定显示内容
                     if (data_group.length === 0) {
                         emptyState.classList.remove('hidden');
                     } else {
                         // 动态创建卡片
-                        createCards(data_group.Catalogue);
+                        await createCards(data_group.Catalogue);
                         initCardInteractions(); // 初始化交互逻辑
                     }
                 } else {
@@ -253,7 +285,9 @@
             .then(data => {
                 // 显示执行结果
                 if (data.success) {
+                    console.log(data.output);
                     data_group = JSON.parse(data.output);
+
                     // 根据结果数量决定显示内容
                     if (data_group.length === 0) {
                         emptyState.classList.remove('hidden');
@@ -330,21 +364,50 @@
                 const title = btn.getAttribute('data-title');
                 const btnstat = btn.getAttribute('disabled');
                 if (!btnstat==1){
-                // 更新模态框内容
-                pdfIframe.src = pdfPath;
-                pdfModalTitle.textContent = title;
-                pdfFileName.textContent = title.replace('技术文档', '') + '.pdf';
-            
-                // 显示模态框
-                pdfModal.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
+                    // 更新模态框内容
+                    pdfModalTitle.textContent = title;
+                    pdfFileName.textContent = title.replace('技术文档', '') + '.pdf';
+                    
+                    // 显示模态框
+                    pdfModal.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden';
+                    
+                    // 使用XMLHttpRequest先检查文件是否存在，避免直接设置src导致的404错误
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('GET', pdfPath, true);
+                    xhr.responseType = 'blob';
+                    
+                    xhr.onload = function() {
+                        if (xhr.status === 200) {
+                            // 文件存在，正常加载
+                            pdfIframe.style.display = 'block';
+                            document.getElementById('pdfError').classList.add('hidden');
+                            pdfIframe.src = pdfPath;
+                        } else {
+                            // 文件不存在，显示错误提示
+                            pdfIframe.style.display = 'none';
+                            document.getElementById('pdfError').classList.remove('hidden');
+                        }
+                    };
+                    
+                    xhr.onerror = function() {
+                        // 网络错误，显示错误提示
+                        pdfIframe.style.display = 'none';
+                        document.getElementById('pdfError').classList.remove('hidden');
+                    };
+                    
+                    xhr.send();
                 }});
         
             // 关闭模态框
             closePDFBtn.addEventListener('click', () => {
                 pdfModal.classList.add('hidden');
                 document.body.style.overflow = '';
+                // 重置iframe和错误提示
                 pdfIframe.src = '';
+                pdfIframe.style.display = 'block';
+                const pdfError = document.getElementById('pdfError');
+                pdfError.classList.add('hidden');
             });
         
             // 点击模态框背景关闭
@@ -352,7 +415,11 @@
                 if (e.target === pdfModal) {
                 pdfModal.classList.add('hidden');
                 document.body.style.overflow = '';
+                // 重置iframe和错误提示
                 pdfIframe.src = '';
+                pdfIframe.style.display = 'block';
+                const pdfError = document.getElementById('pdfError');
+                pdfError.classList.add('hidden');
                 }
             });
         
@@ -361,7 +428,11 @@
                 if (e.key === 'Escape' && !pdfModal.classList.contains('hidden')) {
                 pdfModal.classList.add('hidden');
                 document.body.style.overflow = '';
+                // 重置iframe和错误提示
                 pdfIframe.src = '';
+                pdfIframe.style.display = 'block';
+                const pdfError = document.getElementById('pdfError');
+                pdfError.classList.add('hidden');
                 }
             });
         }
@@ -394,104 +465,93 @@
             hoverInfo.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
         }
 
-        function generatecardhtml(item){
-            if (item["file_status"] == 1){
-                return  `
-                    <div class="bg-white rounded-2xl shadow-card overflow-hidden hover-scale group" data-card-id="${item["Name"]}">
-                        <div class="relative h-48 overflow-hidden">
-                            <img src=${"../PIC/"+item["Name"]+".gif"} alt="动图" class="w-full h-full object-cover" loading="lazy">
-                            <div class="absolute inset-0 bg-gradient-to-t from-dark/70 to-transparent"></div>
-                            <div class="absolute bottom-4 left-4 text-white">
-                                <span class="bg-primary/90 text-white text-xs font-medium px-2 py-1 rounded-full"> ${item["sae_enum_LEVEL"]}级</span>
+        function generatecardhtml(item, isFileAvailable){
+            // 根据文件是否存在动态设置按钮属性
+            const buttonBgClass = isFileAvailable ? "bg-blue-600" : "bg-ban";
+            const buttonHoverClass = isFileAvailable ? "hover:bg-blue-700" : "hover:bg-ban/90";
+            const buttonTextColor = isFileAvailable ? "text-white" : "text-black";
+            const buttonIcon = isFileAvailable ? "fa-file-pdf-o" : "fa-times-circle";
+            const buttonText = isFileAvailable ? "查看技术文档" : "准备中，敬请期待";
+            const buttonDisabled = isFileAvailable ? "" : "disabled";
+            const buttonCursor = isFileAvailable ? "cursor-pointer" : "cursor-not-allowed";
+            return  `
+                <div class="bg-white rounded-2xl shadow-card overflow-hidden hover-scale group flex flex-col" data-card-id="${item["Name"]}">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src=${functionpicpath+item["Name"]+".gif"} alt="动图" class="w-full h-full object-cover" loading="lazy" onerror="handleImageError(this)">
+                        <div class="absolute inset-0 bg-gradient-to-t from-dark/70 to-transparent"></div>
+                        <div class="absolute bottom-4 left-4 text-white">
+                            <span class="bg-primary/90 text-white text-xs font-medium px-2 py-1 rounded-full"> ${item["SAE"]}级</span>
+                        </div>
+                    </div> 
+                    
+                    <!-- 卡片内容区域 -->
+                    <div class="p-6 flex flex-col flex-grow">
+                        <!-- 功能简写和全称 -->
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="text-[clamp(1.2rem,3vw,1.5rem)] font-bold text-dark group-hover:text-primary transition-colors">
+                                ${item["Name"]}
+                                </h3>
+                                <p class="text-gray-500 text-sm">${item["Full_Name"]}</p>
                             </div>
-                        </div> 
+                                <span class="bg-blue-50 text-blue-700 text-xs font-medium px-2 py-1 rounded-full">
+                                ${item["SAE"]}
+                                </span>
+                        </div>
                         
-                        <!-- 卡片内容区域 -->
-                        <div class="p-6">
-                            <!-- 功能简写和全称 -->
-                            <div class="flex justify-between items-start mb-3">
-                                <div>
-                                    <h3 class="text-[clamp(1.2rem,3vw,1.5rem)] font-bold text-dark group-hover:text-primary transition-colors">
-                                    ${item["Name"]}
-                                    </h3>
-                                    <p class="text-gray-500 text-sm">${item["Full_Name"]}</p>
-                                </div>
-                                    <span class="bg-blue-50 text-blue-700 text-xs font-medium px-2 py-1 rounded-full">
-                                    ${item["sae_enum_LEVEL"]}
-                                    </span>
-                            </div>
-                            
-                            <!-- 功能介绍 -->
-                            <p class="text-gray-600 mb-4 line-clamp-3 text-xs">
-                                ${item["Description"]}
-                            </p>
-                            
-                            <!-- 查看详情按钮 -->
-                                <button 
-                                    class="view-details-btn w-full py-3 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg transition-colors duration-300 flex items-center justify-center gap-2 "
-                                    data-pdf-path = "${"../Doc/"+item["Name"]+".pdf"}" data-title = "${item["Name"]+"技术文档"}">
-                                    <i class="fa fa-file-pdf-o"></i>
-                                    <span>查看技术文档</span>
-                                </button>
+                        <!-- 功能介绍 -->
+                        <p class="text-gray-600 line-clamp-3 text-xs mb-4">
+                            ${item["Description"]}
+                        </p>
+                        
+                        <!-- 按钮容器 -->
+                        <div class="mt-auto">
+                            <button 
+                                class="view-details-btn w-full py-3 ${buttonBgClass} ${buttonHoverClass} ${buttonTextColor} ${buttonCursor} font-medium rounded-lg transition-colors duration-300 flex items-center justify-center gap-2"
+                                data-pdf-path = "${"../Doc/"+item["Name"]+".pdf"}" data-title = "${item["Name"]+"技术文档"}" ${buttonDisabled}>
+                                <i class="fa ${buttonIcon}"></i>
+                                <span>${buttonText}</span>
+                            </button>
                         </div>
                     </div>
-                `;
-            }else{
-                return  `
-                    <div class="bg-white rounded-2xl shadow-card overflow-hidden hover-scale group" data-card-id="${item["Name"]}">
-                        <div class="relative h-48 overflow-hidden">
-                            <img src=${"../PIC/"+item["Name"]+".gif"} alt="动图" class="w-full h-full object-cover" loading="lazy">
-                            <div class="absolute inset-0 bg-gradient-to-t from-dark/70 to-transparent"></div>
-                            <div class="absolute bottom-4 left-4 text-white">
-                                <span class="bg-primary/90 text-white text-xs font-medium px-2 py-1 rounded-full"> ${item["sae_enum_LEVEL"]}级</span>
-                            </div>
-                        </div> 
-                        
-                        <!-- 卡片内容区域 -->
-                        <div class="p-6">
-                            <!-- 功能简写和全称 -->
-                            <div class="flex justify-between items-start mb-3">
-                                <div>
-                                    <h3 class="text-[clamp(1.2rem,3vw,1.5rem)] font-bold text-dark group-hover:text-primary transition-colors">
-                                    ${item["Name"]}
-                                    </h3>
-                                    <p class="text-gray-500 text-sm">${item["Full_Name"]}</p>
-                                </div>
-                                    <span class="bg-blue-50 text-blue-700 text-xs font-medium px-2 py-1 rounded-full">
-                                    ${item["sae_enum_LEVEL"]}
-                                    </span>
-                            </div>
-                            
-                            <!-- 功能介绍 -->
-                            <p class="text-gray-600 mb-4 line-clamp-3 text-xs">
-                                ${item["Description"]}
-                            </p>
-                            
-                            <!-- 查看详情按钮 -->
-                                <button 
-                                    class="view-details-btn w-full py-3 bg-ban hover:bg-ban/90 text-black font-medium rounded-lg transition-colors duration-300 flex items-center justify-center gap-2"
-                                    data-pdf-path = "${"../Doc/"+item["Name"]+".pdf"}" data-title = "${item["Name"]+"技术文档"}">
-                                    <i class="fa fa-times-circle"></i>
-                                    <span>准备中，敬请期待</span>
-                                </button>
-                        </div>
-                    </div>
-                `;
-            }
+                </div>
+            `;
+        }
+        
+        // 检查文件是否存在
+        async function checkFileExists(fileName) {
+            return new Promise((resolve) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('HEAD', `../Doc/${fileName}`, true);
+                xhr.cache = 'no-cache';
+                
+                xhr.onload = function() {
+                    resolve(xhr.status === 200);
+                };
+                
+                xhr.onerror = function() {
+                    resolve(false);
+                };
+                
+                xhr.send();
+            });
         }
         
         // 动态创建卡片的函数
-        function createCards(items) {
+        async function createCards(items) {
             // 清空容器
             currentCards = items;
             cardContainer.innerHTML = '';
             
             // 为每个结果创建卡片
-            Object.keys(items).forEach(item => {
-                const card = generatecardhtml(items[item]);
-            // 将卡片添加到容器
-            cardContainer.insertAdjacentHTML('beforeend', card);
-            });
+            for (const itemKey of Object.keys(items)) {
+                const item = items[itemKey];
+                const fileName = `${item["Name"]}.pdf`;
+                const isFileAvailable = await checkFileExists(fileName);
+                const card = generatecardhtml(item, isFileAvailable);
+                // 将卡片添加到容器
+                cardContainer.insertAdjacentHTML('beforeend', card);
+            }
         }
 
         // 显示通知
@@ -529,6 +589,7 @@
 
     </script>
     <script src="../js/load-components.js"></script>
+    <script src="../js/function-link-manager.js"></script>
     <script src="../js/Visit_Monitor.js"></script>
 </body>
 </html>

@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>行业矩阵-达客智驾领航员</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+    <script src="../css/tailwind.css"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>    
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
@@ -25,65 +26,59 @@
             <!-- 主内容区 -->
             <div class="container mx-auto px-4 py-8">
                 <!-- 筛选器区域 -->
-                <section class="mt-14 mb-12 relative rounded bg-gradient-to-t from-light-blue/40 to-dark border-b border-primary/20 pb-10 px-6">
+                <section class="mt-8 mb-4 relative rounded bg-gradient-to-t from-light-blue/40 to-dark border-b border-primary/20 pb-10 px-6">
                     <h2 class="text-[clamp(1.8rem,5vw,3rem)] font-bold mb-4 text-white text-center">
                         ADAS <span class="text-light-blue text-shadow-glow">对标数据库</span> 
                     </h2>
-                    <p class="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
-                        精准对比分析ADAS系统性能指标，为智能驾驶技术发展提供数据支持与决策参考
-                    </p>
+
                     <!-- <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 mt-8">
                         <h3 class="text-xl font-semibold text-white flex items-center gap-2 no-underline" style="border-bottom: none;"><i class="fa fa-filter text-white"></i> 筛选条件</h3>
                     </div> -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                        <div class="space-y-2">
-                            <label class="text-sm text-white">产品类型</label>
-                            <select class="w-full bg-dark-light border border-gray-700 rounded-lg py-2 px-3 text-gray-200 focus:outline-none focus:border-primary transition-colors">
-                                <option>全部类型</option>
-                                <!-- <option>前视摄像头</option>
-                                <option>激光雷达</option>
-                                <option>毫米波雷达</option>
-                                <option>域控制器</option>
-                                <option>完整解决方案</option> -->
-                            </select>
-                        </div>
-                        <div class="space-y-2">
+                    <div class="flex flex-wrap gap-4">
+                        <div class="space-y-2 flex-1 min-w-[150px]">
                             <label class="text-sm text-white">汽车品牌</label>
                             <select id="brand-filter" class="w-full bg-dark-light border border-gray-700 rounded-lg py-2 px-3 text-gray-200 focus:outline-none focus:border-primary transition-colors">
                                 <option value="all">所有品牌</option>
                             </select>
                         </div>
-                        <div class="space-y-2">
-                            <label class="text-sm text-white">测试场景</label>
-                            <select class="w-full bg-dark-light border border-gray-700 rounded-lg py-2 px-3 text-gray-200 focus:outline-none focus:border-primary transition-colors">
-                                <option>全部场景</option>
-                                <!-- <option>城市道路</option>
-                                <option>高速公路</option>
-                                <option>乡村道路</option>
-                                <option>夜间环境</option>
-                                <option>恶劣天气</option> -->
-                            </select>
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-sm text-white">发布年份</label>
-                            <select id="version-filter" class="w-full bg-dark-light border border-gray-700 rounded-lg py-2 px-3 text-gray-200 focus:outline-none focus:border-primary transition-colors">
+                        <div class="space-y-2 flex-1 min-w-[150px]">
+                            <label class="text-sm text-white">上市年份</label>
+                            <select id="year-filter" class="w-full bg-dark-light border border-gray-700 rounded-lg py-2 px-3 text-gray-200 focus:outline-none focus:border-primary transition-colors">
                                 <option value="all">所有年份</option>
                             </select>
                         </div>
-                        <div class="space-y-2">
-                            <label class="text-sm text-white">排序方式</label>
-                            <select class="w-full bg-dark-light border border-gray-700 rounded-lg py-2 px-3 text-gray-200 focus:outline-none focus:border-primary transition-colors">
-                                <option>综合评分 (降序)</option>
+                        <div class="space-y-2 flex-1 min-w-[150px]">
+                            <label class="text-sm text-white">能源类型</label>
+                            <select id="powertype-filter" class="w-full bg-dark-light border border-gray-700 rounded-lg py-2 px-3 text-gray-200 focus:outline-none focus:border-primary transition-colors">
+                                <option value="all">所有类型</option>
                             </select>
                         </div>
-                    </div>
-                    <div class="mt-6 flex flex-wrap gap-3">
-                        <button class="text-sm text-gray-400 hover:text-primary ml-auto flex items-center gap-1">
-                            <i class="fa fa-refresh"></i> 清除全部筛选
-                        </button>
+                        <div class="space-y-2 flex-1 min-w-[150px]">
+                            <label class="text-sm text-white">售卖国家</label>
+                            <select id="country-filter" class="w-full bg-dark-light border border-gray-700 rounded-lg py-2 px-3 text-gray-200 focus:outline-none focus:border-primary transition-colors">
+                                <option value="all">所有国家</option>
+                            </select>
+                        </div>
+                        <div class="space-y-2 flex-1 min-w-[150px]">
+                            <label class="text-sm text-white">功能级别</label>
+                            <select id="functionlevel-filter" class="w-full bg-dark-light border border-gray-700 rounded-lg py-2 px-3 text-gray-200 focus:outline-none focus:border-primary transition-colors">
+                                <option value="all">所有级别</option>
+                            </select>
+                        </div>
+                        <div class="space-y-2 flex-1 min-w-[150px]">
+                            <label class="text-sm text-white">生产厂商</label>
+                            <select id="oem-filter" class="w-full bg-dark-light border border-gray-700 rounded-lg py-2 px-3 text-gray-200 focus:outline-none focus:border-primary transition-colors">
+                                <option value="all">所有厂商</option>
+                            </select>
+                        </div>
+                        <div class="space-y-2 flex items-end">
+                            <button class="text-sm text-gray-400 hover:text-primary flex items-center gap-1 bg-dark-light border border-gray-700 rounded-lg py-2 px-4 transition-colors">
+                                <i class="fa fa-refresh"></i> 清除全部筛选
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="mt-6 flex flex-wrap gap-3">
+                    <div class="mt-4 flex justify-center">
                         <div class="relative w-full max-w-md">
                             <input type="text" id="search-input" placeholder="搜索产品..." class="w-full py-3 px-4 pr-10 bg-dark rounded-lg border border-gray-700 focus:border-primary focus:outline-none text-white">
                             <button id="search-btn" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-200 hover:text-white">
@@ -96,7 +91,7 @@
                 <!-- 产品展示区域 -->
                 <section id="products" class="rounded mb-16 bg-grid bg-dark-light p-6">
                     <!-- 标题和加载更多按钮 -->
-                    <div class="relative mb-8">
+                    <div class="relative mb-4">
                         <!-- 产品仓库标题 - 绝对居中 -->
                         <div class="text-center">
                             <label class="text-xl font-bold text-white">产品仓库</label>
@@ -330,6 +325,7 @@
     <!-- JavaScript -->
 
     <script>
+        let vehiclepicpath = "../PIC/Vehicles/"
         // 初始化图表
         document.addEventListener('DOMContentLoaded', function() {
             // 雷达图
@@ -588,19 +584,26 @@
             let alloem = {}
             let productArray =[]
             loadProducts();
+            
+            // 为所有筛选器添加事件监听器
             document.getElementById('brand-filter').addEventListener('change', applyFilters);
+            document.getElementById('year-filter').addEventListener('change', applyFilters);
+            document.getElementById('powertype-filter').addEventListener('change', applyFilters);
+            document.getElementById('functionlevel-filter').addEventListener('change', applyFilters);
+            document.getElementById('oem-filter').addEventListener('change', applyFilters);
             //初始化加载数据库
             function loadProducts(){    //初始化加载数据库
                 // 显示加载状态
                 document.getElementById('product-grid').innerHTML = '<div class="col-span-full text-center py-10"><i class="fa fa-spinner fa-spin text-primary text-3xl"></i></div>';
-                command = ip + '/launchtrying'
+                command = ip + '/extract_item_group'
                 fetch(command,{
                     method:'POST',
                     headers:{
                         'Content-Type':'application/json'
                     },
                     body:JSON.stringify({
-                        scriptName:'parse_adas_benchmark'
+                        item_cate:'vehicle',
+                        table_name:'vehiclemodel',
                     })
                 })
                 .then(response =>{
@@ -611,10 +614,19 @@
                 })
                 .then(data =>{
                     if(data.success){
+                        const functionlevellist = []
                         const answer = JSON.parse(data.output);
-                        const products = answer.result
+                        const products = answer.Catalogue
                         allproduct = products
-                        const oemlist = answer.oem_array
+                        const oemlist = answer.OEM
+                        const Brandlist = answer.Brand
+                        const yearlist = answer.Year
+                        const powertypelist = answer.PowerType
+                        Object.keys(products).forEach(key => {
+                            if (!(products[key].Adas_Solution.briefing.SAE in functionlevellist)){
+                                functionlevellist.push(products[key].Adas_Solution.briefing.SAE)
+                            }
+                        });
                         alloem = oemlist
                             // 生成产品卡片
                         renderProducts(products);
@@ -622,7 +634,7 @@
                         nonhiddencards = document.querySelectorAll('.veh-card:not(.hidden)');
                         displayviewcards(nonhiddencards)
                         summerizeupdate()
-                        populateFilters(oemlist);
+                        populateFilters(Brandlist,yearlist,powertypelist,oemlist,functionlevellist);
                         initComparisonFeature()
                     }
                     else{
@@ -708,48 +720,52 @@
                 // 提取产品信息
 
                 const name = product.id || '未知产品';
-                const version = product.PROP?.YEAR || 'v1.0.0';
+                const version = product.Launch_Time || 'v1.0.0';
                 const description = product.PROP?.DESCRIPTION || '暂无描述';
-                const rating = product.PROP?.RATING || 0;
+                if (product.vehicle_test_input && product.vehicle_test_input.length > 0) {
+                    rating = product.vehicle_test_input[0].Score || 0;
+                } else {
+                    rating = 0;
+                }
                 const reviewCount = product.PROP?.REVIEW_COUNT || 0;
-                const brand = product.PROP?.BRAND || '未知品牌';
-                const productname = product.PROP?.PRODUCT_NAME || '未知产品';
-                const productlevel = product.PROP?.PERFORMANCE.SAE ||"未知级别"
-                const productresource = product.PROP?.PERFORMANCE.RESOURCE ||"未知资源"
-                const feature1 = product.PROP?.SENSOR.STATISTICS.TOTAL || '特性1';
-                const feature2 = product.PROP?.ECU_INFO.SOC_MCU || '特性2';
+                const brand = product.Brand.Name + "/" +product.Brand.CN_Name || '未知品牌';
+                const productname = product.Adas_Product_Name || '未知产品';
+                const productlevel = product.Adas_Solution.briefing.SAE ||"未知级别"
+                const productresource = product.Adas_Solution.briefing.AI_RESOURCE ||"未知资源"
+                const feature1 = product.Adas_Solution.briefing.sensor_set || '特性1';
+                const feature2 = product.Adas_Solution.briefing.calculator_sum || '特性2';
                 const feature1Label = 'SensorSet';
                 const feature2Label = 'Calculator'
                 isnew = 0;
                 
-                if (version == 2024) {
+                if (version >= 2024) {
                     isnew = 1;
                 }
                 // 创建卡片元素
                 const card = document.createElement('div');
-                card.className = 'veh-card bg-light-blue/40 rounded-xl overflow-hidden border border-gray-800 hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 group';
+                card.className = 'veh-card bg-light-blue/40 rounded-xl overflow-hidden border border-gray-800 hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 group flex flex-col h-full relative';
                 card.id = product.id
                 // 卡片内容
                 card.innerHTML = `
                     <div class="relative h-40 bg-dark overflow-hidden">
-                        <img src="../PIC/${name}.png" alt="${name}" class="w-full h-full object-cover opacity-100 group-hover:scale-110 transition-transform duration-500">
+                        <img src="${vehiclepicpath}${name}.png" alt="${name}" class="w-full h-full object-cover opacity-100 group-hover:scale-110 transition-transform duration-500">
                         ${isnew ? '<div class="absolute top-3 right-3 bg-neon-pink text-white text-xs font-bold px-2 py-1 rounded">新品</div>' : ''}
                     </div>
-                    <div class="p-5">
-                        <div class="flex justify-between items-start mb-3">
+                    <div class="p-5 flex flex-col flex-1">
+                        <div class="flex justify-between items-start mb-1">
                             <h4 class="text-lg font-semibold text-white group-hover:text-SOP transition-colors">${name}</h4>
                             <span class="text-white font-mono">${version}</span>
                         </div>
-                        <p class="text-gray-400 text-sm mb-4 line-clamp-2">${brand}</p>
-                        <div class="flex justify-between items-center mb-4">
+                        <p class="text-gray-400 text-sm mb-2 line-clamp-2">${brand}</p>
+                        <div class="flex justify-between items-center mb-2">
                             <div class="flex items-center gap-1">
                                 <i class="fa fa-star text-yellow-400"></i>
                                 <span class="text-white font-bold">${productlevel}</span>
-                                <span class="text-white text-sm">(${productresource} TOPS)</span>
+                                <span class="text-white text-sm">(${productresource})</span>
                             </div>
                             <span class="text-xs bg-gray-800 px-2 py-1 rounded-full">${productname}</span>
                         </div>
-                        <div class="grid grid-cols-[40%_60%] gap-2 text-xs mb-5">
+                        <div class="grid grid-cols-[40%_60%] gap-2 text-xs mb-2">
                             <div class="bg-dark/50 rounded p-2">
                                 <div class="text-neon mb-1">${feature1Label}</div>
                                 <div class="text-white flex items-center gap-1">
@@ -763,42 +779,236 @@
                                 </div>
                             </div>
                         </div>
-                        <button class="w-full py-2 bg-light-blue/80 text-primary hover:bg-light-blue transition-all duration-300 text-sm">
-                            查看详情
-                        </button>
+                        <div class="mt-auto">
+                            <button class="w-full py-2 bg-light-blue/80 text-primary hover:bg-light-blue transition-all duration-300 text-sm view-details-btn">
+                                查看详情
+                            </button>
+                        </div>
                     </div>
                 `;
 
+                // 添加点击事件监听器
+                const viewDetailsBtn = card.querySelector('.view-details-btn');
+                viewDetailsBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    showProductDetails(product, e.target);
+                });
+
                 return card;
+            }
+
+            // 显示产品详情弹窗
+            function showProductDetails(product, buttonElement) {
+                // 移除已存在的弹窗
+                const existingModal = document.getElementById('product-details-modal');
+                if (existingModal) {
+                    existingModal.remove();
+                }
+
+                // 处理数据，删除所有包含ID的字段
+                const processedProduct = removeIdFields(product);
+
+                // 创建弹窗元素
+                const modal = document.createElement('div');
+                modal.id = 'product-details-modal';
+                modal.className = 'fixed inset-0 bg-black/70 flex items-center justify-center z-50';
+
+                // 弹窗内容
+                modal.innerHTML = `
+                    <div class="bg-dark-light rounded-xl w-full max-w-3xl max-h-[80vh] overflow-hidden flex flex-col">
+                        <div class="p-5 border-b border-gray-800 flex justify-between items-center">
+                            <h3 class="text-xl font-bold text-white">产品详情 - ${product.id}</h3>
+                            <button class="text-gray-400 hover:text-white close-modal">
+                                <i class="fa fa-times text-xl"></i>
+                            </button>
+                        </div>
+                        <div class="p-5 overflow-y-auto flex-1">
+                            <div class="bg-dark rounded-lg p-4">
+                                <div class="json-tree text-white text-sm"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // 添加到文档
+                document.body.appendChild(modal);
+
+                // 生成可折叠JSON树
+                const jsonTreeContainer = modal.querySelector('.json-tree');
+                jsonTreeContainer.innerHTML = createJsonTree(processedProduct);
+
+                // 添加样式
+                const style = document.createElement('style');
+                style.textContent = `
+                    .json-tree {
+                        font-family: 'JetBrains Mono', monospace;
+                    }
+                    .json-node {
+                        margin-left: 16px;
+                    }
+                    .json-key {
+                        color: #ff79c6;
+                    }
+                    .json-string {
+                        color: #f1fa8c;
+                    }
+                    .json-number {
+                        color: #bd93f9;
+                    }
+                    .json-boolean {
+                        color: #50fa7b;
+                    }
+                    .json-null {
+                        color: #ff5555;
+                    }
+                    .json-toggle {
+                        cursor: pointer;
+                        user-select: none;
+                        color: #8be9fd;
+                        margin-right: 4px;
+                    }
+                    .json-toggle::before {
+                        content: '▸';
+                        display: inline-block;
+                        transition: transform 0.2s;
+                    }
+                    .json-toggle.expanded::before {
+                        transform: rotate(90deg);
+                    }
+                    .json-children {
+                        display: none;
+                    }
+                    .json-children.expanded {
+                        display: block;
+                    }
+                    .json-collapsible {
+                        cursor: pointer;
+                    }
+                `;
+                modal.appendChild(style);
+
+                // 添加交互事件
+                addJsonTreeInteractions(modal);
+
+                // 关闭弹窗事件
+                const closeModalBtn = modal.querySelector('.close-modal');
+                closeModalBtn.addEventListener('click', function() {
+                    modal.remove();
+                });
+
+                // 点击弹窗外部关闭
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        modal.remove();
+                    }
+                });
+            }
+
+            // 删除所有包含ID的字段（不分大小写）
+            function removeIdFields(data) {
+                // 如果是基本类型，直接返回
+                if (data === null || typeof data !== 'object') {
+                    return data;
+                }
+
+                // 如果是数组，遍历每个元素
+                if (Array.isArray(data)) {
+                    return data.map(item => removeIdFields(item));
+                }
+
+                // 如果是对象，遍历每个键
+                const result = {};
+                for (const key in data) {
+                    if (Object.prototype.hasOwnProperty.call(data, key)) {
+                        // 检查键名是否包含"id"（不分大小写）
+                        if (!/id/i.test(key)) {
+                            // 递归处理值
+                            result[key] = removeIdFields(data[key]);
+                        }
+                    }
+                }
+                return result;
+            }
+
+            // 创建可折叠JSON树
+            function createJsonTree(data, level = 0) {
+                if (data === null) {
+                    return '<span class="json-null">null</span>';
+                }
+
+                if (typeof data === 'string') {
+                    return `<span class="json-string">"${data}"</span>`;
+                }
+
+                if (typeof data === 'number') {
+                    return `<span class="json-number">${data}</span>`;
+                }
+
+                if (typeof data === 'boolean') {
+                    return `<span class="json-boolean">${data}</span>`;
+                }
+
+                if (Array.isArray(data)) {
+                    if (data.length === 0) {
+                        return '[]';
+                    }
+
+                    let html = `[
+`;
+                    data.forEach((item, index) => {
+                        html += `<div class="json-node">`;
+                        const isLast = index === data.length - 1;
+                        html += `${createJsonTree(item, level + 1)}${isLast ? '' : ','}</div>`;
+                    });
+                    html += `]`;
+                    return html;
+                }
+
+                if (typeof data === 'object') {
+                    const keys = Object.keys(data);
+                    if (keys.length === 0) {
+                        return '{}';
+                    }
+
+                    // 第一层节点默认展开
+                    const isFirstLevel = level === 0;
+                    const toggleClass = isFirstLevel ? ' expanded' : '';
+                    const childrenClass = isFirstLevel ? ' json-children expanded' : ' json-children';
+
+                    let html = `<div class="json-collapsible">`;
+                    html += `<span class="json-toggle${toggleClass}"></span>{`;
+                    html += `<div class="${childrenClass}">
+`;
+                    keys.forEach((key, index) => {
+                        html += `<div class="json-node">`;
+                        html += `<span class="json-key">"${key}"</span>: `;
+                        const isLast = index === keys.length - 1;
+                        html += `${createJsonTree(data[key], level + 1)}${isLast ? '' : ','}</div>`;
+                    });
+                    html += `</div>}`;
+                    html += `</div>`;
+                    return html;
+                }
+
+                return String(data);
+            }
+
+            // 添加JSON树交互事件
+            function addJsonTreeInteractions(container) {
+                const toggles = container.querySelectorAll('.json-toggle');
+                toggles.forEach(toggle => {
+                    toggle.addEventListener('click', function() {
+                        this.classList.toggle('expanded');
+                        const children = this.nextElementSibling;
+                        if (children && children.classList.contains('json-children')) {
+                            children.classList.toggle('expanded');
+                        }
+                    });
+                });
             }
         
             // 填充筛选选项
-            function populateFilters(brands) {   // 填充筛选选项
-                // 提取所有类别和品牌
-                const categories = new Set();
-                // const brands = new Set();
-
-                // products.forEach(product => {
-                //     // 假设类别信息在PRODUCT_TYPE字段
-                //     if (product.PROP?.PRODUCT_TYPE) {
-                //         categories.add(product.PROP.PRODUCT_TYPE);
-                //     }
-                //     // 品牌信息在BRAND字段
-                //     if (product.PROP?.BRAND) {
-                //         brands.add(product.PROP.BRAND);
-                //     }
-                // });
-
-                // 填充类别筛选器
-                // const categoryFilter = document.getElementById('category-filter');
-                // categoryFilter.innerHTML = '<option value="all">所有类别</option>';
-                // categories.forEach(category => {
-                //     const option = document.createElement('option');
-                //     option.value = category;
-                //     option.textContent = category;
-                //     categoryFilter.appendChild(option);
-                // });
-
+            function populateFilters(brands,years,powertypes,oem,functionlevellist) {   // 填充筛选选项
                 // 填充品牌筛选器
                 const brandFilter = document.getElementById('brand-filter');
                 brandFilter.innerHTML = '<option value="all">所有品牌</option>';
@@ -809,15 +1019,45 @@
                     brandFilter.appendChild(option);
                 });
 
-                //                 // 填充品牌筛选器
-                // const versionfilter = document.getElementById('version-filter');
-                // versionfilter.innerHTML = '<option value="all">所有年份</option>';
-                // brands.forEach(brand => {
-                //     const option = document.createElement('option');
-                //     option.value = brand;
-                //     option.textContent = brand;
-                //     brandFilter.appendChild(option);
-                // });
+                // 填充上市年份筛选器
+                const yearFilter = document.getElementById('year-filter');
+                yearFilter.innerHTML = '<option value="all">所有年份</option>';
+                years.forEach(year => {
+                    const option = document.createElement('option');
+                    option.value = year;
+                    option.textContent = year;
+                    yearFilter.appendChild(option);
+                });
+
+                // 填充能源类型筛选器
+                const powertypeFilter = document.getElementById('powertype-filter');
+                powertypeFilter.innerHTML = '<option value="all">所有类型</option>';
+                powertypes.forEach(powertype => {
+                    const option = document.createElement('option');
+                    option.value = powertype;
+                    option.textContent = powertype;
+                    powertypeFilter.appendChild(option);
+                });
+
+                // 填充功能级别筛选器
+                const functionlevelFilter = document.getElementById('functionlevel-filter');
+                functionlevelFilter.innerHTML = '<option value="all">所有级别</option>';
+                functionlevellist.forEach(level => {
+                    const option = document.createElement('option');
+                    option.value = level;
+                    option.textContent = level;
+                    functionlevelFilter.appendChild(option);
+                });
+
+                // 填充生产厂商筛选器
+                const oemFilter = document.getElementById('oem-filter');
+                oemFilter.innerHTML = '<option value="all">所有厂商</option>';
+                oem.forEach(manufacturer => {
+                    const option = document.createElement('option');
+                    option.value = manufacturer;
+                    option.textContent = manufacturer;
+                    oemFilter.appendChild(option);
+                });
             }
             
             // 应用筛选
@@ -825,8 +1065,13 @@
                 const productGrid = document.getElementById('product-grid');
                 const allProducts = JSON.parse(productGrid.dataset.allProducts || '[]');
                 const searchTerm = document.getElementById('search-input').value.toLowerCase();
-                // const category = document.getElementById('category-filter').value;
+                
+                // 获取所有筛选器的值
                 const brand = document.getElementById('brand-filter').value;
+                const year = document.getElementById('year-filter').value;
+                const powertype = document.getElementById('powertype-filter').value;
+                const functionlevel = document.getElementById('functionlevel-filter').value;
+                const oem = document.getElementById('oem-filter').value;
 
                 // 筛选产品
                 const filteredProducts = allProducts.filter(product => {
@@ -835,54 +1080,44 @@
                                         (product.PROP?.PRODUCT_NAME && product.PROP.PRODUCT_NAME.toLowerCase().includes(searchTerm)) ||
                                         (product.PROP?.DESCRIPTION && product.PROP.DESCRIPTION.toLowerCase().includes(searchTerm));
 
-                    // // 类别筛选
-                    // const matchesCategory = category === 'all' ||
-                    //                     (product.PROP?.PRODUCT_TYPE && product.PROP.PRODUCT_TYPE === category);
-
                     // 品牌筛选
                     const matchesBrand = brand === 'all' ||
-                                    (product.PROP?.BRAND && product.PROP.BRAND === brand);
+                                    (product.Brand?.Name && product.Brand.Name === brand);
+                    
+                    // 上市年份筛选
+                    const matchesYear = year === 'all' ||
+                                    (product.Launch_Time && product.Launch_Time === year);
+                    
+                    // 能源类型筛选
+                    const matchesPowertype = powertype === 'all' ||
+                                        (product.PowerType.Name && product.PowerType.Name === powertype);
+                    
+                    // 功能级别筛选
+                    const matchesFunctionLevel = functionlevel === 'all' ||
+                                            (product.Adas_Solution?.briefing?.SAE && product.Adas_Solution.briefing.SAE === functionlevel);
+                    
+                    // 生产厂商筛选
+                    const matchesOEM = oem === 'all' ||
+                                    (product.Brand?.corperate_input && Array.isArray(product.Brand.corperate_input) && 
+                                        product.Brand.corperate_input.some(corpItem => 
+                                            corpItem.Corperate_Name && corpItem.Corperate_Name.Name === oem
+                                        ));
 
+                    // 组合所有筛选条件
+                    const matchesAll = matchesSearch && matchesBrand && matchesYear && matchesPowertype && matchesFunctionLevel && matchesOEM;
+                    
                     currentcard = document.getElementById(product.id)
-                    if (!(matchesSearch && matchesBrand)){
-
+                    if (!matchesAll){
                         currentcard.classList.add('hidden')
                         currentcard.classList.add('filout')
                     }else{
                         currentcard.classList.remove('hidden')
                         currentcard.classList.remove('filout')
                     }
-                    return matchesSearch && matchesBrand;
+                    return matchesAll;
                 });
 
                 loadbuttondefine()
-
-
-                // // 显示筛选结果
-                // productGrid.innerHTML = '';
-                // if (filteredProducts.length === 0) {
-                //     productGrid.innerHTML = '<div class="col-span-full text-center py-10 text-gray-400">没有找到匹配的产品</div>';
-                //     document.getElementById('load-more').style.display = 'none';
-                // } else {
-                //     // 只显示前4个产品
-                //     const initialProducts = filteredProducts.slice(0, 4);
-                //     initialProducts.forEach(product => {
-                //         const card = createProductCard(product);
-                //         productGrid.appendChild(card);
-                //     });
-
-                //     // 更新完整产品列表
-                //     productGrid.dataset.allProducts = JSON.stringify(filteredProducts);
-
-                //     // 控制加载更多按钮
-                //     const loadMoreBtn = document.getElementById('load-more');
-                //     if (filteredProducts.length > 4) {
-                //         loadMoreBtn.style.display = 'inline-flex';
-                //         loadMoreBtn.innerHTML = '<i class="fa fa-refresh"></i> 加载更多产品';
-                //     } else {
-                //         loadMoreBtn.style.display = 'none';
-                //     }
-                // }
             }
             
             // 初始化对比产品功能
@@ -941,7 +1176,7 @@
                 function createModalProductItem(product) {
                     const name = product.id || '未知产品';
                     const brand = product.PROP?.BRAND || '未知品牌';
-                    const imageUrl = `../PIC/${name}.png`;
+                    const imageUrl = `${vehiclepicpath}${name}.png`;
                     const item = document.createElement('div');
                     item.className = 'bg-dark rounded-lg border border-gray-800 p-3 hover:border-primary/50 cursor-pointer transition-colors';
                     item.innerHTML = `
@@ -967,7 +1202,7 @@
                 function addProductToComparison(product) {
                     const name = product.id || '未知产品';
                     const brand = product.PROP?.BRAND || '未知品牌';
-                    const imageUrl = `../PIC/${name}.png`;
+                    const imageUrl = `${vehiclepicpath}${name}.png`;
 
                     // 创建对比产品项
                     const productItem = document.createElement('div');
@@ -1010,7 +1245,6 @@
 
                 // 添加空的对比项（用于添加新产品）
                 function addEmptyComparisonItem() {
-                    console.log("我就是我，使眼色不一样的烟火")
                     const emptyItem = document.createElement('div');
                     emptyItem.className = 'compare-item flex items-center justify-center p-6 bg-dark rounded-lg border border-dashed border-gray-700 hover:border-primary/50 transition-colors cursor-pointer add-comparison-item';
                     emptyItem.innerHTML = '<i class="fa fa-plus-circle text-2xl text-gray-500 hover:text-primary"></i>';
@@ -1019,6 +1253,7 @@
             }
             //智库信息汇总
             function summerizeupdate(){
+                console.log(allcards,alloem);
                 document.getElementById("product_number_count").textContent = allcards.length;
                 document.getElementById("oem_number_count").textContent = alloem.length;
 
@@ -1047,6 +1282,7 @@
 
         <!-- 加载组件的脚本 -->
     <script src="../js/load-components.js"></script>
+    <script src="../js/function-link-manager.js"></script>
     <script src="../js/Visit_Monitor.js"></script>
 </body>
 </html>

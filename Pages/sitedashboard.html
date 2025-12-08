@@ -144,16 +144,16 @@
                     <i class="fa fa-bar-chart text-neon mr-2"></i>站点统计
                 </h2>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-                    <!-- 访问次数卡片 -->
-                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02] flex flex-col min-h-[180px]">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
+                    <!-- 站点访问情况卡片 -->
+                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02] flex flex-col min-h-[180px] cursor-pointer card" data-card="visits">
                         <div class="flex justify-between items-start">
                             <div>
                                 <p class="text-gray-400 text-sm">总访问次数</p>
                                 <h3 id="visit-count" class="text-3xl font-bold mt-2 text-neon">--</h3>
                             </div>
                             <div class="p-3 bg-neon/10 rounded-full">
-                                <i class="fa fa-eye text-neon text-xl"></i>
+                                <i class="fa fa-line-chart text-neon text-xl"></i>
                             </div>
                         </div>
                         <div class="mt-auto flex items-center text-sm">
@@ -164,34 +164,15 @@
                         </div>
                     </div>
                     
-                    <!-- 处理中的问题卡片 -->
-                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02] flex flex-col min-h-[180px]">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-gray-400 text-sm">总访问人数</p>
-                                <h3 id="total-visitors" class="text-3xl font-bold mt-2 text-yellow-400">--</h3>
-                            </div>
-                            <div class="p-3 bg-yellow-400/10 rounded-full">
-                                <i class="fa fa-users text-yellow-400 text-xl"></i>
-                            </div>
-                        </div>
-                        <div class="mt-auto flex items-center text-sm">
-                            <span class="text-green-400 flex items-center">
-                                <i class="fa fa-arrow-up mr-1"></i> 12%
-                            </span>
-                            <span class="text-gray-500 ml-2">相比上月</span>
-                        </div>
-                    </div>
-                    
-                    <!-- 问题总数卡片 -->
-                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02] flex flex-col min-h-[180px]">
+                    <!-- 用户情况卡片 -->
+                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02] flex flex-col min-h-[180px] cursor-pointer card" data-card="users">
                         <div class="flex justify-between items-start">
                             <div>
                                 <p class="text-gray-400 text-sm">用户总数</p>
                                 <h3 id="total-user" class="text-3xl font-bold mt-2 text-primary">--</h3>
                             </div>
                             <div class="p-3 bg-primary/10 rounded-full">
-                                <i class="fa fa-user-circle-o text-primary text-xl"></i>
+                                <i class="fa fa-users text-primary text-xl"></i>
                             </div>
                         </div>
                         <div class="mt-auto flex items-center text-sm">
@@ -201,15 +182,15 @@
                         </div>
                     </div>
                     
-                    <!-- 待处理问题卡片 -->
-                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02] flex flex-col min-h-[180px]">
+                    <!-- 问题管理卡片 -->
+                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02] flex flex-col min-h-[180px] cursor-pointer card" data-card="issues">
                         <div class="flex justify-between items-start">
                             <div>
                                 <p class="text-gray-400 text-sm">待处理的问题</p>
                                 <h3 id="pending-issues" class="text-3xl font-bold mt-2 text-red-400">--</h3>
                             </div>
                             <div class="p-3 bg-red-400/10 rounded-full">
-                                <i class="fa fa-clock-o text-red-400 text-xl"></i>
+                                <i class="fa fa-bug text-red-400 text-xl"></i>
                             </div>
                         </div>
                         <div class="mt-auto flex items-center text-sm">
@@ -219,15 +200,15 @@
                         </div>
                     </div>
                     
-                    <!-- 已解决问题卡片 -->
-                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02] flex flex-col min-h-[180px]">
+                    <!-- 建议管理卡片 -->
+                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02] flex flex-col min-h-[180px] cursor-pointer card" data-card="advice">
                         <div class="flex justify-between items-start">
                             <div>
                                 <p class="text-gray-400 text-sm">待处理的建议</p>
                                 <h3 id="pending-advice" class="text-3xl font-bold mt-2 text-green-400">--</h3>
                             </div>
                             <div class="p-3 bg-green-400/10 rounded-full">
-                                <i class="fa fa-check-circle text-green-400 text-xl"></i>
+                                <i class="fa fa-lightbulb-o text-green-400 text-xl"></i>
                             </div>
                         </div>
                         <div class="mt-auto flex items-center text-sm">
@@ -236,11 +217,112 @@
                             </span>
                         </div>
                     </div>
+                    
+                    <!-- 站点产品管理卡片 -->
+                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02] flex flex-col min-h-[180px] cursor-pointer card" data-card="products">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-400 text-sm">上线产品数量</p>
+                                <h3 id="product-count" class="text-3xl font-bold mt-2 text-purple-400">--</h3>
+                            </div>
+                            <div class="p-3 bg-purple-400/10 rounded-full">
+                                <i class="fa fa-cubes text-purple-400 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-auto flex items-center text-sm">
+                            <span class="text-purple-400 flex items-center">
+                                <i class="fa fa-info-circle mr-1"></i> 查看详情
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- 待上线点卡片 -->
+                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02] flex flex-col min-h-[180px] cursor-pointer card" data-card="tobepub">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-400 text-sm">待上线点</p>
+                                <h3 id="tobepub-count" class="text-3xl font-bold mt-2 text-blue-400">--</h3>
+                            </div>
+                            <div class="p-3 bg-blue-400/10 rounded-full">
+                                <i class="fa fa-rocket text-blue-400 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-auto flex items-center text-sm">
+                            <span class="text-blue-400 flex items-center">
+                                <i class="fa fa-info-circle mr-1"></i> 待上线功能列表
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </section>
             
-            <!-- 问题列表 -->
-            <section>
+            <!-- 内容区域 -->
+            
+            <!-- 总访问数量区域 -->
+            <section id="visits-content" class="mt-8 content-area hidden">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <h2 class="text-[clamp(1.25rem,2vw,1.75rem)] font-bold flex items-center">
+                        <i class="fa fa-line-chart text-neon mr-2"></i>总访问数量
+                    </h2>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- 折线图 -->
+                    <div class="glass-effect rounded-lg p-6 neon-border overflow-hidden">
+                        <h3 class="text-lg font-semibold mb-4">访问趋势</h3>
+                        <div id="visit-chart" class="w-full h-80 bg-gray-900/30 rounded-lg"></div>
+                    </div>
+                    
+                    <!-- 柱状图 -->
+                    <div class="glass-effect rounded-lg p-6 neon-border overflow-hidden">
+                        <h3 class="text-lg font-semibold mb-4">访问分布</h3>
+                        <div id="visit-bar-chart" class="w-full h-80 bg-gray-900/30 rounded-lg"></div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 用户管理区域 -->
+            <section id="users-content" class="mt-8 content-area hidden">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <h2 class="text-[clamp(1.25rem,2vw,1.75rem)] font-bold flex items-center">
+                        <i class="fa fa-users text-primary mr-2"></i>用户管理
+                    </h2>
+                </div>
+                
+                <div class="glass-effect rounded-lg p-6 neon-border overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-800">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-s font-medium text-gray-400 uppercase tracking-wider">
+                                        用户名
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-s font-medium text-gray-400 uppercase tracking-wider">
+                                        用户邮箱
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-s font-medium text-gray-400 uppercase tracking-wider">
+                                        注册时间
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-s font-medium text-gray-400 uppercase tracking-wider">
+                                        是否订阅
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body" class="bg-gray-900/30 divide-y divide-gray-800">
+                                <!-- 用户列表行将通过JavaScript动态生成 -->
+                                <tr class="animate-pulse-slow">
+                                    <td colspan="4" class="px-6 py-10 text-center text-gray-400">
+                                        <i class="fa fa-spinner fa-spin mr-2"></i>加载用户数据中...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 问题管理区域 -->
+            <section id="issues-content" class="mt-8 content-area">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                     <h2 class="text-[clamp(1.25rem,2vw,1.75rem)] font-bold flex items-center">
                         <i class="fa fa-list-alt text-issue mr-2"></i>问题列表
@@ -406,8 +488,8 @@
                 </div>
             </section>
             
-            <!-- 建议列表 -->
-            <section class="mt-8">
+            <!-- 建议管理区域 -->
+            <section id="advice-content" class="mt-8 content-area hidden">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                     <h2 class="text-[clamp(1.25rem,2vw,1.75rem)] font-bold flex items-center">
                         <i class="fa fa-lightbulb-o text-advice mr-2"></i>建议列表
@@ -565,6 +647,184 @@
                     </div>
                 </div>
             </section>
+            
+            <!-- 站点产品管理区域 -->
+            <section id="products-content" class="mt-8 content-area hidden">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <h2 class="text-[clamp(1.25rem,2vw,1.75rem)] font-bold flex items-center">
+                        <i class="fa fa-cubes text-purple-400 mr-2"></i>站点产品管理
+                    </h2>
+                </div>
+                
+                <div class="glass-effect rounded-lg p-6 neon-border overflow-hidden">
+                    <div id="products-container" class="space-y-8">
+                        <!-- 产品分类卡片将通过JavaScript动态生成 -->
+                        <div class="animate-pulse-slow text-center py-10 text-gray-400">
+                            <i class="fa fa-spinner fa-spin mr-2"></i>加载产品数据中...
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 待上线点区域 -->
+            <section id="tobepub-content" class="mt-8 content-area hidden">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <h2 class="text-[clamp(1.25rem,2vw,1.75rem)] font-bold flex items-center">
+                        <i class="fa fa-rocket text-blue-400 mr-2"></i>待上线点
+                    </h2>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <button id="add-tobepub-btn" class="px-4 py-2 bg-neon hover:bg-primary/80 text-dark font-medium rounded transition-all flex items-center">
+                            <i class="fa fa-plus mr-2"></i>添加待上线点
+                        </button>
+                        <button id="tobepub-filter-toggle" class="px-4 py-2 border border-gray-700 text-gray-300 hover:text-neon hover:border-neon rounded transition-all flex items-center">
+                            <i class="fa fa-filter mr-2"></i>筛选
+                        </button>
+                        <button id="tobepub-clear-filters" class="px-4 py-2 border border-gray-700 text-gray-300 hover:text-neon hover:border-neon rounded transition-all flex items-center hidden">
+                            <i class="fa fa-times mr-2"></i>清除筛选
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 待上线点筛选条件面板 -->
+                <div id="tobepub-filter-panel" class="glass-effect rounded-lg p-6 mb-4 neon-border hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <!-- 待上线点ID筛选 -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">ID</label>
+                            <div class="flex flex-wrap gap-2" id="tobepub-id-filter-container">
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="filter-checkbox tobepub-id-filter" value="custom" />
+                                    <span class="ml-2 text-sm text-gray-300">自定义范围</span>
+                                </label>
+                                <div id="tobepub-custom-id-range" class="w-full mt-2 hidden">
+                                    <div class="flex gap-2">
+                                        <input type="number" id="tobepub-id-min" placeholder="最小ID" 
+                                            class="flex-1 px-3 py-1 bg-gray-800 border border-gray-700 rounded text-sm text-gray-100" />
+                                        <input type="number" id="tobepub-id-max" placeholder="最大ID" 
+                                            class="flex-1 px-3 py-1 bg-gray-800 border border-gray-700 rounded text-sm text-gray-100" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 功能名称筛选 -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">功能名称</label>
+                            <input type="text" id="tobepub-name-filter" placeholder="搜索功能名称" 
+                                class="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-100" />
+                        </div>
+                        
+                        <!-- 提交时间筛选 -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">提交时间</label>
+                            <div class="flex flex-wrap gap-2" id="tobepub-time-filter-container">
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="filter-checkbox tobepub-time-filter" value="today" />
+                                    <span class="ml-2 text-sm text-gray-300">今天</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="filter-checkbox tobepub-time-filter" value="week" />
+                                    <span class="ml-2 text-sm text-gray-300">本周</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="filter-checkbox tobepub-time-filter" value="month" />
+                                    <span class="ml-2 text-sm text-gray-300">本月</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="filter-checkbox tobepub-time-filter" value="custom" />
+                                    <span class="ml-2 text-sm text-gray-300">自定义</span>
+                                </label>
+                                <div id="tobepub-custom-date-range" class="w-full mt-2 hidden">
+                                    <div class="flex gap-2">
+                                        <input type="date" id="tobepub-date-start" 
+                                            class="flex-1 px-3 py-1 bg-gray-800 border border-gray-700 rounded text-sm text-gray-100" />
+                                        <input type="date" id="tobepub-date-end" 
+                                            class="flex-1 px-3 py-1 bg-gray-800 border border-gray-700 rounded text-sm text-gray-100" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 状态筛选 -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">状态</label>
+                            <div class="flex flex-wrap gap-2" id="tobepub-status-filter-container">
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="filter-checkbox tobepub-status-filter" value="规划中"/>
+                                    <span class="ml-2 text-sm text-yellow-400">规划中</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="filter-checkbox tobepub-status-filter" value="开发中"/>
+                                    <span class="ml-2 text-sm text-blue-400">开发中</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="filter-checkbox tobepub-status-filter" value="完成_待上线"/>
+                                    <span class="ml-2 text-sm text-purple-400">完成_待上线</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="filter-checkbox tobepub-status-filter" value="已上线" />
+                                    <span class="ml-2 text-sm text-green-400">已上线</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end mt-6">
+                        <button id="tobepub-apply-filters" class="px-4 py-2 bg-neon hover:bg-primary/80 text-dark font-medium rounded transition-all">
+                            应用筛选
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="glass-effect rounded-lg p-6 neon-border overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-800">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-s font-medium text-gray-400 uppercase tracking-wider">
+                                        功能名称
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-s font-medium text-gray-400 uppercase tracking-wider">
+                                        描述
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-s font-medium text-gray-400 uppercase tracking-wider">
+                                        发布类型
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-s font-medium text-gray-400 uppercase tracking-wider">
+                                        计划发布日期
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-s font-medium text-gray-400 uppercase tracking-wider">
+                                        状态
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="tobepub-table-body" class="bg-gray-900/30 divide-y divide-gray-800">
+                                <!-- 待上线点列表行将通过JavaScript动态生成 -->
+                                <tr class="animate-pulse-slow">
+                                    <td colspan="4" class="px-6 py-10 text-center text-gray-400">
+                                        <i class="fa fa-spinner fa-spin mr-2"></i>加载待上线点数据中...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- 分页控制 -->
+                    <div class="flex justify-between items-center mt-6">
+                        <div class="text-sm text-gray-400">
+                            显示 <span id="tobepub-showing-range">0-0</span> 共 <span id="tobepub-total-items">0</span> 项
+                        </div>
+                        <div class="flex space-x-2">
+                            <button id="tobepub-prev-page" class="px-3 py-1 border border-gray-700 rounded text-gray-400 hover:text-neon hover:border-neon transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                <i class="fa fa-chevron-left"></i>
+                            </button>
+                            <button id="tobepub-next-page" class="px-3 py-1 border border-gray-700 rounded text-gray-400 hover:text-neon hover:border-neon transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                <i class="fa fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </main>
         
         <!-- 页脚 -->
@@ -676,10 +936,116 @@
         </div>
     </div>
     
+    <!-- 添加/编辑产品模态框 -->
+    <div id="product-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50 hidden">
+        <div class="glass-effect rounded-lg p-6 w-full max-w-lg neon-border transform transition-all duration-300">
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="product-modal-title" class="text-xl font-bold text-white">编辑产品</h3>
+                <button id="product-close-modal" class="text-gray-400 hover:text-neon transition-colors">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="product-form" class="space-y-6">
+                <input type="hidden" id="product-id">
+                <div>
+                    <label for="product-cn-name" class="block text-sm font-medium text-gray-300 mb-1">产品名称</label>
+                    <input type="text" id="product-cn-name" 
+                           class="block w-full px-4 py-2 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-neon focus:border-transparent text-gray-100" 
+                           placeholder="输入产品名称" required>
+                </div>
+                
+                <div>
+                    <label for="product-status" class="block text-sm font-medium text-gray-300 mb-1">产品状态</label>
+                    <select id="product-status" 
+                            class="block w-full px-4 py-2 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-neon focus:border-transparent text-gray-100" 
+                            required>
+                        <!-- 状态选项将通过JavaScript动态生成 -->
+                    </select>
+                </div>
+                
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" id="product-cancel-btn" class="px-4 py-2 border border-gray-700 rounded text-gray-400 hover:text-white hover:border-gray-500 transition-colors">
+                        取消
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-neon hover:bg-primary/80 text-dark font-medium rounded transition-all">
+                        保存
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 添加/编辑待上线点模态框 -->
+    <div id="tobepub-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50 hidden">
+        <div class="glass-effect rounded-lg p-6 w-full max-w-lg neon-border transform transition-all duration-300">
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="tobepub-modal-title" class="text-xl font-bold text-white">添加待上线点</h3>
+                <button id="tobepub-close-modal" class="text-gray-400 hover:text-neon transition-colors">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="tobepub-form" class="space-y-6">
+                <input type="hidden" id="tobepub-id">
+                
+                <div>
+                    <label for="tobepub-name" class="block text-sm font-medium text-gray-300">功能名称</label>
+                    <input type="text" id="tobepub-name" class="w-full bg-gray-800 border border-gray-700 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-neon focus:border-transparent">
+                </div>
+                
+                <div>
+                    <label for="tobepub-description" class="block text-sm font-medium text-gray-300">描述</label>
+                    <textarea id="tobepub-description" rows="4" class="w-full bg-gray-800 border border-gray-700 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-neon focus:border-transparent"></textarea>
+                </div>
+                
+                <div>
+                    <label for="tobepub-planned-date" class="block text-sm font-medium text-gray-300">预计发布日期</label>
+                    <input type="date" id="tobepub-planned-date" class="w-full bg-gray-800 border border-gray-700 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-neon focus:border-transparent">
+                </div>
+                
+                <div>
+                    <label for="tobepub-status" class="block text-sm font-medium text-gray-300">状态</label>
+                    <select id="tobepub-status" class="w-full bg-gray-800 border border-gray-700 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-neon focus:border-transparent">
+                        <option value="规划中">规划中</option>
+                        <option value="开发中">开发中</option>
+                        <option value="完成_待上线">完成_待上线</option>
+                    </select>
+                </div>
+                
+                <div class="flex justify-end space-x-4">
+                    <button type="button" id="tobepub-cancel-btn" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-md">取消</button>
+                    <button type="submit" id="tobepub-save-btn" class="px-4 py-2 bg-neon text-white rounded-md hover:bg-neon/90 transition-colors">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
     <!-- 提示消息 -->
     <div id="toast" class="fixed bottom-6 right-6 glass-effect px-6 py-3 rounded-lg neon-border transform translate-y-20 opacity-0 transition-all duration-300 flex items-center space-x-3 max-w-xs">
         <i id="toast-icon" class="fa fa-check-circle text-green-400 text-xl"></i>
         <p id="toast-message" class="text-sm text-gray-200"></p>
+    </div>
+    
+    <!-- 自定义确认弹窗 -->
+    <div id="confirm-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50 hidden">
+        <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 max-w-sm w-full">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="confirm-title" class="text-lg font-bold text-white">确认操作</h3>
+                <button id="confirm-close" class="text-gray-400 hover:text-neon transition-colors">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+            <p id="confirm-message" class="text-gray-300 mb-6"></p>
+            <div class="flex justify-end space-x-3">
+                <button id="confirm-cancel" class="px-4 py-2 border border-gray-700 rounded text-gray-300 hover:text-white hover:border-gray-500 transition-colors">
+                    取消
+                </button>
+                <button id="confirm-ok" class="px-4 py-2 bg-neon hover:bg-primary/80 text-dark font-medium rounded transition-all">
+                    确认
+                </button>
+            </div>
+        </div>
     </div>
     
     <!-- JavaScript -->
@@ -696,13 +1062,14 @@
         const visitCount = document.getElementById('visit-count');
         const totalUserEl = document.getElementById('total-user');  
         const pendingIssuesEl = document.getElementById('pending-issues');
-        const totalVisitorsEl = document.getElementById('total-visitors');
+        // const totalVisitorsEl = document.getElementById('total-visitors');
         const pendingAdviceEl = document.getElementById('pending-advice');
         const issuesTableBody = document.getElementById('issues-table-body');
         const showingRange = document.getElementById('showing-range');
         const totalItems = document.getElementById('total-items');
         const prevPageBtn = document.getElementById('prev-page');
         const nextPageBtn = document.getElementById('next-page');
+        const availableProductsEl = document.getElementById('product-count');
         // const addIssueBtn = document.getElementById('add-issue-btn');
         const issueModal = document.getElementById('issue-modal');
         const issuecloseModal = document.getElementById('issue-close-modal');
@@ -712,6 +1079,18 @@
         const toast = document.getElementById('toast');
         const toastIcon = document.getElementById('toast-icon');
         const toastMessage = document.getElementById('toast-message');
+        // 自定义确认弹窗元素
+        const confirmModal = document.getElementById('confirm-modal');
+        const confirmTitle = document.getElementById('confirm-title');
+        const confirmMessage = document.getElementById('confirm-message');
+        const confirmOkBtn = document.getElementById('confirm-ok');
+        const confirmCancelBtn = document.getElementById('confirm-cancel');
+        const confirmCloseBtn = document.getElementById('confirm-close');
+        // 确认弹窗回调函数
+        let confirmCallback = null;
+        // 卡片和内容区域
+        const cards = document.querySelectorAll('.card');
+        const contentAreas = document.querySelectorAll('.content-area');
         
         // Advice DOM元素
         const adviceTableBody = document.getElementById('advice-table-body');
@@ -724,6 +1103,28 @@
         const adviceCancelBtn = document.getElementById('advice-cancel-btn');
         const adviceForm = document.getElementById('advice-form');
         const adviceModalTitle = document.getElementById('advice-modal-title');
+        
+        // Product DOM元素
+        const productModal = document.getElementById('product-modal');
+        const productCloseModal = document.getElementById('product-close-modal');
+        const productCancelBtn = document.getElementById('product-cancel-btn');
+        const productForm = document.getElementById('product-form');
+        const productModalTitle = document.getElementById('product-modal-title');
+        
+        // 待上线点DOM元素
+        const tobepubTableBody = document.getElementById('tobepub-table-body');
+        const tobepubShowingRange = document.getElementById('tobepub-showing-range');
+        const tobepubTotalItems = document.getElementById('tobepub-total-items');
+        const tobepubPrevPageBtn = document.getElementById('tobepub-prev-page');
+        const tobepubNextPageBtn = document.getElementById('tobepub-next-page');
+        const tobepubCountEl = document.getElementById('tobepub-count');
+        // 待上线点模态框DOM元素
+        const tobepubModal = document.getElementById('tobepub-modal');
+        const tobepubModalTitle = document.getElementById('tobepub-modal-title');
+        const tobepubCloseModal = document.getElementById('tobepub-close-modal');
+        const tobepubCancelBtn = document.getElementById('tobepub-cancel-btn');
+        const tobepubForm = document.getElementById('tobepub-form');
+        const addTobepubBtn = document.getElementById('add-tobepub-btn');
         
         // 问题数据
         let issues = [];
@@ -771,8 +1172,10 @@
             status: ['待处理', '处理中'] // 默认只显示待处理和处理中
         };
         let advice = [];
+        let release_content =[];
         let user_number = 0;
         let statistics = {};
+        let available_products = "";
         // DOM筛选元素
         const filterToggle = document.getElementById('filter-toggle');
         const filterPanel = document.getElementById('filter-panel');
@@ -799,6 +1202,42 @@
         const adviceDateStartInput = document.getElementById('advice-date-start');
         const adviceDateEndInput = document.getElementById('advice-date-end');
         const adviceCustomDateRange = document.getElementById('advice-custom-date-range');
+        
+        // 待上线点数据
+        let tobepubItems = [];
+        // 待上线点分页配置
+        const tobepubItemsPerPage = 5;
+        let tobepubCurrentPage = 1;
+        
+        // 待上线点筛选配置
+        let tobepubFilters = {
+            id: {
+                useCustom: false,
+                min: null,
+                max: null
+            },
+            name: '',
+            time: {
+                ranges: [], // 'today', 'week', 'month'
+                useCustom: false,
+                start: null,
+                end: null
+            },
+            status: ['规划中', '开发中', '完成_待上线'] // 默认显示所有待上线相关状态
+        };
+        
+        // 待上线点筛选DOM元素
+        const tobepubFilterToggle = document.getElementById('tobepub-filter-toggle');
+        const tobepubFilterPanel = document.getElementById('tobepub-filter-panel');
+        const tobepubClearFiltersBtn = document.getElementById('tobepub-clear-filters');
+        const tobepubApplyFiltersBtn = document.getElementById('tobepub-apply-filters');
+        const tobepubNameFilter = document.getElementById('tobepub-name-filter');
+        const tobepubIdMinInput = document.getElementById('tobepub-id-min');
+        const tobepubIdMaxInput = document.getElementById('tobepub-id-max');
+        const tobepubCustomIdRange = document.getElementById('tobepub-custom-id-range');
+        const tobepubDateStartInput = document.getElementById('tobepub-date-start');
+        const tobepubDateEndInput = document.getElementById('tobepub-date-end');
+        const tobepubCustomDateRange = document.getElementById('tobepub-custom-date-range');
 
         function get_all_recording(){
             command = ip + '/get_all_recording'
@@ -826,6 +1265,31 @@
                 }
             }).catch(error => {
                 console.error('获取建议数据失败:', error);
+            });
+        }
+        
+        // 获取待上线点数据
+        function get_task_tobepub(){
+            command = ip + '/get_tasks_tobepub'
+            fetch(command,{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({
+                    'req':'none'
+                })
+            }).then(response=>response.json()).then(data=>{
+                if(data.success){
+                    result = JSON.parse(data.output).Result;
+                    // 检查数据结构，可能result是一个包含items和content_count的对象
+                    tobepubItems = result.content;
+                    tobepubCountEl.textContent = result.content_count;
+                    renderTobepubItems();
+                }
+            }).catch(error => {
+                console.error('获取待上线点数据失败:', error);
+                // 确保tobepubItems是一个数组
             });
         }
 
@@ -1224,8 +1688,33 @@
             adviceCurrentPage = 1;
             renderAdvice();
         }
+        // 切换内容区域显示
+        function showContentArea(contentId) {
+            // 隐藏所有内容区域
+            const contentAreas = document.querySelectorAll('.content-area');
+            contentAreas.forEach(area => {
+                area.classList.add('hidden');
+            });
+            
+            // 显示指定的内容区域
+            const targetArea = document.getElementById(`${contentId}-content`);
+            if (targetArea) {
+                targetArea.classList.remove('hidden');
+            }
+        }
+        
         // 初始化
         document.addEventListener('DOMContentLoaded', () => {
+            // 卡片点击事件
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const contentId = card.getAttribute('data-card');
+                    if (contentId) {
+                        showContentArea(contentId);
+                    }
+                });
+            });
             // 绑定事件
             loginForm.addEventListener('submit', handleLogin);
             logoutBtn.addEventListener('click', handleLogout);
@@ -1242,6 +1731,51 @@
             if (adviceCloseModal) adviceCloseModal.addEventListener('click', closeAdviceModal);
             if (adviceCancelBtn) adviceCancelBtn.addEventListener('click', closeAdviceModal);
             if (adviceForm) adviceForm.addEventListener('submit', handleAdviceSubmit);
+            
+            // 产品相关事件
+            if (productCloseModal) productCloseModal.addEventListener('click', closeProductModal);
+            if (productCancelBtn) productCancelBtn.addEventListener('click', closeProductModal);
+            if (productForm) productForm.addEventListener('submit', handleProductSubmit);
+            
+            // 确认弹窗事件
+            if (confirmOkBtn) {
+                confirmOkBtn.addEventListener('click', () => {
+                    if (confirmCallback) {
+                        confirmCallback(true);
+                    }
+                    hideConfirmModal();
+                });
+            }
+            
+            if (confirmCancelBtn) {
+                confirmCancelBtn.addEventListener('click', () => {
+                    if (confirmCallback) {
+                        confirmCallback(false);
+                    }
+                    hideConfirmModal();
+                });
+            }
+            
+            if (confirmCloseBtn) {
+                confirmCloseBtn.addEventListener('click', () => {
+                    if (confirmCallback) {
+                        confirmCallback(false);
+                    }
+                    hideConfirmModal();
+                });
+            }
+            
+            // 点击弹窗外部关闭
+            if (confirmModal) {
+                confirmModal.addEventListener('click', (e) => {
+                    if (e.target === confirmModal) {
+                        if (confirmCallback) {
+                            confirmCallback(false);
+                        }
+                        hideConfirmModal();
+                    }
+                });
+            }
             
             // 筛选相关事件
             filterToggle?.addEventListener('click', toggleFilterPanel);
@@ -1302,7 +1836,152 @@
             if (dateEndInput) dateEndInput.value = today;
             if (adviceDateStartInput) adviceDateStartInput.value = today;
             if (adviceDateEndInput) adviceDateEndInput.value = today;
+            if (tobepubDateStartInput) tobepubDateStartInput.value = today;
+            if (tobepubDateEndInput) tobepubDateEndInput.value = today;
+            
+            // 待上线点相关事件
+            tobepubPrevPageBtn?.addEventListener('click', goToTobepubPrevPage);
+            tobepubNextPageBtn?.addEventListener('click', goToTobepubNextPage);
+            tobepubFilterToggle?.addEventListener('click', toggleTobepubFilterPanel);
+            tobepubApplyFiltersBtn?.addEventListener('click', applyTobepubFilters);
+            tobepubClearFiltersBtn?.addEventListener('click', clearTobepubFilters);
+            
+            // 待上线点自定义ID范围切换
+            const tobepubIdCustomCheckbox = document.querySelector('.tobepub-id-filter[value="custom"]');
+            if (tobepubIdCustomCheckbox) {
+                tobepubIdCustomCheckbox.addEventListener('change', function() {
+                    if (tobepubCustomIdRange) {
+                        tobepubCustomIdRange.classList.toggle('hidden', !this.checked);
+                    }
+                });
+            }
+            
+            // 待上线点自定义日期范围切换
+            const tobepubTimeCustomCheckbox = document.querySelector('.tobepub-time-filter[value="custom"]');
+            if (tobepubTimeCustomCheckbox) {
+                tobepubTimeCustomCheckbox.addEventListener('change', function() {
+                    if (tobepubCustomDateRange) {
+                        tobepubCustomDateRange.classList.toggle('hidden', !this.checked);
+                    }
+                });
+            }
+            
+            // 待上线点模态框事件
+            addTobepubBtn?.addEventListener('click', openAddTobepubModal);
+            tobepubCloseModal?.addEventListener('click', closeTobepubModal);
+            tobepubCancelBtn?.addEventListener('click', closeTobepubModal);
+            tobepubForm?.addEventListener('submit', handleTobepubFormSubmit);
+            
+            // 初始化待上线点筛选面板的默认选中状态
+            document.querySelectorAll('.tobepub-status-filter').forEach(checkbox => {
+                if (tobepubFilters.status.includes(checkbox.value)) {
+                    checkbox.checked = true;
+                }
+            });
         });
+        
+        // 打开添加待上线点模态框
+        function openAddTobepubModal() {
+            if (tobepubModal && tobepubForm) {
+                tobepubModalTitle.textContent = '添加待上线点';
+                tobepubForm.reset();
+                document.getElementById('tobepub-id').value = '';
+                tobepubModal.classList.remove('hidden');
+            }
+        }
+        
+        // 关闭待上线点模态框
+        function closeTobepubModal() {
+            if (tobepubModal) {
+                tobepubModal.classList.add('hidden');
+            }
+        }
+        
+        // 处理待上线点表单提交
+        function handleTobepubFormSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('tobepub-id').value;
+            const name = document.getElementById('tobepub-name').value.trim();
+            const description = document.getElementById('tobepub-description').value.trim();
+            const plannedDate = document.getElementById('tobepub-planned-date').value;
+            const status = document.getElementById('tobepub-status').value;
+            
+            if (!name) {
+                showToast('error', '功能名称不能为空');
+                return;
+            }
+            
+                // 添加新待上线点
+                const newId = tobepubItems.length > 0 ? Math.max(...tobepubItems.map(item => item.ID)) + 1 : 1;
+                const newItem = {
+                    ID: newId,
+                    Belong_Feature: name,
+                    Content: description,
+                    Planned_Release_Date: plannedDate ? plannedDate : null,
+                    Item_Status: status,
+                    Create_Time: new Date().toISOString(),
+                    Last_Modified: new Date().toISOString()
+                };
+                createNewToPubTaks(newItem,'creation','')
+                showToast('success', '待上线点已添加');
+            
+            // 更新统计数字
+            if (tobepubCountEl) {
+                tobepubCountEl.textContent = tobepubItems.length;
+            }
+            
+            // 关闭模态框并重新渲染
+            closeTobepubModal();
+            renderTobepubItems();
+        }
+        function createNewToPubTaks(Item,type,BUG_ID){
+            command = ip + '/create_new_tasks'
+                fetch(command,{
+                    method:'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        "Belong_Feature": Item.Belong_Feature,
+                        "Content": Item.Content,
+                        "Planned_Release_Date": Item.Planned_Release_Date,
+                        "Item_Status": Item.Item_Status,
+                        "Content_Type": type,
+                        "BUG_ID": BUG_ID,
+                    }
+                    ),
+                }).then(response=>response.json()).then(data=>{
+                    if(data.success){
+                        showToast('success', '产品上线状态已更新');
+                    }
+                })
+            }
+        // 编辑待上线点
+        function editTobepubItem(id) {
+            const item = tobepubItems.find(item => item.ID == id);
+            if (item && tobepubModal && tobepubForm) {
+                tobepubModalTitle.textContent = '编辑待上线点';
+                document.getElementById('tobepub-id').value = item.ID;
+                document.getElementById('tobepub-name').value = item.Belong_Feature || '';
+                document.getElementById('tobepub-description').value = item.Content || '';
+                document.getElementById('tobepub-planned-date').value = item.Planned_Release_Date ? new Date(item.Planned_Release_Date).toISOString().split('T')[0] : '';
+                document.getElementById('tobepub-status').value = item.Item_Status || '规划中';
+                tobepubModal.classList.remove('hidden');
+            }
+        }
+        
+        // 删除待上线点
+        function deleteTobepubItem(id) {
+            if (confirm('确定要删除此待上线点吗？')) {
+                tobepubItems = tobepubItems.filter(item => item.ID != id);
+                // 更新统计数字
+                if (tobepubCountEl) {
+                    tobepubCountEl.textContent = tobepubItems.length;
+                }
+                renderTobepubItems();
+                showToast('success', '待上线点已删除');
+            }
+        }
         
         // 切换筛选面板显示状态
         function toggleFilterPanel() {
@@ -1495,8 +2174,11 @@
                 // 更新过期时间（延长会话）
                 updateAuthExpiry();
                 getvisitstat();
+                get_product_status();
                 get_all_recording();
                 get_user_info();
+                get_task_tobepub(); // 获取待上线点数据
+
                 // 延迟 2 秒后再执行后续逻辑
                 setTimeout(() => {
                     showDashboard();
@@ -1678,6 +2360,8 @@
                         updateAuthExpiry();
                         // 登录成功后显示仪表板并加载数据
                         getvisitstat();
+                        get_task_tobepub(); // 获取待上线点数据
+                        get_product_status();
                         get_all_recording();
                         get_user_info();
                         // 延迟 2 秒后再执行后续逻辑
@@ -1740,13 +2424,16 @@
             // const inwork = issue_static.in_progress_issues;
             const totalvisit = total_visit;
             const totalwatcher = total_user;
+            const available_products = `${product_info.filter(product => (product.Status === '正式版本上线')||(product.Status === '测试版本上线')||(product.Status === '新产品上线')).length}/${product_info.length}`;
             
             totalUserEl.textContent = totaluser;
             pendingIssuesEl.textContent = pending_issues;
             pendingAdviceEl.textContent = prending_advice;
+            availableProductsEl.textContent = available_products;
             // totalItems.textContent = total;
-            totalVisitorsEl.textContent = totalwatcher;
+            // totalVisitorsEl.textContent = totalwatcher;
             visitCount.textContent = totalvisit;
+            
         }
         
         // 渲染问题列表
@@ -1846,6 +2533,15 @@
                 minute: '2-digit'
             });
         }
+
+        function formatDate2(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+        }
         
         // 获取状态样式类
         function getStatusClass(status) {
@@ -1904,6 +2600,463 @@
             issueModal.classList.add('hidden');
         }
         
+        // 渲染用户列表
+        function renderUsers() {
+            const usersTableBody = document.getElementById('users-table-body');
+            if (!usersTableBody) return;
+            
+            // 清空表格
+            usersTableBody.innerHTML = '';
+            
+            if (!user_info || user_info.length === 0) {
+                // 无数据状态
+                const emptyRow = document.createElement('tr');
+                emptyRow.innerHTML = `
+                    <td colspan="4" class="px-6 py-10 text-center text-gray-400">
+                        <i class="fa fa-search mr-2"></i>没有符合条件的用户数据
+                    </td>
+                `;
+                usersTableBody.appendChild(emptyRow);
+                return;
+            }
+            
+            // 渲染用户行
+            user_info.forEach(user => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-800/40 transition-colors';
+                
+                // 处理订阅状态图标
+                const subscribeIcon = user.isSubscribe === 1 
+                    ? '<i class="fa fa-check text-green-400"></i>' 
+                    : '<i class="fa fa-times text-red-400"></i>';
+                
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-300">
+                        ${user.Name || '未知'}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                        ${user.email || '未知'}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                        ${formatDate(user.create_time || '')}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                        ${subscribeIcon}
+                    </td>
+                `;
+                usersTableBody.appendChild(row);
+            });
+        }
+        
+        // 渲染待上线点列表
+        function renderTobepubItems() {
+            // 应用筛选
+            const filteredItems = filterTobepubItems(tobepubItems);
+            
+            // 计算分页
+            const startIndex = (tobepubCurrentPage - 1) * tobepubItemsPerPage;
+            const endIndex = startIndex + tobepubItemsPerPage;
+            const paginatedItems = filteredItems.slice(startIndex, endIndex);
+            
+            // 更新显示范围
+            if (tobepubShowingRange) {
+                tobepubShowingRange.textContent = filteredItems.length > 0 ? 
+                    `${startIndex + 1}-${Math.min(endIndex, filteredItems.length)}` : '0-0';
+            }
+            
+            // 更新总数
+            if (tobepubTotalItems) {
+                tobepubTotalItems.textContent = filteredItems.length;
+            }
+            
+            // 更新分页按钮状态
+            if (tobepubPrevPageBtn) {
+                tobepubPrevPageBtn.disabled = tobepubCurrentPage === 1;
+            }
+            if (tobepubNextPageBtn) {
+                tobepubNextPageBtn.disabled = endIndex >= filteredItems.length;
+            }
+            
+            // 清空表格
+            if (tobepubTableBody) {
+                tobepubTableBody.innerHTML = '';
+                
+                if (paginatedItems.length === 0) {
+                    // 无数据状态
+                    const emptyRow = document.createElement('tr');
+                    const message = filteredItems.length === 0 ? 
+                        '没有符合条件的待上线点数据' : '暂无待上线点数据';
+                    emptyRow.innerHTML = `
+                        <td colspan="4" class="px-6 py-10 text-center text-gray-400">
+                            <i class="fa fa-search mr-2"></i>${message}
+                        </td>
+                    `;
+                    tobepubTableBody.appendChild(emptyRow);
+                } else {
+                    // 渲染待上线点行
+                    paginatedItems.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.className = 'hover:bg-gray-800/40 transition-colors';
+                        row.innerHTML = `
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                                <div class="font-medium">${item.Belong_Feature || '未知'}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                                <div class="content-cell" data-id="${item.ID}" data-field="Content">
+                                    <span class="content-value">${item.Content || ''}</span>
+                                    <input type="text" class="content-input hidden w-full bg-gray-800 border border-neon text-white rounded px-2 py-1" value="${item.Content || ''}">
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                                <div class="content-cell" data-id="${item.ID}" data-field="Content_Type">
+                                    <span class="content-value">${item.Content_Type || ''}</span>
+                                    <input type="text" class="content-input hidden w-full bg-gray-800 border border-neon text-white rounded px-2 py-1" value="${item.Content_Type || ''}">
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                                <div class="date-cell" data-id="${item.ID}" data-field="Planned_Release_Date">
+                                    <span class="date-value">${item.Planned_Release_Date ? item.Planned_Release_Date: '未设置'}</span>
+                                    <input type="date" class="date-input hidden w-full bg-gray-800 border border-neon text-white rounded px-2 py-1" value="${item.Planned_Release_Date ? new Date(item.Planned_Release_Date).toISOString().split('T')[0] : ''}">
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <div class="status-cell" data-id="${item.ID}" data-field="Item_Status">
+                                    <span class="status-value px-2 py-1 text-xs rounded-full ${getTobepubStatusClass(item.Item_Status)}">
+                                        ${item.Item_Status || '未知'}
+                                    </span>
+                                    <select class="status-select hidden w-full bg-gray-800 border border-neon text-white rounded px-2 py-1">
+                                        <option value="规划中" ${item.Item_Status === '规划中' ? 'selected' : ''}>规划中</option>
+                                        <option value="开发中" ${item.Item_Status === '开发中' ? 'selected' : ''}>开发中</option>
+                                        <option value="完成_待上线" ${item.Item_Status === '完成_待上线' ? 'selected' : ''}>完成_待上线</option>
+                                    </select>
+                                </div>
+                            </td>
+                        `;
+                        tobepubTableBody.appendChild(row);
+                    });
+                    
+                    // 绑定内联编辑事件
+                    // Content编辑事件
+                    document.querySelectorAll('.content-cell').forEach(cell => {
+                        const valueSpan = cell.querySelector('.content-value');
+                        const input = cell.querySelector('.content-input');
+                        
+                        valueSpan.addEventListener('click', () => {
+                            valueSpan.classList.add('hidden');
+                            input.classList.remove('hidden');
+                            input.focus();
+                        });
+                        
+                        input.addEventListener('blur', () => {
+                            saveInlineEdit(cell.dataset.id, cell.dataset.field, input.value);
+                            valueSpan.textContent = input.value;
+                            valueSpan.classList.remove('hidden');
+                            input.classList.add('hidden');
+                        });
+                        
+                        input.addEventListener('keypress', (e) => {
+                            if (e.key === 'Enter') {
+                                saveInlineEdit(cell.dataset.id, cell.dataset.field, input.value);
+                                valueSpan.textContent = input.value;
+                                valueSpan.classList.remove('hidden');
+                                input.classList.add('hidden');
+                            }
+                        });
+                    });
+                    
+                    // Status编辑事件
+                    document.querySelectorAll('.status-cell').forEach(cell => {
+                        const valueSpan = cell.querySelector('.status-value');
+                        const select = cell.querySelector('.status-select');
+                        
+                        valueSpan.addEventListener('click', () => {
+                            valueSpan.classList.add('hidden');
+                            select.classList.remove('hidden');
+                            select.focus();
+                        });
+                        
+                        select.addEventListener('blur', () => {
+                            saveInlineEdit(cell.dataset.id, cell.dataset.field, select.value);
+                            valueSpan.textContent = select.value;
+                            valueSpan.className = `status-value px-2 py-1 text-xs rounded-full ${getTobepubStatusClass(select.value)}`;
+                            valueSpan.classList.remove('hidden');
+                            select.classList.add('hidden');
+                        });
+                        
+                        select.addEventListener('change', () => {
+                            saveInlineEdit(cell.dataset.id, cell.dataset.field, select.value);
+                            valueSpan.textContent = select.value;
+                            valueSpan.className = `status-value px-2 py-1 text-xs rounded-full ${getTobepubStatusClass(select.value)}`;
+                            valueSpan.classList.remove('hidden');
+                            select.classList.add('hidden');
+                            // 更新任务状态
+                            updateTaskInfo(cell.dataset.id, cell.dataset.field, select.value,"task");
+
+                        });
+                    });
+                    
+                    // Date编辑事件
+                    document.querySelectorAll('.date-cell').forEach(cell => {
+                        const valueSpan = cell.querySelector('.date-value');
+                        const input = cell.querySelector('.date-input');
+                        
+                        valueSpan.addEventListener('click', () => {
+                            valueSpan.classList.add('hidden');
+                            input.classList.remove('hidden');
+                            input.focus();
+                        });
+                        
+                        input.addEventListener('blur', () => {
+                            const dateValue = input.value;
+                            saveInlineEdit(cell.dataset.id, cell.dataset.field, dateValue);
+                            valueSpan.textContent = dateValue ? dateValue : '未设置';
+                            valueSpan.classList.remove('hidden');
+                            input.classList.add('hidden');
+                        });
+                        
+                        input.addEventListener('change', () => {
+                            const dateValue = input.value;
+                            saveInlineEdit(cell.dataset.id, cell.dataset.field, dateValue);
+                            valueSpan.textContent = dateValue ? dateValue : '未设置';
+                            valueSpan.classList.remove('hidden');
+                            input.classList.add('hidden');
+                            // 更新任务状态
+                            updateTaskInfo(cell.dataset.id, cell.dataset.field, dateValue,"task");
+                        });
+                    });
+                }
+            }
+        }
+        function updateTaskInfo(taskId,type,value,mode){
+            const command = ip + '/update_tasks';
+            fetch(command, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "table": mode,
+                    "content":{
+                        "Task_ID": taskId,
+                        "Column": type,
+                        "Value": value
+                    }
+                }),
+            }).then(response => response.json()).then(data => {
+                if (data.success) {
+                    showToast('success', '任务状态已更新');
+                    renderIssues(); // 刷新任务列表
+                }
+            });
+            }
+        // 筛选待上线点
+        function filterTobepubItems(itemsList) {
+            // 确保itemsList是一个数组
+            const items = Array.isArray(itemsList) ? itemsList : [];
+            return items.filter(item => {
+                // ID筛选
+                if (tobepubFilters.id.useCustom) {
+                    if (tobepubFilters.id.min !== null && item.ID < tobepubFilters.id.min) return false;
+                    if (tobepubFilters.id.max !== null && item.ID > tobepubFilters.id.max) return false;
+                }
+                
+                // 名称筛选 - 使用正确的字段名
+                const itemName = item.Belong_Feature || '';
+                if (tobepubFilters.name && !itemName.toLowerCase().includes(tobepubFilters.name.toLowerCase())) {
+                    return false;
+                }
+                
+                // 时间筛选
+                if (tobepubFilters.time.ranges.length > 0 || tobepubFilters.time.useCustom) {
+                    const itemDate = new Date(item.Create_Time);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    
+                    let timeMatch = false;
+                    
+                    // 预定义时间范围
+                    if (tobepubFilters.time.ranges.includes('today') && itemDate >= today) {
+                        timeMatch = true;
+                    }
+                    
+                    if (tobepubFilters.time.ranges.includes('week')) {
+                        const weekAgo = new Date(today);
+                        weekAgo.setDate(today.getDate() - 7);
+                        if (itemDate >= weekAgo) timeMatch = true;
+                    }
+                    
+                    if (tobepubFilters.time.ranges.includes('month')) {
+                        const monthAgo = new Date(today);
+                        monthAgo.setMonth(today.getMonth() - 1);
+                        if (itemDate >= monthAgo) timeMatch = true;
+                    }
+                    
+                    // 自定义时间范围
+                    if (tobepubFilters.time.useCustom && tobepubFilters.time.start && tobepubFilters.time.end) {
+                        const startDate = new Date(tobepubFilters.time.start);
+                        const endDate = new Date(tobepubFilters.time.end);
+                        endDate.setHours(23, 59, 59, 999);
+                        
+                        if (itemDate >= startDate && itemDate <= endDate) {
+                            timeMatch = true;
+                        }
+                    }
+                    
+                    if (!timeMatch) return false;
+                }
+                
+                // 状态筛选 - 使用正确的字段名
+                if (tobepubFilters.status.length > 0 && !tobepubFilters.status.includes(item.Item_Status)) {
+                    return false;
+                }
+                
+                return true;
+            });
+        }
+        
+        // 获取待上线点状态样式类
+        function getTobepubStatusClass(status) {
+            switch (status) {
+                case '规划中': 
+                    return 'bg-yellow-400/20 text-yellow-400';
+                case '开发中': 
+                    return 'bg-blue-400/20 text-blue-400';
+                case '完成_待上线': 
+                case '完成,待上线': 
+                    return 'bg-purple-400/20 text-purple-400';
+                case '已上线': 
+                    return 'bg-green-400/20 text-green-400';
+                default: 
+                    return 'bg-gray-400/20 text-gray-400';
+            }
+        }
+        
+        // 待上线点分页控制
+        function goToTobepubPrevPage() {
+            if (tobepubCurrentPage > 1) {
+                tobepubCurrentPage--;
+                renderTobepubItems();
+            }
+        }
+        
+        function goToTobepubNextPage() {
+            const totalPages = Math.ceil(tobepubItems.length / tobepubItemsPerPage);
+            if (tobepubCurrentPage < totalPages) {
+                tobepubCurrentPage++;
+                renderTobepubItems();
+            }
+        }
+        
+        // 编辑待上线点
+        function editTobepubItem(id) {
+            const item = tobepubItems.find(item => item.ID == id);
+            if (item) {
+                // 这里可以添加编辑模态框逻辑，暂时只显示提示
+                showToast('info', `编辑待上线点 ${id}`);
+            }
+        }
+        
+        // 删除待上线点
+        function deleteTobepubItem(id) {
+            if (confirm('确定要删除此待上线点吗？')) {
+                tobepubItems = tobepubItems.filter(item => item.ID != id);
+                renderTobepubItems();
+                showToast('success', '待上线点已删除');
+            }
+        }
+        
+        // 保存内联编辑
+        function saveInlineEdit(id, field, value) {
+            // 更新本地数据
+            const itemIndex = tobepubItems.findIndex(item => item.ID === parseInt(id));
+            if (itemIndex !== -1) {
+                tobepubItems[itemIndex][field] = value;
+                renderTobepubItems();
+                showToast('success', '数据已更新');
+            }
+        }
+        
+        // 切换待上线点筛选面板
+        function toggleTobepubFilterPanel() {
+            if (tobepubFilterPanel) {
+                tobepubFilterPanel.classList.toggle('hidden');
+            }
+        }
+        
+        // 应用待上线点筛选
+        function applyTobepubFilters() {
+            // 收集ID筛选条件
+            const idCustomCheckbox = document.querySelector('.tobepub-id-filter[value="custom"]');
+            if (idCustomCheckbox) {
+                tobepubFilters.id.useCustom = idCustomCheckbox.checked;
+                tobepubFilters.id.min = tobepubIdMinInput?.value ? parseInt(tobepubIdMinInput.value) : null;
+                tobepubFilters.id.max = tobepubIdMaxInput?.value ? parseInt(tobepubIdMaxInput.value) : null;
+            }
+            
+            // 收集名称筛选条件
+            tobepubFilters.name = tobepubNameFilter?.value.trim() || '';
+            
+            // 收集时间筛选条件
+            tobepubFilters.time.ranges = Array.from(document.querySelectorAll('.tobepub-time-filter:not([value="custom"]):checked'))
+                .map(checkbox => checkbox.value);
+            const timeCustomCheckbox = document.querySelector('.tobepub-time-filter[value="custom"]');
+            if (timeCustomCheckbox) {
+                tobepubFilters.time.useCustom = timeCustomCheckbox.checked;
+                tobepubFilters.time.start = tobepubDateStartInput?.value;
+                tobepubFilters.time.end = tobepubDateEndInput?.value;
+            }
+            
+
+            // 收集状态筛选条件
+            tobepubFilters.status = Array.from(document.querySelectorAll('.tobepub-status-filter:checked'))
+                .map(checkbox => checkbox.value);
+            
+            // 重置分页并重新渲染
+            tobepubCurrentPage = 1;
+            renderTobepubItems();
+            
+            // 关闭筛选面板
+            if (tobepubFilterPanel) {
+                tobepubFilterPanel.classList.add('hidden');
+            }
+        }
+        
+        // 清除所有待上线点筛选
+        function clearTobepubFilters() {
+            // 重置筛选器值
+            tobepubFilters = {
+                id: { useCustom: false, min: null, max: null },
+                name: '',
+                time: { ranges: [], useCustom: false, start: null, end: null },
+                status: ['规划中', '开发中', '完成_待上线'] // 重置为默认状态
+            };
+            
+            // 重置UI
+            if (tobepubNameFilter) tobepubNameFilter.value = '';
+            if (tobepubIdMinInput) tobepubIdMinInput.value = '';
+            if (tobepubIdMaxInput) tobepubIdMaxInput.value = '';
+            
+            // 取消选中所有筛选框
+            document.querySelectorAll('.filter-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            // 选中默认状态
+            document.querySelectorAll('.tobepub-status-filter').forEach(checkbox => {
+                if (checkbox.value === '规划中' || checkbox.value === '开发中' || checkbox.value === '完成_待上线') {
+                    checkbox.checked = true;
+                }
+            });
+            
+            // 隐藏自定义范围输入框
+            if (tobepubCustomIdRange) tobepubCustomIdRange.classList.add('hidden');
+            if (tobepubCustomDateRange) tobepubCustomDateRange.classList.add('hidden');
+            
+            // 重置分页并重新渲染
+            tobepubCurrentPage = 1;
+            renderTobepubItems();
+        }
+        
         function get_user_info(){
             command = ip + '/get_user_info'
             fetch(command,{
@@ -1916,8 +3069,303 @@
                     })
             }).then(response=>response.json()).then(data=>{
                 if(data.success){
+                    user_info = JSON.parse(data.output).Result.user;
                     user_number = JSON.parse(data.output).Result.user_count;
+                    renderUsers(); // 渲染用户列表
                     // showDashboard();
+                }
+            })
+        }
+
+        // 渲染产品列表
+        function renderProducts() {
+            const productsContainer = document.getElementById('products-container');
+            if (!productsContainer) return;
+            
+            // 清空容器
+            productsContainer.innerHTML = '';
+            
+            if (!product_info || product_info.length === 0) {
+                // 无数据状态
+                productsContainer.innerHTML = `
+                    <div class="text-center py-10 text-gray-400">
+                        <i class="fa fa-search mr-2"></i>没有符合条件的产品数据
+                    </div>
+                `;
+                return;
+            }
+            
+            // 按产品分类分组
+            const productsByCategory = {};
+            product_info.forEach(product => {
+                const category = product.Category || '未分类';
+                if (!productsByCategory[category]) {
+                    productsByCategory[category] = [];
+                }
+                productsByCategory[category].push(product);
+            });
+            
+            // 遍历每个分类，生成分类大卡片
+            Object.entries(productsByCategory).forEach(([category, products]) => {
+                // 创建分类大卡片
+                const categoryCard = document.createElement('div');
+                categoryCard.className = 'space-y-4';
+                
+                // 分类标题
+                categoryCard.innerHTML = `
+                    <h3 class="text-xl font-bold text-white flex items-center">
+                        <i class="fa fa-folder-open text-purple-400 mr-2"></i>${category}
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+                        <!-- 产品卡片将在这里生成 -->
+                    </div>
+                `;
+                
+                // 获取产品卡片容器
+                const productsGrid = categoryCard.querySelector('div.grid');
+                
+                // 为每个产品生成卡片
+                products.forEach(product => {
+                    // 获取状态信息
+                    const statusText = status_enum.includes(product.Status) ? product.Status : '未知';
+                    
+                    // 获取状态样式和图标
+                    let statusClass = 'bg-gray-400/20 text-gray-400';
+                    let statusIcon = 'fa-question-circle';
+                    switch (product.Status) {
+                        case '测试版本上线':
+                            statusClass = 'bg-yellow-400/20 text-yellow-400';
+                            statusIcon = 'fa-flask';
+                            break;
+                        case '规划中':
+                            statusClass = 'bg-blue-400/20 text-blue-400';
+                            statusIcon = 'fa-calendar-check-o';
+                            break;
+                        case '正式版本上线':
+                            statusClass = 'bg-green-400/20 text-green-400';
+                            statusIcon = 'fa-check-circle';
+                            break;
+                        case '未上线':
+                            statusClass = 'bg-red-400/20 text-red-400';
+                            statusIcon = 'fa-times-circle';
+                            break;
+                        case '先产品上线':
+                            statusClass = 'bg-purple-400/20 text-purple-400';
+                            statusIcon = 'fa-rocket';
+                            break;
+                    }
+                    
+                    // 创建产品卡片
+                    const productCard = document.createElement('div');
+                    productCard.className = 'bg-gray-900/30 rounded-lg p-3 border border-gray-800 hover:border-purple-400 transition-all duration-300 relative';
+                    productCard.innerHTML = `
+                        <div class="flex justify-between items-center">
+                            <h4 class="font-medium text-white text-sm">${product.CN_Name || '未知'}</h4>
+                            <button class="status-icon ${statusClass} px-2 py-1 rounded-full text-xs font-medium hover:opacity-80 transition-opacity cursor-pointer flex items-center justify-center" 
+                                    data-id="${product.ID}" data-current-status="${product.Status}" title="点击修改状态">
+                                ${statusText}
+                            </button>
+                        </div>
+                    `;
+                    
+                    // 添加到分类卡片中
+                    productsGrid.appendChild(productCard);
+                });
+                
+                // 添加到主容器
+                productsContainer.appendChild(categoryCard);
+            });
+            
+            // 绑定状态图标点击事件
+            bindStatusIconEvents();
+        }
+        
+        // 绑定状态图标点击事件
+        function bindStatusIconEvents() {
+            document.querySelectorAll('.status-icon').forEach(icon => {
+                icon.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    
+                    // 移除所有其他下拉菜单
+                    document.querySelectorAll('.status-dropdown').forEach(dropdown => {
+                        dropdown.remove();
+                    });
+                    
+                    // 获取当前图标和产品信息
+                    const productId = this.getAttribute('data-id');
+                    const currentStatus = this.getAttribute('data-current-status');
+                    
+                    // 创建下拉菜单
+                    const dropdown = document.createElement('div');
+                    dropdown.className = 'status-dropdown absolute z-10 bg-gray-900 border border-gray-800 rounded-lg shadow-lg p-2 mt-1 min-w-[150px]';
+                    
+                    // 生成状态选项
+                    status_enum.forEach(status => {
+                        const isActive = status === currentStatus;
+                        const option = document.createElement('div');
+                        option.className = `px-3 py-2 rounded cursor-pointer hover:bg-gray-800 transition-colors ${isActive ? 'bg-gray-800' : ''}`;
+                        option.textContent = status;
+                        option.addEventListener('click', () => {
+                            // 更新产品状态
+                            updateProductStatus(productId, status);
+                            // 移除下拉菜单
+                            dropdown.remove();
+                        });
+                        dropdown.appendChild(option);
+                    });
+                    
+                    // 添加到文档中
+                    document.body.appendChild(dropdown);
+                    
+                    // 计算并设置下拉菜单位置
+                    const rect = this.getBoundingClientRect();
+                    dropdown.style.left = `${rect.right - dropdown.offsetWidth}px`;
+                    dropdown.style.top = `${rect.bottom}px`;
+                });
+            });
+            
+            // 点击其他地方关闭下拉菜单
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.status-icon')) {
+                    document.querySelectorAll('.status-dropdown').forEach(dropdown => {
+                        dropdown.remove();
+                    });
+                }
+            });
+        }
+        
+        // 显示确认弹窗
+        function showConfirmModal(title, message, callback) {
+            confirmTitle.textContent = title;
+            confirmMessage.textContent = message;
+            confirmCallback = callback;
+            confirmModal.classList.remove('hidden');
+        }
+        
+        // 隐藏确认弹窗
+        function hideConfirmModal() {
+            confirmModal.classList.add('hidden');
+            confirmCallback = null;
+        }
+        
+        // 更新产品状态
+        function updateProductStatus(productId, newStatus) {
+            // 检查用户权限
+            const allright = sessionStorage.getItem('access_allright');
+            if (allright !== '1') {
+                showToast('error', '您没有权限修改产品状态');
+                return;
+            }
+            
+            // 自定义弹窗确认
+            showConfirmModal('确认修改产品状态', `确定要将产品状态修改为 "${newStatus}" 吗？`, (confirmed) => {
+                if (confirmed) {
+                    // 更新本地数据
+                    const product = product_info.find(product => product.ID == productId);
+                    if (product) {
+                        product.Status = newStatus;
+                    }
+                    
+                    // 发送数据给后端
+                    const data = { Status: newStatus };
+                    modifyproductindatabase(data, productId);
+                    
+                    // 重新渲染产品列表
+                    renderProducts();
+                }
+            });
+        }
+        
+        // 关闭产品模态框
+        function closeProductModal() {
+            if (productModal) {
+                productModal.classList.add('hidden');
+            }
+        }
+        
+        // 编辑产品
+        function editProduct(id) {
+            const product = product_info.find(product => product.ID == id);
+            if (product && productModal && productForm) {
+                productModalTitle.textContent = '编辑产品';
+                document.getElementById('product-id').value = product.ID;
+                document.getElementById('product-cn-name').value = product.CN_Name || '';
+                
+                // 填充状态选项
+                const productStatusSelect = document.getElementById('product-status');
+                if (productStatusSelect) {
+                    // 清空现有选项
+                    productStatusSelect.innerHTML = '';
+                    
+                    // 添加状态选项
+                    if (status_enum && status_enum.length > 0) {
+                        status_enum.forEach(status => {
+                            const option = document.createElement('option');
+                            option.value = status;
+                            option.textContent = status;
+                            if (status === product.Status) {
+                                option.selected = true;
+                            }
+                            productStatusSelect.appendChild(option);
+                        });
+                    } else {
+                        // 如果没有状态枚举，添加默认选项
+                        const option = document.createElement('option');
+                        option.value = product.Status;
+                        option.textContent = product.Status;
+                        productStatusSelect.appendChild(option);
+                    }
+                }
+                
+                productModal.classList.remove('hidden');
+            }
+        }
+        
+        // 处理产品表单提交
+        function handleProductSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('product-id').value;
+            const cnName = document.getElementById('product-cn-name').value.trim();
+            const status = document.getElementById('product-status').value;
+            
+            if (id) {
+                // 编辑现有产品
+                const index = product_info.findIndex(product => product.ID == id);
+                if (index !== -1) {
+                    product_info[index] = {
+                        ...product_info[index],
+                        CN_Name: cnName,
+                        Status: status
+                    };
+                    data = {
+                        Status: status
+                    }
+                    modifyproductindatabase(data,id);
+                    showToast('success', '产品已更新');
+                    renderProducts();
+                }
+            }
+            
+            // 关闭模态框
+            closeProductModal();
+        }
+        
+        function get_product_status(){
+            command = ip + '/get_siteproduct_info'
+            fetch(command,{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({
+                    'req':'none',
+                    })
+            }).then(response=>response.json()).then(data=>{
+                if(data.success){
+                    status_enum = JSON.parse(data.output).Result.status;
+                    product_info = JSON.parse(data.output).Result.productfeatures;
+                    available_products = product_info.filter(product => product.Status === '已上线').length;
+                    renderProducts(); // 渲染产品列表
                 }
             })
         }
@@ -1963,6 +3411,28 @@
                 }
             })
         }
+
+        function modifyproductindatabase(data,id){
+            command = ip + '/update_productStatus'
+            fetch(command,{
+                method:'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "ID": id,
+                    "to_update": data
+                }
+                ),
+            }).then(response=>response.json()).then(data=>{
+                if(data.success){
+                    showToast('success', '产品上线状态已更新');
+                    // resulting = JSON.parse(data.output)
+                    // statistics = resulting.Result.statistic;
+                    // updateStatistics();
+                }
+            })
+        }
         
         // 处理问题表单提交
         function handleIssueSubmit(e) {
@@ -1989,7 +3459,28 @@
                         Description: description,
                         Last_Modified: getBeijingTimeString()
                     }
+
                     modifyIssueinDatabase(data,id)
+                    if (status == "处理中"){
+                        // 获取当前日期+7天的日期
+                        const futureDate = new Date();
+                        futureDate.setDate(futureDate.getDate() + 7);
+                        time = formatDate2(futureDate.toISOString());
+                        console.log(time)
+                        NewItem = {
+                            "Belong_Feature": name,
+                            "Content": description,
+                            "Planned_Release_Date": time,
+                            "Item_Status": "规划中",
+                        }
+
+                        // createNewToPubTaks(NewItem,"bug_fix",id)
+                    } else if (status == "已解决"){
+                        updateTaskInfo(id,"Item_Status","完成_待上线","tasks","bug_fix")
+
+                    }
+
+
                     showToast('success', '问题已更新');
                     renderIssues();
                 }

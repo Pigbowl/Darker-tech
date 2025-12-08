@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>硬件领域-达客智驾领航员</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+    <script src="../css/tailwind.css"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>    
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
@@ -186,6 +187,9 @@
         let sensorData = {};
         let sensorbttypeData = {};
         let sensorbttypeData_init = {};
+        let supplierpicpath = "../PIC/Company/";
+        let componentpicpath = "../PIC/Component/";
+        let chipsetkeyattribute = ["Domain","Fusa_Level","Temparature_Range","Type","AI_RESOURCE","CPU_RESOURCE"]
         
         document.addEventListener('DOMContentLoaded', () => {     // 配置搜索功能函数
             const productDetailEmpty = document.getElementById('product-detail-empty');
@@ -206,11 +210,12 @@
             ];
 
             let currentCards = [];
-
+            
             function filterProducts() {
                 let visibleCount = Object.keys(productData.Catalogue).length;
                 const chipCards = document.querySelectorAll('.chip-card');
                 // 获取所有选中的筛选条件
+
                 const selectedManufacturers = Array.from(document.querySelectorAll('#manufacturer-options input:checked'))
                     .map(input => input.value);
                 const selectedTypes = Array.from(document.querySelectorAll('#type-options input:checked'))
@@ -223,12 +228,12 @@
 
                 const productsArray = Object.values(productData.Catalogue);
                 const filteredProducts = productsArray.filter(product => {
-                    const matchesManufacturer = selectedManufacturers.includes(product.Supplier_Name);
+                    const matchesManufacturer = selectedManufacturers.includes(product.Supplier_Name.Name);
                     const matchesType = selectedTypes.includes(product.Type);
                     // const matchesApplication = selectedApplications.includes(product.application);
                     const matchesSearch = product.Name.toLowerCase().includes(searchTerm) || 
                                         // JSON.stringify(product.PROCESSOR).toLowerCase().includes(searchTerm) ||
-                                        product.Supplier_Name.toLowerCase().includes(searchTerm);
+                                        product.Supplier_Name.Name.toLowerCase().includes(searchTerm);
                                         JSON.stringify(product.Domain).toLowerCase().includes(searchTerm);
                     const result = matchesManufacturer && matchesType && matchesSearch
 
@@ -279,7 +284,7 @@
                         <div class="manufacturer-header flex items-center justify-between mb-4 cursor-pointer">
                             <h3 class="text-lg font-semibold flex items-center">
                                 <i class="fa fa-chevron-down text-tech-accent mr-2 transition-transform duration-300"></i>
-                                <img src="../PIC/${manufacturer}.png" alt="${manufacturer} Logo" class="w-16 h-6 mr-2">
+                                <img src=${supplierpicpath+manufacturer+".png"} alt="${manufacturer} Logo" class="w-16 h-6 mr-2">
                                 ${manufacturer}
                             </h3>
                             <span class="supplier-count text-sm bg-tech-light/50 px-2 py-1 rounded-full">${products.length} 个产品</span>
@@ -311,7 +316,7 @@
                 
                 card.className = 'chip-card bg-tech-dark border border-gray-700 rounded-lg p-3';
                 card.dataset.id = productId;
-                card.dataset.manufacturer = product.Supplier_Name.toLowerCase();
+                card.dataset.manufacturer = product.Supplier_Name.Name.toLowerCase();
                 card.dataset.type = product.Type || 'unknown';
                 
                 productdomain = ""
@@ -360,7 +365,7 @@
                 manufacturerData = {};
                 Object.keys(productINFO).forEach(key => {
                     product = productINFO[key]
-                    const manufacturer = product.Supplier_Name || '未知厂商';
+                    const manufacturer = product.Supplier_Name.Name || '未知厂商';
                     if (!manufacturerData[manufacturer]) {
                         manufacturerData[manufacturer] = [];
                     }
@@ -411,7 +416,7 @@
                 productDetailEmpty.classList.add('hidden');
                 productDetailContent.classList.remove('hidden');
 
-                productImage.src = "../PIC/"+product.Name+".png";
+                productImage.src = componentpicpath+product.Name+".png";
                 productTitle.textContent = product.Name;
 
             // 渲染规格
@@ -425,9 +430,10 @@
                 document.querySelectorAll('.spec-view').forEach(v => v.classList.add('hidden'));
                 // 根据 processor 类型填充对应容器
                 const processorView = document.getElementById(`spec-view-processor`);
-                Object.keys(product.processor).forEach(processorType => {
+                // console.log(product.processor_group)
+                Object.keys(product.processor_group).forEach(processorType => {
                     if (!processorView) return; // 防止意外类型 
-                    product.processor[processorType].forEach(element => {
+                    product.processor_group[processorType].forEach(element => {
                         const elementDiv = document.createElement('div');
                         elementDiv.className = 'element-info-container bg-tech-dark/30 border border-gray-600 rounded-lg p-3 mb-2';
 
@@ -460,7 +466,7 @@
 
                             // 根据 interface 类型填充对应容器
                 const interfaceView = document.getElementById(`spec-view-interface`);
-                Object.keys(product.interface).forEach(interfaceType => {
+                Object.keys(product.interface_group).forEach(interfaceType => {
                     if (!interfaceView) return; // 防止意外类型
                     const elementDiv = document.createElement('div');
                     elementDiv.className = 'element-info-container bg-tech-dark/30 border border-gray-600 rounded-lg p-3 mb-2';
@@ -469,7 +475,7 @@
                     typeTitle.className = 'text-tech-accent font-semibold mb-2';
                     typeTitle.textContent = interfaceType || '未知类型';
                     elementDiv.appendChild(typeTitle);
-                    product.interface[interfaceType].forEach(element => {
+                    product.interface_group[interfaceType].forEach(element => {
                         // 仅渲染 Power、Name
                         ['Power', 'SubType'].forEach(key => {
                             if (element.hasOwnProperty(key)) {
@@ -492,34 +498,32 @@
                 
                 const defaultView = document.querySelector('#spec-view-keyspec');
                 Object.keys(product).forEach(key => {
+                    if (key && typeof(product[key])!=='object' && chipsetkeyattribute.includes(key)){
                     // 为 element 创建一个 div 容器，用于放置其内部信息
-                    const elementDiv = document.createElement('div');
-                    elementDiv.className = 'element-info-container bg-tech-dark/30 border border-gray-600 rounded-lg p-3 mb-2';
-                    // // 创建 elementDiv
-                    // const elementDiv = document.createElement('div');
-                    // elementDiv.className = 'bg-tech-dark/50 rounded-lg p-3 mb-3';
+                        elementDiv = document.createElement('div');
+                        elementDiv.className = 'element-info-container bg-tech-dark/30 border border-gray-600 rounded-lg p-3 mb-2';
+                    
+                        // 添加 Type 标题
+                        const typeTitle = document.createElement('h5');
+                        typeTitle.className = 'text-tech-accent font-semibold mb-2';
+                        typeTitle.textContent = key || '未知类型';
+                        elementDiv.appendChild(typeTitle);
 
-                    // 添加 Type 标题
-                    const typeTitle = document.createElement('h5');
-                    typeTitle.className = 'text-tech-accent font-semibold mb-2';
-                    typeTitle.textContent = key || '未知类型';
-                    elementDiv.appendChild(typeTitle);
-
-                    // 仅渲染 power、Number、Name 三项
-                    if (key && typeof(product[key])!=='object') {
-
+                        // console.log(key,product[key])
                         const infoItem = document.createElement('div');
                         infoItem.className = 'flex justify-between text-sm';
                         infoItem.innerHTML = `
                             <span class="text-white font-medium">${product[key]}</span>
                     `;
-                    elementDiv.appendChild(infoItem);}
+                    elementDiv.appendChild(infoItem);
 
                     // 将生成的 div 添加到需要显示的父容器中
-                    defaultView.appendChild(elementDiv);
+                    defaultView.appendChild(elementDiv);}
                 });
 
                 defaultView.classList.remove('hidden');
+                document.getElementById("spec-view-keyspec-btn").classList.remove('text-white');
+                document.getElementById("spec-view-keyspec-btn").classList.add('text-tech-accent');
             }
 
             // 将showSpecs函数暴露到全局作用域，使HTML按钮可以访问
@@ -561,6 +565,7 @@
                 .then(data => {
                     if (data.success) {
                         productData = JSON.parse(data.output); 
+                        console.log(productData)
                         manufacturerData = groupProductsByManufacturer(productData.Catalogue);
                         manufacturerData_init = manufacturerData;
                         initFilters(productData)
@@ -637,6 +642,7 @@
         });
     </script>
     <script src="../js/load-components.js"></script>
+    <script src="../js/function-link-manager.js"></script>
     <script src="../js/Visit_Monitor.js"></script>
 </body>
 </html>

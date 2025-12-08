@@ -8,19 +8,65 @@ async function loadComponent(elementId, componentPath) {
         const html = await response.text();
         const element = document.getElementById(elementId);
         if (element) {
-            element.innerHTML = html;
+            // 创建一个临时div来解析HTML
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+            
+            // 处理脚本标签
+            const scripts = tempDiv.querySelectorAll('script');
+            const externalScripts = [];
+            const inlineScripts = [];
+            
+            // 分离外部脚本和内联脚本
+            scripts.forEach(script => {
+                if (script.src) {
+                    externalScripts.push(script);
+                } else {
+                    inlineScripts.push(script.textContent);
+                }
+            });
+            
+            // 移除脚本标签，避免重复执行
+            scripts.forEach(script => script.remove());
+            
+            // 将处理后的HTML（不含脚本标签）添加到目标元素
+            element.innerHTML = tempDiv.innerHTML;
+            
+            // 先加载所有外部脚本
+            const scriptPromises = externalScripts.map(script => {
+                return new Promise((resolve, reject) => {
+                    const newScript = document.createElement('script');
+                    newScript.src = script.src;
+                    newScript.onload = resolve;
+                    newScript.onerror = reject;
+                    document.head.appendChild(newScript);
+                });
+            });
+            
+            // 等待所有外部脚本加载完成
+            await Promise.all(scriptPromises);
+            
+            // 然后执行所有内联脚本
+            inlineScripts.forEach(scriptContent => {
+                eval(scriptContent);
+            });
             
             // 检查是否是footer组件，如果是，则尝试初始化交互
             if (elementId === 'footer-container') {
                 // 页脚交互初始化
                 setTimeout(() => {
-                    console.log('初始化页脚交互');
+                    // console.log('初始化页脚交互');
                     const modal = document.getElementById('version-detail-modal');
                     const detailBtn = document.getElementById('version-detail-btn');
                     const closeBtn = document.getElementById('close-modal-btn');
                     
                     if (modal && detailBtn && closeBtn) {
-                        console.log('找到页脚元素，绑定事件');
+                        // console.log('找到页脚元素，绑定事件');
+                        
+                        // 调用版本信息加载函数
+                        if (window.loadVersionInfo) {
+                            window.loadVersionInfo();
+                        }
                         
                         // 移除可能存在的旧事件监听器
                         const newDetailBtn = detailBtn.cloneNode(true);
@@ -32,19 +78,19 @@ async function loadComponent(elementId, componentPath) {
                         // 绑定新的事件监听器
                         newDetailBtn.addEventListener('click', function() {
                             modal.classList.toggle('hidden');
-                            console.log('点击了查看详情按钮');
+                            // console.log('点击了查看详情按钮');
                         });
                         
                         newCloseBtn.addEventListener('click', function() {
                             modal.classList.add('hidden');
-                            console.log('点击了关闭按钮');
+                            // console.log('点击了关闭按钮');
                         });
                         
                         // 点击浮窗外部关闭浮窗
                         const handleOutsideClick = function(event) {
                             if (!modal.contains(event.target) && event.target !== newDetailBtn) {
                                 modal.classList.add('hidden');
-                                console.log('点击了浮窗外部');
+                                // console.log('点击了浮窗外部');
                             }
                         };
                         
@@ -66,11 +112,15 @@ async function loadComponent(elementId, componentPath) {
 
 async function initComponents() {
     // await loadComponent('header-container', '../components/header.html');
-
     await loadComponent('navbar-container', '../components/navbar.html');
     await loadComponent('footer-container', '../components/footer.html');
     // 可选：添加导航栏激活状态逻辑
     setActiveNavLink();
+    
+    // 等待功能链接管理器初始化，然后更新功能链接状态
+    if (window.updateFunctionLinks) {
+        window.updateFunctionLinks();
+    }
 }
 
 // 立即调用初始化函数

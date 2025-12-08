@@ -16,7 +16,7 @@
             <!-- 桌面导航 -->
             <nav class="hidden md:flex items-center space-x-6">
                 <a href="../../index.html" class="text-white hover:text-logobuttom transition-colors duration-300">首页</a>
-                <a href="../Pages/KnowledgeNet.html" class="text-white hover:text-logobuttom transition-colors duration-300">知识网络</a>
+                <a href="../Pages/KnowledgeNet.html" id="知识网络" class="func_link hover:text-logobuttom transition-colors duration-300">知识网络</a>
                 
                 <!-- ADAS知识库 - 带下拉菜单 -->
                 <div class="relative group">
@@ -26,17 +26,36 @@
                     </a>
                     <div class="absolute left-0 mt-2 w-48 glass-effect rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
                         <div class="py-2">
-                            <a href="../Pages/FunctionHall.html" class="block px-4 py-2 text-sm text-white hover:bg-logoup/20">功能领域</a>
-                            <a href="../Pages/HardWareHall.html" class="block px-4 py-2 text-sm text-white hover:bg-logoup/20">硬件领域</a>
-                            <a href="../Pages/SensorHall.html" class="block px-4 py-2 text-sm text-white hover:bg-logoup/20">传感器领域</a>
-                            <a href="../Pages/RegulationMap.html" class="block px-4 py-2 text-sm text-white hover:bg-logoup/20">法规/标准领域</a>
-                            <a href="../Pages/ArchitectureBuild.html" class="block px-4 py-2 text-sm text-white hover:bg-logoup/20">架构领域</a>
+                            <a href="../Pages/FunctionHall.html" id="功能星球" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20">功能星球</a>  
+                            <a href="../Pages/HardWareHall.html" id="硬件星球" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20">硬件星球</a>
+                            <a href="../Pages/SensorHall.html" id="传感器星球" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20">传感器星球</a>
+                            <a href="../Pages/RegulationMap.html" id="法规/标准星球" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20">法规/标准星球</a>
+                            <a href="../Pages/ArchitectureBuild.html" id="架构星球" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20">架构星球</a>
                         </div>
                     </div>
                 </div>
                 
-                <a href="../Pages/AdasBenchmark.html" class="text-white hover:text-logobuttom transition-colors duration-300">行业矩阵</a>
+                <a href="../Pages/Forum.html" id="智驾论坛" class="func_link text-white hover:text-logobuttom transition-colors duration-300 flex items-center">智驾论坛</a>
                 
+                <!-- <a href="../Pages/AdasBenchmark.html" id="车型智库" class="func_link text-white hover:text-logobuttom transition-colors duration-300 flex items-center">行业矩阵</a> -->
+                
+                                <!-- ADAS工具库 - 带下拉菜单 -->
+                <div class="relative group">
+                    <button class="text-white hover:text-logobuttom transition-colors duration-300 flex items-center bg-transparent border-none">
+                        行业纵横
+                        <i class="fa fa-chevron-down ml-1 text-xs"></i>
+                    </button>
+                    <div class="absolute left-0 mt-2 w-48 glass-effect rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                        <div class="py-2">
+                            <a href="../Pages/AdasBenchmark.html" id="车型矩阵" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20">车型矩阵</a>
+                            <a href="#" id="方案矩阵" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20">方案矩阵</a>
+                            <a href="#" id="方案角斗场" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20">方案角斗场</a>
+                            <a href="#" id="市场通" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20">市场通</a>
+                            <a href="#" id="生态网络" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20">生态网络</a>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- ADAS工具库 - 带下拉菜单 -->
                 <div class="relative group">
                     <button class="text-white hover:text-logobuttom transition-colors duration-300 flex items-center bg-transparent border-none">
@@ -45,14 +64,14 @@
                     </button>
                     <div class="absolute left-0 mt-2 w-48 glass-effect rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
                         <div class="py-2">
-                            <a href="../Pages/Configurator.html" class="block px-4 py-2 text-sm text-white hover:bg-logoup/20">产品配置器</a>
-                            <a href="../Pages/RoadBuilder.html" class="block px-4 py-2 text-sm text-white hover:bg-logoup/20">环境生成器</a>
-                            <a href="../Pages/FoV_build.html" class="block px-4 py-2 text-sm text-white hover:bg-logoup/20">传感器配置器</a>
-                            <a href="../Pages/SensorInspector.html" class="block px-4 py-2 text-sm text-white hover:bg-logoup/20">传感器仿真器</a>
-                            <a href="../Pages/SimulationPlatform.html" class="block px-4 py-2 text-sm text-white hover:bg-logoup/20">仿真平台</a>
-                            <a href="../Pages/PhyArchiTool.html" class="block px-4 py-2 text-sm text-white hover:bg-logoup/20">物理架构工具</a>
+                            <a href="../Pages/Configurator.html" id="产品配置器" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20">产品配置器</a>
+                            <a href="../Pages/RoadBuilder.html" id="环境生成器" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20">环境生成器</a>
+                            <a href="../Pages/FoV_build.html" id="传感器配置器" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20">传感器配置器</a>
+                            <a href="../Pages/SensorInspector.html" id="传感器仿真" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20">传感器仿真</a>
+                            <a href="../Pages/SimulationPlatform.html" id="仿真平台" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20">仿真平台</a>
+                            <a href="../Pages/PhyArchiTool.html" id="物理架构工具" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20">物理架构工具</a>
 
-                            <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-logoup/20">其它工具</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-logoup/20">其它工具...</a>
                         </div>
                     </div>
                 </div>
@@ -70,7 +89,7 @@
         </div>
         
         <!-- 移动端导航菜单 -->
-        <div id="mobile-menu" class="hidden md:hidden glass-effect">
+        <!-- <div id="mobile-menu" class="hidden md:hidden glass-effect">
             <div class="container mx-auto px-4 py-3 flex flex-col space-y-4">
                 <a href="#" class="text-white hover:text-tech transition-colors duration-300 py-2 border-b border-accent/20">首页</a>
                 <a href="#knowledge" class="text-white hover:text-tech transition-colors duration-300 py-2 border-b border-accent/20">ADAS知识库</a>
@@ -79,6 +98,6 @@
                 <a href="#simulation" class="text-white hover:text-tech transition-colors duration-300 py-2 border-b border-accent/20">仿真平台</a>
                 <a href="#about" class="tech-button bg-transparent border border-accent text-accent px-4 py-2 rounded hover:bg-accent/10 text-center">关于我们</a>
             </div>
-        </div>
+        </div> -->
 
     </header>

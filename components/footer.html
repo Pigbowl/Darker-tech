@@ -4,47 +4,86 @@
             <span>达客智能驾驶领航员</span>
         </div>
         <div class="flex items-center space-x-2">
-            <span>版本号: 1.1.0</span>
+            <span id="version-number">版本号: </span>
             <button id="version-detail-btn" class="px-2 py-0.5 bg-primary/30 hover:bg-primary/50 rounded text-white text-xs transition-all duration-200">
                 查看详情
             </button>
         </div>
         <div>
-            <span>上次更新: 2025-11-10</span>
+            <span id="last-update">上次更新: </span>
         </div>
     </div>
     
     <!-- 版本详情浮窗 -->
     <div id="version-detail-modal" class="fixed left-1/2 bottom-9 transform -translate-x-1/2 w-80 bg-dark-light/95 backdrop-blur-md border border-primary/30 rounded-lg p-4 text-white hidden">
         <div class="flex justify-between items-center mb-2">
-            <h4 class="font-bold text-sm">版本 1.1.0 更新内容</h4>
+            <h4 id="modal-title" class="font-bold text-sm">版本 更新内容</h4>
             <button id="close-modal-btn" class="text-white hover:text-yellow-400 transition-colors">×</button>
         </div>
-        <div class="text-xs space-y-2 max-h-48 overflow-y-auto">
-            <div class="flex items-start">
-                <span class="text-green-400 mr-2">✓</span>
-                <span>新增ADAS驾驶辅助功能展示模块</span>
-            </div>
-            <div class="flex items-start">
-                <span class="text-green-400 mr-2">✓</span>
-                <span>优化传感器交互界面，提升用户体验</span>
-            </div>
-            <div class="flex items-start">
-                <span class="text-green-400 mr-2">✓</span>
-                <span>修复地图加载时的性能问题</span>
-            </div>
-            <div class="flex items-start">
-                <span class="text-green-400 mr-2">✓</span>
-                <span>更新硬件数据库，增加新的雷达型号</span>
-            </div>
-            <div class="flex items-start">
-                <span class="text-green-400 mr-2">✓</span>
-                <span>支持配置更多的智能驾驶场景</span>
-            </div>
-            <div class="flex items-start">
-                <span class="text-green-400 mr-2">✓</span>
-                <span>改进知识图谱可视化效果</span>
-            </div>
+        <div id="changes-list" class="text-xs space-y-2">
         </div>
     </div>
 </footer>
+
+<script src="/js/version_control.js"></script>
+<script>
+    // 动态加载版本信息
+    function loadVersionInfo() {
+
+        // 确保version_content已经加载
+        if (typeof version_content !== 'undefined') {
+            // 更新版本号
+            document.getElementById('version-number').textContent = '版本号: ' + version_content.version;
+            
+            // 更新上次更新时间
+            const releaseDate = version_content.release_date.split(' ')[0];
+            document.getElementById('last-update').textContent = '上次更新: ' + releaseDate;
+            
+            // 更新模态框标题
+            document.getElementById('modal-title').textContent = '版本 ' + version_content.version + ' 更新内容';
+            
+            // 动态生成变更点列表
+            const changesList = document.getElementById('changes-list');
+            changesList.innerHTML = '';
+            
+            version_content.changes.forEach(change => {
+                const changeItem = document.createElement('div');
+                changeItem.className = 'flex items-start';
+                
+                // 根据变更类型设置不同的图标
+                let icon = '✓';
+                let iconColor = 'text-green-400';
+                if (change.Content_Type === 'creation') {
+                    icon = '🚀';
+                    iconColor = 'text-green-400';
+                } else if (change.Content_Type === 'bug_fix') {
+                    icon = '🐞';
+                    iconColor = 'text-yellow-400';
+                } else if (change.Content_Type === 'update') {
+                    icon = '🔄';
+                    iconColor = 'text-blue-400';
+                }
+                
+                changeItem.innerHTML = `
+                    <span class="${iconColor} mr-2">${icon}</span>
+                    <div>
+                        <span class="font-bold text-green-400">${change.Belong_Feature}：</span>
+                        <span>${change.Content}</span>
+                    </div>
+                `;
+                
+                changesList.appendChild(changeItem);
+            });
+        }
+    }
+    
+    // 页面加载完成后执行
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', loadVersionInfo);
+    } else {
+        // 如果DOM已经加载完成，直接执行
+        loadVersionInfo();
+    }
+    // 暴露给全局，以便load-components.js调用
+    window.loadVersionInfo = loadVersionInfo;
+</script>
