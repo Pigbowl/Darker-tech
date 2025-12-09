@@ -20,8 +20,14 @@ class FunctionLinkManager {
     // 处理所有功能链接
     async processLinks() {
         try {            
-            // 检查deploy_mode变量，如果为test，则不进行任何禁用操作
-            if (typeof deploy_mode !== 'undefined' && deploy_mode === 'test') {
+            // // 检查deploy_mode变量，如果为test，则不进行任何禁用操作
+            // if (typeof deploy_mode !== 'undefined' && deploy_mode === 'test') {
+            //     return;
+            // }
+            
+            // 检查用户是否已登录，如果已登录则不进行任何禁用操作
+            const isLoggedIn = sessionStorage.getItem('admin_authenticated') === 'true';
+            if (isLoggedIn) {
                 return;
             }
             

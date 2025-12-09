@@ -29,13 +29,8 @@
             <div class="container mx-auto px-4 py-8 pt-16">
                 <!-- 论坛页面 -->
                 <div class="page-content">
-                    <header class="mb-6 text-center">
-                        <h1 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-white mb-0">智驾论坛</h1>
-                        <p class="text-logotext mt-2">分享知识，交流经验，共同成长</p>
-                    </header>
-                    
                     <!-- 论坛主体内容 -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
                         <!-- 左侧：论坛分类 -->
                         <div class="lg:col-span-1">
                             <div class="bg-gradient-to-t from-light-blue/40 to-dark rounded-xl p-4 shadow-sm">
@@ -101,7 +96,7 @@
                         </div>
                         
                         <!-- 中间：帖子列表 -->
-                        <div class="lg:col-span-2">
+                        <div class="lg:col-span-3">
                             <!-- 发帖按钮 -->
                             <div class="bg-gradient-to-t from-light-blue/40 to-dark rounded-xl p-4 shadow-sm mb-6">
                                 <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -262,6 +257,84 @@
         <div id="footer-container"></div>   
     </div>
             
+    <!-- 发布新帖模态框 -->
+    <div id="createPostModal" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 hidden">
+        <div class="bg-dark rounded-xl p-6 max-w-2xl w-full mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-white">发布新帖</h2>
+                <button id="closeModal" class="text-white hover:text-primary transition-colors text-xl">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <form id="createPostForm">
+                <div class="mb-4">
+                    <label for="postTitle" class="block text-sm font-medium text-white mb-2">标题</label>
+                    <input type="text" id="postTitle" name="postTitle" class="w-full bg-gray-903 border border-gray-800 rounded-lg p-2 text-white focus:outline-none focus:ring-2 focus:ring-primary" placeholder="请输入帖子标题" required>
+                </div>
+                <div class="mb-4">
+                    <label for="postCategory" class="block text-sm font-medium text-white mb-2">分类</label>
+                    <select id="postCategory" name="postCategory" class="w-full bg-gray-903 border border-gray-800 rounded-lg p-2 text-white focus:outline-none focus:ring-2 focus:ring-primary" required>
+                        <option value="">请选择分类</option>
+                        <option value="ADAS功能讨论">ADAS功能讨论</option>
+                        <option value="传感器技术">传感器技术</option>
+                        <option value="计算平台">计算平台</option>
+                        <option value="法规标准">法规标准</option>
+                        <option value="行业动态">行业动态</option>
+                        <option value="求职招聘">求职招聘</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="postContent" class="block text-sm font-medium text-white mb-2">内容</label>
+                    <textarea id="postContent" name="postContent" rows="6" class="w-full bg-gray-903 border border-gray-800 rounded-lg p-2 text-white focus:outline-none focus:ring-2 focus:ring-primary" placeholder="请输入帖子内容" required></textarea>
+                </div>
+                <div class="flex justify-end gap-3">
+                    <button type="button" id="cancelPost" class="px-4 py-2 bg-gray-903 rounded-lg hover:bg-gray-905 transition-colors text-white">取消</button>
+                    <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">发布</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 帖子详情模态框 -->
+    <div id="postDetailModal" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 hidden">
+        <div class="bg-dark rounded-xl p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="detailTitle" class="text-xl font-bold text-white"></h2>
+                <button id="closeDetailModal" class="text-white hover:text-primary transition-colors text-xl">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div id="detailMeta" class="text-logotext text-sm mb-4"></div>
+            <div id="detailContent" class="text-white mb-6 whitespace-pre-line"></div>
+            
+            <!-- 回复列表 -->
+            <div class="mb-8">
+                <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                    <i class="fa fa-comments-o mr-2"></i>
+                    <span id="replyCount">回复</span>
+                </h3>
+                <div id="replyList" class="space-y-4"></div>
+            </div>
+            
+            <!-- 回复表单 -->
+            <div class="bg-gray-903 rounded-xl p-4 mb-4">
+                <h4 class="text-white font-medium mb-3">发表回复</h4>
+                <form id="replyForm">
+                    <div class="mb-4">
+                        <textarea id="replyContent" name="replyContent" rows="4" class="w-full bg-gray-905 border border-gray-800 rounded-lg p-2 text-white focus:outline-none focus:ring-2 focus:ring-primary" placeholder="写下你的回复..." required></textarea>
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">提交回复</button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="flex justify-end">
+                <button id="closeDetailBtn" class="px-4 py-2 bg-gray-903 rounded-lg hover:bg-gray-905 transition-colors text-white">关闭</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 粒子背景脚本 -->
 
     <script>    
@@ -376,6 +449,404 @@
             },
             retina_detect: true
         });
+
+        // 模拟帖子数据
+        let posts = [
+            {
+                id: 1,
+                title: "L2+级自动驾驶的未来发展方向",
+                author: "Automan",
+                date: "2024-01-15 14:30",
+                category: "ADAS功能讨论",
+                content: "随着技术的不断发展，L2+级自动驾驶已经成为市场的主流。本文将探讨L2+级自动驾驶的未来发展方向，包括传感器融合、AI算法、法规标准等方面的趋势。\n\n首先，传感器融合技术将更加成熟，激光雷达、摄像头、毫米波雷达等多种传感器将实现更高效的融合，提高感知系统的可靠性和准确性。\n\n其次，AI算法将迎来突破，特别是在决策规划和行为预测方面，深度学习和强化学习技术的应用将使自动驾驶系统能够更好地应对复杂的交通场景。\n\n最后，法规标准的完善将为自动驾驶的大规模商业化铺平道路，各国政府将出台更加详细和严格的法规，确保自动驾驶车辆的安全运行。",
+                views: 567,
+                replies: 23,
+                likes: 45,
+                lastReply: "2小时前",
+                comments: [
+                    {
+                        id: 1,
+                        author: "User1",
+                        date: "2024-01-15 15:20",
+                        content: "非常有见解的文章，期待后续更多讨论！"
+                    },
+                    {
+                        id: 2,
+                        author: "User2",
+                        date: "2024-01-15 16:45",
+                        content: "传感器融合确实是未来的发展方向，不知道作者对固态激光雷达怎么看？"
+                    }
+                ]
+            },
+            {
+                id: 2,
+                title: "激光雷达与摄像头融合方案探讨",
+                author: "SensorPro",
+                date: "2024-01-14 10:15",
+                category: "传感器技术",
+                content: "激光雷达和摄像头是自动驾驶系统中最重要的两种传感器，它们各有优缺点。本文将探讨激光雷达与摄像头融合的技术方案，包括数据融合、时间同步、坐标系转换等关键技术。\n\n激光雷达的优点是能够提供精确的3D距离信息，不受光照条件的影响，缺点是成本高、分辨率相对较低。摄像头的优点是成本低、分辨率高、能够识别颜色和纹理信息，缺点是受光照条件影响大、无法直接获取距离信息。\n\n通过将这两种传感器的信息进行融合，可以充分发挥它们的优势，弥补各自的不足，提高自动驾驶系统的感知能力。常用的融合方法包括早期融合、中期融合和后期融合等。",
+                views: 423,
+                replies: 17,
+                likes: 38,
+                lastReply: "5小时前",
+                comments: [
+                    {
+                        id: 1,
+                        author: "TechFan",
+                        date: "2024-01-14 11:30",
+                        content: "写得很详细，对新手很友好！"
+                    }
+                ]
+            },
+            {
+                id: 3,
+                title: "最新ADAS法规解读",
+                author: "RegExpert",
+                date: "2024-01-13 16:45",
+                category: "法规标准",
+                content: "近期，国内外发布了多项ADAS相关的法规和标准，对自动驾驶行业产生了重要影响。本文将对这些法规进行解读，分析其对行业的影响和应对策略。\n\n首先，联合国发布了新的UN-R79法规，对自动紧急制动系统(AEB)提出了更高的要求，包括增加了弱势道路使用者检测和保护的要求。\n\n其次，中国发布了GB/T XXXX-2023《智能网联汽车自动驾驶功能测试方法》，规定了自动驾驶功能的测试场景和评价指标。\n\n这些法规的出台将推动ADAS技术的发展和普及，同时也对企业提出了更高的要求，需要加强技术研发和测试验证能力。",
+                views: 389,
+                replies: 12,
+                likes: 32,
+                lastReply: "昨天 19:20",
+                comments: []
+            }
+        ];
+
+        // 当前页码
+        let currentPage = 1;
+        const postsPerPage = 3;
+        
+        // 当前查看的帖子ID
+        let currentPostId = null;
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 发布新帖按钮事件
+            document.querySelector('button.bg-primary').addEventListener('click', function() {
+                document.getElementById('createPostModal').classList.remove('hidden');
+            });
+
+            // 关闭模态框事件
+            document.getElementById('closeModal').addEventListener('click', closeModal);
+            document.getElementById('cancelPost').addEventListener('click', closeModal);
+
+            // 关闭详情模态框事件
+            document.getElementById('closeDetailModal').addEventListener('click', closeDetailModal);
+            document.getElementById('closeDetailBtn').addEventListener('click', closeDetailModal);
+
+            // 点击模态框外部关闭
+            window.addEventListener('click', function(e) {
+                if (e.target.id === 'createPostModal') {
+                    closeModal();
+                }
+                if (e.target.id === 'postDetailModal') {
+                    closeDetailModal();
+                }
+            });
+
+            // 表单提交事件
+            document.getElementById('createPostForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                createPost();
+            });
+
+            // 回复表单提交事件
+            document.getElementById('replyForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                submitReply();
+            });
+
+            // 初始化翻页事件
+            initPagination();
+
+            // 初始加载帖子
+            loadPosts();
+        });
+
+        // 关闭发布模态框
+        function closeModal() {
+            document.getElementById('createPostModal').classList.add('hidden');
+            document.getElementById('createPostForm').reset();
+        }
+
+        // 关闭详情模态框
+        function closeDetailModal() {
+            document.getElementById('postDetailModal').classList.add('hidden');
+        }
+
+        // 创建新帖子
+        function createPost() {
+            const title = document.getElementById('postTitle').value;
+            const category = document.getElementById('postCategory').value;
+            const content = document.getElementById('postContent').value;
+
+            if (!title || !category || !content) {
+                alert('请填写所有必填字段');
+                return;
+            }
+
+            // 创建新帖子对象
+            const newPost = {
+                id: posts.length + 1,
+                title: title,
+                author: "当前用户",
+                date: new Date().toLocaleString('zh-CN'),
+                category: category,
+                content: content,
+                views: 0,
+                replies: 0,
+                likes: 0,
+                lastReply: "刚刚"
+            };
+
+            // 添加到帖子列表
+            posts.unshift(newPost);
+
+            // 关闭模态框
+            closeModal();
+
+            // 重新加载帖子
+            loadPosts();
+        }
+
+        // 加载帖子
+        function loadPosts() {
+            const startIndex = (currentPage - 1) * postsPerPage;
+            const endIndex = startIndex + postsPerPage;
+            const pagePosts = posts.slice(startIndex, endIndex);
+
+            const postsContainer = document.querySelector('.space-y-4');
+            postsContainer.innerHTML = '';
+
+            pagePosts.forEach(post => {
+                const postCard = document.createElement('div');
+                postCard.className = 'bg-gradient-to-t from-light-blue/40 to-dark rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow';
+                // 限制内容预览为100字以内
+                const previewContent = post.content.length > 100 ? post.content.substring(0, 100) + '...' : post.content;
+                
+                postCard.innerHTML = `
+                    <div class="flex gap-3 p-3">
+                        <div class="w-8 h-8 rounded-full bg-gray-903 flex items-center justify-center text-white text-xs font-bold">
+                            ${post.author.charAt(0).toUpperCase()}
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-white font-semibold text-sm">${post.author}</span>
+                                <span class="text-logotext text-xs">${post.date}</span>
+                                <span class="bg-primary/20 text-primary text-xs px-2 py-0.5 rounded-full">${post.category}</span>
+                            </div>
+                            <h3 class="text-base font-bold text-white hover:text-primary transition-colors mb-1">
+                                <a href="#" class="post-link" data-id="${post.id}">${post.title}</a>
+                            </h3>
+                            <p class="text-white/80 text-xs mb-2 line-clamp-2">
+                                ${previewContent}
+                            </p>
+                            <div class="flex items-center justify-between text-logotext text-xs">
+                                <div class="flex items-center gap-3">
+                                    <span class="flex items-center gap-1">
+                                        <i class="fa fa-eye"></i>
+                                        ${post.views}
+                                    </span>
+                                    <span class="flex items-center gap-1">
+                                        <i class="fa fa-comment"></i>
+                                        ${post.replies}
+                                    </span>
+                                    <span class="flex items-center gap-1">
+                                        <i class="fa fa-thumbs-up"></i>
+                                        ${post.likes}
+                                    </span>
+                                </div>
+                                <span>最后回复：${post.lastReply}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                postsContainer.appendChild(postCard);
+            });
+
+            // 添加查看详情事件
+            document.querySelectorAll('.post-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const postId = parseInt(this.getAttribute('data-id'));
+                    showPostDetail(postId);
+                });
+            });
+        }
+
+        // 显示帖子详情
+        function showPostDetail(postId) {
+            currentPostId = postId;
+            const post = posts.find(p => p.id === postId);
+            if (post) {
+                // 更新浏览量
+                post.views++;
+                
+                // 更新详情模态框内容
+                document.getElementById('detailTitle').textContent = post.title;
+                document.getElementById('detailMeta').innerHTML = `
+                    <span class="mr-4">作者：${post.author}</span>
+                    <span class="mr-4">发布时间：${post.date}</span>
+                    <span class="mr-4">分类：${post.category}</span>
+                    <span class="mr-4"><i class="fa fa-eye"></i> ${post.views}</span>
+                    <span class="mr-4"><i class="fa fa-comment"></i> ${post.replies}</span>
+                    <span><i class="fa fa-thumbs-up"></i> ${post.likes}</span>
+                `;
+                document.getElementById('detailContent').textContent = post.content;
+                
+                // 渲染回复列表
+                renderComments(post.comments);
+                
+                // 显示模态框
+                document.getElementById('postDetailModal').classList.remove('hidden');
+                
+                // 重新加载帖子以更新浏览量
+                loadPosts();
+            }
+        }
+
+        // 渲染回复列表
+        function renderComments(comments) {
+            const replyList = document.getElementById('replyList');
+            const replyCount = document.getElementById('replyCount');
+            
+            replyCount.textContent = `回复 (${comments.length})`;
+            
+            if (comments.length === 0) {
+                replyList.innerHTML = '<p class="text-logotext text-center py-4">暂无回复，快来抢沙发吧！</p>';
+                return;
+            }
+            
+            replyList.innerHTML = '';
+            comments.forEach(comment => {
+                const commentElement = document.createElement('div');
+                commentElement.className = 'bg-gray-903 rounded-xl p-4';
+                commentElement.innerHTML = `
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-white text-xs font-bold">
+                            ${comment.author.charAt(0).toUpperCase()}
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2">
+                                <span class="text-white font-medium">${comment.author}</span>
+                                <span class="text-logotext text-xs">${comment.date}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pl-11 text-white/90">
+                        ${comment.content}
+                    </div>
+                `;
+                replyList.appendChild(commentElement);
+            });
+        }
+
+        // 提交回复
+        function submitReply() {
+            const replyContent = document.getElementById('replyContent').value;
+            
+            if (!replyContent.trim()) {
+                alert('请填写回复内容');
+                return;
+            }
+            
+            if (!currentPostId) {
+                alert('无法确定回复的帖子');
+                return;
+            }
+            
+            const post = posts.find(p => p.id === currentPostId);
+            if (post) {
+                // 创建新回复
+                const newComment = {
+                    id: post.comments.length + 1,
+                    author: "当前用户",
+                    date: new Date().toLocaleString('zh-CN'),
+                    content: replyContent
+                };
+                
+                // 添加到回复列表
+                post.comments.push(newComment);
+                
+                // 更新回复数和最后回复时间
+                post.replies++;
+                post.lastReply = "刚刚";
+                
+                // 清空回复表单
+                document.getElementById('replyContent').value = '';
+                
+                // 重新渲染回复列表
+                renderComments(post.comments);
+                
+                // 更新帖子列表
+                loadPosts();
+            }
+        }
+
+        // 初始化分页
+        function initPagination() {
+            const paginationButtons = document.querySelectorAll('.flex.justify-center button');
+            paginationButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const text = this.textContent.trim();
+                    if (this.innerHTML.includes('fa-chevron-left')) {
+                        // 上一页
+                        if (currentPage > 1) {
+                            currentPage--;
+                            updatePagination();
+                            loadPosts();
+                        }
+                    } else if (this.innerHTML.includes('fa-chevron-right')) {
+                        // 下一页
+                        const totalPages = Math.ceil(posts.length / postsPerPage);
+                        if (currentPage < totalPages) {
+                            currentPage++;
+                            updatePagination();
+                            loadPosts();
+                        }
+                    } else {
+                        // 具体页码
+                        const pageNum = parseInt(text);
+                        if (!isNaN(pageNum)) {
+                            currentPage = pageNum;
+                            updatePagination();
+                            loadPosts();
+                        }
+                    }
+                });
+            });
+        }
+
+        // 更新分页状态
+        function updatePagination() {
+            const buttons = document.querySelectorAll('.flex.justify-center button');
+            const totalPages = Math.ceil(posts.length / postsPerPage);
+            
+            // 更新上一页按钮状态
+            buttons[0].disabled = currentPage === 1;
+            
+            // 更新页码按钮状态
+            for (let i = 1; i < buttons.length - 1; i++) {
+                const pageNum = i;
+                if (pageNum === currentPage) {
+                    buttons[i].classList.remove('bg-gray-903');
+                    buttons[i].classList.add('bg-primary');
+                } else {
+                    buttons[i].classList.remove('bg-primary');
+                    buttons[i].classList.add('bg-gray-903');
+                }
+                // 隐藏超过总页数的按钮
+                if (pageNum > totalPages) {
+                    buttons[i].classList.add('hidden');
+                } else {
+                    buttons[i].classList.remove('hidden');
+                }
+            }
+            
+            // 更新下一页按钮状态
+            buttons[buttons.length - 1].disabled = currentPage === totalPages;
+        }
     </script>
     
     <script src="../js/load-components.js"></script>
