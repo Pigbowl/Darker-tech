@@ -1,15 +1,15 @@
 
 // 版本更新内容 - 自动生成
-// 生成时间: 2025-12-09 18:19:37
+// 生成时间: 2025-12-09 20:57:40
 
 // 全局版本内容变量
 let version_content = {
-  "version": "ALPHA-2512-1",
+  "version": "ALPHA-2512-2",
   "major_version": "ALPHA",
   "minor_year": 25,
   "minor_month": 12,
-  "temp_version": 1,
-  "release_date": "2025-12-09 18:19:37",
+  "temp_version": 2,
+  "release_date": "2025-12-09 20:57:40",
   "changes": [
     {
       "Belong_Feature": "功能星球",
