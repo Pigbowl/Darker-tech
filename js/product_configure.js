@@ -1,6 +1,6 @@
 
 // 产品配置信息 - 自动生成
-// 生成时间: 2025-12-09 17:56:58
+// 生成时间: 2025-12-09 18:06:31
 
 // 全局产品配置变量
 let products_config = {
@@ -51,7 +51,7 @@ let products_config = {
       "Category": "知识宇宙",
       "Description": "提供架构开发的相关知识",
       "CN_Name": "架构星球",
-      "Status": "测试版本上线"
+      "Status": "未上线"
     },
     {
       "ID": 7,
@@ -190,7 +190,7 @@ let products_config = {
         "Category": "知识宇宙",
         "Description": "提供架构开发的相关知识",
         "CN_Name": "架构星球",
-        "Status": "测试版本上线"
+        "Status": "未上线"
       }
     ],
     "知识网络": [
@@ -306,7 +306,7 @@ let products_config = {
       }
     ]
   },
-  "version": "ALPHA-25-12-3",
+  "version": "ALPHA-25-12-1",
   "status": [
     "新产品上线",
     "未上线",
