@@ -1,15 +1,15 @@
 
 // 版本更新内容 - 自动生成
-// 生成时间: 2025-12-09 16:41:13
+// 生成时间: 2025-12-09 17:56:48
 
 // 全局版本内容变量
 let version_content = {
-  "version": "BETA-2512-8",
-  "major_version": "BETA",
+  "version": "ALPHA-2512-3",
+  "major_version": "ALPHA",
   "minor_year": 25,
   "minor_month": 12,
-  "temp_version": 8,
-  "release_date": "2025-12-09 16:41:13",
+  "temp_version": 3,
+  "release_date": "2025-12-09 17:56:48",
   "changes": [
     {
       "Belong_Feature": "功能星球",
@@ -19,11 +19,6 @@ let version_content = {
     {
       "Belong_Feature": "传感器配置器",
       "Content": "发布“传感器配置器”功能，自行定义，快速绘制你的传感器配置图",
-      "Content_Type": "creation"
-    },
-    {
-      "Belong_Feature": "传感器星球",
-      "Content": "发布“传感器星球”功能",
       "Content_Type": "creation"
     }
   ]
