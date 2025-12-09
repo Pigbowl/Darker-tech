@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>多视角传感器模拟-达客智驾领航员</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>    
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <title>传感器仿真-达客智驾领航员</title>
+    <script src="../css/tailwind.css"></script>
+    <script src="../js/xlsx/xlsx.full.min.js"></script>
+    <script src="../js/particles/particles.min.js"></script>    
+    <script src="../js/chartjs/chart.umd.min.js"></script>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/components.css">
-    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="../css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/fonts/local-fonts.css" rel="stylesheet">
     <script src="../js/ipcontroller.js"></script>    
     <script src="../js/load-duck-assistant.js"></script>
 
@@ -94,21 +94,20 @@
     <button id="3DView-btn" style="position: absolute; bottom: 140px; left: 400px; padding: 8px 16px; background-color: #4c4caf; color: white; border: none; border-radius: 4px; cursor: pointer;" onclick="window.location.href='FoV_build.html'">切换2D视图</button>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/build/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/loaders/GLTFLoader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="../js/three/three.min.js"></script>
+    <script src="../js/three/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="../js/three/examples/js/controls/OrbitControls.js"></script>
     <!-- 后处理基础组件 - 必须按此顺序引入 -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/postprocessing/Pass.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/shaders/CopyShader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/postprocessing/ShaderPass.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/postprocessing/EffectComposer.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/postprocessing/RenderPass.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+    <script src="../js/three/examples/js/postprocessing/Pass.js"></script>
+    <script src="../js/three/examples/js/shaders/CopyShader.js"></script>
+    <script src="../js/three/examples/js/shaders/LuminosityHighPassShader.js"></script>
+    <script src="../js/three/examples/js/postprocessing/ShaderPass.js"></script>
+    <script src="../js/three/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="../js/three/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="../js/three/examples/js/postprocessing/UnrealBloomPass.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/loaders/RGBELoader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/utils/PMREMGenerator.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/helpers/RectAreaLightHelper.js"></script>
+    <script src="../js/three/examples/js/loaders/RGBELoader.js"></script>
+    <script src="../js/three/examples/js/helpers/RectAreaLightHelper.js"></script>
 
     
     <script>
@@ -137,17 +136,17 @@
         }
         // 添加HDR环境贴图
         const hdrLoader = new THREE.RGBELoader();
-        hdrLoader.load('templates/hdr_env.hdr', function(texture) {
-            texture.mapping = THREE.EquirectangularReflectionMapping;
-            scene.environment = texture;  // 这将影响所有PBR材质
+        // hdrLoader.load('templates/hdr_env.hdr', function(texture) {
+        //     texture.mapping = THREE.EquirectangularReflectionMapping;
+        //     scene.environment = texture;  // 这将影响所有PBR材质
             
-            // 创建间接光照
-            const pmremGenerator = new THREE.PMREMGenerator(renderer);
-            pmremGenerator.compileEquirectangularShader();
-            const envMap = pmremGenerator.fromEquirectangular(texture).texture;
-            scene.environment = envMap;
-            pmremGenerator.dispose();
-        });
+        //     // 创建间接光照
+        //     const pmremGenerator = new THREE.PMREMGenerator(renderer);
+        //     pmremGenerator.compileEquirectangularShader();
+        //     const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+        //     scene.environment = envMap;
+        //     pmremGenerator.dispose();
+        // });
         let lightsetup ={
             "frontLight":{"posx":0,"posy":0,"posz":0,"color":0x222222,"density":0},
             "backLight":{"posx":0,"posy":4,"posz":-4,"color":0xFFFFFF,"density":0},

@@ -7,12 +7,11 @@
 
     <script src="../css/tailwind.css"></script>
     <!-- <link href ="css/tailwind.css" rel="stylesheet"> -->
-    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
     <link href="css/style.css" rel="stylesheet">
     <script src="../js/ipcontroller.js"></script>   
     <script src="./js/load-duck-assistant.js"></script>
-    <!-- <script src="./js/product_configure.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
 
 </head>
@@ -829,58 +828,61 @@
     <script>
         // 向后端请求产品状态数据并更新业务展示
         function updateBusinessSections() {
-            const command = ip + '/get_siteproduct_info';
-            fetch(command, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    'req': 'none'
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const result = JSON.parse(data.output).Result;
-                    const productFeatures = result.productfeatures;
-                    
-                    // 分类功能
-                    const categorizedFeatures = {
-                        '知识宇宙': [],
-                        '行业纵横': [],
-                        '智驾军火库': []
-                    };
-                    
-                    // 根据Category分类功能
-                    productFeatures.forEach(feature => {
-                        if (categorizedFeatures[feature.Category]) {
-                            categorizedFeatures[feature.Category].push(feature);
-                        }
-                    });
-                    
-                    // 更新ADAS知识库section
-                    updateSectionFeatures(
-                        'knowledge-base-section',
-                        categorizedFeatures['知识宇宙']
-                    );
-                    
-                    // 更新ADAS对标库section
-                    updateSectionFeatures(
-                        'benchmark-section',
-                        categorizedFeatures['行业纵横']
-                    );
-                    
-                    // 更新ADAS配置工具section
-                    updateSectionFeatures(
-                        'configurator-section',
-                        categorizedFeatures['智驾军火库']
-                    );
+            // console.log(products_config);
+
+            const result = products_config;
+            const productFeatures = result.productfeatures;
+            
+            // 分类功能
+            const categorizedFeatures = {
+                '知识宇宙': [],
+                '行业纵横': [],
+                '智驾军火库': []
+            };
+            
+            // 根据Category分类功能
+            productFeatures.forEach(feature => {
+                if (categorizedFeatures[feature.Category]) {
+                    categorizedFeatures[feature.Category].push(feature);
                 }
-            })
-            .catch(error => {
-                console.error('获取产品信息失败:', error);
             });
+            
+            // 更新ADAS知识库section
+            updateSectionFeatures(
+                'knowledge-base-section',
+                categorizedFeatures['知识宇宙']
+            );
+            
+            // 更新ADAS对标库section
+            updateSectionFeatures(
+                'benchmark-section',
+                categorizedFeatures['行业纵横']
+            );
+            
+            // 更新ADAS配置工具section
+            updateSectionFeatures(
+                'configurator-section',
+                categorizedFeatures['智驾军火库']
+            );
+            // const command = ip + '/get_siteproduct_info';
+            // fetch(command, {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json'
+            //     },
+            //     body: JSON.stringify({
+            //         'req': 'none'
+            //     })
+            // })
+            // .then(response => response.json())
+            // .then(data => {
+            //     if (data.success) {
+                    
+            //     }
+            // })
+            // .catch(error => {
+            //     console.error('获取产品信息失败:', error);
+            // });
         }
         
         // 更新section的功能列表

@@ -1,0 +1,16 @@
+/* 本地字体定义 */
+@font-face {
+    font-family: 'Orbitron';
+    src: url('orbitron-variable.woff2') format('woff2-variations');
+    font-weight: 400 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'JetBrains Mono';
+    src: url('jetbrains-mono-variable.woff2') format('woff2-variations');
+    font-weight: 400 500;
+    font-style: normal;
+    font-display: swap;
+}

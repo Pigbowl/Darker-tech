@@ -1,3 +1,4 @@
+
 // 功能链接管理器 - 用于管理所有页面中的功能链接状态
 class FunctionLinkManager {
     constructor() {
@@ -7,22 +8,22 @@ class FunctionLinkManager {
     }
 
     // 初始化函数 - 入口点
-    init() {
+    async init() {
         // 确保DOM加载完成
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.processLinks());
         } else {
-            this.processLinks();
+            await this.processLinks();
         }
     }
 
     // 处理所有功能链接
-    processLinks() {
+    async processLinks() {
         try {            
-            // // 检查deploy_mode变量，如果为test，则不进行任何禁用操作
-            // if (typeof deploy_mode !== 'undefined' && deploy_mode === 'test') {
-            //     return;
-            // }
+            // 检查deploy_mode变量，如果为test，则不进行任何禁用操作
+            if (typeof deploy_mode !== 'undefined' && deploy_mode === 'test') {
+                return;
+            }
             
             // 先检查DOM中是否有func_link元素
             const funcLinks = document.querySelectorAll('.func_link, .button_func_link');
@@ -41,7 +42,7 @@ class FunctionLinkManager {
             }
             
             // 获取功能上线管理数据
-            const functionData = this.getFunctionData();
+            const functionData = await this.getFunctionData();
             if (!functionData) {
                 return;
             }
@@ -82,16 +83,37 @@ class FunctionLinkManager {
         }
     }
 
+    // 动态加载product_configure.js文件
+    loadProductConfigure() {
+        return new Promise((resolve, reject) => {
+            // 检查是否已经加载过
+            if (typeof products_config !== 'undefined') {
+                resolve();
+                return;
+            }
+
+            // 创建script标签
+            const script = document.createElement('script');
+            script.src = '/js/product_configure.js';
+            script.onload = resolve;
+            script.onerror = reject;
+            document.head.appendChild(script);
+        });
+    }
+
     // 从session获取功能数据，如果不存在则从全局变量products_config获取
-    getFunctionData() {
+    async getFunctionData() {
         // 尝试从session获取数据
         const sessionData = sessionStorage.getItem(this.sessionKey);
         if (sessionData) {
             return JSON.parse(sessionData);
         }
 
-        // 从全局变量products_config获取数据
         try {
+            // 动态加载product_configure.js文件
+            await this.loadProductConfigure();
+            
+            // 从全局变量products_config获取数据
             if (typeof products_config !== 'undefined' && products_config.productfeatures) {
                 const result = products_config.productfeatures;
                 // 将数据存入session
@@ -203,11 +225,11 @@ class FunctionLinkManager {
     }
 
     // 手动刷新功能数据（例如在管理页面中使用）
-    refreshFunctionData() {
+    async refreshFunctionData() {
         // 清除session中的数据
         sessionStorage.removeItem(this.sessionKey);
         // 重新获取数据并处理链接
-        this.processLinks();
+        await this.processLinks();
     }
 }
 
