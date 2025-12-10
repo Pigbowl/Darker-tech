@@ -1,6 +1,6 @@
 
 // 产品配置信息 - 自动生成
-// 生成时间: 2025-12-10 09:56:21
+// 生成时间: 2025-12-11 00:30:21
 
 // 全局产品配置变量
 let products_config = {
@@ -147,6 +147,14 @@ let products_config = {
       "Category": "智驾论坛",
       "Description": "提供智能驾驶行业信息交流的空间",
       "CN_Name": "智驾论坛",
+      "Status": "未上线"
+    },
+    {
+      "ID": 19,
+      "Function": "General",
+      "Category": "通用信息",
+      "Description": "辅助网站工作",
+      "CN_Name": "通用信息",
       "Status": "未上线"
     }
   ],
@@ -304,9 +312,19 @@ let products_config = {
         "CN_Name": "智驾论坛",
         "Status": "未上线"
       }
+    ],
+    "通用信息": [
+      {
+        "ID": 19,
+        "Function": "General",
+        "Category": "通用信息",
+        "Description": "辅助网站工作",
+        "CN_Name": "通用信息",
+        "Status": "未上线"
+      }
     ]
   },
-  "version": "BETA-25-12-3",
+  "version": "BETA-25-12-1",
   "status": [
     "新产品上线",
     "未上线",
