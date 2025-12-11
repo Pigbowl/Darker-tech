@@ -1,30 +1,20 @@
 
 // 版本更新内容 - 自动生成
-// 生成时间: 2025-12-11 17:22:18
+// 生成时间: 2025-12-11 18:12:28
 
 // 全局版本内容变量
 let version_content = {
-  "version": "Beta-2512-6",
+  "version": "Beta-2512-7",
   "major_version": "Beta",
   "minor_year": 25,
   "minor_month": 12,
-  "temp_version": 6,
-  "release_date": "2025-12-11 17:22:18",
+  "temp_version": 7,
+  "release_date": "2025-12-11 18:12:28",
   "changes": [
     {
       "Belong_Feature": "功能星球",
       "Content": "发布\"功能星球”板块业务，提供ADAS用户功能知识信息",
       "Content_Type": "creation"
-    },
-    {
-      "Belong_Feature": "环境生成器",
-      "Content": "发布“环境生成器”功能",
-      "Content_Type": "creation"
-    },
-    {
-      "Belong_Feature": "通用信息",
-      "Content": "服务器无法连接-返回fail-to-fetch",
-      "Content_Type": "bug_fix"
     },
     {
       "Belong_Feature": "硬件星球",
@@ -42,14 +32,29 @@ let version_content = {
       "Content_Type": "creation"
     },
     {
+      "Belong_Feature": "环境生成器",
+      "Content": "发布“环境生成器”功能",
+      "Content_Type": "creation"
+    },
+    {
       "Belong_Feature": "传感器配置器",
       "Content": "发布“传感器配置器”功能，自行定义，快速绘制你的传感器配置图",
       "Content_Type": "creation"
     },
     {
+      "Belong_Feature": "环境生成器",
+      "Content": "3D预览功能无法使用",
+      "Content_Type": "bug_fix"
+    },
+    {
       "Belong_Feature": "通用修改",
       "Content": "替换后台服务器数据库",
       "Content_Type": "creation"
+    },
+    {
+      "Belong_Feature": "通用信息",
+      "Content": "服务器无法连接-返回fail-to-fetch",
+      "Content_Type": "bug_fix"
     }
   ]
 };

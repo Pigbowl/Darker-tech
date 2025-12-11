@@ -1,1 +1,1 @@
-version: Beta-25-12-6
+version: Beta-25-12-7
