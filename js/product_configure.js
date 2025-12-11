@@ -1,6 +1,6 @@
 
 // 产品配置信息 - 自动生成
-// 生成时间: 2025-12-11 16:23:26
+// 生成时间: 2025-12-11 17:22:40
 
 // 全局产品配置变量
 let products_config = {
@@ -11,7 +11,7 @@ let products_config = {
       "Category": "知识宇宙",
       "Description": "提供应用层功能知识",
       "CN_Name": "功能星球",
-      "Status": "正式版本上线"
+      "Status": "测试版本上线"
     },
     {
       "ID": 2,
@@ -19,7 +19,7 @@ let products_config = {
       "Category": "知识宇宙",
       "Description": "提供传感器知识和数据库",
       "CN_Name": "传感器星球",
-      "Status": "正式版本上线"
+      "Status": "测试版本上线"
     },
     {
       "ID": 3,
@@ -27,7 +27,7 @@ let products_config = {
       "Category": "知识宇宙",
       "Description": "提供硬件知识和数据库",
       "CN_Name": "硬件星球",
-      "Status": "正式版本上线"
+      "Status": "测试版本上线"
     },
     {
       "ID": 4,
@@ -35,7 +35,7 @@ let products_config = {
       "Category": "知识网络",
       "Description": "提供硬件知识和数据库",
       "CN_Name": "知识网络",
-      "Status": "正式版本上线"
+      "Status": "测试版本上线"
     },
     {
       "ID": 5,
@@ -166,7 +166,7 @@ let products_config = {
         "Category": "知识宇宙",
         "Description": "提供应用层功能知识",
         "CN_Name": "功能星球",
-        "Status": "正式版本上线"
+        "Status": "测试版本上线"
       },
       {
         "ID": 2,
@@ -174,7 +174,7 @@ let products_config = {
         "Category": "知识宇宙",
         "Description": "提供传感器知识和数据库",
         "CN_Name": "传感器星球",
-        "Status": "正式版本上线"
+        "Status": "测试版本上线"
       },
       {
         "ID": 3,
@@ -182,7 +182,7 @@ let products_config = {
         "Category": "知识宇宙",
         "Description": "提供硬件知识和数据库",
         "CN_Name": "硬件星球",
-        "Status": "正式版本上线"
+        "Status": "测试版本上线"
       },
       {
         "ID": 5,
@@ -208,7 +208,7 @@ let products_config = {
         "Category": "知识网络",
         "Description": "提供硬件知识和数据库",
         "CN_Name": "知识网络",
-        "Status": "正式版本上线"
+        "Status": "测试版本上线"
       }
     ],
     "行业纵横": [
@@ -324,7 +324,7 @@ let products_config = {
       }
     ]
   },
-  "version": "Alpha-25-12-5",
+  "version": "Beta-25-12-6",
   "status": [
     "新产品上线",
     "未上线",
