@@ -2,6 +2,7 @@
 function loadDuckAssistant() {
 
     let parenthtml = window.parent.location.pathname;
+
     if (deploy_mode != 'full'){
         mainpageaddress = ['/index.html','/index.html#contact']
     }else{
