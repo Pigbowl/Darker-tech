@@ -1,1 +1,1 @@
-version: fix assitant appearance issue
+version: fix duck-assistance-ssiue
