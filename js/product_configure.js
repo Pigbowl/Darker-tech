@@ -1,6 +1,6 @@
 
 // 产品配置信息 - 自动生成
-// 生成时间: 2025-12-14 22:13:45
+// 生成时间: 2025-12-14 22:16:21
 
 // 全局产品配置变量
 let products_config = {
@@ -324,7 +324,7 @@ let products_config = {
       }
     ]
   },
-  "version": "aaaa-Quick_Fix",
+  "version": "DarkerDuckFixation-Quick_Fix",
   "status": [
     "新产品上线",
     "未上线",
