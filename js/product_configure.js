@@ -1,6 +1,6 @@
 
 // 产品配置信息 - 自动生成
-// 生成时间: 2025-12-14 21:56:50
+// 生成时间: 2025-12-14 21:59:40
 
 // 全局产品配置变量
 let products_config = {
@@ -324,7 +324,7 @@ let products_config = {
       }
     ]
   },
-  "version": "FIx darkerduct apperance-Quick_Fix",
+  "version": "Duck Fix-Quick_Fix",
   "status": [
     "新产品上线",
     "未上线",
