@@ -4,12 +4,13 @@ function loadDuckAssistant() {
     let parenthtml = window.parent.location.pathname;
 
     if (deploy_mode != 'full'){
-        mainpageaddress = ['/index.html','/index.html#contact']
+        mainpageaddress = ['/index.html','/index.html#contact','/index.html#about']
     }else{
-        mainpageaddress = '/'
+        mainpageaddress = ['/','/index.html#contact','/index.html#about']
+        darkurl = './Pages/darker_assistance.html';
     }
 
-    if (parenthtml == mainpageaddress[0] || parenthtml == mainpageaddress[1]){
+    if (parenthtml == mainpageaddress[0] || parenthtml == mainpageaddress[1] || parenthtml == mainpageaddress[2]){
         darkurl = './Pages/darker_assistance.html';
     }else{
         darkurl = 'darker_assistance.html';
