@@ -1,1 +1,1 @@
-version: fix duck issue
+version: fix assitant appearance issue
