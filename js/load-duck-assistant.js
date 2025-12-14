@@ -3,12 +3,12 @@ function loadDuckAssistant() {
 
     let parenthtml = window.parent.location.pathname;
     if (deploy_mode != 'full'){
-        mainpageaddress = '/index.html'
+        mainpageaddress = ['/index.html','/index.html#contact']
     }else{
         mainpageaddress = '/'
     }
 
-    if (parenthtml == mainpageaddress){
+    if (parenthtml == mainpageaddress[0] || parenthtml == mainpageaddress[1]){
         darkurl = './Pages/darker_assistance.html';
     }else{
         darkurl = 'darker_assistance.html';
