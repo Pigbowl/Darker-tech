@@ -1,1 +1,1 @@
-version: 1.修复darkerassitance无法显示问题
+version: fix duck issue
