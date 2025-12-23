@@ -631,7 +631,6 @@
                             sessionStorage.setItem('access_adding', '0');
                             sessionStorage.setItem('access_modification', '0');
                         }
-                        console.log(userlogin.UserInfo.userdata)
                         sessionStorage.setItem('userType', userType);
                         sessionStorage.setItem('userData',JSON.stringify(userlogin.UserInfo))
                         // 延迟显示提示后跳转
@@ -760,7 +759,7 @@
                     // 该邮箱已注册为用户
                     showEmailExistsModal();
                     return;
-                } else if (existingUser.is_user === 0 && existingUser.isSubscribe === 1) {
+                } else if ((existingUser.is_user === 0 || existingUser.is_user === null) && existingUser.isSubscribe === 1){
                     // 该邮箱已订阅但未注册为用户
                     // 存储当前注册信息
                     currentRegisterInfo = {

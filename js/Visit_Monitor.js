@@ -30,7 +30,8 @@
             };
 
             const uservisit = {}
-            if (sessionStorage.userData){
+
+            if (sessionStorage.userData && !JSON.parse(sessionStorage.userData).UserLevel.startsWith('Manager')){
                 uservisit["userid"] = JSON.parse(sessionStorage.userData).ID
                 uservisit["page"] = data.page_url.split('/').pop();
             }

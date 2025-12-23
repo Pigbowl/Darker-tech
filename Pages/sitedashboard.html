@@ -83,7 +83,31 @@
         }
         
         // 页面加载时检查认证状态
-        document.addEventListener('DOMContentLoaded', checkAuth);
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            
+            // 移动端菜单交互
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            if (mobileMenuBtn && mobileMenu) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+            
+            // 移动端退出登录按钮
+            const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+            
+            // 确保移动端和桌面端退出登录行为一致
+            if (mobileLogoutBtn && logoutBtn) {
+                // 复制桌面端退出登录按钮的点击事件到移动端按钮
+                mobileLogoutBtn.addEventListener('click', () => {
+                    logoutBtn.click();
+                });
+            }
+        });
     </script>
     
     <!-- 仪表板容器 -->
@@ -96,7 +120,13 @@
                     <h1 class="text-xl font-bold text-white">站点管理后台</h1>
                 </div>
                 
-                <div class="flex items-center space-x-4">
+                <!-- 移动端汉堡菜单按钮 -->
+                <button id="mobile-menu-btn" class="md:hidden text-gray-300 hover:text-neon transition-colors text-xl">
+                    <i class="fa fa-bars"></i>
+                </button>
+                
+                <!-- 导航链接容器 -->
+                <div id="nav-links" class="hidden md:flex items-center space-x-4">
                     <a href="../../index.html" class="text-white hover:text-logobuttom transition-colors duration-300">首页</a>
                     <a href="./DBManipTool.html" class="text-white hover:text-logobuttom transition-colors duration-300">数据库操作工具</a>
                     <div class="hidden md:flex items-center space-x-2 text-sm text-gray-400">
@@ -105,6 +135,21 @@
                     </div>
                     <button id="logout-btn" class="text-gray-300 hover:text-neon transition-colors">
                         <i class="fa fa-sign-out text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 移动端导航菜单 -->
+            <div id="mobile-menu" class="md:hidden glass-effect border-t border-gray-800 hidden">
+                <div class="container mx-auto px-4 py-3 space-y-3">
+                    <a href="../../index.html" class="block py-2 text-white hover:text-logobuttom transition-colors duration-300">首页</a>
+                    <a href="./DBManipTool.html" class="block py-2 text-white hover:text-logobuttom transition-colors duration-300">数据库操作工具</a>
+                    <div class="flex items-center space-x-2 text-sm text-gray-400 py-2">
+                        <i class="fa fa-user-circle-o text-neon"></i>
+                        <span id="mobile-current-username">Admin</span>
+                    </div>
+                    <button id="mobile-logout-btn" class="w-full text-left py-2 text-gray-300 hover:text-neon transition-colors">
+                        <i class="fa fa-sign-out mr-2"></i>退出登录
                     </button>
                 </div>
             </div>
@@ -118,7 +163,7 @@
                     <i class="fa fa-bar-chart text-neon mr-2"></i>站点统计
                 </h2>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
                     <!-- 站点访问情况卡片 -->
                     <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02] flex flex-col min-h-[180px] cursor-pointer card" data-card="visits">
                         <div class="flex justify-between items-start">
@@ -265,7 +310,7 @@
                 
                 <div class="glass-effect rounded-lg p-6 neon-border overflow-hidden">
                     <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-800">
+                        <table class="min-w-full divide-y divide-gray-800 min-w-[600px]">
                             <thead>
                                 <tr>
                                     <th scope="col" class="px-6 py-3 text-left text-s font-medium text-gray-400 uppercase tracking-wider">
@@ -302,10 +347,10 @@
                         <i class="fa fa-list-alt text-issue mr-2"></i>问题列表
                     </h2>
                     <div class="flex flex-wrap items-center gap-3">
-                        <button id="filter-toggle" class="px-4 py-2 border border-gray-700 text-gray-300 hover:text-neon hover:border-neon rounded transition-all flex items-center">
+                        <button id="filter-toggle" class="px-4 py-3 border border-gray-700 text-gray-300 hover:text-neon hover:border-neon rounded transition-all flex items-center">
                             <i class="fa fa-filter mr-2"></i>筛选
                         </button>
-                        <button id="clear-filters" class="px-4 py-2 border border-gray-700 text-gray-300 hover:text-neon hover:border-neon rounded transition-all flex items-center hidden">
+                        <button id="clear-filters" class="px-4 py-3 border border-gray-700 text-gray-300 hover:text-neon hover:border-neon rounded transition-all flex items-center hidden">
                             <i class="fa fa-times mr-2"></i>清除筛选
                         </button>
                         <!-- <button id="add-issue-btn" class="px-4 py-2 bg-neon hover:bg-primary/80 text-dark font-medium rounded transition-all flex items-center">
@@ -316,7 +361,7 @@
                 
                 <!-- 筛选条件面板 -->
                 <div id="filter-panel" class="glass-effect rounded-lg p-6 mb-4 issue-border hidden">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         <!-- 问题ID筛选 -->
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">问题ID</label>
@@ -403,7 +448,7 @@
                     </div>
                     
                     <div class="flex justify-end mt-6">
-                        <button id="apply-filters" class="px-4 py-2 bg-neon hover:bg-primary/80 text-dark font-medium rounded transition-all">
+                        <button id="apply-filters" class="px-4 py-3 bg-neon hover:bg-primary/80 text-dark font-medium rounded transition-all">
                             应用筛选
                         </button>
                     </div>
@@ -411,7 +456,7 @@
                 
                 <div class="glass-effect rounded-lg p-6 issue-border overflow-hidden">
                     <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-800">
+                        <table class="min-w-full divide-y divide-gray-800 min-w-[600px]">
                             <thead>
                                 <tr>
                                     <th scope="col" class="px-6 py-3 text-left text-s font-medium text-gray-400 uppercase tracking-wider">
@@ -451,10 +496,10 @@
                             显示 <span id="showing-range">0-0</span> 共 <span id="total-items">0</span> 项
                         </div>
                         <div class="flex space-x-2">
-                            <button id="prev-page" class="px-3 py-1 border border-gray-700 rounded text-gray-400 hover:text-neon hover:border-neon transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            <button id="prev-page" class="px-4 py-2 border border-gray-700 rounded text-gray-400 hover:text-neon hover:border-neon transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
                                 <i class="fa fa-chevron-left"></i>
                             </button>
-                            <button id="next-page" class="px-3 py-1 border border-gray-700 rounded text-gray-400 hover:text-neon hover:border-neon transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            <button id="next-page" class="px-4 py-2 border border-gray-700 rounded text-gray-400 hover:text-neon hover:border-neon transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
                                 <i class="fa fa-chevron-right"></i>
                             </button>
                         </div>
@@ -469,10 +514,10 @@
                         <i class="fa fa-lightbulb-o text-advice mr-2"></i>建议列表
                     </h2>
                     <div class="flex flex-wrap items-center gap-3">
-                        <button id="advice-filter-toggle" class="px-4 py-2 border border-gray-700 text-gray-300 hover:text-neon hover:border-neon rounded transition-all flex items-center">
+                        <button id="advice-filter-toggle" class="px-4 py-3 border border-gray-700 text-gray-300 hover:text-neon hover:border-neon rounded transition-all flex items-center">
                             <i class="fa fa-filter mr-2"></i>筛选
                         </button>
-                        <button id="advice-clear-filters" class="px-4 py-2 border border-gray-700 text-gray-300 hover:text-neon hover:border-neon rounded transition-all flex items-center hidden">
+                        <button id="advice-clear-filters" class="px-4 py-3 border border-gray-700 text-gray-300 hover:text-neon hover:border-neon rounded transition-all flex items-center hidden">
                             <i class="fa fa-times mr-2"></i>清除筛选
                         </button>
                     </div>
@@ -480,7 +525,7 @@
                 
                 <!-- 建议筛选条件面板 -->
                 <div id="advice-filter-panel" class="glass-effect rounded-lg p-6 mb-4 advice-border hidden">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         <!-- 建议ID筛选 -->
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">建议ID</label>
@@ -563,7 +608,7 @@
                     </div>
                     
                     <div class="flex justify-end mt-6">
-                        <button id="advice-apply-filters" class="px-4 py-2 bg-neon hover:bg-primary/80 text-dark font-medium rounded transition-all">
+                        <button id="advice-apply-filters" class="px-4 py-3 bg-neon hover:bg-primary/80 text-dark font-medium rounded transition-all">
                             应用筛选
                         </button>
                     </div>
@@ -571,7 +616,7 @@
                 
                 <div class="glass-effect rounded-lg p-6 advice-border overflow-hidden">
                     <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-800">
+                        <table class="min-w-full divide-y divide-gray-800 min-w-[600px]">
                             <thead>
                                 <tr>
                                     <th scope="col" class="px-6 py-3 text-left text-s font-medium text-gray-400 uppercase tracking-wider">
@@ -611,10 +656,10 @@
                             显示 <span id="advice-showing-range">0-0</span> 共 <span id="advice-total-items">0</span> 项
                         </div>
                         <div class="flex space-x-2">
-                            <button id="advice-prev-page" class="px-3 py-1 border border-gray-700 rounded text-gray-400 hover:text-neon hover:border-neon transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            <button id="advice-prev-page" class="px-4 py-2 border border-gray-700 rounded text-gray-400 hover:text-neon hover:border-neon transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
                                 <i class="fa fa-chevron-left"></i>
                             </button>
-                            <button id="advice-next-page" class="px-3 py-1 border border-gray-700 rounded text-gray-400 hover:text-neon hover:border-neon transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            <button id="advice-next-page" class="px-4 py-2 border border-gray-700 rounded text-gray-400 hover:text-neon hover:border-neon transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
                                 <i class="fa fa-chevron-right"></i>
                             </button>
                         </div>
@@ -647,13 +692,13 @@
                         <i class="fa fa-rocket text-blue-400 mr-2"></i>待上线点
                     </h2>
                     <div class="flex flex-wrap items-center gap-3">
-                        <button id="add-tobepub-btn" class="px-4 py-2 bg-neon hover:bg-primary/80 text-dark font-medium rounded transition-all flex items-center">
+                        <button id="add-tobepub-btn" class="px-4 py-3 bg-neon hover:bg-primary/80 text-dark font-medium rounded transition-all flex items-center">
                             <i class="fa fa-plus mr-2"></i>添加待上线点
                         </button>
-                        <button id="tobepub-filter-toggle" class="px-4 py-2 border border-gray-700 text-gray-300 hover:text-neon hover:border-neon rounded transition-all flex items-center">
+                        <button id="tobepub-filter-toggle" class="px-4 py-3 border border-gray-700 text-gray-300 hover:text-neon hover:border-neon rounded transition-all flex items-center">
                             <i class="fa fa-filter mr-2"></i>筛选
                         </button>
-                        <button id="tobepub-clear-filters" class="px-4 py-2 border border-gray-700 text-gray-300 hover:text-neon hover:border-neon rounded transition-all flex items-center hidden">
+                        <button id="tobepub-clear-filters" class="px-4 py-3 border border-gray-700 text-gray-300 hover:text-neon hover:border-neon rounded transition-all flex items-center hidden">
                             <i class="fa fa-times mr-2"></i>清除筛选
                         </button>
                     </div>
@@ -661,7 +706,7 @@
                 
                 <!-- 待上线点筛选条件面板 -->
                 <div id="tobepub-filter-panel" class="glass-effect rounded-lg p-6 mb-4 neon-border hidden">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         <!-- 待上线点ID筛选 -->
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">ID</label>
@@ -744,7 +789,7 @@
                     </div>
                     
                     <div class="flex justify-end mt-6">
-                        <button id="tobepub-apply-filters" class="px-4 py-2 bg-neon hover:bg-primary/80 text-dark font-medium rounded transition-all">
+                        <button id="tobepub-apply-filters" class="px-4 py-3 bg-neon hover:bg-primary/80 text-dark font-medium rounded transition-all">
                             应用筛选
                         </button>
                     </div>
@@ -752,7 +797,7 @@
                 
                 <div class="glass-effect rounded-lg p-6 neon-border overflow-hidden">
                     <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-800">
+                        <table class="min-w-full divide-y divide-gray-800 min-w-[600px]">
                             <thead>
                                 <tr>
                                     <th scope="col" class="px-6 py-3 text-left text-s font-medium text-gray-400 uppercase tracking-wider">
@@ -789,10 +834,10 @@
                             显示 <span id="tobepub-showing-range">0-0</span> 共 <span id="tobepub-total-items">0</span> 项
                         </div>
                         <div class="flex space-x-2">
-                            <button id="tobepub-prev-page" class="px-3 py-1 border border-gray-700 rounded text-gray-400 hover:text-neon hover:border-neon transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            <button id="tobepub-prev-page" class="px-4 py-2 border border-gray-700 rounded text-gray-400 hover:text-neon hover:border-neon transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
                                 <i class="fa fa-chevron-left"></i>
                             </button>
-                            <button id="tobepub-next-page" class="px-3 py-1 border border-gray-700 rounded text-gray-400 hover:text-neon hover:border-neon transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            <button id="tobepub-next-page" class="px-4 py-2 border border-gray-700 rounded text-gray-400 hover:text-neon hover:border-neon transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
                                 <i class="fa fa-chevron-right"></i>
                             </button>
                         </div>
@@ -2190,11 +2235,6 @@
                     
         }
         
-
-    
-
-
-
         // 登录成功后显示仪表板并加载数据
         getvisitstat();
         get_task_tobepub(); // 获取待上线点数据
