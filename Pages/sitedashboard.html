@@ -62,57 +62,32 @@
     </style>
 </head>
 <body class="cyber-bg text-gray-100 font-inter min-h-screen flex flex-col">
-    <!-- 登录界面容器 -->
-    <div id="login-container" class="min-h-screen flex items-center justify-center p-4">
-        <div class="glass-effect rounded-lg p-8 w-full max-w-md neon-border">
-            <a href="../../index.html" class="text-white hover:text-logobuttom transition-colors duration-300">返回首页</a>
-            <div class="text-center mb-8">
-                <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-neon">
-                    <i class="fa fa-cogs mr-2"></i>站点管理后台
-                </h2>
-                <p class="text-gray-400 mt-2">请输入管理员凭据</p>
-                
-            </div>
+    <!-- 检查认证状态 -->
+    <script>
+        // 检查认证状态
+        function checkAuth() {
+            const authStatus = sessionStorage.getItem('authenticated');
+            const expiryTime = sessionStorage.getItem('auth_expiry');
+            const currentTime = new Date().getTime();
+            const userType = sessionStorage.getItem('userType');
             
-            <form id="login-form" class="space-y-6">
-                <div>
-                    <label for="username" class="block text-sm font-medium text-gray-300 mb-1">用户名</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                            <i class="fa fa-user"></i>
-                        </span>
-                        <input type="text" id="username" 
-                               class="block w-full pl-10 pr-3 py-2 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-neon focus:border-transparent text-gray-100" 
-                               placeholder="输入用户名">
-                    </div>
-                </div>
-                
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-300 mb-1">密码</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                            <i class="fa fa-lock"></i>
-                        </span>
-                        <input type="password" id="password" 
-                               class="block w-full pl-10 pr-3 py-2 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-neon focus:border-transparent text-gray-100" 
-                               placeholder="输入密码">
-                    </div>
-                </div>
-                
-                <div class="text-red-500 text-sm hidden" id="error-message">
-                    用户名或密码错误，请重试
-                </div>
-                
-                <button type="submit" 
-                        class="w-full bg-neon hover:bg-primary/80 text-dark font-bold py-3 px-4 rounded transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center">
-                    <i class="fa fa-sign-in mr-2"></i>登录
-                </button>
-            </form>
-        </div>
-    </div>
+            const isAuthenticated = authStatus === 'true' && 
+                                  expiryTime && 
+                                  currentTime < parseInt(expiryTime) &&
+                                  userType && userType.startsWith('Manager');
+                                  
+            if (!isAuthenticated) {
+                // 未认证或不是管理员，跳转到登录页面
+                window.location.href = './login.html';
+            }
+        }
+        
+        // 页面加载时检查认证状态
+        document.addEventListener('DOMContentLoaded', checkAuth);
+    </script>
     
-    <!-- 仪表板容器（默认隐藏） -->
-    <div id="dashboard-container" class="hidden flex flex-col min-h-screen">
+    <!-- 仪表板容器 -->
+    <div id="dashboard-container" class="flex flex-col min-h-screen">
         <!-- 顶部导航栏 -->
         <header class="glass-effect border-b border-gray-800 sticky top-0 z-50">
             <div class="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -874,7 +849,7 @@
                 </div>
                 
                 <div class="flex justify-end space-x-3 pt-4">
-                    <button type="button" id="cancel-issue" class="px-4 py-2 border border-gray-700 rounded text-gray-400 hover:text-white hover:border-gray-500 transition-colors">
+                    <button type="button" id="cancel-issue" class="px-4 py-2 border border-gray-700 text-gray-400 hover:text-white hover:border-gray-500 transition-colors">
                         取消
                     </button>
                     <button type="submit" class="px-4 py-2 bg-neon hover:bg-primary/80 text-dark font-medium rounded transition-all">
@@ -924,7 +899,7 @@
                 </div>
                 
                 <div class="flex justify-end space-x-3 pt-4">
-                    <button type="button" id="advice-cancel-btn" class="px-4 py-2 border border-gray-700 rounded text-gray-400 hover:text-white hover:border-gray-500 transition-colors">
+                    <button type="button" id="advice-cancel-btn" class="px-4 py-2 border border-gray-700 text-gray-400 hover:text-white hover:border-gray-500 transition-colors">
                         取消
                     </button>
                     <button type="submit" class="px-4 py-2 bg-neon hover:bg-primary/80 text-dark font-medium rounded transition-all">
@@ -964,7 +939,7 @@
                 </div>
                 
                 <div class="flex justify-end space-x-3 pt-4">
-                    <button type="button" id="product-cancel-btn" class="px-4 py-2 border border-gray-700 rounded text-gray-400 hover:text-white hover:border-gray-500 transition-colors">
+                    <button type="button" id="product-cancel-btn" class="px-4 py-2 border border-gray-700 text-gray-400 hover:text-white hover:border-gray-500 transition-colors">
                         取消
                     </button>
                     <button type="submit" class="px-4 py-2 bg-neon hover:bg-primary/80 text-dark font-medium rounded transition-all">
@@ -1124,7 +1099,7 @@
         const tobepubCancelBtn = document.getElementById('tobepub-cancel-btn');
         const tobepubForm = document.getElementById('tobepub-form');
         const addTobepubBtn = document.getElementById('add-tobepub-btn');
-        
+
         // 问题数据
         let issues = [];
         let total_visit = 0;
@@ -1246,6 +1221,7 @@
                     'Content-Type':'application/json'
                 },
                 body:JSON.stringify({
+                    datatype:'operation',
                     'scriptName':'get_all_recording'
                 })
             }).then(response=>response.json()).then(data=>{
@@ -1276,6 +1252,7 @@
                     'Content-Type':'application/json'
                 },
                 body:JSON.stringify({
+                    datatype:'operation',
                     'req':'none'
                 })
             }).then(response=>response.json()).then(data=>{
@@ -1702,8 +1679,37 @@
             }
         }
         
+        // 清除认证信息
+        function clearAuth() {
+            console.log('清除认证信息...');
+            sessionStorage.removeItem('authenticated');
+            sessionStorage.removeItem('auth_expiry');
+            sessionStorage.removeItem('username');
+            sessionStorage.removeItem('userType');
+            // 清除权限相关信息
+            sessionStorage.removeItem('access_allright');
+            sessionStorage.removeItem('adding');
+            sessionStorage.removeItem('access_modification');
+            console.log('认证信息和权限信息已完全清除');
+        }
+        
+        // 处理登出
+        function handleLogout() {
+            // 清除所有认证相关数据
+            clearAuth();
+            
+            // 跳转到登录页面
+            window.location.href = './login.html';
+            
+            // 显示登出成功提示
+            showToast('info', '已成功登出');
+        }
+        
         // 初始化
         document.addEventListener('DOMContentLoaded', () => {
+            // 绑定登出按钮事件
+            logoutBtn.addEventListener('click', handleLogout);
+            
             // 卡片点击事件
             const cards = document.querySelectorAll('.card');
             cards.forEach(card => {
@@ -1715,8 +1721,7 @@
                 });
             });
             // 绑定事件
-            loginForm.addEventListener('submit', handleLogin);
-            logoutBtn.addEventListener('click', handleLogout);
+
             // addIssueBtn.addEventListener('click', openAddIssueModal);
             issuecloseModal.addEventListener('click', closeIssueModal);
             cancelIssue.addEventListener('click', closeIssueModal);
@@ -1941,12 +1946,14 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
+                        datatype:'operation',
+                        taskdata:{
                         "Belong_Feature": Item.Belong_Feature,
                         "Content": Item.Content,
                         "Planned_Release_Date": Item.Planned_Release_Date,
                         "Item_Status": Item.Item_Status,
                         "Content_Type": type,
-                        "BUG_ID": BUG_ID,
+                        "BUG_ID": BUG_ID},
                     }
                     ),
                 }).then(response=>response.json()).then(data=>{
@@ -2151,66 +2158,8 @@
                 return true;
             });
         }
-        
-        // 检查认证状态
-        function checkAuth() {
-            console.log('执行认证检查...');
-            const authStatus = sessionStorage.getItem('admin_authenticated');
-            const expiryTime = sessionStorage.getItem('admin_auth_expiry');
-            const currentTime = new Date().getTime();
-            
-            console.log('认证状态:', authStatus ? authStatus : '未设置');
-            console.log('过期时间:', expiryTime ? new Date(parseInt(expiryTime)).toLocaleString() : '无');
-            console.log('当前时间:', new Date(currentTime).toLocaleString());
-            
-            // 检查认证状态和是否过期
-            const isAuthenticated = authStatus === 'true' && 
-                                  expiryTime && 
-                                  currentTime < parseInt(expiryTime);
-                                  
-            if (isAuthenticated) {
-                console.log('认证有效，更新过期时间并显示仪表板');
-                // 更新过期时间（延长会话）
-                updateAuthExpiry();
-                getvisitstat();
-                get_product_status();
-                get_all_recording();
-                get_user_info();
-                get_task_tobepub(); // 获取待上线点数据
 
-                // 延迟 2 秒后再执行后续逻辑
-                setTimeout(() => {
-                    showDashboard();
-                    showToast('success', '登录成功');
-                }, 1000);
-                return true;
-            } else {
-                console.log('认证无效或已过期，显示登录界面');
-                // 只有在认证无效时才显示登录界面，不自动清除认证信息
-                // 这样可以保持同一个会话中的状态，避免重复登录
-                showLogin();
-                return false;
-            }
-        }
-        
-        // 更新认证过期时间
-        function updateAuthExpiry() {
-            const expiryTime = new Date().getTime() + (30 * 60 * 1000); // 30分钟后过期
-            sessionStorage.setItem('admin_auth_expiry', expiryTime.toString());
-        }
-        
-        // 清除认证信息
-        function clearAuth() {
-            console.log('清除认证信息...');
-            sessionStorage.removeItem('admin_authenticated');
-            sessionStorage.removeItem('admin_auth_expiry');
-            sessionStorage.removeItem('username');
-            // 清除权限相关信息
-            sessionStorage.removeItem('access_allright');
-            sessionStorage.removeItem('access_checking');
-            sessionStorage.removeItem('access_modification');
-            console.log('认证信息和权限信息已完全清除');
-        }
+
         
         // 获取北京时间字符串（格式：YYYY-MM-DDTHH:mm:ss）
         function getBeijingTimeString() {
@@ -2228,10 +2177,7 @@
         
         // 显示仪表板
         function showDashboard() {
-            console.log('显示仪表板...');
-            loginContainer.classList.add('hidden');
-            dashboardContainer.classList.remove('hidden');
-            
+
             // 更新显示的用户名
             const username = sessionStorage.getItem('username') || 'Admin';
             const usernameElement = document.getElementById('current-username');
@@ -2245,153 +2191,20 @@
         }
         
 
-        // 向后端发送登录验证请求
-        function loginverification(username, password) {
-            // 测试日志
-            // console.log('执行登录验证:', { username, password });
-            
-            return new Promise((resolve, reject) => {
-                const command = ip + '/manager_login';
-                
-                fetch(command, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        login: {
-                            name: username,
-                            password: password
-                        }
-                    })
-                })
-                .then(response => {
-                    // console.log('响应状态:', response.status);
-                    if (!response.ok) {
-                        throw new Error(`HTTP错误: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    // console.log('响应数据:', data);
-                    // 检查响应格式是否符合要求
-                    if (data && typeof data === 'object') {
-                        // 根据用户要求：success为True且Status为true时验证通过
-                        const isSuccess = data.success === true && data.output && data.output.status === true;
-                        console.log('验证结果:', isSuccess ? '通过' : '失败');
-                        
-                        resolve({
-                            success: isSuccess,
-                            data: data
-                        });
-                    } else {
-                        reject(new Error('无效的响应格式'));
-                    }
-                })
-                .catch(error => {
-                    console.error("登录验证过程中出错:", error);
-                    // 在开发环境中，如果后端服务未运行，可以添加模拟响应以便测试
-                    /* 模拟测试代码（可选，仅用于开发测试）
-                    if (error.message.includes('Network')) {
-                        console.log('使用模拟响应进行测试');
-                        // 模拟成功响应
-                        const mockSuccess = username === 'test' && password === 'test';
-                        const mockResponse = {
-                            success: mockSuccess,
-                            output: {
-                                status: mockSuccess,
-                                message: mockSuccess ? '验证成功' : '验证失败'
-                            }
-                        };
-                        resolve({
-                            success: mockSuccess,
-                            data: mockResponse
-                        });
-                    } else {
-                        reject(error);
-                    }
-                    */
-                    reject(error);
-                });
-            });
-        }
+    
 
 
-        // 处理登录
-        function handleLogin(e) {
-            e.preventDefault();
-            
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value.trim();
-            
-            // 输入验证
-            if (!username || !password) {
-                errorMessage.textContent = '请输入用户名和密码';
-                errorMessage.classList.remove('hidden');
-                setTimeout(() => {
-                    errorMessage.classList.add('hidden');
-                }, 3000);
-                return;
-            }
-            
-            // 调用后端验证函数
-            loginverification(username, password)
-                .then(result => {
-                    if (result.success) {
-                        // 登录成功
-                        sessionStorage.setItem('admin_authenticated', 'true');
-                        sessionStorage.setItem('username', username); // 保存用户名
-                        
-                        // 存储权限信息到sessionStorage
-                        if (result.data && result.data.output && result.data.output.access) {
-                            const access = result.data.output.access;
-                            // 分别存储三个权限状态
-                            sessionStorage.setItem('access_allright', access.allright ? access.allright.toString() : '0');
-                            sessionStorage.setItem('adding', access.adding ? access.adding.toString() : '0');
-                            sessionStorage.setItem('access_modification', access.modification ? access.modification.toString() : '0');
-                            console.log('已存储权限信息:', {
-                                allright: access.allright,
-                                adding: access.adding,
-                                modification: access.modification
-                            });
-                        }
-                        
-                        updateAuthExpiry();
-                        // 登录成功后显示仪表板并加载数据
-                        getvisitstat();
-                        get_task_tobepub(); // 获取待上线点数据
-                        get_product_status();
-                        get_all_recording();
-                        get_user_info();
-                        // 延迟 2 秒后再执行后续逻辑
-                        setTimeout(() => {
-                            showDashboard();
-                            showToast('success', '登录成功');
-                        }, 1000);
-                    } else {
-                        if (result.data.output.error == 1){
-                            message = '用户名不存在，请重试'
-                        }else if (result.data.output.error == 2){
-                            message = '密码错误，请重试'
-                        }
-                        // 登录失败
-                        errorMessage.textContent = message;
-                        errorMessage.classList.remove('hidden');
-                        setTimeout(() => {
-                            errorMessage.classList.add('hidden');
-                        }, 3000);
-                    }
-                })
-                .catch(error => {
-                    // 处理验证过程中的错误
-                    console.error('登录验证失败:', error);
-                    errorMessage.textContent = '登录失败，请稍后重试';
-                    errorMessage.classList.remove('hidden');
-                    setTimeout(() => {
-                        errorMessage.classList.add('hidden');
-                    }, 3000);
-                });
-        }
+
+        // 登录成功后显示仪表板并加载数据
+        getvisitstat();
+        get_task_tobepub(); // 获取待上线点数据
+        get_product_status();
+        get_all_recording();
+        get_user_info();
+        // 延迟 2 秒后再执行后续逻辑
+        setTimeout(() => {
+            showDashboard();
+        }, 3000);
         
         // 处理登出
         function handleLogout() {
@@ -2405,8 +2218,8 @@
             issues = [];
             issue_static = { pending_issues: 0, solved_issues: 0 };
             
-            // 显示登录界面
-            showLogin();
+            // 跳转到登录页面
+            window.location.href = './login.html';
             
             // 重置登录表单
             loginForm.reset();
@@ -2834,6 +2647,7 @@
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
+                    datatype:'operation',
                     "table": mode,
                     "content":{
                         "Task_ID": taskId,
@@ -2920,7 +2734,6 @@
                     return 'bg-yellow-400/20 text-yellow-400';
                 case '开发中': 
                     return 'bg-blue-400/20 text-blue-400';
-                case '完成_待上线': 
                 case '完成,待上线': 
                     return 'bg-purple-400/20 text-purple-400';
                 case '已上线': 
@@ -3057,13 +2870,14 @@
         }
         
         function get_user_info(){
-            command = ip + '/get_user_info'
+            command = ip + '/get_all_users'
             fetch(command,{
                 method:'POST',
                 headers:{
                     'Content-Type':'application/json'
                 },
                 body:JSON.stringify({
+                    datatype:'operation',
                     'req':'none',
                     })
             }).then(response=>response.json()).then(data=>{
@@ -3071,7 +2885,6 @@
                     user_info = JSON.parse(data.output).Result.user;
                     user_number = JSON.parse(data.output).Result.user_count;
                     renderUsers(); // 渲染用户列表
-                    // showDashboard();
                 }
             })
         }
@@ -3357,13 +3170,16 @@
                     'Content-Type':'application/json'
                 },
                 body:JSON.stringify({
+                    datatype:'operation',
                     'req':'none',
+
                     })
             }).then(response=>response.json()).then(data=>{
                 if(data.success){
                     status_enum = JSON.parse(data.output).Result.status;
                     product_info = JSON.parse(data.output).Result.productfeatures;
                     available_products = product_info.filter(product => product.Status === '已上线').length;
+
                     renderProducts(); // 渲染产品列表
                 }
             })
@@ -3377,6 +3193,7 @@
                     'Content-Type':'application/json'
                 },
                 body:JSON.stringify({
+                    datatype:'operation',
                     'req':'none',
                     })
             }).then(response=>response.json()).then(data=>{
@@ -3397,6 +3214,7 @@
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
+                    datatype:'operation',
                     "ID": id,
                     "to_update": data
                 }
@@ -3419,6 +3237,7 @@
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
+                    datatype:'operation',
                     "ID": id,
                     "to_update": data
                 }
@@ -3465,7 +3284,6 @@
                         const futureDate = new Date();
                         futureDate.setDate(futureDate.getDate() + 7);
                         time = formatDate2(futureDate.toISOString());
-                        console.log(time)
                         NewItem = {
                             "Belong_Feature": name,
                             "Content": description,
@@ -3524,6 +3342,7 @@
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
+                    datatype:'operation',
                     "ID": id,
                 }
                 ),

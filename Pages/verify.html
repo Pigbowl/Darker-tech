@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>账户激活 - Darker-tech</title>
+    <!-- Tailwind CSS -->
+    <script src="../css/tailwind.css"></script>
+    <script src="../js/ipcontroller.js"></script>
+    <link href="../css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 配置Tailwind自定义颜色和字体 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#00e5ff',
+                        secondary: '#673ab7',
+                        darkAccent: '#1a1a2e',
+                        logobuttom: '#0a9396',
+                        dark: '#0f0f1a',
+                        neon: '#00e5ff',
+                        issue: '#acbd2e',
+                        advice: '#1243d8',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .neon-border {
+                box-shadow: 0 0 5px #00e5ff, 0 0 10px rgba(0, 229, 255, 0.5);
+            }
+            .cyber-bg {
+                background-color: #0f0f1a;
+                background-image: 
+                    linear-gradient(rgba(10, 147, 150, 0.05) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(10, 147, 150, 0.05) 1px, transparent 1px);
+                background-size: 20px 20px;
+            }
+            .glass-effect {
+                backdrop-filter: blur(10px);
+                background-color: rgba(17, 24, 39, 0.8);
+            }
+        }
+    </style>
+</head>
+<body class="cyber-bg text-gray-100 font-inter min-h-screen flex flex-col">
+    <!-- 激活界面容器 -->
+    <div id="verify-container" class="min-h-screen flex items-center justify-center p-4">
+        <div class="glass-effect rounded-lg p-8 w-full max-w-md neon-border">
+            <a href="../../index.html" class="text-white hover:text-logobuttom transition-colors duration-300">返回首页</a>
+            <div class="text-center mb-8">
+                <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-neon">
+                    <i class="fa fa-check-circle mr-2"></i>账户激活
+                </h2>
+                <p class="text-gray-400 mt-2">正在验证您的账户信息...</p>
+            </div>
+            
+            <div class="text-center py-4">
+                <i id="status-icon" class="fa fa-spinner fa-spin text-neon text-4xl mb-4"></i>
+                <h3 id="status-title" class="text-xl font-bold text-gray-200 mb-2">验证中</h3>
+                <p id="status-message" class="text-gray-400">请稍候，系统正在处理您的请求...</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 提示消息 -->
+    <div id="toast" class="fixed bottom-6 right-6 glass-effect px-6 py-3 rounded-lg neon-border transform translate-y-20 opacity-0 transition-all duration-300 flex items-center space-x-3 max-w-xs">
+        <i id="toast-icon" class="fa fa-check-circle text-green-400 text-xl"></i>
+        <p id="toast-message" class="text-sm text-gray-200"></p>
+    </div>
+    
+    <script>
+        // DOM元素
+        const statusIcon = document.getElementById('status-icon');
+        const statusTitle = document.getElementById('status-title');
+        const statusMessage = document.getElementById('status-message');
+        const toast = document.getElementById('toast');
+        const toastIcon = document.getElementById('toast-icon');
+        const toastMessage = document.getElementById('toast-message');
+        
+        // 显示提示消息
+        function showToast(type, message) {
+            toastMessage.textContent = message;
+            
+            // 设置图标和颜色
+            if (type === 'success') {
+                toastIcon.className = 'fa fa-check-circle text-green-400 text-xl';
+            } else if (type === 'error') {
+                toastIcon.className = 'fa fa-exclamation-circle text-red-400 text-xl';
+            } else if (type === 'info') {
+                toastIcon.className = 'fa fa-info-circle text-blue-400 text-xl';
+            }
+            
+            // 显示提示
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            
+            // 3秒后自动隐藏
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+        
+        // 解析URL参数
+        function getURLParams() {
+            const params = {};
+            const queryString = window.location.search.substring(1);
+            const pairs = queryString.split('&');
+            
+            for (let i = 0; i < pairs.length; i++) {
+                const pair = pairs[i].split('=');
+                const key = decodeURIComponent(pair[0]);
+                const value = decodeURIComponent(pair[1] || '');
+                params[key] = value;
+            }
+            
+            return params;
+        }
+        
+        // 激活账户
+        function activateAccount(email, code) {
+            return new Promise((resolve, reject) => {
+                const command = ip + '/activation_account';
+                fetch(command, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        datatype: "operation",
+                        activation: {
+                            email: email,
+                            code: code
+                        }
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP错误: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && typeof data === 'object') {
+                        resolve({
+                            success: data.success === true,
+                            data: data
+                        });
+                    } else {
+                        reject(new Error('无效的响应格式'));
+                    }
+                })
+                .catch(error => {
+                    console.error("账户激活过程中出错:", error);
+                    reject(error);
+                });
+            });
+        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 获取URL参数
+            const params = getURLParams();
+            const infoParam = params.info;
+            
+            if (!infoParam) {
+                // 没有info参数
+                statusIcon.className = 'fa fa-times-circle text-red-400 text-4xl mb-4';
+                statusTitle.textContent = '激活失败';
+                statusMessage.textContent = '无效的激活链接，请检查链接是否完整。';
+                return;
+            }
+            
+            try {
+                // 解析info参数
+                // 注意：这里假设info参数是JSON字符串，需要根据实际情况调整
+                // 如果info参数是base64编码或其他格式，需要相应的解码处理
+                const info = JSON.parse(decodeURIComponent(infoParam));
+                const email = info.email;
+                const code = info.code;
+                
+                if (!email || !code) {
+                    throw new Error('缺少必要的激活信息');
+                }
+                
+                // 调用激活函数
+                activateAccount(email, code)
+                    .then(result => {
+                        if (result.success) {
+                            // 激活成功
+                            statusIcon.className = 'fa fa-check-circle text-green-400 text-4xl mb-4';
+                            statusTitle.textContent = '激活成功';
+                            statusMessage.textContent = '您的账户已成功激活，即将跳转至首页...';
+                            
+                            // 显示成功提示
+                            showToast('success', '账户激活成功！');
+                            
+                            // 3秒后跳转至主页
+                            setTimeout(() => {
+                                window.location.href = '../../index.html';
+                            }, 3000);
+                        } else {
+                            // 激活失败
+                            statusIcon.className = 'fa fa-times-circle text-red-400 text-4xl mb-4';
+                            statusTitle.textContent = '激活失败';
+                            statusMessage.textContent = result.data.output?.error || '激活失败，请重试或联系管理员。';
+                        }
+                    })
+                    .catch(error => {
+                        // 激活过程中出错
+                        console.error('激活失败:', error);
+                        statusIcon.className = 'fa fa-times-circle text-red-400 text-4xl mb-4';
+                        statusTitle.textContent = '激活失败';
+                        statusMessage.textContent = '激活过程中发生错误，请稍后重试。';
+                    });
+            } catch (error) {
+                // 解析info参数失败
+                console.error('解析激活信息失败:', error);
+                statusIcon.className = 'fa fa-times-circle text-red-400 text-4xl mb-4';
+                statusTitle.textContent = '激活失败';
+                statusMessage.textContent = '无效的激活信息，请检查链接是否正确。';
+            }
+        });
+    </script>
+</body>
+</html>

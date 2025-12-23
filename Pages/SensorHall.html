@@ -578,9 +578,10 @@
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
+                    datatype:"product",
                     item_cate:"hardware",
                     table_name:sensortypetext,
-                })
+                    })
                 })
                 .then(response => {
                 if (!response.ok) {

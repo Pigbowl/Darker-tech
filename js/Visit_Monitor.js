@@ -28,6 +28,12 @@
                 // timestamp: new Date().getTime(),    // 时间戳
                 from_page: document.referrer         // 来源页面（前一个页面的URL）
             };
+
+            const uservisit = {}
+            if (sessionStorage.userData){
+                uservisit["userid"] = JSON.parse(sessionStorage.userData).ID
+                uservisit["page"] = data.page_url.split('/').pop();
+            }
             command = ip + '/add_visit'
             fetch(command,{
                 method:'POST',
@@ -35,7 +41,9 @@
                     'Content-Type':'application/json'
                 },
                 body:JSON.stringify({
-                    "data":data
+                    datatype:'operation',
+                    "data":data,
+                    "uservisit":uservisit
                 })
             }).then(response=>response.json()).then(data=>{
                 if(data.success){

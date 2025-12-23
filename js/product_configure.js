@@ -1,6 +1,6 @@
 
 // 产品配置信息 - 自动生成
-// 生成时间: 2025-12-14 22:41:24
+// 生成时间: 2025-12-23 21:23:24
 
 // 全局产品配置变量
 let products_config = {
@@ -51,7 +51,7 @@ let products_config = {
       "Category": "知识宇宙",
       "Description": "提供架构开发的相关知识",
       "CN_Name": "架构星球",
-      "Status": "未上线"
+      "Status": "测试版本上线"
     },
     {
       "ID": 7,
@@ -91,7 +91,7 @@ let products_config = {
       "Category": "智驾军火库",
       "Description": "在3D环境下检查传感器视角功能",
       "CN_Name": "传感器仿真",
-      "Status": "新产品上线"
+      "Status": "测试版本上线"
     },
     {
       "ID": 12,
@@ -99,7 +99,7 @@ let products_config = {
       "Category": "智驾军火库",
       "Description": "完整的仿真平台",
       "CN_Name": "仿真平台",
-      "Status": "未上线"
+      "Status": "规划中"
     },
     {
       "ID": 13,
@@ -107,7 +107,7 @@ let products_config = {
       "Category": "智驾军火库",
       "Description": "提供生成标准物理架构的工具",
       "CN_Name": "物理架构工具",
-      "Status": "未上线"
+      "Status": "规划中"
     },
     {
       "ID": 14,
@@ -115,7 +115,7 @@ let products_config = {
       "Category": "行业纵横",
       "Description": "提供ADAS系统方案级别的陈列以及对比",
       "CN_Name": "方案矩阵",
-      "Status": "未上线"
+      "Status": "规划中"
     },
     {
       "ID": 15,
@@ -123,7 +123,7 @@ let products_config = {
       "Category": "行业纵横",
       "Description": "提供整车级别,方案级别等的对比工具以及报告输出",
       "CN_Name": "方案角斗场",
-      "Status": "未上线"
+      "Status": "规划中"
     },
     {
       "ID": 16,
@@ -131,7 +131,7 @@ let products_config = {
       "Category": "行业纵横",
       "Description": "提供行业分析",
       "CN_Name": "市场通",
-      "Status": "未上线"
+      "Status": "规划中"
     },
     {
       "ID": 17,
@@ -139,7 +139,7 @@ let products_config = {
       "Category": "行业纵横",
       "Description": "提供行业内不同公司的合作关系",
       "CN_Name": "生态网络",
-      "Status": "未上线"
+      "Status": "规划中"
     },
     {
       "ID": 18,
@@ -147,7 +147,7 @@ let products_config = {
       "Category": "智驾论坛",
       "Description": "提供智能驾驶行业信息交流的空间",
       "CN_Name": "智驾论坛",
-      "Status": "未上线"
+      "Status": "规划中"
     },
     {
       "ID": 19,
@@ -155,7 +155,7 @@ let products_config = {
       "Category": "通用信息",
       "Description": "辅助网站工作",
       "CN_Name": "通用信息",
-      "Status": "未上线"
+      "Status": "规划中"
     }
   ],
   "categorized_features": {
@@ -198,7 +198,7 @@ let products_config = {
         "Category": "知识宇宙",
         "Description": "提供架构开发的相关知识",
         "CN_Name": "架构星球",
-        "Status": "未上线"
+        "Status": "测试版本上线"
       }
     ],
     "知识网络": [
@@ -226,7 +226,7 @@ let products_config = {
         "Category": "行业纵横",
         "Description": "提供ADAS系统方案级别的陈列以及对比",
         "CN_Name": "方案矩阵",
-        "Status": "未上线"
+        "Status": "规划中"
       },
       {
         "ID": 15,
@@ -234,7 +234,7 @@ let products_config = {
         "Category": "行业纵横",
         "Description": "提供整车级别,方案级别等的对比工具以及报告输出",
         "CN_Name": "方案角斗场",
-        "Status": "未上线"
+        "Status": "规划中"
       },
       {
         "ID": 16,
@@ -242,7 +242,7 @@ let products_config = {
         "Category": "行业纵横",
         "Description": "提供行业分析",
         "CN_Name": "市场通",
-        "Status": "未上线"
+        "Status": "规划中"
       },
       {
         "ID": 17,
@@ -250,7 +250,7 @@ let products_config = {
         "Category": "行业纵横",
         "Description": "提供行业内不同公司的合作关系",
         "CN_Name": "生态网络",
-        "Status": "未上线"
+        "Status": "规划中"
       }
     ],
     "智驾军火库": [
@@ -284,7 +284,7 @@ let products_config = {
         "Category": "智驾军火库",
         "Description": "在3D环境下检查传感器视角功能",
         "CN_Name": "传感器仿真",
-        "Status": "新产品上线"
+        "Status": "测试版本上线"
       },
       {
         "ID": 12,
@@ -292,7 +292,7 @@ let products_config = {
         "Category": "智驾军火库",
         "Description": "完整的仿真平台",
         "CN_Name": "仿真平台",
-        "Status": "未上线"
+        "Status": "规划中"
       },
       {
         "ID": 13,
@@ -300,7 +300,7 @@ let products_config = {
         "Category": "智驾军火库",
         "Description": "提供生成标准物理架构的工具",
         "CN_Name": "物理架构工具",
-        "Status": "未上线"
+        "Status": "规划中"
       }
     ],
     "智驾论坛": [
@@ -310,7 +310,7 @@ let products_config = {
         "Category": "智驾论坛",
         "Description": "提供智能驾驶行业信息交流的空间",
         "CN_Name": "智驾论坛",
-        "Status": "未上线"
+        "Status": "规划中"
       }
     ],
     "通用信息": [
@@ -320,16 +320,10 @@ let products_config = {
         "Category": "通用信息",
         "Description": "辅助网站工作",
         "CN_Name": "通用信息",
-        "Status": "未上线"
+        "Status": "规划中"
       }
     ]
   },
-  "version": "duck fixation 2-Quick_Fix",
-  "status": [
-    "新产品上线",
-    "未上线",
-    "正式版本上线",
-    "测试版本上线",
-    "规划中"
-  ]
+  "version": "Beta-25-12-14-Official_Release",
+  "status": []
 };

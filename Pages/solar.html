@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js 太阳系官方示例（简化版）</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #000033; }
+        canvas { display: block; }
+        .hint {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #fff;
+            font-size: 12px;
+            font-family: Arial, sans-serif;
+            background: rgba(255, 31, 31, 0.7);
+            padding: 8px 12px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hint">
+        操作：鼠标拖拽旋转视角 | 滚轮缩放 | 悬浮星球高亮放大
+    </div>
+
+    <!-- 引入Three.js核心库和轨道控制器（CDN） -->
+    <script src="../js/three/three.min.js"></script>
+    <script src="../js/three/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        // ===================== 1. 初始化基础场景 =====================
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x000000); // 设置场景背景为黑色
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.body.appendChild(renderer.domElement);
+        
+        // 添加星光效果
+        function createStarfield() {
+            const starGeometry = new THREE.BufferGeometry();
+            const starCount = 1000;
+            const positions = new Float32Array(starCount * 3);
+            const colors = new Float32Array(starCount * 3);
+            
+            for (let i = 0; i < starCount * 3; i += 3) {
+                // 随机位置
+                positions[i] = (Math.random() - 0.5) * 2000;
+                positions[i + 1] = (Math.random() - 0.5) * 2000;
+                positions[i + 2] = (Math.random() - 0.5) * 2000;
+                
+                // 随机颜色（白色为主）
+                const color = Math.random();
+                colors[i] = color;
+                colors[i + 1] = color;
+                colors[i + 2] = color;
+            }
+            
+            starGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            starGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            
+            const starMaterial = new THREE.PointsMaterial({
+                size: 1,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8
+            });
+            
+            const stars = new THREE.Points(starGeometry, starMaterial);
+            scene.add(stars);
+        }
+        
+        createStarfield(); // 创建星光背景
+
+        // 轨道控制器（鼠标交互）
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true; // 顺滑阻尼效果
+        controls.dampingFactor = 0.05;
+        camera.position.set(100, 50, 150); // 初始视角位置
+        controls.update();
+
+        // ===================== 2. 光源系统（模拟太阳光） =====================
+        // 环境光（补光，避免阴影过暗）
+        const ambientLight = new THREE.AmbientLight(0x666666); // 增加环境光强度
+        scene.add(ambientLight);
+        // 点光源（模拟太阳，黄色自发光）
+        const sunLight = new THREE.PointLight(0xffffcc, 4, 1000); // 增加点光源强度
+        sunLight.position.set(0, 0, 0);
+        scene.add(sunLight);
+
+        // ===================== 3. 封装星球创建函数 =====================
+        /**
+         * 创建星球（含公转轨道）
+         * @param {number} radius 星球半径
+         * @param {number} orbitRadius 公转轨道半径
+         * @param {number} rotationSpeed 自转速度
+         * @param {number} revolutionSpeed 公转速度
+         * @param {THREE.Color} color 星球颜色（可选，默认随机）
+         * @returns {object} 包含星球和轨道的对象
+         */
+        // 创建轨道线函数
+        function createOrbitLine(orbitRadius) {
+            const geometry = new THREE.RingGeometry(orbitRadius - 0.1, orbitRadius, 100, 1);
+            const material = new THREE.MeshBasicMaterial({ color: 0xffffff, opacity: 0.6, transparent: true, side: THREE.DoubleSide });
+            const orbitLine = new THREE.Mesh(geometry, material);
+            orbitLine.rotation.x = -Math.PI / 2; // 旋转到XY平面
+            scene.add(orbitLine);
+            return orbitLine;
+        }
+
+        function createPlanet(radius, orbitRadius, rotationSpeed = 0.01, revolutionSpeed = 0.01, color = null) {
+            // 1. 公转轨道容器（星球绕容器中心旋转 = 绕太阳公转）
+            const orbit = new THREE.Object3D();
+            scene.add(orbit);
+
+            // 2. 创建轨道线
+            const orbitLine = createOrbitLine(orbitRadius);
+
+            // 3. 生成随机颜色（如果没有指定）
+            const randomColor = color || new THREE.Color(Math.random(), Math.random(), Math.random());
+            
+            // 4. 星球几何体 + 纯色材质
+            const geometry = new THREE.SphereGeometry(radius, 32, 32);
+            const material = new THREE.MeshPhongMaterial({ color: randomColor });
+            const planet = new THREE.Mesh(geometry, material);
+            
+            // 5. 星球位置（在轨道上的距离）
+            planet.position.x = orbitRadius;
+            
+            // 6. 存储基础属性（用于悬浮交互）
+            planet.userData = {
+                baseRadius: radius,
+                rotationSpeed: rotationSpeed,
+                revolutionSpeed: revolutionSpeed,
+                orbit: orbit,
+                material: material
+            };
+
+            orbit.add(planet);
+            return { planet, orbit, orbitLine };
+        }
+
+        // ===================== 5. 创建太阳系星球 =====================
+        // 太阳（无公转，自发光，没有轨道线）
+        // 直接创建太阳，不使用createPlanet函数避免创建轨道线
+        const sunGeometry = new THREE.SphereGeometry(10, 32, 32);
+        const sunMaterial = new THREE.MeshPhongMaterial({ color: 0xffff00 });
+        const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+        sun.material.emissive = new THREE.Color(0xffff00); // 自发光颜色
+        sun.material.emissiveIntensity = 0.5; // 发光强度
+        sun.position.set(0, 0, 0);
+        // 存储太阳的基础属性
+        sun.userData = {
+            baseRadius: 10,
+            rotationSpeed: 0.001, // 降低自转速度
+            revolutionSpeed: 0,
+            orbit: new THREE.Object3D() // 太阳没有轨道，创建空对象占位
+        };
+        scene.add(sun);
+
+        // 八大行星 + 额外星球（调整轨道间距，调整星球大小，降低运行速度，随机颜色）
+        // 最大星球是木星，半径5；最小星球为最大的一半，即2.5
+        const mercury = createPlanet(2.5, 15, 0.002, 0.002).planet; // 最小星球，半径2.5
+        const venus = createPlanet(3.0, 23, 0.0015, 0.0015).planet;
+        const earth = createPlanet(3.2, 31, 0.001, 0.001).planet;
+        const mars = createPlanet(2.8, 39, 0.0008, 0.0008).planet;
+        const jupiter = createPlanet(5.0, 48, 0.0006, 0.0006).planet; // 最大星球，保持半径5.0
+        
+        // 土星（带环）
+        const saturnObj = createPlanet(4.5, 57, 0.0005, 0.0005);
+        const saturnRing = new THREE.Mesh(
+            new THREE.RingGeometry(5.5, 9, 32), // 调整土星环大小以匹配星球
+            new THREE.MeshPhongMaterial({
+                color: new THREE.Color(Math.random(), Math.random(), Math.random()),
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: 0.7
+            })
+        );
+        saturnRing.rotation.x = -Math.PI / 2; // 旋转环的角度
+        saturnObj.planet.add(saturnRing);
+
+        const uranus = createPlanet(3.8, 66, 0.0004, 0.0004).planet;
+        const neptune = createPlanet(3.5, 75, 0.0003, 0.0003).planet;
+        
+        // 添加额外星球
+        const planet9 = createPlanet(3.2, 84, 0.00025, 0.00025).planet;
+        const planet10 = createPlanet(2.9, 93, 0.0002, 0.0002).planet;
+        const planet11 = createPlanet(2.7, 102, 0.00018, 0.00018).planet;
+        const planet12 = createPlanet(2.5, 111, 0.00015, 0.00015).planet; // 最小星球，半径2.5
+        const planet13 = createPlanet(2.5, 120, 0.00012, 0.00012).planet; // 最小星球，半径2.5
+
+        // 所有星球数组（用于交互检测）
+        const planets = [sun, mercury, venus, earth, mars, jupiter, saturnObj.planet, uranus, neptune, planet9, planet10, planet11, planet12, planet13];
+
+        // ===================== 6. 鼠标悬浮交互（高亮+放大） =====================
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        let hoveredPlanet = null;
+
+        // 鼠标移动检测
+        window.addEventListener('mousemove', (e) => {
+            // 转换鼠标坐标到Three.js坐标系
+            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+            // 射线检测鼠标是否击中星球
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(planets);
+
+            // 重置上一个悬浮的星球
+            if (hoveredPlanet && !intersects.some(i => i.object === hoveredPlanet)) {
+                hoveredPlanet.scale.set(1, 1, 1);
+                hoveredPlanet.material.emissiveIntensity = hoveredPlanet.userData.baseEmissive || 0;
+                hoveredPlanet = null;
+            }
+
+            // 高亮当前悬浮的星球
+            if (intersects.length > 0) {
+                hoveredPlanet = intersects[0].object;
+                hoveredPlanet.scale.set(1.3, 1.3, 1.3); // 放大1.3倍
+                // 存储原始发光强度，避免重复赋值
+                if (!hoveredPlanet.userData.baseEmissive) {
+                    hoveredPlanet.userData.baseEmissive = hoveredPlanet.material.emissiveIntensity;
+                }
+                hoveredPlanet.material.emissiveIntensity = 0.3; // 高亮发光
+            }
+        });
+
+        // ===================== 7. 动画循环 =====================
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // 星球自转 + 公转
+            planets.forEach(planet => {
+                planet.rotation.y += planet.userData.rotationSpeed;
+                planet.userData.orbit.rotation.y += planet.userData.revolutionSpeed;
+            });
+
+            controls.update(); // 更新轨道控制器
+            renderer.render(scene, camera); // 渲染场景
+        }
+
+        // ===================== 8. 窗口自适应 =====================
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // 启动动画
+        animate();
+    </script>
+</body>
+</html>

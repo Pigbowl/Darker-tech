@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人用户空间 - Darker-tech</title>
+    <!-- Tailwind CSS -->
+    <script src="../css/tailwind.css"></script>
+    <script src="../js/ipcontroller.js"></script>
+    <link href="../css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Three.js核心库和轨道控制器 -->
+    <script src="../js/three/three.min.js"></script>
+    <script src="../js/three/examples/js/controls/OrbitControls.js"></script>
+<!-- 配置Tailwind自定义颜色和字体 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#00e5ff',
+                        secondary: '#673ab7',
+                        darkAccent: '#1a1a2e',
+                        logobuttom: '#0a9396',
+                        dark: '#0f0f1a',
+                        neon: '#00e5ff',
+                        issue: '#acbd2e',
+                        advice: '#1243d8',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .neon-border {
+                box-shadow: 0 0 5px #00e5ff, 0 0 10px rgba(0, 229, 255, 0.5);
+            }
+            .cyber-bg {
+                background-color: #0f0f1a;
+                background-image: 
+                    linear-gradient(rgba(10, 147, 150, 0.05) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(10, 147, 150, 0.05) 1px, transparent 1px);
+                background-size: 20px 20px;
+            }
+            .glass-effect {
+                backdrop-filter: blur(10px);
+                background-color: rgba(17, 24, 39, 0.8);
+            }
+            .animate-pulse-slow {
+                animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            }
+        }
+    </style>
+</head>
+<body class="cyber-bg text-gray-100 font-inter min-h-screen flex flex-col">
+    <!-- 检查认证状态 -->
+    <script>
+        // 检查认证状态
+        function checkAuth() {
+            const authStatus = sessionStorage.getItem('authenticated');
+            const expiryTime = sessionStorage.getItem('auth_expiry');
+            const currentTime = new Date().getTime();
+            const userType = sessionStorage.getItem('userType');
+            
+            const isAuthenticated = authStatus === 'true' && 
+                                  expiryTime && 
+                                  currentTime < parseInt(expiryTime) &&
+                                  userType && !userType.startsWith('Manager');
+                                  
+            if (!isAuthenticated) {
+                // 未认证或不是普通用户，跳转到登录页面
+                window.location.href = './login.html';
+            }
+        }
+        
+        // 页面加载时检查认证状态
+        document.addEventListener('DOMContentLoaded', checkAuth);
+    </script>
+    
+    <!-- 用户仪表盘容器 -->
+    <div id="userdashboard-container" class="flex flex-col min-h-screen">
+        <!-- 顶部导航栏 -->
+        <header class="glass-effect border-b border-gray-800 sticky top-0 z-50">
+            <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fa fa-user-circle text-neon text-2xl"></i>
+                    <h1 class="text-xl font-bold text-white">个人用户空间</h1>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <a href="../../index.html" class="text-white hover:text-logobuttom transition-colors duration-300">首页</a>
+                    <div class="hidden md:flex items-center space-x-2 text-sm text-gray-400">
+                        <i class="fa fa-user-circle-o text-neon"></i>
+                        <span id="current-username">User</span>
+                    </div>
+                    <button id="logout-btn" class="text-gray-300 hover:text-neon transition-colors">
+                        <i class="fa fa-sign-out text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+        
+        <!-- 主要内容区域 -->
+        <main class="flex-grow container mx-auto px-4 py-8">
+            <!-- 用户信息卡片 -->
+            <section class="mb-10">
+                <div class="glass-effect rounded-lg p-6 neon-border">
+                    <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
+                        <!-- 用户头像 -->
+                        <div class="w-24 h-24 rounded-full bg-gray-800 flex items-center justify-center neon-border">
+                            <i class="fa fa-user text-4xl text-neon"></i>
+                        </div>
+                        
+                        <!-- 用户信息 -->
+                        <div class="flex-1">
+                            <h2 class="text-2xl font-bold text-white mb-4">欢迎回来，<span id="username-display">用户</span></h2>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+                                <div class="p-3 bg-gray-800/50 rounded-lg flex flex-col">
+                                    <p class="text-gray-400 text-sm mb-1">用户ID</p>
+                                    <p class="text-white text-xl font-bold" id="user-id">USR-0001</p>
+                                </div>
+                                <div class="p-3 bg-gray-800/50 rounded-lg flex flex-col">
+                                    <p class="text-gray-400 text-sm mb-1">注册时间</p>
+                                    <p class="text-white text-xl font-bold" id="registration-date">2023-01-01</p>
+                                </div>
+                                <div class="p-3 bg-gray-800/50 rounded-lg flex flex-col">
+                                    <p class="text-gray-400 text-sm mb-1">账号状态</p>
+                                    <p class="text-green-400 text-xl font-bold" id="user-level">普通用户</p>
+                                </div>
+                                <div class="p-3 bg-gray-800/50 rounded-lg flex flex-col">
+                                    <p class="text-gray-400 text-sm mb-1">我的话题</p>
+                                    <p class="text-white text-xl font-bold" style="color: var(--tw-text-opacity, 1); color: rgb(0 229 255 / var(--tw-text-opacity));">-</p>
+                                </div>
+                                <div class="p-3 bg-gray-800/50 rounded-lg flex flex-col">
+                                    <p class="text-gray-400 text-sm mb-1">我的收藏</p>
+                                    <p class="text-white text-xl font-bold" style="color: var(--tw-text-opacity, 1); color: rgb(0 229 255 / var(--tw-text-opacity));">-</p>
+                                </div>
+                                <div class="p-3 bg-gray-800/50 rounded-lg flex flex-col">
+                                    <p class="text-gray-400 text-sm mb-1">我的评论</p>
+                                    <p class="text-white text-xl font-bold" style="color: var(--tw-text-opacity, 1); color: rgb(74 222 128 / var(--tw-text-opacity));">-</p>
+                                </div>
+                                <div class="p-3 bg-gray-800/50 rounded-lg flex flex-col">
+                                    <p class="text-gray-400 text-sm mb-1">我的积分</p>
+                                    <p class="text-white text-xl font-bold" style="color: var(--tw-text-opacity, 1); color: rgb(168 85 247 / var(--tw-text-opacity));" id="user-credits">0</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 全屏太阳系区域 -->
+            <section class="mb-10">
+                <div class="rounded-lg overflow-hidden neon-border" style="height: 600px;">
+                    <div class="w-full h-full relative">
+                        <div class="hint absolute top-4 left-4 z-10 color: #fff; font-size: 12px; font-family: Arial, sans-serif; background: rgba(255, 31, 31, 0.7); padding: 8px 12px; border-radius: 4px; line-height: 1.5;">
+                            <div style="font-size: 20px; font-weight: bold; margin-bottom: 4px;">我的旅程</div>
+                            <div>实时观测您点亮（参观）了几个学习板块。</div>
+                            <div style="font-size: 14px;">
+                                总共星球数：<span id="total-planets">0</span>，
+                                <span style="color: #4ade80;">已点亮：<span id="lit-planets">0</span></span>，
+                                点亮率：<span id="lit-percentage">0%</span>，
+                                <span style="color: #facc15;">待点亮：<span id="unlit-planets">0</span></span>
+                            </div>
+                        </div>
+                        <!-- Three.js渲染容器 -->
+                        <div id="solar-container" class="w-full h-full"></div>
+                        <!-- 星球信息悬浮框 -->
+                        <div id="planet-info" class="fixed bg-gray-900/90 text-white p-4 rounded-lg shadow-lg border border-neon transform translate-x-20 opacity-0 pointer-events-none transition-all duration-300 z-20 max-w-xs">
+                            <h3 id="planet-name" class="text-lg font-bold text-neon mb-2"></h3>
+                            <div class="space-y-2 text-sm">
+                                <p><span class="text-gray-400">点亮状态：</span><span id="planet-lit-status"></span></p>
+                                <p><span class="text-gray-400">板块名称：</span><span id="planet_name"></span></p>
+                                <p><span class="text-gray-400">版块介绍：</span><span id="planet_description"></span></p>
+                                <p><span class="text-gray-400">板框状态：</span><span id="planet_status"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 保留个人资料设置 -->
+            <section class="mb-10">
+                <div class="glass-effect rounded-lg p-6 neon-border">
+                    <h2 class="text-xl font-bold text-white mb-4 flex items-center">
+                        <i class="fa fa-user-o text-neon mr-2"></i>个人资料
+                    </h2>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-gray-800/50 rounded-lg">
+                            <h3 class="font-medium text-white mb-2">基本信息</h3>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400 text-sm">用户名</span>
+                                    <span class="text-white" id="profile-username">用户</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400 text-sm">邮箱</span>
+                                    <span class="text-white" id="profile-email">user@example.com</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400 text-sm">手机号</span>
+                                    <span class="text-white" id="profile-phone">未设置</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="p-4 bg-gray-800/50 rounded-lg">
+                            <h3 class="font-medium text-white mb-2">账号设置</h3>
+                            <div class="space-y-3">
+                                <button class="w-full text-left px-3 py-2 bg-gray-700/50 hover:bg-gray-700 rounded transition-colors flex items-center justify-between">
+                                    <span class="text-white">修改密码</span>
+                                    <i class="fa fa-chevron-right text-gray-400"></i>
+                                </button>
+                                <button class="w-full text-left px-3 py-2 bg-gray-700/50 hover:bg-gray-700 rounded transition-colors flex items-center justify-between">
+                                    <span class="text-white">通知设置</span>
+                                    <i class="fa fa-chevron-right text-gray-400"></i>
+                                </button>
+                                <button class="w-full text-left px-3 py-2 bg-gray-700/50 hover:bg-gray-700 rounded transition-colors flex items-center justify-between">
+                                    <span class="text-white">隐私设置</span>
+                                    <i class="fa fa-chevron-right text-gray-400"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <!-- 页脚 -->
+        <footer class="glass-effect border-t border-gray-800 py-6 mt-10">
+            <div class="container mx-auto px-4 text-center text-gray-400 text-sm">
+                <p>© 2023 Darker-tech. 个人用户空间</p>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- 提示消息 -->
+    <div id="toast" class="fixed bottom-6 right-6 glass-effect px-6 py-3 rounded-lg neon-border transform translate-y-20 opacity-0 transition-all duration-300 flex items-center space-x-3 max-w-xs">
+        <i id="toast-icon" class="fa fa-check-circle text-green-400 text-xl"></i>
+        <p id="toast-message" class="text-sm text-gray-200"></p>
+    </div>
+    
+    <!-- 引入Three.js核心库和轨道控制器 -->
+    <!-- <script src="../js/three/three.min.js"></script>
+    <script src="../js/three/examples/js/controls/OrbitControls.js"></script> -->
+    
+    <!-- JavaScript -->
+    <script>
+        // DOM元素
+        const logoutBtn = document.getElementById('logout-btn');
+        const toast = document.getElementById('toast');
+        const toastIcon = document.getElementById('toast-icon');
+        const toastMessage = document.getElementById('toast-message');
+        const usernameDisplay = document.getElementById('username-display');
+        const currentUsername = document.getElementById('current-username');
+        const profileUsername = document.getElementById('profile-username');
+        
+        // 显示提示消息
+        function showToast(type, message) {
+            toastMessage.textContent = message;
+            
+            // 设置图标和颜色
+            if (type === 'success') {
+                toastIcon.className = 'fa fa-check-circle text-green-400 text-xl';
+            } else if (type === 'error') {
+                toastIcon.className = 'fa fa-exclamation-circle text-red-400 text-xl';
+            } else if (type === 'info') {
+                toastIcon.className = 'fa fa-info-circle text-blue-400 text-xl';
+            }
+            
+            // 显示提示
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            
+            // 3秒后自动隐藏
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+        
+        // 清除认证信息
+        function clearAuth() {
+            console.log('清除认证信息...');
+            sessionStorage.removeItem('authenticated');
+            sessionStorage.removeItem('auth_expiry');
+            sessionStorage.removeItem('username');
+            sessionStorage.removeItem('userType');
+            // 清除权限相关信息
+            sessionStorage.removeItem('access_allright');
+            sessionStorage.removeItem('access_modification');
+            sessionStorage.removeItem('access_adding');
+            sessionStorage.removeItem('userData');
+            console.log('认证信息和权限信息已完全清除');
+        }
+        
+        // 处理登出
+        function handleLogout() {
+            // 清除所有认证相关数据
+            clearAuth();
+            
+            // 跳转到登录页面
+            window.location.href = './login.html';
+            
+            // 显示登出成功提示
+            showToast('info', '已成功登出');
+        }
+        
+        // 初始化用户信息
+        function initUserInfo() {
+            current_user_info = JSON.parse(sessionStorage.userData)
+            console.log(current_user_info)
+            const username = sessionStorage.getItem('username');
+            if (username) {
+                usernameDisplay.textContent = username;
+                currentUsername.textContent = username;
+                profileUsername.textContent = username;
+            }
+            
+            // Update user information cards
+            const userIdElement = document.getElementById('user-id');
+            const registrationDateElement = document.getElementById('registration-date');
+            const userLevelElement = document.getElementById('user-level');
+            const creditsElement = document.querySelector('[id="user-credits"]');
+            const emailElement = document.getElementById('profile-email');
+            
+            if (userIdElement && current_user_info) {
+                userIdElement.textContent = `USR-${current_user_info.ID}`;
+            }
+            if (registrationDateElement && current_user_info) {
+                registrationDateElement.textContent = current_user_info.create_time.split('T')[0];
+            }
+            if (userLevelElement && current_user_info) {
+                userLevelElement.textContent = current_user_info.UserLevel;
+            }
+            if (creditsElement && current_user_info) {
+                creditsElement.textContent = current_user_info.Credit;
+            }
+            if (emailElement && current_user_info) {
+                emailElement.textContent = current_user_info.email;
+            }
+        }
+        // ===================== 太阳系3D场景 =====================
+        function initSolarSystem() {
+            const container = document.getElementById('solar-container');
+            if (!container) return;
+            
+            // ===================== 1. 初始化基础场景 =====================
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x000000); // 设置场景背景为黑色
+            const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 2000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+            
+            // 添加星光效果
+            function createStarfield() {
+                const starGeometry = new THREE.BufferGeometry();
+                const starCount = 1000;
+                const positions = new Float32Array(starCount * 3);
+                const colors = new Float32Array(starCount * 3);
+                
+                for (let i = 0; i < starCount * 3; i += 3) {
+                    // 随机位置
+                    positions[i] = (Math.random() - 0.5) * 2000;
+                    positions[i + 1] = (Math.random() - 0.5) * 2000;
+                    positions[i + 2] = (Math.random() - 0.5) * 2000;
+                    
+                    // 随机颜色（白色为主）
+                    const color = Math.random();
+                    colors[i] = color;
+                    colors[i + 1] = color;
+                    colors[i + 2] = color;
+                }
+                
+                starGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                starGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+                
+                const starMaterial = new THREE.PointsMaterial({
+                    size: 1,
+                    vertexColors: true,
+                    transparent: true,
+                    opacity: 0.8
+                });
+                
+                const stars = new THREE.Points(starGeometry, starMaterial);
+                scene.add(stars);
+            }
+            
+            createStarfield(); // 创建星光背景
+        
+            // 轨道控制器（鼠标交互）
+            const controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true; // 顺滑阻尼效果
+            controls.dampingFactor = 0.05;
+            camera.position.set(100, 50, 150); // 初始视角位置
+            controls.update();
+        
+            // ===================== 2. 光源系统（模拟太阳光） =====================
+            // 环境光（补光，强化环境光使光照更均匀）
+            const ambientLight = new THREE.AmbientLight(0xaaaaaa); // 增强环境光强度
+            scene.add(ambientLight);
+            // 点光源（模拟太阳，黄色自发光）
+            const sunLight = new THREE.PointLight(0xffffcc, 1, 1000); // 弱化点光源强度
+            sunLight.position.set(0, 0, 0);
+            scene.add(sunLight);
+        
+            // ===================== 3. 封装星球创建函数 =====================
+            /**
+             * 创建星球（含公转轨道）
+             * @param {number} radius 星球半径
+             * @param {number} orbitRadius 公转轨道半径
+             * @param {number} rotationSpeed 自转速度
+             * @param {number} revolutionSpeed 公转速度
+             * @param {THREE.Color} color 星球颜色（可选，默认随机）
+             * @returns {object} 包含星球和轨道的对象
+             */
+            // 创建轨道线函数
+            function createOrbitLine(orbitRadius) {
+                const geometry = new THREE.RingGeometry(orbitRadius - 0.3, orbitRadius, 100, 1); // 加粗轨道线
+                const material = new THREE.MeshBasicMaterial({ color: 0xffffff, opacity: 0.8, transparent: true, side: THREE.DoubleSide }); // 增强透明度
+                const orbitLine = new THREE.Mesh(geometry, material);
+                orbitLine.rotation.x = -Math.PI / 2; // 旋转到XY平面
+                scene.add(orbitLine);
+                return orbitLine;
+            }
+        
+            function createPlanet(name, radius, orbitRadius, rotationSpeed = 0.01, revolutionSpeed = 0.01, color = null) {
+                // 1. 公转轨道容器（星球绕容器中心旋转 = 绕太阳公转）
+                const orbit = new THREE.Object3D();
+                scene.add(orbit);
+
+                // 2. 创建轨道线
+                const orbitLine = createOrbitLine(orbitRadius);
+
+                // 3. 生成随机颜色（如果没有指定）
+                const randomColor = color || new THREE.Color(Math.random(), Math.random(), Math.random());
+                
+                // 4. 星球几何体 + 纯色材质
+                const geometry = new THREE.SphereGeometry(radius, 32, 32);
+                const material = new THREE.MeshPhongMaterial({ color: randomColor });
+                const planet = new THREE.Mesh(geometry, material);
+                
+                // 5. 生成随机初始角度，让星球分布在轨道上的不同位置
+                const initialAngle = Math.random() * Math.PI * 2;
+                
+                // 6. 计算星球位置（使用随机角度）
+                planet.position.x = Math.cos(initialAngle) * orbitRadius;
+                planet.position.z = Math.sin(initialAngle) * orbitRadius;
+                
+                // 7. 计算旋转和公转周期（基于速度，以秒为单位）
+                const rotationPeriod = (2 * Math.PI / rotationSpeed) / 60; // 假设60fps
+                const revolutionPeriod = (2 * Math.PI / revolutionSpeed) / 60;
+                
+                // 8. 获取实际星球数据
+                let planetData = {};
+                let description = '这是一颗神秘的行星，等待着我们去探索。';
+                
+                try {
+                    if (typeof current_user_info !== 'undefined' && 
+                        current_user_info.userdata && 
+                        current_user_info.userdata.planetdictionary) {
+                        // 遍历planetdictionary数组，找到Function匹配的字典
+                        const matchedPlanet = current_user_info.userdata.planetdictionary.find(item => 
+                            item.Function === name
+                        );
+                        
+                        if (matchedPlanet) {
+                            planetData = matchedPlanet;
+                            pubname = matchedPlanet.CN_Name;
+                            category = matchedPlanet.Category;
+                            functionname = matchedPlanet.Function;
+                            status = matchedPlanet.Status;
+                            // 使用实际数据的描述，如果有的话
+                            description = matchedPlanet.Description
+                        }
+                    }
+                } catch (e) {
+                    console.error('Error accessing planet dictionary data:', e);
+                }
+                
+                // 9. 存储基础属性（用于悬浮交互和信息显示）
+                planet.userData = {
+                    name: pubname,
+                    baseRadius: radius,
+                    orbitRadius: orbitRadius,
+                    rotationSpeed: rotationSpeed,
+                    revolutionSpeed: revolutionSpeed,
+                    rotationPeriod: rotationPeriod.toFixed(1),
+                    revolutionPeriod: revolutionPeriod.toFixed(1),
+                    description: description,
+                    status: status,
+                    category: category,
+                    functionname: functionname,
+
+                    orbit: orbit,
+                    material: material,
+                    // 添加实际星球数据
+                    actualData: planetData
+                };
+
+                orbit.add(planet);
+                return { planet, orbit, orbitLine };
+            }
+        
+            // ===================== 5. 创建太阳系星球 =====================
+            // 太阳（无公转，自发光，没有轨道线）
+            // 直接创建太阳，不使用createPlanet函数避免创建轨道线
+            const sunGeometry = new THREE.SphereGeometry(10, 32, 32);
+            const sunMaterial = new THREE.MeshPhongMaterial({ color: 0xffff00 });
+            const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+            sun.material.emissive = new THREE.Color(0xffff00); // 自发光颜色
+            sun.material.emissiveIntensity = 0.5; // 发光强度
+            sun.position.set(0, 0, 0);
+            // 存储太阳的基础属性
+            sun.userData = {
+                name: '太阳',
+                baseRadius: 10,
+                orbitRadius: 0,
+                rotationSpeed: 0.001, // 降低自转速度
+                revolutionSpeed: 0,
+                rotationPeriod: ((2 * Math.PI / 0.001) / 60).toFixed(1),
+                revolutionPeriod: '无穷大',
+                description: '太阳系的中心天体，通过核聚变释放巨大能量，是地球生命的能量来源。',
+                orbit: new THREE.Object3D() // 太阳没有轨道，创建空对象占位
+            };
+            scene.add(sun);
+
+            // 动态生成星球 - 基于current_user_info.lightplanet数据
+            // 所有星球数组（用于交互检测）
+            const planets = [sun];
+            
+            // 获取用户星球数据
+            let lightplanetData = {};
+            try {
+                if (typeof current_user_info !== 'undefined' && current_user_info.userdata.lightplanet) {
+                    lightplanetData = current_user_info.userdata.lightplanet;
+                }
+            } catch (e) {
+                console.error('Error accessing lightplanet data:', e);
+            }
+            
+            // 过滤掉ID和user_ID字段，获取其他键值对
+            const planetEntries = Object.entries(lightplanetData).filter(([key]) => 
+                key !== 'ID' && key !== 'user_ID'
+            );
+            
+            // 计算基础参数
+            const baseOrbitRadius = 15;
+            const orbitStep = 9;
+            const minRadius = 2.5;
+            const maxRadius = 5.0;
+            
+            // 遍历星球数据，创建星球
+            planetEntries.forEach(([planetName, value], index) => {
+                // 计算星球参数
+                const orbitRadius = baseOrbitRadius + (index * orbitStep);
+                const planetRadius = minRadius + (Math.random() * (maxRadius - minRadius));
+                const rotationSpeed = 0.002 - (index * 0.0001);
+                const revolutionSpeed = 0.002 - (index * 0.0001);
+                
+                // 根据value设置颜色
+                let planetColor;
+                const isLit = value === 1;
+                
+                if (!isLit) {
+                    // 值为0时使用灰色，降低亮度
+                    planetColor = new THREE.Color(0.3, 0.3, 0.3);
+                } else {
+                    // 值不为0时使用随机亮色
+                    planetColor = new THREE.Color(
+                        0.5 + Math.random() * 0.5, // R: 0.5-1.0
+                        0.5 + Math.random() * 0.5, // G: 0.5-1.0
+                        0.5 + Math.random() * 0.5  // B: 0.5-1.0
+                    );
+                }
+                
+                // 创建星球
+                const planetObj = createPlanet(planetName, planetRadius, orbitRadius, rotationSpeed, revolutionSpeed, planetColor);
+                const planet = planetObj.planet;
+                
+                // 存储点亮状态
+                planet.userData.isLit = isLit;
+                
+                // 设置星球视觉效果
+                if (isLit) {
+                    // 已点亮：添加高光效果
+                    planet.material.emissive = new THREE.Color(0xffffff);
+                    planet.material.emissiveIntensity = 0.2;
+                    planet.material.transparent = false;
+                    planet.material.opacity = 1.0;
+                } else {
+                    // 未点亮：进一步降低亮度并增加透明度
+                    planet.material.emissiveIntensity = 0;
+                    planet.material.color = new THREE.Color(0.3, 0.3, 0.3); // 更暗的灰色
+                    planet.material.transparent = true;
+                    planet.material.opacity = 0.8; // 增加透明度
+                }
+                
+                planets.push(planet);
+            });
+            
+            // 更新星球统计信息
+            function updatePlanetStats() {
+                const totalPlanetsElement = document.getElementById('total-planets');
+                const litPlanetsElement = document.getElementById('lit-planets');
+                const litPercentageElement = document.getElementById('lit-percentage');
+                const unlitPlanetsElement = document.getElementById('unlit-planets');
+                
+                if (totalPlanetsElement && litPlanetsElement && litPercentageElement && unlitPlanetsElement) {
+                    // 计算统计数据（排除太阳）
+                    const planetCount = planets.length - 1; // 减1是排除太阳
+                    const litCount = planets.filter(planet => planet.userData.isLit).length;
+                    const unlitCount = planetCount - litCount;
+                    const litPercentage = planetCount > 0 ? Math.round((litCount / planetCount) * 100) : 0;
+                    
+                    // 更新DOM元素
+                    totalPlanetsElement.textContent = planetCount;
+                    litPlanetsElement.textContent = litCount;
+                    litPercentageElement.textContent = `${litPercentage}%`;
+                    unlitPlanetsElement.textContent = unlitCount;
+                }
+            }
+            
+            // 初始更新统计信息
+            updatePlanetStats();
+        
+            // ===================== 6. 鼠标悬浮交互（高亮+放大+信息显示） =====================
+            const raycaster = new THREE.Raycaster();
+            const mouse = new THREE.Vector2();
+            let hoveredPlanet = null;
+            
+            // 获取悬浮框元素
+            const planetInfo = document.getElementById('planet-info');
+            const planetName = document.getElementById('planet-name');
+            const planetRadius = document.getElementById('planet_name');
+            const planetOrbitRadius = document.getElementById('planet_description');
+            const planetRotation = document.getElementById('planet_status');
+            // const planetRevolution = document.getElementById('planet-revolution');
+            // const planetDescription = document.getElementById('planet-description');
+
+            // 显示星球信息悬浮框
+            function showPlanetInfo(planet, mouseEvent) {
+                // 获取点亮状态
+                const isLit = planet.userData.isLit;
+                const litStatusText = isLit ? '已点亮' : '待点亮';
+                
+                // 获取悬浮框元素
+                const planetLitStatus = document.getElementById('planet-lit-status');
+                
+                // 填充星球信息
+                planetName.textContent = planet.userData.name;
+                planetLitStatus.textContent = litStatusText;
+                planetRadius.textContent = `${planet.userData.category || '未分类'}`;
+                planetOrbitRadius.textContent = `${planet.userData.description || '暂无描述'}`;
+                planetRotation.textContent = `${planet.userData.status || '正常'}`;
+                
+                // 根据点亮状态设置悬浮框样式
+                if (isLit) {
+                    // 已点亮：保持蓝色主题
+                    planetInfo.style.borderColor = '#00e5ff';
+                    planetName.style.color = '#00e5ff';
+                } else {
+                    // 未点亮：设置为灰色
+                    planetInfo.style.borderColor = '#666666';
+                    planetName.style.color = '#666666';
+                }
+                
+                // 显示悬浮框
+                planetInfo.classList.remove('opacity-0', 'translate-x-20', 'pointer-events-none');
+                planetInfo.classList.add('opacity-100', 'translate-x-0', 'pointer-events-auto');
+                
+                // 调整悬浮框位置，跟随鼠标
+                const containerRect = container.getBoundingClientRect();
+                const x = mouseEvent.clientX + 15;
+                const y = mouseEvent.clientY + 15;
+                
+                // 确保悬浮框在视窗内
+                const maxX = window.innerWidth - planetInfo.offsetWidth - 10;
+                const maxY = window.innerHeight - planetInfo.offsetHeight - 10;
+                
+                planetInfo.style.left = `${Math.min(x, maxX)}px`;
+                planetInfo.style.top = `${Math.min(y, maxY)}px`;
+            }
+            
+            // 隐藏星球信息悬浮框
+            function hidePlanetInfo() {
+                planetInfo.classList.remove('opacity-100', 'translate-x-0', 'pointer-events-auto');
+                planetInfo.classList.add('opacity-0', 'translate-x-20', 'pointer-events-none');
+            }
+
+            // 鼠标移动检测
+            window.addEventListener('mousemove', (e) => {
+                // 获取鼠标在容器内的相对坐标
+                const rect = container.getBoundingClientRect();
+                mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+                mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+                // 射线检测鼠标是否击中星球
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObjects(planets);
+
+                // 重置上一个悬浮的星球
+                if (hoveredPlanet && !intersects.some(i => i.object === hoveredPlanet)) {
+                    hoveredPlanet.scale.set(1, 1, 1);
+                    hoveredPlanet.material.emissiveIntensity = hoveredPlanet.userData.baseEmissive || 0;
+                    hoveredPlanet = null;
+                    hidePlanetInfo();
+                }
+
+                // 高亮当前悬浮的星球
+                if (intersects.length > 0) {
+                    hoveredPlanet = intersects[0].object;
+                    hoveredPlanet.scale.set(1.3, 1.3, 1.3); // 放大1.3倍
+                    // 存储原始发光强度，避免重复赋值
+                    if (!hoveredPlanet.userData.baseEmissive) {
+                        hoveredPlanet.userData.baseEmissive = hoveredPlanet.material.emissiveIntensity;
+                    }
+                    hoveredPlanet.material.emissiveIntensity = 0.3; // 高亮发光
+                    
+                    // 显示星球信息悬浮框
+                    showPlanetInfo(hoveredPlanet, e);
+                }
+            });
+            
+            // 鼠标移出容器时隐藏悬浮框
+            container.addEventListener('mouseleave', () => {
+                if (hoveredPlanet) {
+                    hoveredPlanet.scale.set(1, 1, 1);
+                    hoveredPlanet.material.emissiveIntensity = hoveredPlanet.userData.baseEmissive || 0;
+                    hoveredPlanet = null;
+                }
+                hidePlanetInfo();
+            });
+        
+            // ===================== 7. 动画循环 =====================
+            function animate() {
+                requestAnimationFrame(animate);
+        
+                // 星球自转 + 公转
+                planets.forEach(planet => {
+                    planet.rotation.y += planet.userData.rotationSpeed;
+                    planet.userData.orbit.rotation.y += planet.userData.revolutionSpeed;
+                });
+        
+                controls.update(); // 更新轨道控制器
+                renderer.render(scene, camera); // 渲染场景
+            }
+        
+            // ===================== 8. 窗口自适应 =====================
+            window.addEventListener('resize', () => {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+        
+            // 启动动画
+            animate();
+        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 绑定登出按钮事件
+            logoutBtn.addEventListener('click', handleLogout);
+            
+            // 初始化用户信息
+            initUserInfo();
+            
+            // 初始化太阳系3D场景
+            initSolarSystem();
+        });
+    </script>
+</body>
+</html>

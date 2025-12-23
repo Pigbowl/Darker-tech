@@ -71,7 +71,7 @@
   <div class="max-w-8xl mx-auto bg-white rounded-lg shadow-md p-6">
     
     <h1 id="main-title" class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-      <i class="fa-solid fa-folder-tree text-blue-500 mr-3"></i>
+      <i class="fa fa-folder-tree text-blue-500 mr-3"></i>
       通用树状数据录入界面
     </h1>
     
@@ -82,10 +82,10 @@
     <div class="mt-8">
       <div class="flex gap-4 mb-4">
         <button id="view-data-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md flex items-center">
-          <i class="fa-solid fa-eye mr-2"></i> 查看更新后的数据
+          <i class="fa fa-eye mr-2"></i> 查看更新后的数据
         </button>
         <button id="download-data-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md flex items-center">
-        <i class="fa-solid fa-paper-plane mr-2"></i> 写入数据库
+        <i class="fa fa-paper-plane mr-2"></i> 写入数据库
         </button>
       </div>
       <pre id="data-preview" class="p-4 bg-gray-100 rounded-md overflow-x-auto hidden"></pre>
@@ -192,7 +192,7 @@
         
         const deleteButton = document.createElement("button");
         deleteButton.className = "text-red-500 hover:text-red-700 focus:outline-none";
-        deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
+        deleteButton.innerHTML = '<i class="fa fa-trash"></i>';
         deleteButton.title = "删除此项";
         deleteMode = "none";
         deleteButton.addEventListener("click", () => {
@@ -259,14 +259,14 @@
           // 添加折叠/展开按钮
           const toggleBtn = document.createElement("button");
           toggleBtn.className = "text-gray-500 hover:text-blue-500 mr-2 mt-1 focus:outline-none mb-2";
-          toggleBtn.innerHTML = '<i class="fa-solid fa-chevron-down transition-transform duration-300"></i> 折叠详情';
+          toggleBtn.innerHTML = '<i class="fa fa-chevron-down transition-transform duration-300"></i> 折叠详情';
           toggleBtn.addEventListener("click", () => {
             if (fieldsContainer.style.maxHeight === "1000px") {
               fieldsContainer.style.maxHeight = "0";
-              toggleBtn.innerHTML = '<i class="fa-solid fa-chevron-right transition-transform duration-300"></i> 展开详情';
+              toggleBtn.innerHTML = '<i class="fa fa-chevron-right transition-transform duration-300"></i> 展开详情';
             } else {
               fieldsContainer.style.maxHeight = "1000px";
-              toggleBtn.innerHTML = '<i class="fa-solid fa-chevron-down transition-transform duration-300"></i> 折叠详情';
+              toggleBtn.innerHTML = '<i class="fa fa-chevron-down transition-transform duration-300"></i> 折叠详情';
             }
           });
           parentElement.appendChild(toggleBtn);
@@ -287,7 +287,7 @@
 
         const toggleBtn = document.createElement("button");
         toggleBtn.className = "text-gray-500 hover:text-blue-500 mr-2 mt-1 focus:outline-none";
-        toggleBtn.innerHTML = '<i class="fa-solid fa-chevron-right transition-transform duration-300"></i>';
+        toggleBtn.innerHTML = '<i class="fa fa-chevron-right transition-transform duration-300"></i>';
         
             // 简化文件夹标题，不显示项目数量
         let folderTitleText = node.id;
@@ -311,7 +311,7 @@
           iconHTML = `<i class="fa-solid fa-star text-yellow-500 mr-2"></i>`;
         } else {
           // 其他使用文件夹图标（黄色）
-          iconHTML = `<i class="fa-solid fa-folder text-yellow-500 mr-2"></i>`;
+          iconHTML = `<i class="fa fa-folder text-yellow-500 mr-2"></i>`;
         }
         
         folderTitle.innerHTML = `${iconHTML} ${folderTitleText}`;
@@ -333,7 +333,7 @@
           const templateNode = node.children.find(child => (child._itemtypeForUI || child.itemtype || "item") === "template");
           const addItemName = templateNode ? templateNode.id : "新项";
           
-          addButton.innerHTML = `<i class="fa-solid fa-plus mr-1"></i> 添加新${addItemName}`;
+          addButton.innerHTML = `<i class="fa fa-plus mr-1"></i> 添加新${addItemName}`;
           addButton.addEventListener("click", () => {
             addNewItem(node, childrenDiv, depth + 1);
           });
@@ -791,7 +791,7 @@
             iconHTML = `<i class="fa-solid fa-star text-yellow-500 mr-2"></i>`;
           } else {
             // 其他使用文件夹图标（黄色）
-            iconHTML = `<i class="fa-solid fa-folder text-yellow-500 mr-2"></i>`;
+            iconHTML = `<i class="fa fa-folder text-yellow-500 mr-2"></i>`;
           }
           
           node.id = newTitleText; // 更新节点ID
@@ -1202,7 +1202,7 @@ function updateNodeData(nodeId, key, value) {
         
         // 更新页面标题
         document.getElementById("main-title").innerHTML = `
-          <i class="fa-solid fa-folder-tree text-blue-500 mr-3"></i>
+          <i class="fa fa-folder-tree text-blue-500 mr-3"></i>
           ${currentData.id} - 树状数据录入界面
         `;
         
@@ -1410,7 +1410,9 @@ function updateNodeData(nodeId, key, value) {
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(formattedData)
+          body: JSON.stringify({
+            datatype:"product",
+            "data":formattedData})
         })
         .then(response => {
             if (!response.ok) {
@@ -1498,8 +1500,8 @@ function updateNodeData(nodeId, key, value) {
             
             // 设置状态图标和颜色
             const statusIcon = record.success 
-              ? '<i class="fas fa-check-circle text-green-500 text-xl mr-2"></i>'
-              : '<i class="fas fa-times-circle text-red-500 text-xl mr-2"></i>';
+              ? '<i class="fa fa-check-circle text-green-500 text-xl mr-2"></i>'
+              : '<i class="fa fa-times-circle text-red-500 text-xl mr-2"></i>';
             
             // 格式化操作类型显示文本
             const operationTypeText = {

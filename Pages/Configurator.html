@@ -443,15 +443,16 @@
                 return new Promise((resolve, reject) => {
                     command = ip + '/init_config_func'
                     fetch(command, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        scriptName: "function_config_initiator.py",
-                        sheetname1: "EUF",
-                        sheetname2: "SUBFEATURES",
-                    })
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            datatype:"product",
+                            scriptName: "function_config_initiator.py",
+                            sheetname1: "EUF",
+                            sheetname2: "SUBFEATURES",
+                        })
                     })
                     .then(response => {
                     if (!response.ok) {
@@ -1131,6 +1132,7 @@
                     'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
+                        datatype:"product",
                         item_cate:'solution',
                         table_name:'system_solution',
                         search_condition: search_condition

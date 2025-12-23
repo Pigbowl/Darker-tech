@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户登录 - Darker-tech</title>
+    <!-- Tailwind CSS -->
+    <script src="../css/tailwind.css"></script>
+    <script src="../js/ipcontroller.js"></script>
+    <link href="../css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 配置Tailwind自定义颜色和字体 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#00e5ff',
+                        secondary: '#673ab7',
+                        darkAccent: '#1a1a2e',
+                        logobuttom: '#0a9396',
+                        dark: '#0f0f1a',
+                        neon: '#00e5ff',
+                        issue: '#acbd2e',
+                        advice: '#1243d8',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .neon-border {
+                box-shadow: 0 0 5px #00e5ff, 0 0 10px rgba(0, 229, 255, 0.5);
+            }
+            .cyber-bg {
+                background-color: #0f0f1a;
+                background-image: 
+                    linear-gradient(rgba(10, 147, 150, 0.05) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(10, 147, 150, 0.05) 1px, transparent 1px);
+                background-size: 20px 20px;
+            }
+            .glass-effect {
+                backdrop-filter: blur(10px);
+                background-color: rgba(17, 24, 39, 0.8);
+            }
+        }
+    </style>
+</head>
+<body class="cyber-bg text-gray-100 font-inter min-h-screen flex flex-col">
+    <!-- 登录界面容器 -->
+    <div id="login-container" class="min-h-screen flex items-center justify-center p-4">
+        <div class="glass-effect rounded-lg p-8 w-full max-w-md neon-border">
+            <a href="../../index.html" class="text-white hover:text-logobuttom transition-colors duration-300">返回首页</a>
+            <div class="text-center mb-8">
+                <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-neon">
+                    <i class="fa fa-cogs mr-2"></i>用户登录
+                </h2>
+                <p class="text-gray-400 mt-2">请输入您的登录凭据</p>
+            </div>
+            
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label for="username" class="block text-sm font-medium text-gray-300">用户名</label>
+                        <button type="button" id="mode-toggle" 
+                                class="text-sm text-neon hover:text-logobuttom transition-colors duration-300">
+                            邮件登录
+                        </button>
+                    </div>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                            <i class="fa fa-user" id="input-icon"></i>
+                        </span>
+                        <input type="text" id="username" 
+                               class="block w-full pl-10 pr-3 py-2 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-neon focus:border-transparent text-gray-100" 
+                               placeholder="输入用户名" data-mode="username">
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-300 mb-1">密码</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                            <i class="fa fa-lock"></i>
+                        </span>
+                        <input type="password" id="password" 
+                               class="block w-full pl-10 pr-3 py-2 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-neon focus:border-transparent text-gray-100" 
+                               placeholder="输入密码">
+                    </div>
+                </div>
+                
+                <div class="text-red-500 text-sm hidden" id="error-message">
+                    用户名或密码错误，请重试
+                </div>
+                <div>
+                <button type="submit" 
+                        class="w-full bg-neon hover:bg-primary/80 text-dark font-bold py-3 px-4 rounded transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center mb-2">
+                    <i class="fa fa-sign-in mr-2"></i>登录
+                </button>
+                <button type="button" id="register-btn"
+                        class="w-full bg-white hover:bg-EUF/80 text-dark font-bold py-3 px-4 rounded transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center">
+                    <i class="fa fa-user mr-2"></i>新用户注册
+                </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 提示消息 -->
+    <div id="toast" class="fixed bottom-6 right-6 glass-effect px-6 py-3 rounded-lg neon-border transform translate-y-20 opacity-0 transition-all duration-300 flex items-center space-x-3 max-w-xs">
+        <i id="toast-icon" class="fa fa-check-circle text-green-400 text-xl"></i>
+        <p id="toast-message" class="text-sm text-gray-200"></p>
+    </div>
+    
+    <!-- 注册浮窗 -->
+    <div id="register-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-effect rounded-lg p-8 w-full max-w-md neon-border transform scale-95 transition-transform duration-300">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-neon">
+                    <i class="fa fa-user-plus mr-2"></i>用户注册
+                </h2>
+                <button type="button" id="close-modal" class="text-gray-400 hover:text-white transition-colors duration-300">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="register-form" class="space-y-6">
+                <div>
+                    <label for="reg-username" class="block text-sm font-medium text-gray-300 mb-1">用户名</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                            <i class="fa fa-user"></i>
+                        </span>
+                        <input type="text" id="reg-username" 
+                               class="block w-full pl-10 pr-3 py-2 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-neon focus:border-transparent text-gray-100" 
+                               placeholder="输入用户名">
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="reg-email" class="block text-sm font-medium text-gray-300 mb-1">邮箱</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                            <i class="fa fa-envelope"></i>
+                        </span>
+                        <input type="email" id="reg-email" 
+                               class="block w-full pl-10 pr-3 py-2 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-neon focus:border-transparent text-gray-100" 
+                               placeholder="输入邮箱地址">
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="reg-password" class="block text-sm font-medium text-gray-300 mb-1">密码</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                            <i class="fa fa-lock"></i>
+                        </span>
+                        <input type="password" id="reg-password" 
+                               class="block w-full pl-10 pr-3 py-2 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-neon focus:border-transparent text-gray-100" 
+                               placeholder="输入密码">
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="reg-confirm-password" class="block text-sm font-medium text-gray-300 mb-1">再次输入密码</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                            <i class="fa fa-lock"></i>
+                        </span>
+                        <input type="password" id="reg-confirm-password" 
+                               class="block w-full pl-10 pr-3 py-2 rounded-md bg-gray-800 border border-gray-700 focus:ring-2 focus:ring-neon focus:border-transparent text-gray-100" 
+                               placeholder="再次输入密码">
+                    </div>
+                </div>
+                
+                <div class="text-red-500 text-sm hidden" id="register-error-message">
+                    注册失败，请检查输入
+                </div>
+                
+                <button type="submit" 
+                        class="w-full bg-neon hover:bg-primary/80 text-dark font-bold py-3 px-4 rounded transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center">
+                    <i class="fa fa-user-plus mr-2"></i>注册
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 邮箱已注册提示弹窗 -->
+    <div id="email-exists-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-999 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-effect rounded-lg p-8 w-full max-w-md neon-border transform scale-95 transition-transform duration-300" style="z-index: 1000;">
+            <div class="text-center mb-6">
+                <i class="fa fa-exclamation-circle text-red-400 text-4xl mb-4"></i>
+                <h3 class="text-xl font-bold text-gray-200 mb-2">邮箱已注册</h3>
+                <p class="text-gray-400">该邮箱已经注册过，若需要获取密码请点击获取密码按钮</p>
+            </div>
+            
+            <div class="flex space-x-4">
+                <button type="button" id="get-password-btn" 
+                        class="flex-1 bg-neon hover:bg-primary/80 text-dark font-bold py-3 px-4 rounded transition-all duration-300 transform hover:scale-[1.02]">
+                    获取密码
+                </button>
+                <button type="button" id="cancel-modal-btn" 
+                        class="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded transition-all duration-300 transform hover:scale-[1.02]">
+                    取消
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 用户名已存在提示弹窗 -->
+    <div id="username-exists-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-999 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-effect rounded-lg p-8 w-full max-w-md neon-border transform scale-95 transition-transform duration-300" style="z-index: 1000;">
+            <div class="text-center mb-6">
+                <i class="fa fa-exclamation-circle text-red-400 text-4xl mb-4"></i>
+                <h3 class="text-xl font-bold text-gray-200 mb-2">用户名已存在</h3>
+                <p class="text-gray-400">该用户名已经被注册，请选择其他用户名</p>
+            </div>
+            
+            <div class="flex justify-center">
+                <button type="button" id="ok-username-btn" 
+                        class="bg-neon hover:bg-primary/80 text-dark font-bold py-3 px-8 rounded transition-all duration-300 transform hover:scale-[1.02]">
+                    确定
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 邮箱已订阅确认注册弹窗 -->
+    <div id="email-subscribed-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-999 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-effect rounded-lg p-8 w-full max-w-md neon-border transform scale-95 transition-transform duration-300" style="z-index: 1000;">
+            <div class="text-center mb-6">
+                <i class="fa fa-info-circle text-blue-400 text-4xl mb-4"></i>
+                <h3 class="text-xl font-bold text-gray-200 mb-2">邮箱已订阅</h3>
+                <p class="text-gray-400">该邮箱已经订阅本网站，是否确认注册为用户？</p>
+            </div>
+            
+            <div class="flex space-x-4">
+                <button type="button" id="confirm-register-btn" 
+                        class="flex-1 bg-neon hover:bg-primary/80 text-dark font-bold py-3 px-4 rounded transition-all duration-300 transform hover:scale-[1.02]">
+                    确认注册
+                </button>
+                <button type="button" id="cancel-subscribe-btn" 
+                        class="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded transition-all duration-300 transform hover:scale-[1.02]">
+                    取消
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // DOM元素
+        const loginForm = document.getElementById('login-form');
+        const registerBtn = document.getElementById('register-btn');
+        const modeToggle = document.getElementById('mode-toggle');
+        const inputIcon = document.getElementById('input-icon');
+        const usernameInput = document.getElementById('username');
+        const usernameLabel = document.querySelector('label[for="username"]');
+        const errorMessage = document.getElementById('error-message');
+        const toast = document.getElementById('toast');
+        const toastIcon = document.getElementById('toast-icon');
+        const toastMessage = document.getElementById('toast-message');
+        
+        // 注册浮窗相关元素
+        const registerModal = document.getElementById('register-modal');
+        const closeModalBtn = document.getElementById('close-modal');
+        const registerForm = document.getElementById('register-form');
+        const registerErrorMessage = document.getElementById('register-error-message');
+        const regUsernameInput = document.getElementById('reg-username');
+        const regEmailInput = document.getElementById('reg-email');
+        const regPasswordInput = document.getElementById('reg-password');
+        const regConfirmPasswordInput = document.getElementById('reg-confirm-password');
+        
+        // 邮箱已注册提示弹窗元素
+        const emailExistsModal = document.getElementById('email-exists-modal');
+        const getPasswordBtn = document.getElementById('get-password-btn');
+        const cancelModalBtn = document.getElementById('cancel-modal-btn');
+        
+        // 用户名已存在提示弹窗元素
+        const usernameExistsModal = document.getElementById('username-exists-modal');
+        const okUsernameBtn = document.getElementById('ok-username-btn');
+        
+        // 邮箱已订阅确认注册弹窗元素
+        const emailSubscribedModal = document.getElementById('email-subscribed-modal');
+        const confirmRegisterBtn = document.getElementById('confirm-register-btn');
+        const cancelSubscribeBtn = document.getElementById('cancel-subscribe-btn');
+        
+        // 存储当前注册信息，用于确认注册时使用
+        let currentRegisterInfo = {};
+        
+        // 当前登录模式，默认为用户名登录
+        let currentMode = 'username';
+        // 存储所有用户数据
+        let allUsers = [];
+        
+        // 显示提示消息
+        function showToast(type, message) {
+            toastMessage.textContent = message;
+            
+            // 设置图标和颜色
+            if (type === 'success') {
+                toastIcon.className = 'fa fa-check-circle text-green-400 text-xl';
+            } else if (type === 'error') {
+                toastIcon.className = 'fa fa-exclamation-circle text-red-400 text-xl';
+            } else if (type === 'info') {
+                toastIcon.className = 'fa fa-info-circle text-blue-400 text-xl';
+            }
+            
+            // 显示提示
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            
+            // 3秒后自动隐藏
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+        
+        // 更新认证过期时间
+        function updateAuthExpiry() {
+            const expiryTime = new Date().getTime() + (30 * 60 * 1000); // 30分钟后过期
+            sessionStorage.setItem('auth_expiry', expiryTime.toString());
+        }
+        
+        // 向后端发送登录验证请求
+        function loginverification(username, password, mode) {
+            return new Promise((resolve, reject) => {
+                const command = ip + '/manage_login';
+                fetch(command, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        datatype:"operation",
+                        login: {
+                            name: username,
+                            password: password,
+                            mode: mode
+                        }
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP错误: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && typeof data === 'object') {
+                        // 根据用户要求：success为True且Status为true时验证通过
+                        const isSuccess = data.success === true && data.output && data.output.status === true;
+                        
+                        resolve({
+                            success: isSuccess,
+                            data: data
+                        });
+                    } else {
+                        reject(new Error('无效的响应格式'));
+                    }
+                })
+                .catch(error => {
+                    console.error("登录验证过程中出错:", error);
+                    reject(error);
+                });
+            });
+        }
+        
+        // 显示注册浮窗
+        function showRegisterModal() {
+            registerModal.classList.remove('opacity-0', 'pointer-events-none');
+            registerModal.classList.add('opacity-100', 'pointer-events-auto');
+            registerModal.querySelector('div').classList.remove('scale-95');
+            registerModal.querySelector('div').classList.add('scale-100');
+        }
+
+        // 隐藏注册浮窗
+        function hideRegisterModal() {
+            registerModal.classList.remove('opacity-100', 'pointer-events-auto');
+            registerModal.classList.add('opacity-0', 'pointer-events-none');
+            registerModal.querySelector('div').classList.remove('scale-100');
+            registerModal.querySelector('div').classList.add('scale-95');
+            // 重置表单
+            registerForm.reset();
+            registerErrorMessage.classList.add('hidden');
+        }
+
+        // 显示邮箱已注册提示弹窗
+        function showEmailExistsModal() {
+            // 先隐藏注册弹窗
+            registerModal.classList.remove('opacity-100', 'pointer-events-auto');
+            registerModal.classList.add('opacity-0', 'pointer-events-none');
+            // 再显示邮箱已注册弹窗
+            emailExistsModal.classList.remove('opacity-0', 'pointer-events-none');
+            emailExistsModal.classList.add('opacity-100', 'pointer-events-auto');
+            emailExistsModal.querySelector('div').classList.remove('scale-95');
+            emailExistsModal.querySelector('div').classList.add('scale-100');
+        }
+
+        // 隐藏邮箱已注册提示弹窗
+        function hideEmailExistsModal() {
+            // 隐藏邮箱已注册弹窗
+            emailExistsModal.classList.remove('opacity-100', 'pointer-events-auto');
+            emailExistsModal.classList.add('opacity-0', 'pointer-events-none');
+            emailExistsModal.querySelector('div').classList.remove('scale-100');
+            emailExistsModal.querySelector('div').classList.add('scale-95');
+            // 恢复显示注册弹窗
+            registerModal.classList.remove('opacity-0', 'pointer-events-none');
+            registerModal.classList.add('opacity-100', 'pointer-events-auto');
+        }
+
+        // 显示用户名已存在提示弹窗
+        function showUsernameExistsModal() {
+            // 先隐藏注册弹窗
+            registerModal.classList.remove('opacity-100', 'pointer-events-auto');
+            registerModal.classList.add('opacity-0', 'pointer-events-none');
+            // 再显示用户名已存在弹窗
+            usernameExistsModal.classList.remove('opacity-0', 'pointer-events-none');
+            usernameExistsModal.classList.add('opacity-100', 'pointer-events-auto');
+            usernameExistsModal.querySelector('div').classList.remove('scale-95');
+            usernameExistsModal.querySelector('div').classList.add('scale-100');
+        }
+
+        // 隐藏用户名已存在提示弹窗
+        function hideUsernameExistsModal() {
+            // 隐藏用户名已存在弹窗
+            usernameExistsModal.classList.remove('opacity-100', 'pointer-events-auto');
+            usernameExistsModal.classList.add('opacity-0', 'pointer-events-none');
+            usernameExistsModal.querySelector('div').classList.remove('scale-100');
+            usernameExistsModal.querySelector('div').classList.add('scale-95');
+            // 恢复显示注册弹窗
+            registerModal.classList.remove('opacity-0', 'pointer-events-none');
+            registerModal.classList.add('opacity-100', 'pointer-events-auto');
+        }
+
+        // 显示邮箱已订阅确认注册弹窗
+        function showEmailSubscribedModal() {
+            // 先隐藏注册弹窗
+            registerModal.classList.remove('opacity-100', 'pointer-events-auto');
+            registerModal.classList.add('opacity-0', 'pointer-events-none');
+            // 再显示邮箱已订阅弹窗
+            emailSubscribedModal.classList.remove('opacity-0', 'pointer-events-none');
+            emailSubscribedModal.classList.add('opacity-100', 'pointer-events-auto');
+            emailSubscribedModal.querySelector('div').classList.remove('scale-95');
+            emailSubscribedModal.querySelector('div').classList.add('scale-100');
+        }
+
+        // 隐藏邮箱已订阅确认注册弹窗
+        function hideEmailSubscribedModal() {
+            // 隐藏邮箱已订阅弹窗
+            emailSubscribedModal.classList.remove('opacity-100', 'pointer-events-auto');
+            emailSubscribedModal.classList.add('opacity-0', 'pointer-events-none');
+            emailSubscribedModal.querySelector('div').classList.remove('scale-100');
+            emailSubscribedModal.querySelector('div').classList.add('scale-95');
+            // 恢复显示注册弹窗
+            registerModal.classList.remove('opacity-0', 'pointer-events-none');
+            registerModal.classList.add('opacity-100', 'pointer-events-auto');
+        }
+
+        // 确认注册
+        function handleConfirmRegister() {
+            hideEmailSubscribedModal();
+            // 使用存储的注册信息调用后端注册函数，设置regi_mode为'renew'
+            registerUser(currentRegisterInfo.username, currentRegisterInfo.email, currentRegisterInfo.password, 'renew')
+                .then(result => {
+                    if (result.success) {
+                        // 注册成功
+                        hideRegisterModal();
+                        showToast('success', '注册成功，请登录');
+                    } else {
+                        // 注册失败
+                        registerErrorMessage.textContent = result.data.output?.error || '注册失败，请重试';
+                        registerErrorMessage.classList.remove('hidden');
+                    }
+                })
+                .catch(error => {
+                    console.error('注册失败:', error);
+                    registerErrorMessage.textContent = '注册失败，请稍后重试';
+                    registerErrorMessage.classList.remove('hidden');
+                });
+        }
+
+        // 处理获取密码
+        function handleGetPassword() {
+            hideEmailExistsModal();
+            // 这里可以添加获取密码的逻辑，比如跳转到密码重置页面或发送验证码
+            showToast('info', '获取密码功能开发中');
+        }
+
+        // 邮箱格式验证
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // 向后端获取所有用户数据
+        function getAllUsers() {
+            return new Promise((resolve, reject) => {
+                const command = ip + '/get_all_users';
+                
+                fetch(command, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        datatype: "operation"
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP错误: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+
+                    allUsers = JSON.parse(data.output).Result.user;
+                    resolve(allUsers);
+                    console.log("获取到的用户数据:", allUsers);
+                })
+                .catch(error => {
+                    console.error("获取用户数据过程中出错:", error);
+                    reject(error);
+                });
+            });
+        }
+
+        // 处理登录模式切换
+        function toggleLoginMode() {
+            if (currentMode === 'username') {
+                // 切换到邮件登录模式
+                currentMode = 'email';
+                usernameLabel.textContent = '邮箱';
+                usernameInput.placeholder = '输入邮箱地址';
+                modeToggle.textContent = '用户名登录';
+                inputIcon.className = 'fa fa-envelope';
+                usernameInput.setAttribute('data-mode', 'email');
+            } else {
+                // 切换到用户名登录模式
+                currentMode = 'username';
+                usernameLabel.textContent = '用户名';
+                usernameInput.placeholder = '输入用户名';
+                modeToggle.textContent = '邮件登录';
+                inputIcon.className = 'fa fa-user';
+                usernameInput.setAttribute('data-mode', 'username');
+            }
+        }
+
+        function handleRegister(e){
+            e.preventDefault();
+            // 显示加载状态
+            showToast('info', '正在获取数据...');
+            // 获取所有用户数据
+            getAllUsers()
+                .then(() => {
+                    // 获取数据成功后显示注册浮窗
+                    showRegisterModal();
+                    // 隐藏加载提示
+                    setTimeout(() => {
+                        toast.classList.add('translate-y-20', 'opacity-0');
+                    }, 500);
+                })
+                .catch(error => {
+                    console.error('获取用户数据失败:', error);
+                    showToast('error', '获取数据失败，请稍后重试');
+                });
+        }
+
+        // 处理登录
+        function handleLogin(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            
+            // 输入验证
+            if (!username || !password) {
+                errorMessage.textContent = '请输入用户名和密码';
+                errorMessage.classList.remove('hidden');
+                setTimeout(() => {
+                    errorMessage.classList.add('hidden');
+                }, 3000);
+                return;
+            }
+            if (currentMode == "email") {
+                // 邮箱格式验证
+                if (!isValidEmail(username)) {
+                    errorMessage.textContent = '请输入有效的邮箱地址';
+                    errorMessage.classList.remove('hidden');
+                    setTimeout(() => {
+                        errorMessage.classList.add('hidden');
+                    }, 3000);
+                    return;
+                }
+            }
+            // 调用后端验证函数
+            loginverification(username, password, currentMode)
+                .then(result => {
+                    userlogin = JSON.parse(result.data.output)
+                    if (userlogin.status == true) {
+                        // 登录成功
+                        sessionStorage.setItem('authenticated', 'true');
+                        sessionStorage.setItem('username', username); // 保存用户名
+                        updateAuthExpiry();
+                        const userType = userlogin.UserInfo.UserLevel
+                        let isManager=false;
+                        if (userType.startsWith('Manager')){
+                            isManager=true;
+                        }
+                        // 存储权限信息到sessionStorage
+                        if (isManager) {
+                            if (userType == "Manager1"){
+                                // 分别存储三个权限状态
+                                sessionStorage.setItem('access_allright', '1')
+                            }
+                            else{
+                                sessionStorage.setItem('access_allright', '0')
+                            }
+                            sessionStorage.setItem('access_adding', '1');
+                            sessionStorage.setItem('access_modification', '1');
+                            }
+                        else{
+                            sessionStorage.setItem('access_allright', '0')
+                            sessionStorage.setItem('access_adding', '0');
+                            sessionStorage.setItem('access_modification', '0');
+                        }
+                        console.log(userlogin.UserInfo.userdata)
+                        sessionStorage.setItem('userType', userType);
+                        sessionStorage.setItem('userData',JSON.stringify(userlogin.UserInfo))
+                        // 延迟显示提示后跳转
+                        showToast('success', '登录成功，用户类型：' + userType);
+                        setTimeout(() => {
+                            if (isManager) {
+                                window.location.href = './sitedashboard.html';
+                            } else {
+                                window.location.href = './userdashboard.html';
+                            }
+                            
+                        }, 1000);
+                    } else {
+                        let message = '登录失败，请重试';
+                        if (userlogin && userlogin.error) {
+                            if (userlogin.error == 1){
+                                message = '用户名不存在，请重试';
+                            } else if (userlogin.error == 2){
+                                message = '密码错误，请重试';
+                            }
+                        }
+                        // 登录失败
+                        errorMessage.textContent = message;
+                        errorMessage.classList.remove('hidden');
+                        setTimeout(() => {
+                            errorMessage.classList.add('hidden');
+                        }, 3000);
+                    }
+                })
+                .catch(error => {
+                    // 处理验证过程中的错误
+                    console.error('登录验证失败:', error);
+                    errorMessage.textContent = '登录失败，请稍后重试';
+                    errorMessage.classList.remove('hidden');
+                    setTimeout(() => {
+                        errorMessage.classList.add('hidden');
+                    }, 3000);
+                });
+        }
+        
+        // 向后端发送注册请求
+        function registerUser(username, email, password, regi_mode = 'new') {
+            return new Promise((resolve, reject) => {
+                const command = ip + '/manage_register';
+                fetch(command, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        datatype:"operation",
+                        registration: {
+                            name: username,
+                            email: email,
+                            password: password,
+                            regi_mode: regi_mode
+                        }
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP错误: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data)
+                    if (data && typeof data === 'object') {
+                        console.log(data)
+                        resolve({
+                            success: data.success === true,
+                            data: data
+                        });
+                    } else {
+                        reject(new Error('无效的响应格式'));
+                    }
+                })
+                .catch(error => {
+                    console.error("注册过程中出错:", error);
+                    reject(error);
+                });
+            });
+        }
+
+        // 处理注册表单提交
+        function handleRegisterSubmit(e) {
+            e.preventDefault();
+            
+            const username = regUsernameInput.value.trim();
+            const email = regEmailInput.value.trim();
+            const password = regPasswordInput.value.trim();
+            const confirmPassword = regConfirmPasswordInput.value.trim();
+            
+            // 输入验证
+            if (!username || !email || !password || !confirmPassword) {
+                registerErrorMessage.textContent = '请填写所有必填字段';
+                registerErrorMessage.classList.remove('hidden');
+                return;
+            }
+            
+            // 邮箱格式验证
+            if (!isValidEmail(email)) {
+                registerErrorMessage.textContent = '请输入有效的邮箱地址';
+                registerErrorMessage.classList.remove('hidden');
+                return;
+            }
+            
+            // 密码匹配验证
+            if (password !== confirmPassword) {
+                registerErrorMessage.textContent = '两次输入的密码不匹配';
+                registerErrorMessage.classList.remove('hidden');
+                return;
+            }
+            
+            // 用户名唯一性验证
+            const usernameExists = allUsers.some(user => user.Name === username);
+            if (usernameExists) {
+                showUsernameExistsModal();
+                return;
+            }
+            
+            // 邮箱唯一性验证
+            const existingUser = allUsers.find(user => user.email === email);
+            if (existingUser) {
+                if (existingUser.is_user === 1) {
+                    // 该邮箱已注册为用户
+                    showEmailExistsModal();
+                    return;
+                } else if (existingUser.is_user === 0 && existingUser.isSubscribe === 1) {
+                    // 该邮箱已订阅但未注册为用户
+                    // 存储当前注册信息
+                    currentRegisterInfo = {
+                        username: username,
+                        email: email,
+                        password: password
+                    };
+                    // 显示确认注册弹窗
+                    showEmailSubscribedModal();
+                    return;
+                }
+            }
+            
+            // 调用后端注册函数
+            registerUser(username, email, password)
+                .then(result => {
+                    console.log("This is the result:", result);
+                    if (result.data.output.status==true) {
+                        // 注册成功
+                        hideRegisterModal();
+                        showToast('success', '注册成功，请登录');
+                    } else {
+                        // 注册失败
+                        registerErrorMessage.textContent = result.data.output?.error || '注册失败，请重试';
+                        registerErrorMessage.classList.remove('hidden');
+                    }
+                })
+                .catch(error => {
+                    console.error('注册失败:', error);
+                    registerErrorMessage.textContent = '注册失败，请稍后重试';
+                    registerErrorMessage.classList.remove('hidden');
+                });
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 绑定登录表单提交事件
+            loginForm.addEventListener('submit', handleLogin);
+            // 绑定注册按钮点击事件
+            registerBtn.addEventListener('click', handleRegister);
+            // 绑定登录模式切换按钮点击事件
+            modeToggle.addEventListener('click', toggleLoginMode);
+            // 绑定注册表单提交事件
+            registerForm.addEventListener('submit', handleRegisterSubmit);
+            // 绑定关闭注册浮窗按钮点击事件
+            closeModalBtn.addEventListener('click', hideRegisterModal);
+            // 绑定邮箱已注册提示弹窗事件
+            getPasswordBtn.addEventListener('click', handleGetPassword);
+            cancelModalBtn.addEventListener('click', hideEmailExistsModal);
+            // 绑定用户名已存在提示弹窗事件
+            okUsernameBtn.addEventListener('click', hideUsernameExistsModal);
+            // 绑定邮箱已订阅确认注册弹窗事件
+            confirmRegisterBtn.addEventListener('click', handleConfirmRegister);
+            cancelSubscribeBtn.addEventListener('click', hideEmailSubscribedModal);
+        });
+    </script>
+</body>
+</html>

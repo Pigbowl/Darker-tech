@@ -222,6 +222,7 @@
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ 
+                        datatype:"product",
                         item_cate:"function",
                         table_name:"euf",
                  })
@@ -273,6 +274,7 @@
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ 
+                        datatype:"product",
                         searchtext:searchText,
                         table_name:"euf",
                  })
@@ -509,7 +511,7 @@
                         <div class="mt-auto">
                             <button 
                                 class="view-details-btn w-full py-3 ${buttonBgClass} ${buttonHoverClass} ${buttonTextColor} ${buttonCursor} font-medium rounded-lg transition-colors duration-300 flex items-center justify-center gap-2"
-                                data-pdf-path = "${"../Doc/"+item["Name"]+".pdf"}" data-title = "${item["Name"]+"技术文档"}" ${buttonDisabled}>
+
                                 <i class="fa ${buttonIcon}"></i>
                                 <span>${buttonText}</span>
                             </button>
@@ -518,7 +520,7 @@
                 </div>
             `;
         }
-        
+                                        // data-pdf-path = "${"../Doc/"+item["Name"]+".pdf"}" data-title = "${item["Name"]+"技术文档"}" ${buttonDisabled}>
         // 检查文件是否存在
         async function checkFileExists(fileName) {
             return new Promise((resolve) => {

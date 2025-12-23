@@ -1,16 +1,138 @@
-<!-- <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet"> -->
-<link href="../css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-<script src="../js/ipcontroller.js"></script>  
-<script src="../js/conversion.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Darker Assistant</title>
+    <style>
+        /* 确保html和body元素没有设置会影响定位的样式 */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* 初始状态下鸭子居中 - 覆盖内联样式 */
+        body.start-mode #duckAssistant {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            bottom: auto !important;
+            right: auto !important;
+        }
+        
+        /* 初始状态下chatBubble偏左并缩小到原尺寸 - 覆盖内联样式 */
+        body.start-mode #chatBubble {
+            width: 200px !important;
+            padding: 10px !important;
+            margin: 0 0 10px 30% !important;
+            align-self: flex-start !important;
+            position: relative !important;
+            /* 将聊天气泡向上提升100px */
+            transform: translateY(-200px) !important;
+        }
+        
+        /* 初始状态下鸭子图片偏左 - 覆盖内联样式 */
+        body.start-mode #duckStatic,
+        body.start-mode #duckIcon {
+            margin: 0 0 0 50% !important;
+            align-self: flex-start !important;
+            position: relative !important;
+            /* 只放大鸭子形象，保持对话气泡大小不变 */
+            transform: scale(6) translateX(50px) ;
+            /* border-radius: 0%; */
+        }
+        
+        /* 初始状态下显示白色框容器并使用与鸭子相同的放大倍数 */
+        body.start-mode #whiteBoxContainer {
+            display: flex !important;
+            margin: 0 0 0 50% !important;
+            align-self: flex-start !important;
+            position: relative !important;
+            /* 使用transform组合实现垂直对齐，translateY先于scale执行，调整值来实现对齐 */
+            transform: translateY(80px) translateX(-110px) scale(6);
+            
+        }
+        
+        /* 初始状态下显示标题 */
+        body.start-mode #initialTitle {
+            display: block !important;
+            transform: scale(1);
+        }
+        
+        /* 初始状态下标题也需要放大 */
+        /* body.start-mode #initialTitle {
+            transform: translateX(-50%) scale(1.5) !important;
+        } */
+        
+        /* 初始状态下隐藏所有非必要元素 */
+        body.start-mode #chatBubble,
+        body.start-mode #optionList,
+        body.start-mode #chatInputBox,
+        body.start-mode #subscribeModal,
+        body.start-mode #reportModal {
+            display: none !important;
+        }
+    </style>
+    <!-- <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet"> -->
+    <link href="../css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <script src="../js/ipcontroller.js"></script>  
+    <script src="../js/conversion.js"></script>
+    <script src="../js/product_configure.js"></script>
+</head>
+<body class="start-mode">
 
 <!-- 动态虚拟助手 -->
-<div id="duckAssistant" style="position:fixed;bottom:150px;right:50px;display:flex;flex-direction:column;align-items:flex-end;z-index:9999;">
+<div id="duckAssistant" style="position:absolute;bottom:10px;right:10px;display:flex;flex-direction:column;align-items:flex-end;z-index:9999;">
+
+  <div id="initialTitle" style="position:absolute;top:90px;left:50%;transform:translateX(-50%);color:white;font-size:65px;font-weight:bold;text-align:center;white-space:nowrap;display:none;">
+    <span id="initialTitleText" style="background:linear-gradient(to right, #ffffff, #00f);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+      欢迎来到达客
+    </span>
+  </div>
+  <!-- 添加发光动画 -->
+  <!-- <style>
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #00f, 0 0 20px #00f;
+      }
+      to {
+        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #00f, 0 0 40px #00f;
+      }
+    }
+    /* #initialTitleText {
+      animation: glow 1.5s ease-in-out infinite alternate;
+    } */
+  </style> -->
   <!-- 对话气泡 -->
-     <!-- 对话气泡 -->
   <div id="chatBubble" style="width:280px;background:rgba(26, 219, 245, 0.95);border-radius:15px;padding:12px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1);position:relative;">
     <div id="bubbleContent" style="font-size:14px;color:rgb(0, 0, 0);line-height:1.5;">Hello,尊敬的用户</div>
       <div style="position:absolute;bottom:-5px;right:10px;width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:8px solid rgba(26, 219, 245, 0.95);"></div>
   </div>
+  <!-- 白色框容器 -->
+  <div id="whiteBoxContainer" style="display:none;align-items:center;">
+    <!-- 左侧白色框，高80px、宽160px -->
+    <div style="width:130px;height:70px;background:white;border-radius:5px;box-shadow:0 0px 10px rgba(0,0,0,0.1);display:flex;flex-direction:column;justify-content:space-between;padding:5px;">
+      <!-- 初始页面标题 -->
+      <!-- <div id="initialTitle" style="color:#00f;font-size:14px;font-weight:bold;text-shadow:0 0 5px #00f, 0 0 10px #00f;font-family:'Courier New', monospace;margin-bottom:5px;text-align:center;display:block;">欢迎来到达客</div> -->
+      <!-- 聊天气泡，添加气泡动画类 -->
+      <div class="bubble-item" style="background:#007bff;border-radius:4px;padding:1px 2px;font-size:3px;color:white;align-self:flex-end;margin-right:30px;max-width:150px;opacity:0;transform:scale(0) translateY(20px);transition:all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);">你好！欢迎来到达客领航员</div>
+      <div class="bubble-item" style="background:#007bff;border-radius:4px;padding:1px 2px;font-size:3px;color:white;align-self:flex-end;margin-right:40px;max-width:150px;opacity:0;transform:scale(0) translateY(20px);transition:all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);">我是达客鸭，您的智能小助手</div>
+      <div class="bubble-item" style="background:#007bff;border-radius:4px;padding:1px 2px;font-size:3px;color:white;align-self:flex-end;margin-right:50px;max-width:150px;opacity:0;transform:scale(0) translateY(20px);transition:all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);">我可以帮您介绍达客的产品，让您不白来</div> 
+      <div class="bubble-item" style="background:#007bff;border-radius:4px;padding:1px 2px;font-size:3px;color:white;align-self:flex-end;margin-right:50px;max-width:150px;opacity:0;transform:scale(0) translateY(20px);transition:all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);">我还可以帮您提醒以及帮您完成和网站的交互</div> 
+      <div class="bubble-item" style="background:#007bff;border-radius:4px;padding:1px 2px;font-size:3px;color:white;align-self:flex-end;margin-right:40px;max-width:150px;opacity:0;transform:scale(0) translateY(20px);transition:all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);">我平时在右下角待着哦↘️</div> 
+      <div class="bubble-item" style="background:#007bff;border-radius:4px;padding:1px 2px;font-size:3px;color:white;align-self:flex-end;margin-right:30px;max-width:150px;opacity:0;transform:scale(0) translateY(20px);transition:all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);">有问题随时找我！随时等待你</div> 
+    </div>
+  </div> <!-- 关闭白色框容器 -->
   <!-- 选项列表 -->
   <div id="optionList" style="
     width:200px;
@@ -31,6 +153,7 @@
       <span style="color:rgb(0, 0, 0);font-size:14px;margin-right:8px;"><i class="fa fa-bug"></i></span>
       <span style="color:rgb(0, 0, 0);font-size:14px;">问题提报</span>
     </div>
+    
     <div class="option-item" style="border-radius:10px;padding:12px 20px;cursor:pointer;transition:background-color 0.2s;" data-action="about">
       <span style="color:rgb(0, 0, 0);font-size:14px;margin-right:8px;"><i class="fa fa-user"></i></span>
       <span style="color:rgb(0, 0, 0);font-size:14px;">认识达客</span>
@@ -53,74 +176,130 @@
     </div>
   </div>
 
-  <!-- 动态图标（雪碧图实现） -->
-  <!-- <div 
-    id="duckIcon" 
-    style="
-      
-      width:100px; 
-      height:100px; 
-      border-radius:50%; 
-      cursor:pointer; 
-      background-image: url('../PIC/duck_sprites_yellow.png');  /* 雪碧图路径 */
-      background-repeat: no-repeat;
-      background-position: 0 0;  /* 默认显示第0帧（静止） */
-      background-size: auto 100%;  /* 确保高度适配，宽度自动缩放 */
-    "
-  ></div> -->
 
-  <video 
-    id="duckIcon" 
-    src="../PIC/duck_spin.mp4"
-    style="
-      width:80px; 
-      height:80px; 
-      border-radius:50%; 
-      cursor:pointer; 
-      display:none;  /* 默认隐藏 */
-    "
-    autoplay 
-    loop 
-    muted 
-    playsinline
-  ></video>
-<!-- 静止图（默认显示） -->
-  <img 
-    id="duckStatic" 
-    src="../PIC/duck_action_0.png" 
-    style="width:80px; height:80px; border-radius:50%; cursor:pointer;"
-  >
 
   <!-- 聊天输入框 -->
-  <div id="chatInputBox" style="display:none;width:1000px;background:rgb(255, 252, 61);border-radius:10px;padding:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1);margin-top:10px;position:relative;">
+  <div id="chatInputBox" style="display:none;width:1000px;background:rgba(26, 219, 245, 0.95);border-radius:15px;padding:12px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1);position:relative;">
     <!-- 关闭按钮 -->
     <button id="closeChatBtn" style="position:absolute;top:5px;right:5px;width:24px;height:24px;border:none;border-radius:50%;background:#ff6b6b;color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,0.2);">
       <i class="fa fa-times"></i>
     </button>
     <div id="chatContent" style="height:380px;overflow-y:auto;padding:10px;background:#000000;"></div>
     <div style="display:flex;padding:10px;border-top:1px solid #eee;">
-      <input type="text" id="userInput" placeholder="请输入你的问题..." style="flex:1;padding:8px;border:1px solid #ddd;border-radius:4px;">
+      <input type="text" id="userInput" placeholder="请输入你的问题..." style="flex:1;padding:8px;border:1px solid #ddd;border-radius:4px;box-sizing:border-box;">
       <button id="sendBtn" style="margin-left:10px;padding:8px 15px;border:none;border-radius:4px;background:#007bff;color:white;cursor:pointer;">发送</button>
     </div>
   </div>
   <!-- 订阅悬浮框 -->
-  <div id="subscribeModal" style="display:none;width:400px;background:rgb(255, 252, 61);border-radius:10px;padding:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1);margin-top:10px;position:relative;">
+  <div id="subscribeModal" style="display:none;width:400px;background:rgba(26, 219, 245, 0.95);border-radius:15px;padding:12px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1);position:relative;">
     <h3 style="margin-top:0;color:#000000;font-size:16px;text-align:center;">订阅达客科技</h3>
     <h3 style="margin-top:0;color:#000000;font-size:8px;text-align:center;">订阅后将第一时间告知您达客的最近动态，敬请期待</h3>
     <div style="margin-bottom:15px;">
       <label style="display:block;margin-bottom:5px;color:#000000;">用户名</label>
-      <input type="text" id="subscribeUsername" placeholder="请输入您的用户名" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;">
+      <input type="text" id="subscribeUsername" placeholder="请输入您的用户名" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;box-sizing:border-box;">
     </div>
     <div style="margin-bottom:15px;">
       <label style="display:block;margin-bottom:5px;color:#000000;">邮箱地址</label>
-      <input type="email" id="subscribeEmail" placeholder="请输入您的邮箱地址" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;">
+      <input type="email" id="subscribeEmail" placeholder="请输入您的邮箱地址" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;box-sizing:border-box;">
     </div>
     <div style="display:flex;gap:10px;">
-      <button id="subscribeSubmitBtn" style="flex:1;padding:10px;border:none;border-radius:4px;background:#007bff;color:white;cursor:pointer;">订阅</button>
-      <button id="subscribeCancelBtn" style="flex:1;padding:10px;border:none;border-radius:4px;background:#6c757d;color:white;cursor:pointer;">取消</button>
+      <button type="button" id="subscribeSubmitBtn" style="flex:1;padding:10px;border:none;border-radius:4px;background:#007bff;color:white;cursor:pointer;">订阅</button>
+      <button type="button" id="subscribeCancelBtn" style="flex:1;padding:10px;border:none;border-radius:4px;background:#6c757d;color:white;cursor:pointer;">取消</button>
     </div>
   </div>
+
+  <!-- 提交成功提示 -->
+  <div id="successMessage" style="
+    display:none;
+    position:fixed;
+    top:25%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    background:rgba(30, 30, 30, 0.95);
+    padding:24px;
+    border-radius:15px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.3);
+    z-index:10000;
+    text-align:center;
+  ">
+    <div>
+      <i class="fa fa-check-circle" style="color:#007bff;font-size:48px;margin-bottom:16px;"></i>
+      <h3 style="font-size:20px;font-weight:bold;color:white;margin-bottom:8px;">提交成功</h3>
+      <p style="color:#999;margin-bottom:20px;">感谢您的留言，我们会尽快回复您！</p>
+      <button id="closeMessage" style="
+        background:#007bff;
+        color:white;
+        border:none;
+        border-radius:4px;
+        padding:8px 16px;
+        cursor:pointer;
+        font-weight:medium;
+        transition:background-color 0.3s ease;
+      ">关闭</button>
+    </div>
+  </div>
+
+  <!-- 问题提报悬浮框 -->
+  <div id="reportModal" style="display:none;width:400px;background:rgba(26, 219, 245, 0.95);border-radius:15px;padding:12px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1);position:relative;">
+    <h3 style="margin-top:0;color:#000000;font-size:16px;text-align:center;">问题提报</h3>
+    <form id="reportForm">
+      <div style="margin-bottom:10px;">
+        <label for="reportName" style="display:block;margin-bottom:3px;color:#000000;">姓名</label>
+        <input type="text" id="reportName" name="name" required style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;box-sizing:border-box;">
+      </div>
+      <div style="margin-bottom:10px;">
+        <label for="reportEmail" style="display:block;margin-bottom:3px;color:#000000;">邮箱</label>
+        <input type="email" id="reportEmail" name="email" required style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;box-sizing:border-box;">
+      </div>
+      <div style="margin-bottom:10px;">
+        <label for="reportType" style="display:block;margin-bottom:3px;color:#000000;">类型</label>
+        <select id="reportType" name="contactType" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;box-sizing:border-box;">
+          <option value="suggestion">意见建议</option>
+          <option value="issue">问题提报</option>
+        </select>
+      </div>
+      <div style="margin-bottom:10px;">
+        <label for="reportSubject" style="display:block;margin-bottom:3px;color:#000000;">主题</label>
+        <select id="reportSubject" name="subject" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;box-sizing:border-box;">
+          <option value="general">通用选项</option>
+        </select>
+      </div>
+      <div style="margin-bottom:10px;">
+        <label for="reportMessage" style="display:block;margin-bottom:3px;color:#000000;">留言内容</label>
+        <textarea id="reportMessage" name="message" rows="3" required style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;box-sizing:border-box;"></textarea>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button type="submit" id="reportSubmitBtn" style="flex:1;padding:10px;border:none;border-radius:4px;background:#007bff;color:white;cursor:pointer;">提交信息</button>
+        <button type="button" id="reportCancelBtn" style="flex:1;padding:10px;border:none;border-radius:4px;background:#6c757d;color:white;cursor:pointer;">取消</button>
+      </div>
+    </form>
+  </div>
+
+  <video 
+      id="duckIcon" 
+      src="../PIC/Duck/duck_intro.mp4",
+      style="
+        width:80px; 
+        height:80px; 
+        border-radius:50%; 
+        cursor:pointer; 
+        display:inline-block;  /* 默认隐藏 */
+      "
+      autoplay 
+      loop 
+      muted 
+      playsinline
+  >
+  </video>
+<!-- 静止图（默认显示） -->
+  <img 
+    id="duckStatic" 
+    src="../PIC/Duck/duck_action_0.png" 
+    style="width:80px; height:80px; border-radius:50%; cursor:pointer;"
+  >
+
 </div>
+
 
   
 
@@ -142,45 +321,133 @@ if (conversion_blog[parenthtml]){
 }else{
   introTexts = ['这不就尴尬了么？','我也不知道说哈呀!','给你唱一个？','啦啦啦啦啦啦啦啦~']
 }
-bubbleContent.textContent = starttext;
-  // 点击交互（触发挥手动画+切换输入框）
+
+// 启动动画的随机介绍话语
+const startTexts = [
+    '嗨，我是达客鸭！',
+    '欢迎使用达客助手！',
+    '有什么可以帮到您？',
+    '初次见面，请多关照！',
+    '我是您的智能助手！',
+    '随时为您服务！',
+    '欢迎来到达客科技！',
+    '让我来帮助您吧！'
+];
+
+// 状态变量
+let isInStartMode = true; // 默认处于启动模式
 let isChatting = false; // 默认不显示聊天输入框
 let isMuted = false; // 默认不静音，显示chatbubble
-  let introInterval;
-  const chatBubble = document.getElementById('chatBubble');
-  const duckIcon = document.getElementById('duckIcon');
-  const chatInputBox = document.getElementById('chatInputBox');
-  const chatContent = document.getElementById('chatContent');
-  const userInput = document.getElementById('userInput');
-  const sendBtn = document.getElementById('sendBtn');
-  const frameWidth = 100;  // 单帧宽度（与雪碧图单帧尺寸一致）
-  const totalFrames = 6;  // 总帧数（6帧动画）
-  const duckVideo = document.getElementById('duckIcon');
-  const duckStatic = document.getElementById('duckStatic');
-  const subscribeModal = document.getElementById('subscribeModal');
-  let animationInterval = null;
-  let animationTimeout = null; // 定义animationTimeout变量
-  // 获取静音选项元素
-  const muteOption = document.querySelector('.option-item[data-action="mute"]');
-  const muteIcon = muteOption.querySelector('i');
-  const muteText = muteOption.querySelector('span:last-child');
-  // chatBubble.innerHTML = pageName;
-  // getusernumber();
-  // 自动播放动画（每5秒触发一次挥手，避免频繁动画）
+let introInterval;
+let initducksize = 'scale(6) translateX(50px)'
+const chatBubble = document.getElementById('chatBubble');
+const duckIcon = document.getElementById('duckIcon');
+const chatInputBox = document.getElementById('chatInputBox');
+const chatContent = document.getElementById('chatContent');
+const userInput = document.getElementById('userInput');
+const sendBtn = document.getElementById('sendBtn');
+const frameWidth = 100;  // 单帧宽度（与雪碧图单帧尺寸一致）
+const totalFrames = 6;  // 总帧数（6帧动画）
+const duckVideo = document.getElementById('duckIcon');
+const duckStatic = document.getElementById('duckStatic');
+const subscribeModal = document.getElementById('subscribeModal');
+let animationInterval = null;
+let animationTimeout = null; // 定义animationTimeout变量
+// 获取静音选项元素
+const muteOption = document.querySelector('.option-item[data-action="mute"]');
+const muteIcon = muteOption.querySelector('i');
+const muteText = muteOption.querySelector('span:last-child');
+const duckimagepath = '../PIC/Duck/';
+// 自动播放动画（每5秒触发一次挥手，避免频繁动画）
 function startAutoAnimation() {
   setInterval(() => {
     playWaveAnimation();
-  }, 10000);
+  }, 500);
 }
+
+// 初始化气泡内容
+const bubbleContent = document.getElementById('bubbleContent');
+
+// 添加消息监听器，处理来自父窗口的消息
+window.addEventListener('message', function(event) {
+    // 切换到正常模式
+    if (event.data && event.data.type === 'switchToNormalMode') {
+        // 立即切换到正常模式（旧逻辑，用于兼容）
+        isInStartMode = false;
+        document.body.classList.remove('start-mode');
+        bubbleContent.textContent = starttext;
+        duckIcon.style.transform = 'scale(1)';
+        duckStatic.style.transform = 'scale(1)';
+        duckVideo.style.transform = 'scale(1)';
+        // 切换到正常模式后，调用updateIframeSize更新iframe大小
+        updateIframeSize();
+    }
+    // 直接切换到正常模式
+        else if (event.data && event.data.type === 'startNormalModeTransition') {
+            // 立即切换到正常模式
+            isInStartMode = false;
+            document.body.classList.remove('start-mode');
+            bubbleContent.textContent = starttext;
+            duckIcon.style.transform = 'scale(1)';
+            duckStatic.style.transform = 'scale(1)';
+            duckVideo.style.transform = 'scale(1)';
+            // 切换到正常模式后，调用updateIframeSize更新iframe大小
+            updateIframeSize();
+        }
+});
+
+// 检查sessionStorage，判断是否是第一次访问
+const hasSeenInitialMode = sessionStorage.getItem('hasSeenDuckInitialMode') === 'true';
+
+if (hasSeenInitialMode) {
+    // 非第一次访问，直接切换到正常模式
+    isInStartMode = false;
+    document.body.classList.remove('start-mode');
+    bubbleContent.textContent = starttext;
+    duckIcon.style.transform = 'scale(1)';
+    duckStatic.style.transform = 'scale(1)';
+    duckVideo.style.transform = 'scale(1)';
+} else {
+    // 第一次访问，显示初始模式文本
+    bubbleContent.textContent = startTexts[Math.floor(Math.random() * startTexts.length)];
+    
+    // 添加气泡逐个弹出动画
+    setTimeout(() => {
+        animateBubbles();
+    }, 500);
+}
+
+// 气泡逐个弹出动画函数
+function animateBubbles() {
+    const bubbles = document.querySelectorAll('.bubble-item');
+    bubbles.forEach((bubble, index) => {
+        setTimeout(() => {
+            bubble.style.opacity = '1';
+            bubble.style.transform = 'scale(1) translateY(0)';
+        }, index * 1000); // 每个气泡间隔1s
+    });
+}
+
 function playWaveAnimation() {
   if (animationTimeout) clearTimeout(animationTimeout);
   // 显示视频，隐藏静止图
   duckVideo.style.display = "block";
   duckStatic.style.display = "none";
+  
+  // 在初始模式下保持8倍缩放
+  if (isInStartMode) {
+    duckVideo.style.transform = initducksize;
+  }
+  
   // 视频播放1.5秒后恢复静止图
   animationTimeout = setTimeout(() => {
     duckVideo.style.display = "none";
     duckStatic.style.display = "block";
+    
+    // 在初始模式下保持8倍缩放
+    if (isInStartMode) {
+      duckStatic.style.transform = initducksize;
+    }
   }, 10000);
 }
 // function playWaveAnimation() {
@@ -189,7 +456,7 @@ function playWaveAnimation() {
   
 //   let currentFrame = 0;
 //   // 使用雪碧图实现动画
-//   animationInterval = setInterval(() => {
+//   animationInterval = etInterval(() => {
 //     currentFrame++;
 //     // 计算背景位置，实现帧动画效果
 //     duckIcon.style.backgroundPosition = `-${currentFrame * frameWidth}px 0`;
@@ -213,12 +480,32 @@ const optionItems = document.querySelectorAll('.option-item');
 let hoverTimer = null;
 
 function showOptions() {
+  // 检查是否正在拖拽或需要等待鼠标离开才能启用交互
+  if (isDragging || waitForMouseLeave) {
+    return; // 如果正在拖拽或需要等待，不执行任何操作
+  }
+  
+  // 检查是否处于初始状态，如果是则不显示选项列表
+  if (isInStartMode) {
+    return; // 初始状态下不执行任何交互
+  }
+  
+  // 检查是否正在显示chatInputBox、subscribeModal或reportModal，如果是则不显示optionList
+  const chatInputBox = document.getElementById('chatInputBox');
+  const subscribeModal = document.getElementById('subscribeModal');
+  const reportModal = document.getElementById('reportModal');
+  if (chatInputBox.style.display === 'block' || 
+      subscribeModal.style.display === 'block' || 
+      reportModal.style.display === 'block') {
+    return; // 如果任何模态框正在显示，不执行任何操作
+  }
+  
   // 清除可能存在的延时计时器
   if (hoverTimer) {
     clearTimeout(hoverTimer);
     hoverTimer = null;
   }
-  duckVideo.src = "../PIC/duck_move.mp4";
+  duckVideo.src = duckimagepath + 'duck_move.mp4';
   playWaveAnimation(); // 显示选项时播放挥手动画
   optionList.style.display = 'block';
   // 使用setTimeout确保display改变后再执行transform动画
@@ -231,23 +518,34 @@ function showOptions() {
 
 // 为动态视频和静态图片添加点击事件
 duckIcon.onclick = () => {
-    playWaveAnimation();  // 点击时播放挥手动画
-
+    // 初始状态下不执行任何操作
+    if (!isInStartMode) {
+        playWaveAnimation();  // 点击时播放挥手动画
+    }
   };
 
 duckStatic.onclick = () => {
-    playWaveAnimation();  // 点击时播放挥手动画
-
+    // 初始状态下不执行任何操作
+    if (!isInStartMode) {
+        playWaveAnimation();  // 点击时播放挥手动画
+    }
   };
 
 // 关闭聊天框功能
 const closeChatBtn = document.getElementById('closeChatBtn');
 closeChatBtn.addEventListener('click', () => {
+  // 隐藏chatInputBox
   chatInputBox.style.display = "none";
-  // 只有当isMuted为false时才显示chatbubble
-  if (!isMuted) {
+  // 只有当isMuted为false、不在拖拽状态且不需要等待鼠标离开且没有显示其他模态框时才显示chatbubble
+  if (!isMuted && !isDragging && !waitForMouseLeave && 
+      document.getElementById('subscribeModal').style.display !== 'block' && 
+      document.getElementById('reportModal').style.display !== 'block') {
     chatBubble.style.display = "block";
   }
+  // 确保optionList、subscribeModal和reportModal隐藏
+  optionList.style.display = 'none';
+  subscribeModal.style.display = 'none';
+  document.getElementById('reportModal').style.display = 'none';
   startIntroAnimation();
   isChatting = false; // 重置聊天状态
   updateIframeSize();
@@ -258,8 +556,11 @@ function hideOptions() {
   // 动画结束后隐藏元素
   setTimeout(() => {
     optionList.style.display = 'none';
-    // 只有当isMuted为false时才显示chatbubble
-    if (!isMuted) {
+    // 只有当isMuted为false、不在拖拽状态、不需要等待鼠标离开且没有显示任何模态框时才显示chatbubble
+    if (!isMuted && !isDragging && !waitForMouseLeave && 
+        chatInputBox.style.display !== 'block' && 
+        subscribeModal.style.display !== 'block' && 
+        document.getElementById('reportModal').style.display !== 'block') {
       chatBubble.style.display = 'block';
     }
     updateIframeSize();
@@ -283,15 +584,7 @@ function scheduleHideOptions() {
   duckStatic.addEventListener('mouseleave', scheduleHideOptions);
 
 // 为了防止鼠标从图标移动到选项列表时选项列表消失，给选项列表也添加事件监听
-optionList.addEventListener('mouseenter', () => {
-  // 清除延时计时器
-  if (hoverTimer) {
-    clearTimeout(hoverTimer);
-    hoverTimer = null;
-  }
-  optionList.style.display = 'block';
-  optionList.style.transform = 'scaleY(1)';
-});
+optionList.addEventListener('mouseenter', handleOptionMouseEnter);
 
 optionList.addEventListener('mouseleave', scheduleHideOptions);
 
@@ -337,38 +630,68 @@ document.addEventListener('click', (event) => {
 
 // 处理选项点击事件
 function handleOptionClick(action) {
+  // 初始状态下不执行任何操作
+  if (isInStartMode) {
+    return;
+  }
+  
   // 根据选择的选项执行相应操作
   switch(action) {
     case 'report':
-      // 问题提报功能
-      window.parent.location.href = "../#contact";
+      duckVideo.src = duckimagepath + 'duck_like.mp4'; // 使用合适的鸭子视频
+      // 显示问题提报模态框
+      showReportModal();
       break;
     case 'about':
       // 理解达客功能
-      window.parent.location.href = "../#about";
+      window.parent.location.href = "../index.html#about";
       break;
     case 'start':
       // 理解达客功能
       window.parent.location.href = "../Pages/ADAS_JOURNEY.html";
       break;
     case 'question':
-      duckVideo.src = "../PIC/duck_keyboard.mp4";
+      duckVideo.src = duckimagepath + 'duck_keyboard.mp4';
       // 我有问题功能
         if (!isChatting) {
-          clearInterval(introInterval);
+          // 清除自动介绍动画的定时器，避免chatbubble自动出现
+          if (introInterval) {
+            clearInterval(introInterval);
+            introInterval = null;
+          }
           bubbleContent.textContent = "请问有什么可以帮你了解的？";
+          // 显示chatInputBox，隐藏其他所有元素
           chatInputBox.style.display = "block";
+          // 隐藏optionList、chatBubble、subscribeModal和reportModal
+          optionList.style.display = 'none';
+          chatBubble.style.display = 'none';
+          subscribeModal.style.display = 'none';
+          document.getElementById('reportModal').style.display = 'none';
           userInput.focus();
         } else {
+          // 隐藏chatInputBox，恢复正常显示
           chatInputBox.style.display = "none";
-          startIntroAnimation();
+          // 如果是非静音状态且没有显示其他模态框，显示chatBubble
+          if (!isMuted && 
+              subscribeModal.style.display !== 'block' && 
+              document.getElementById('reportModal').style.display !== 'block') {
+            chatBubble.style.display = "block";
+            // 重新启动自动介绍动画
+            startIntroAnimation();
+          }
         }
         isChatting = !isChatting; // 切换聊天状态
         updateIframeSize();
       break;
     case 'subscribe':
-      duckVideo.src = "../PIC/duck_like.mp4";
+      duckVideo.src = duckimagepath + 'duck_like.mp4';
+      // 显示subscribeModal，隐藏其他所有元素
       subscribeModal.style.display = 'block';
+      // 隐藏optionList、chatBubble、chatInputBox和reportModal
+      optionList.style.display = 'none';
+      chatBubble.style.display = 'none';
+      chatInputBox.style.display = 'none';
+      document.getElementById('reportModal').style.display = 'none';
   
       // 重置输入框
       document.getElementById('subscribeUsername').value = '';
@@ -389,12 +712,18 @@ function handleOptionClick(action) {
         muteText.textContent = '为我介绍';
         chatBubble.style.display = 'none'; // 立即隐藏chatbubble
       } else {
-        // 非静音状态：显示chatbubble
+        // 非静音状态：显示chatbubble，但要考虑拖拽状态和其他模态框
         muteIcon.className = 'fa fa-volume-off';
         muteText.textContent = '别说话了';
         // 确保chatBubble的样式正确，特别是margin
         chatBubble.style.marginBottom = '10px';
-        chatBubble.style.display = 'block'; // 立即显示chatbubble
+        // 只有当不在拖拽状态、不需要等待鼠标离开且没有显示任何模态框时才显示chatbubble
+        if (!isDragging && !waitForMouseLeave && 
+            chatInputBox.style.display !== 'block' && 
+            subscribeModal.style.display !== 'block' && 
+            document.getElementById('reportModal').style.display !== 'block') {
+          chatBubble.style.display = 'block'; // 立即显示chatbubble
+        }
       }
       
       // 延迟调用updateIframeSize，确保所有样式更新完成
@@ -427,49 +756,98 @@ sendBtn.onclick = async () => {
   updateIframeSize();
 };
 
-// 自动介绍文本（保持不变）
+// 自动介绍文本
 function startIntroAnimation() {
 
   let currentIntroIndex = 0;
   introInterval = setInterval(() => {
-    bubbleContent.textContent = introTexts[currentIntroIndex];
-    // 只有当isMuted为false且选项列表不显示时才显示chatbubble
-    if (!isMuted && optionList.style.display !== 'block') {
+    // 根据当前模式选择文本数组
+    const textsToUse = isInStartMode ? startTexts : introTexts;
+    bubbleContent.textContent = textsToUse[currentIntroIndex];
+    // 只有当isMuted为false、选项列表不显示、不在拖拽状态、不需要等待鼠标离开且没有显示任何模态框时才显示chatbubble
+    if (!isMuted && 
+        optionList.style.display !== 'block' && 
+        !isDragging && 
+        !waitForMouseLeave && 
+        chatInputBox.style.display !== 'block' && 
+        subscribeModal.style.display !== 'block' && 
+        document.getElementById('reportModal').style.display !== 'block') {
       chatBubble.style.display = 'block';
     }
-    currentIntroIndex = (currentIntroIndex + 1) % introTexts.length;
+    currentIntroIndex = (currentIntroIndex + 1) % textsToUse.length;
     updateIframeSize();
   }, 4000);
 }
+
+// 初始化：确保只有一个鸭子形象显示
+// duckIcon默认是隐藏的，duckStatic默认是显示的
+// 直接使用之前声明过的变量，不重新声明
+// 确保duckIcon默认隐藏，duckStatic默认显示
+duckIcon.style.display = 'none';
+duckStatic.style.display = 'block';
 
 // 初始化
 startIntroAnimation();
 // 初始化 - 只启动自动动画
 startAutoAnimation();
 
+// 初始化后立即更新iframe尺寸，确保chatbubble能完整显示
+updateIframeSize();
+
 // 图标悬停时添加缩放效果
   duckIcon.addEventListener('mouseenter', () => {
-    duckIcon.style.transform = 'scale(1.05)';
+    // 初始模式下保持缩放，不执行悬停效果
+    if (isInStartMode) {
+      duckIcon.style.transform = initducksize;
+    } else {
+      duckIcon.style.transform = 'scale(1.05)';
+    }
   });
 
   duckIcon.addEventListener('mouseleave', () => {
-    duckIcon.style.transform = 'scale(1)';
+    // 初始模式下保持缩放，不执行悬停效果
+    if (isInStartMode) {
+      duckIcon.style.transform = initducksize;
+    } else {
+      duckIcon.style.transform = 'scale(1)';
+    }
   });
   
   // 静态图片悬停时添加缩放效果
   duckStatic.addEventListener('mouseenter', () => {
-    duckStatic.style.transform = 'scale(1.05)';
+    // 初始模式下保持缩放，不执行悬停效果
+    if (isInStartMode) {
+      duckStatic.style.transform = initducksize;
+    } else {
+      duckStatic.style.transform = 'scale(1.05)';
+    }
   });
 
   duckStatic.addEventListener('mouseleave', () => {
-    duckStatic.style.transform = 'scale(1)';
+    // 初始模式下保持缩放，不执行悬停效果
+    if (isInStartMode) {
+      duckStatic.style.transform = initducksize;
+    } else {
+      duckStatic.style.transform = 'scale(1)';
+    }
   });
 
 // 显示订阅悬浮框
 function showSubscribeModal() {
   const subscribeModal = document.getElementById('subscribeModal');
   
+  // 显示subscribeModal，隐藏其他所有元素
   subscribeModal.style.display = 'block';
+  // 隐藏optionList、chatBubble和chatInputBox
+  optionList.style.display = 'none';
+  chatBubble.style.display = 'none';
+  chatInputBox.style.display = 'none';
+  
+  // 清除自动介绍动画的定时器，避免chatbubble自动出现
+  if (introInterval) {
+    clearInterval(introInterval);
+    introInterval = null;
+  }
   
   // 重置输入框
   document.getElementById('subscribeUsername').value = '';
@@ -480,7 +858,15 @@ function showSubscribeModal() {
 function hideSubscribeModal() {
   const subscribeModal = document.getElementById('subscribeModal');
   
+  // 隐藏subscribeModal
   subscribeModal.style.display = 'none';
+  // 只有当isMuted为false、不在拖拽状态、不需要等待鼠标离开且没有显示chatInputBox和reportModal时才显示chatbubble
+  if (!isMuted && !isDragging && !waitForMouseLeave && chatInputBox.style.display !== 'block' && document.getElementById('reportModal').style.display !== 'block') {
+    chatBubble.style.display = 'block';
+    // 重新启动自动介绍动画
+    startIntroAnimation();
+  }
+  updateIframeSize();
 }
 
 // 处理订阅提交
@@ -516,6 +902,7 @@ function handleSubscribe() {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body:JSON.stringify({
+        datatype:"operation",
         'user': {
             "id": "USER",
             "name": username,
@@ -566,19 +953,621 @@ function initSubscribeEvents() {
   });
 }
 
+// 定义选项列表鼠标进入事件处理函数
+function handleOptionMouseEnter() {
+  // 检查是否正在拖拽或需要等待鼠标离开
+  if (isDragging || waitForMouseLeave) {
+    return; // 如果正在拖拽或需要等待，不执行任何操作
+  }
+  
+  // 清除延时计时器
+  if (hoverTimer) {
+    clearTimeout(hoverTimer);
+    hoverTimer = null;
+  }
+  optionList.style.display = 'block';
+  optionList.style.transform = 'scaleY(1)';
+}
+
+// 拖拽功能重新设计
+let isDragging = false;
+let startMouseX, startMouseY;
+let startDuckX, startDuckY;
+let currentDuckX, currentDuckY;
+let iframe;
+// 标记是否需要等待鼠标离开才能启用交互
+let waitForMouseLeave = false;
+
+// 为鸭子形象添加拖拽事件监听器
+function initDrag() {
+  const duckElements = [document.getElementById('duckIcon'), document.getElementById('duckStatic')];
+  
+  duckElements.forEach(duck => {
+    // 鼠标按下事件
+    duck.addEventListener('mousedown', (e) => {
+      // 初始状态下不执行拖拽
+      if (isInStartMode) {
+        return;
+      }
+      
+      // 防止默认行为和事件冒泡
+      e.preventDefault();
+      e.stopPropagation();
+      
+      // 禁止选择文本
+      document.body.style.userSelect = 'none';
+      
+      isDragging = true;
+      
+      // 获取当前iframe元素
+      iframe = window.parent.document.getElementById('duckIframe');
+      
+      // 获取鼠标相对于视口的位置
+      startMouseX = e.clientX;
+      startMouseY = e.clientY;
+      
+      // 获取鸭子元素相对于视口的位置
+      const duckRect = duck.getBoundingClientRect();
+      startDuckX = duckRect.left;
+      startDuckY = duckRect.top;
+      currentDuckX = startDuckX;
+      currentDuckY = startDuckY;
+      
+      // 改变鼠标样式
+      document.body.style.cursor = 'grabbing';
+      
+      // 临时禁用原有交互逻辑，包括updateIframeSize
+      disableAllInteractions();
+    });
+    
+    // 触摸开始事件（移动端支持）
+    duck.addEventListener('touchstart', (e) => {
+      // 初始状态下不执行拖拽
+      if (isInStartMode) {
+        return;
+      }
+      
+      // 防止默认行为和事件冒泡
+      e.preventDefault();
+      e.stopPropagation();
+      
+      isDragging = true;
+      
+      // 获取当前iframe元素
+      iframe = window.parent.document.getElementById('duckIframe');
+      
+      // 获取触摸点相对于视口的位置
+      const touch = e.touches[0];
+      startMouseX = touch.clientX;
+      startMouseY = touch.clientY;
+      
+      // 获取鸭子元素相对于视口的位置
+      const duckRect = duck.getBoundingClientRect();
+      startDuckX = duckRect.left;
+      startDuckY = duckRect.top;
+      currentDuckX = startDuckX;
+      currentDuckY = startDuckY;
+      
+      // 临时禁用原有交互逻辑，包括updateIframeSize
+      disableAllInteractions();
+    });
+  });
+  
+  // 窗口鼠标移动事件
+  window.addEventListener('mousemove', (e) => {
+    if (!isDragging || !iframe) return;
+    
+    // 防止默认行为和事件冒泡
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // 计算鼠标相对于初始位置的偏移量
+    const deltaX = e.clientX - startMouseX;
+    const deltaY = e.clientY - startMouseY;
+    
+    // 计算新的鸭子位置
+    currentDuckX = startDuckX + deltaX;
+    currentDuckY = startDuckY + deltaY;
+    
+    // 计算iframe需要移动的距离
+    // 注意：我们需要将鸭子位置的变化转换为iframe位置的变化
+    // 因为鸭子位于iframe的右下角，所以iframe的移动距离等于鸭子的移动距离
+    const iframeRect = iframe.getBoundingClientRect();
+    const newIframeX = iframeRect.left + deltaX;
+    const newIframeY = iframeRect.top + deltaY;
+    
+    // 发送新位置给父窗口
+    window.parent.postMessage({
+      type: 'moveDuckIframe',
+      x: newIframeX,
+      y: newIframeY
+    }, '*');
+  });
+  
+  // 窗口触摸移动事件（移动端支持）
+  window.addEventListener('touchmove', (e) => {
+    if (!isDragging || !iframe) return;
+    
+    // 防止默认行为和事件冒泡
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // 获取触摸点相对于视口的位置
+    const touch = e.touches[0];
+    
+    // 计算触摸点相对于初始位置的偏移量
+    const deltaX = touch.clientX - startMouseX;
+    const deltaY = touch.clientY - startMouseY;
+    
+    // 计算新的鸭子位置
+    currentDuckX = startDuckX + deltaX;
+    currentDuckY = startDuckY + deltaY;
+    
+    // 计算iframe需要移动的距离
+    const iframeRect = iframe.getBoundingClientRect();
+    const newIframeX = iframeRect.left + deltaX;
+    const newIframeY = iframeRect.top + deltaY;
+    
+    // 发送新位置给父窗口
+    window.parent.postMessage({
+      type: 'moveDuckIframe',
+      x: newIframeX,
+      y: newIframeY
+    }, '*');
+  });
+  
+  // 结束拖拽的处理函数
+  function endDrag() {
+    if (!isDragging) return;
+    
+    isDragging = false;
+    
+    // 恢复文本选择
+    document.body.style.userSelect = 'auto';
+    
+    // 恢复鼠标样式
+    document.body.style.cursor = 'default';
+    
+    // 恢复原有交互逻辑
+    restoreAllInteractions();
+    
+    // 清除iframe引用
+    iframe = null;
+  }
+  
+  // 鼠标释放事件
+  window.addEventListener('mouseup', (e) => {
+    // 防止默认行为和事件冒泡
+    e.preventDefault();
+    e.stopPropagation();
+    endDrag();
+  });
+  
+  // 触摸结束事件（移动端支持）
+  window.addEventListener('touchend', (e) => {
+    // 防止默认行为和事件冒泡
+    e.preventDefault();
+    e.stopPropagation();
+    endDrag();
+  });
+  
+  // 鼠标离开窗口事件
+  window.addEventListener('mouseleave', endDrag);
+}
+
+// 保存元素原始显示状态，用于拖拽结束后恢复
+let originalElementStyles = [];
+
+// 临时禁用所有交互逻辑，包括updateIframeSize
+function disableAllInteractions() {
+  // 禁用所有事件监听器
+  document.body.style.pointerEvents = 'none';
+  
+  // 保存所有元素的原始显示状态
+  originalElementStyles = [];
+  
+  // 隐藏所有元素，只保留鸭子形象
+  const allElements = document.querySelectorAll('body > *');
+  allElements.forEach(element => {
+    // 保存原始样式
+    originalElementStyles.push({
+      element: element,
+      originalDisplay: element.style.display
+    });
+    
+    // 只保留duckAssistant容器，隐藏其他所有直接子元素
+    if (element.id !== 'duckAssistant') {
+      element.style.display = 'none';
+    }
+  });
+  
+  // 只显示当前应该显示的鸭子形象，隐藏另一个
+  const duckIcon = document.getElementById('duckIcon');
+  const duckStatic = document.getElementById('duckStatic');
+  
+  // 保存鸭子形象的原始样式
+  originalElementStyles.push({
+    element: duckIcon,
+    originalDisplay: duckIcon.style.display
+  });
+  originalElementStyles.push({
+    element: duckStatic,
+    originalDisplay: duckStatic.style.display
+  });
+  
+  // 检查哪个鸭子形象当前是显示状态
+  const isIconVisible = duckIcon.style.display !== 'none';
+  const isStaticVisible = duckStatic.style.display !== 'none';
+  
+  // 确保只有一个鸭子形象显示
+  if (isIconVisible) {
+    // 如果duckIcon是显示的，隐藏duckStatic
+    duckStatic.style.display = 'none';
+  } else {
+    // 否则，隐藏duckIcon，显示duckStatic
+    duckIcon.style.display = 'none';
+    duckStatic.style.display = 'block';
+  }
+  
+  // 隐藏duckAssistant容器内的所有其他元素
+  const assistant = document.getElementById('duckAssistant');
+  const assistantChildren = assistant.querySelectorAll('*');
+  assistantChildren.forEach(child => {
+    // 保存原始样式
+    // 对于optionList，总是保存它的显示状态为none，无论实际状态如何
+    let displayToSave = child.style.display;
+    if (child.id === 'optionList') {
+      displayToSave = 'none';
+    }
+    originalElementStyles.push({
+      element: child,
+      originalDisplay: displayToSave
+    });
+    
+    // 只保留鸭子形象，隐藏其他所有子元素
+    if (child.id !== 'duckIcon' && child.id !== 'duckStatic') {
+      child.style.display = 'none';
+    }
+  });
+  
+  // 暂停自动动画
+  if (introInterval) {
+    clearInterval(introInterval);
+    introInterval = null;
+  }
+  
+  // 确保没有残留的定时器
+  if (hoverTimer) {
+    clearTimeout(hoverTimer);
+    hoverTimer = null;
+  }
+  
+  // 覆盖updateIframeSize函数，防止在拖拽过程中改变iframe大小
+  window.updateIframeSize = function() {
+    // 拖拽过程中不更新iframe大小
+    return;
+  };
+}
+
+// 恢复所有交互逻辑
+function restoreAllInteractions() {
+  // 设置需要等待鼠标离开才能启用交互
+  waitForMouseLeave = true;
+  
+  // 只恢复鸭子形象的指针事件，其他元素仍保持禁用
+  const duckElements = [document.getElementById('duckIcon'), document.getElementById('duckStatic')];
+  duckElements.forEach(duck => {
+    // 恢复鸭子形象的指针事件
+    duck.style.pointerEvents = 'auto';
+    // 恢复鸭子形象的鼠标离开事件监听器，用于检测鼠标离开
+    duck.addEventListener('mouseleave', onDuckMouseLeave);
+    // 注意：这里只添加了mouseleave事件监听器，没有添加mouseenter事件监听器
+    // 防止拖拽结束后，鼠标仍然悬停在鸭子形象上时，触发showOptions()函数
+  });
+  
+  // 恢复updateIframeSize函数
+  window.updateIframeSize = function() {
+    // 在初始模式下禁用尺寸调整
+    if (isInStartMode) {
+      return;
+    }
+    
+    const assistant = document.getElementById('duckAssistant');
+    // 使用requestAnimationFrame确保在浏览器下一次重绘前执行
+    requestAnimationFrame(() => {
+      // 增加额外的缓冲值，确保鸭子形象放大时能够完全显示在iframe内
+      // 考虑到鸭子放大效果（scale(1.05)）和边缘间隙，增加20px的缓冲值
+      window.parent.postMessage({
+        type: 'updateDuckSize',
+        width: assistant.offsetWidth + 20,
+        height: assistant.offsetHeight + 20
+      }, '*');
+    });
+  };
+  
+  // 不需要这里调用updateIframeSize，因为在onDuckMouseLeave函数中会调用
+  // 移除不必要的setTimeout调用，避免导致chatbubble位置异常
+}
+
+// 鸭子形象鼠标离开事件处理函数
+function onDuckMouseLeave(e) {
+  // 只有当需要等待鼠标离开时才执行
+  if (waitForMouseLeave) {
+    // 移除鸭子形象的鼠标离开事件监听器
+    const duckElements = [document.getElementById('duckIcon'), document.getElementById('duckStatic')];
+    duckElements.forEach(duck => {
+      duck.removeEventListener('mouseleave', onDuckMouseLeave);
+    });
+    
+    // 恢复所有元素的原始显示状态，但确保optionList保持隐藏
+    originalElementStyles.forEach(styleInfo => {
+      // 恢复原始显示状态，但如果是optionList，保持隐藏
+      if (styleInfo.element.id === 'optionList') {
+        styleInfo.element.style.display = 'none';
+      } else {
+        styleInfo.element.style.display = styleInfo.originalDisplay;
+      }
+    });
+    
+    // 确保optionList保持隐藏，不会被设置为display:block
+    document.getElementById('optionList').style.display = 'none';
+    document.getElementById('optionList').style.transform = 'scaleY(0)';
+    
+    // 恢复所有元素的指针事件
+    document.body.style.pointerEvents = 'auto';
+    
+    // 重置标记
+    waitForMouseLeave = false;
+    
+    // 确保聊天气泡显示正确（如果需要）
+    const chatBubble = document.getElementById('chatBubble');
+    const bubbleContent = document.getElementById('bubbleContent');
+    if (!isMuted) {
+      chatBubble.style.display = 'block';
+      // 立即设置聊天气泡的文字内容，避免显示空气泡
+      const textsToUse = isInStartMode ? startTexts : introTexts;
+      bubbleContent.textContent = textsToUse[Math.floor(Math.random() * textsToUse.length)];
+    } else {
+      chatBubble.style.display = 'none';
+    }
+    
+    // 直接更新iframe大小，确保所有元素都能正确显示
+    // updateIframeSize函数内部已经使用了requestAnimationFrame，不需要再嵌套
+    window.updateIframeSize();
+    
+    // 最后重新启动自动动画，避免影响chatbubble的初始位置
+    startIntroAnimation();
+  }
+}
+
 // 宽高自适应
 function updateIframeSize() {
+  // 在初始模式下禁用尺寸调整
+  if (isInStartMode) {
+    return;
+  }
+  
   const assistant = document.getElementById('duckAssistant');
   // 使用requestAnimationFrame确保在浏览器下一次重绘前执行
   requestAnimationFrame(() => {
+    // 增加额外的缓冲值，确保鸭子形象放大时能够完全显示在iframe内
+    // 考虑到鸭子放大效果（scale(1.05)）和边缘间隙，增加20px的缓冲值
     window.parent.postMessage({
       type: 'updateDuckSize',
-      width: assistant.offsetWidth,
-      height: assistant.offsetHeight
+      width: assistant.offsetWidth + 20,
+      height: assistant.offsetHeight + 20
     }, '*');
+  });
+}
+
+// 处理问题提报类型变更，动态更新主题选项
+function handleReportTypeChange() {
+  const subjectSelect = document.getElementById('reportSubject');
+  const contactType = document.getElementById('reportType').value;
+  
+  // 获取当前页面地址
+  const currentPagePath = window.parent.location.pathname;
+  const currentPageFilename = currentPagePath.split('/').pop();
+  
+  // 去掉.html后缀
+  const pageNameWithoutExt = currentPageFilename.replace('.html', '');
+  
+  // 查找匹配的option
+  let matchedOption = null;
+  if (products_config && products_config.productfeatures) {
+    matchedOption = products_config.productfeatures.find(option => {
+      return option.Function === pageNameWithoutExt;
+    });
+  }
+  
+  // 获取返回值，命名为default
+  const defaultOption = matchedOption ? matchedOption.CN_Name : '通用信息';
+  
+  // 打印结果
+  console.log('默认选项:', defaultOption);
+  
+  // 清空现有选项
+  subjectSelect.innerHTML = '';
+  
+  if (contactType === 'issue') {
+    // 问题提报类型，添加所有页面选项
+    if (products_config && products_config.productfeatures) {
+      // 先创建选项数组
+      const options = [...products_config.productfeatures];
+      
+      // 查找默认选项的索引
+      const defaultIndex = options.findIndex(option => option.CN_Name === defaultOption);
+      
+      // 如果找到了默认选项，将其移到数组开头
+      if (defaultIndex > -1) {
+        const [defaultItem] = options.splice(defaultIndex, 1);
+        options.unshift(defaultItem);
+      }
+      
+      // 添加所有选项
+      options.forEach(option => {
+          const opt = document.createElement('option');
+          opt.value = option.CN_Name;
+          opt.textContent = option.CN_Name;
+          subjectSelect.appendChild(opt);
+      });
+    }
+  } else {
+    // 意见建议类型，只显示通用选项
+    const opt = document.createElement('option');
+    opt.value = 'general';
+    opt.textContent = '通用选项';
+    subjectSelect.appendChild(opt);
+  }
+}
+
+// 处理问题提报提交
+function handleReportSubmit(event) {
+  event.preventDefault();
+  
+  // 获取表单数据
+  const name = document.getElementById('reportName').value.trim();
+  const email = document.getElementById('reportEmail').value.trim();
+  const contactType = document.getElementById('reportType').value;
+  const subject = document.getElementById('reportSubject').value;
+  const message = document.getElementById('reportMessage').value.trim();
+  
+  // 调用addnewissue函数提交数据
+  addnewissue(name, message, subject, email, contactType);
+}
+
+// 与index.html中相同的addnewissue函数，用于提交问题提报
+function addnewissue(name, message, subject, email, contactType) {
+  // console.log('addnewissue函数被调用，准备调用API');
+  
+  // 调用真实API
+  const command = ip + '/add_issue';
+  fetch(command, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      datatype:'operation',
+      'issue': {
+        "id": "ISSUE-",
+        "type": contactType,
+        "title": subject,
+        "description": message,
+        "submit_time": new Date().toISOString(),
+        "submit_email": email,
+        "submit_name": name,
+      },
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    // 根据API返回结果显示相应提示
+    if (data && data.success) {
+      // 使用postMessage通知父页面显示成功提示
+      window.parent.postMessage({
+        type: 'showSuccessMessage'
+      }, '*');
+    } else {
+      // 使用postMessage通知父页面显示失败提示
+      window.parent.postMessage({
+        type: 'showErrorMessage',
+        message: data && data.message ? data.message : '提交失败，请稍后重试'
+      }, '*');
+    }
+    
+    // 隐藏报告模态框
+    hideReportModal();
+  })
+  .catch(error => {
+    // 使用postMessage通知父页面显示失败提示
+    window.parent.postMessage({
+      type: 'showErrorMessage',
+      message: '提交过程中发生网络错误，请稍后重试'
+    }, '*');
+    
+    // 隐藏报告模态框
+    hideReportModal();
+  });
+}
+
+// 显示问题提报模态框
+function showReportModal() {
+  // 显示reportModal，隐藏其他所有元素
+  const reportModal = document.getElementById('reportModal');
+  reportModal.style.display = 'block';
+  
+  // 隐藏optionList、chatBubble、chatInputBox和subscribeModal
+  const optionList = document.getElementById('optionList');
+  const chatBubble = document.getElementById('chatBubble');
+  const chatInputBox = document.getElementById('chatInputBox');
+  const subscribeModal = document.getElementById('subscribeModal');
+  
+  optionList.style.display = 'none';
+  chatBubble.style.display = 'none';
+  chatInputBox.style.display = 'none';
+  subscribeModal.style.display = 'none';
+  
+  // 清除自动介绍动画的定时器，避免chatbubble自动出现
+  if (introInterval) {
+    clearInterval(introInterval);
+    introInterval = null;
+  }
+  
+  // 初始化主题选项
+  handleReportTypeChange();
+  
+  updateIframeSize();
+}
+
+// 隐藏问题提报模态框
+function hideReportModal() {
+  const reportModal = document.getElementById('reportModal');
+  reportModal.style.display = 'none';
+  
+  // 重置表单，避免下次打开时残留之前的输入
+  const reportForm = document.getElementById('reportForm');
+  reportForm.reset();
+  
+  // 只有当isMuted为false、不在拖拽状态、不需要等待鼠标离开且没有显示其他模态框时才显示chatbubble
+  if (!isMuted && !isDragging && !waitForMouseLeave && 
+      document.getElementById('chatInputBox').style.display !== 'block' && 
+      document.getElementById('subscribeModal').style.display !== 'block') {
+    document.getElementById('chatBubble').style.display = 'block';
+    // 重新启动自动介绍动画
+    startIntroAnimation();
+  }
+  
+  updateIframeSize();
+}
+
+// 初始化问题提报相关事件监听
+function initReportEvents() {
+  const reportType = document.getElementById('reportType');
+  const reportForm = document.getElementById('reportForm');
+  const reportCancelBtn = document.getElementById('reportCancelBtn');
+  
+  // 联系类型变更事件
+  reportType.addEventListener('change', handleReportTypeChange);
+  
+  // 表单提交事件
+  reportForm.addEventListener('submit', handleReportSubmit);
+  
+  // 取消按钮事件
+  reportCancelBtn.addEventListener('click', hideReportModal);
+  
+  // 防止点击模态框内容时关闭模态框
+  document.getElementById('reportModal').addEventListener('click', function(e) {
+    e.stopPropagation();
   });
 }
 
 // 初始化订阅事件
 initSubscribeEvents();
+// 初始化问题提报事件
+initReportEvents();
+// 初始化拖拽功能
+initDrag();
 </script>
+</body>
+</html>

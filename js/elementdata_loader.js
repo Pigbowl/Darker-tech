@@ -18,6 +18,7 @@ function loadElementData() {
         body: JSON.stringify({
             // 这里可以根据实际API需求添加请求参数
             // 示例参数，实际使用时请根据API要求修改
+            datatype:"product",
             item_cate: 'elementdata',
             action: 'work'
         })

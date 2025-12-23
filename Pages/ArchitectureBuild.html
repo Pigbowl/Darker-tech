@@ -10,20 +10,37 @@
     <link href="../css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/components.css">
+    
+    <style>
+        /* 数字雨背景样式 */
+        #digital-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+        }
+    </style>
+        
+
+        
+
 
     <script src="../js/xlsx/xlsx.full.min.js"></script>
-    <script src="../js/particles/particles.min.js"></script>    
-    <script src="../js/chartjs/chart.umd.min.js"></script>
+        <script src="../js/chartjs/chart.umd.min.js"></script>
 
-    <link href="../css/fonts/local-fonts.css" rel="stylesheet">
-    <script src="../js/ipcontroller.js"></script>
-    <script src="../js/load-duck-assistant.js"></script>
+        <link href="../css/fonts/local-fonts.css" rel="stylesheet">
+        <script src="../js/ipcontroller.js"></script>
+        <script src="../js/load-duck-assistant.js"></script>
+        
 
 </head>
 
 
 <body class="bg-primary text-gray-100 font-inter min-h-screen flex flex-col bg-grid">
-    <div id="particles-js"></div>
+    <!-- 数字雨背景 -->
+    <canvas id="digital-rain"></canvas>
     <div class="content min-h-screen">
         <!-- 导航栏容器 --> 
         <div id="navbar-container"></div>       
@@ -110,7 +127,7 @@
                         </div>
                     </div>
                     
-                    <div id="visualization-container" class="relative w-full h-screen bg-dark-light/60">
+                    <div id="visualization-container" class="relative w-full h-screen bg-black/70">
                         <svg id="connections" class="absolute inset-0 w-full h-full pointer-events-none z-10"></svg>
                         <div id="buble-container" class="bg-primary/10 inset-0 w-full h-full overflow-hidden z-20"></div>
                     </div>
@@ -123,60 +140,70 @@
         <div id="footer-container"></div>   
     </div>
             
+    <script>
+        const canvas = document.getElementById('digital-rain');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
 
+            // 字符集（数字+中文+符号，增强科技感）
+            const chars = '0123456789abcdefghijklmnopqrstuvwxyzあいうえおかきくけこ★■●◆';
+            const fontSize = 16;
+            const columns = Math.floor(canvas.width / fontSize); // 列数
+            const drops = []; // 每列的下落位置
+
+            // 初始化每列的起始位置
+            for (let i = 0; i < columns; i++) {
+                drops[i] = Math.random() * -100;
+            }
+
+            function drawDigitalRain() {
+                // 半透明黑色背景，实现拖影效果
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = '#009933'; // 暗绿色，降低亮度
+                ctx.font = `${fontSize}px monospace`;
+
+                // 逐列绘制字符
+                for (let i = 0; i < drops.length; i++) {
+                    const text = chars[Math.floor(Math.random() * chars.length)];
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                    // 随机重置下落位置，形成循环
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+
+            // 控制帧率（30帧/秒）
+            setInterval(drawDigitalRain, 35);
+            // 窗口大小适配
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+    </script>
     <script>    
         
         let netinitstatus = 0
         window.apiReponse = null;
         let dropdownlist = [];
 
-        document.addEventListener('DOMContentLoaded', () => { 
-            //加载所有数据
-            getdropdowninfo()
-
-            function getdropdowninfo() {
-                command = ip + '/init_config_func'
-                fetch(command, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        scriptName: "function_config_initiator.py",
-                        tablepath: "database.xlsx"
-                    })
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        console.log('No shit');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        dropdownlist = JSON.parse(data.output); // 解析Promise并传递data.output
-                        generateDropdownOptions(dropdownlist["EUF"])
-                        initDropdown()
-                    } else {
-                        console.log("请求失败");
-                    }
-                })
-                // .catch(error => {
-                //     console.error("请求过程中出错:", error);
-                //     reject(error);
-                // });
-            }
-
-
-        })
         
-        command = ip + '/fbsnetinit'
+        // command = ip + '/fbsnetinit'
+        command = ip +'/function_breakdown_full'
         fetch(command,{
                 method:'POST',
                 headers:{
                     'Content-Type':'application/json'
                 },
                 body:JSON.stringify({
+                    datatype:"product",
                     scriptName:'fbsnetinit'
                 })
             })
@@ -189,7 +216,11 @@
             .then(data=>{
                 if (data.success){
                     window.apiReponse = (JSON.parse(data.output))
-                    showPage('架构网络查看');   
+                    console.log(JSON.parse(data.output))
+                    showPage('架构网络查看')
+                    generateDropdownOptions(JSON.parse(data.output)['EUF_LIST'])
+                    initDropdown()
+                    
                 }
                 else{
                     console.log("Still no shit")
@@ -243,6 +274,7 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
+                        datatype:"product",
                         scriptName: "fbssearching",
                         intputdata:fbsfindinginput
                     })
@@ -267,16 +299,16 @@
                 })
             }
         });
+
         
         function generateDropdownOptions(optiondata) {
             const dropdownMenu = document.getElementById('dropdownOptions');
             dropdownMenu.innerHTML = '';
-            
             optiondata.forEach(item => {
                 // 创建主选项
-                if (item.features.length == 1) {
+                if (item.feature.length == 1) {
                     const li = document.createElement('li');
-                    li.innerHTML = `<a class="dropdown-item" data-id="${item.name}">${item.name}</a>`;
+                    li.innerHTML = `<a class="dropdown-item" data-id="${item.desc}">${item.desc}</a>`;
                     dropdownMenu.appendChild(li);
                 } else {
                     // 创建带子选项的主选项
@@ -286,8 +318,8 @@
                     // 主选项
                     const mainLink = document.createElement('a');
                     mainLink.className = 'dropdown-item dropdown-toggle';
-                    mainLink.setAttribute('data-id', item.name);
-                    mainLink.textContent = item.name;
+                    mainLink.setAttribute('data-id', item.desc);
+                    mainLink.textContent = item.desc;
                     li.appendChild(mainLink);
                     
                     // 子选项容器
@@ -295,9 +327,9 @@
                     subMenu.className = 'dropdown-menu';
                     
                     // 添加子选项
-                    item.features.forEach(subItem => {
+                    item.feature.forEach(subItem => {
                         const subLi = document.createElement('li');
-                        subLi.innerHTML = `<a class="dropdown-item" data-id="${subItem.FEATURE_NAME}">${subItem.FEATURE_NAME}</a>`;
+                        subLi.innerHTML = `<a class="dropdown-item" data-id="${subItem.Name}">${subItem.Name}</a>`;
                         subMenu.appendChild(subLi);
                     });
                     
@@ -386,7 +418,7 @@
             
             // 创建第一层容器和网格
             const level1Div = document.createElement('div');
-            level1Div.className = 'level-container bg-white rounded-l-lg overflow-hidden shadow-lg';
+            level1Div.className = 'level-container bg-white rounded-l-lg shadow-lg';
             cardContainer.appendChild(level1Div);
 
             const level1Grid = document.createElement('div');
@@ -396,7 +428,7 @@
 
             // 创建第二层容器和网格
             const level2Div = document.createElement('div');
-            level2Div.className = 'level-container bg-white overflow-hidden shadow-md';
+            level2Div.className = 'level-container bg-white shadow-md';
             cardContainer.appendChild(level2Div);
                 // 设置总行数为第三层卡片总数
             level2Div.style.setProperty('--total-rows', totalLevel3Cards);
@@ -404,11 +436,11 @@
             const level2Grid = document.createElement('div');
             level2Grid.className = 'grid grid-uniform-vertical h-full gap-px';
             level2Div.appendChild(level2Grid);
-            // console.log("二层创建完毕")
+
 
             // 创建第三层容器和网格
             const level3Div = document.createElement('div');
-            level3Div.className = 'level-container bg-white rounded-r-lg overflow-hidden shadow-md';
+            level3Div.className = 'level-container bg-white rounded-r-lg shadow-md';
             cardContainer.appendChild(level3Div);
                 // 设置总行数为第三层卡片总数
             level3Div.style.setProperty('--total-rows', totalLevel3Cards);
@@ -416,7 +448,7 @@
             const level3Grid = document.createElement('div');
             level3Grid.className = 'grid grid-uniform-vertical h-full gap-px';
             level3Div.appendChild(level3Grid);
-            // console.log("三层创建完毕")
+
             // 渲染第一层卡片
             renderLevel1Cards(cardContainer,level1Grid,level2Grid,level3Grid,data);
             
@@ -427,17 +459,28 @@
 
             // 显示布局并隐藏加载状态
             loadingState.classList.add('hidden');
-            cardLayout.innerHTML += '<div class="mt-8 text-center"><button id="reset-btn" class="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg transition-colors shadow-md">重置布局</button></div>';
-            cardLayout.classList.remove('hidden');
             
-            // 添加重置按钮事件
-            document.getElementById('reset-btn').addEventListener('click', () => {
-                cardLayout.classList.add('hidden');
-                loadingState.classList.remove('hidden');
-                setTimeout(() => {
-                    renderCardLayout(mockData);
-                }, 1000);
-            });
+            // 创建重置按钮并添加到cardLayout，而不是使用innerHTML +=
+            // 先检查是否已有重置按钮，避免重复添加
+            let resetBtn = document.getElementById('reset-btn');
+            if (!resetBtn) {
+                const resetBtnContainer = document.createElement('div');
+                resetBtnContainer.className = 'mt-8 text-center';
+                resetBtnContainer.innerHTML = '<button id="reset-btn" class="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg transition-colors shadow-md">重置布局</button>';
+                cardLayout.appendChild(resetBtnContainer);
+                
+                // 添加重置按钮事件
+                resetBtn = document.getElementById('reset-btn');
+                resetBtn.addEventListener('click', () => {
+                    cardLayout.classList.add('hidden');
+                    loadingState.classList.remove('hidden');
+                    setTimeout(() => {
+                        renderCardLayout(mockData);
+                    }, 1000);
+                });
+            }
+            
+            cardLayout.classList.remove('hidden');
         }
 
         // 渲染第一层卡片
@@ -483,23 +526,124 @@
             const color = getColorClass(level)
             const headinglevel = getHeadingLevel(level)
             const textsize = getTextSize(level)
-            const fontweithg = getFontWeight(level)
+            const fontweight = getFontWeight(level)
             const icona = getIcon(level)
             const iconmarge = getIconMargin(level)
-
             // 第一层和第二层卡片保持不变
-            card.className = `${color} p-2 card-transition flex items-center justify-center shadow-md hover:shadow-xl transform-origin-bottom-left hover:scale-105 transition-all duration-300`;
+            card.className = `${color} p-2 card-transition flex items-center justify-center shadow-md hover:shadow-xl transform-origin-bottom-left hover:scale-105 transition-all duration-300 relative`;
             card.innerHTML = `
                 <div class="flex items-start w-full ml-1.5">
                     <i class="fa ${icona} text-white text-${getIconSize(level)} mr-2 mt-1.5"></i>
                     <div class="text-left flex-grow">
-                        <h${headinglevel} class="text-${textsize} font-${fontweithg} text-white">${item["FUNCTION_INDEX"]}</h${headinglevel}>
+                        <h${headinglevel} class="text-${textsize} font-${fontweight} text-white">${item["FUNCTION_INDEX"]}</h${headinglevel}>
                         <p class="text-white/90 text-${getsubTextSize(level)}">${item["FUNCTION_NAME"]}</p>
                     </div>
                 </div>
             
                 `;
-                // console.log(card.innerHTML)
+
+            // 创建悬浮框
+            const tooltip = document.createElement('div');
+            // 使用fixed定位，避免被父容器限制
+            tooltip.style.position = 'fixed';
+            tooltip.style.zIndex = '9999'; // 确保悬浮框在最上层
+            tooltip.style.backgroundColor = '#374151'; // 灰色背景
+            tooltip.style.color = 'white';
+            tooltip.style.padding = '8px 12px';
+            tooltip.style.borderRadius = '6px';
+            tooltip.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)';
+            tooltip.style.fontSize = '12px';
+            tooltip.style.maxWidth = '250px';
+            tooltip.style.opacity = '0';
+            tooltip.style.visibility = 'hidden';
+            tooltip.style.transition = 'opacity 0.2s ease, visibility 0.2s ease';
+            tooltip.style.pointerEvents = 'none';
+            tooltip.style.whiteSpace = 'normal';
+            tooltip.style.wordWrap = 'break-word';
+            tooltip.style.border = '1px solid #4B5563'; // 添加边框使其更明显
+            
+            // 填充悬浮框内容
+            let tooltipContent = '<div style="font-weight: bold; margin-bottom: 4px; padding-bottom: 2px; border-bottom: 1px solid #4B5563;">详细信息</div>';
+            
+            // 添加基本信息
+            tooltipContent += `<div style="margin: 2px 0;"><strong>功能索引:</strong> ${item["FUNCTION_INDEX"] || '无'}</div>`;
+            tooltipContent += `<div style="margin: 2px 0;"><strong>功能名称:</strong> ${item["FUNCTION_NAME"] || '无'}</div>`;
+            tooltipContent += `<div style="margin: 2px 0;"><strong>层级:</strong> ${level}</div>`;
+            
+            // 根据不同层级添加额外信息
+            if (level === 'level1') {
+                tooltipContent += `<div style="margin: 2px 0;"><strong>中层功能数量:</strong> ${item.mf_count || 0}</div>`;
+            } else if (level === 'level2') {
+                tooltipContent += `<div style="margin: 2px 0;"><strong>起始位置:</strong> ${item.position?.start || 0}</div>`;
+                tooltipContent += `<div style="margin: 2px 0;"><strong>占据行数:</strong> ${item.position?.length || 0}</div>`;
+                tooltipContent += `<div style="margin: 2px 0;"><strong>底层功能数量:</strong> ${item.tf_functions?.length || 0}</div>`;
+            } else if (level === 'level3') {
+                tooltipContent += `<p><strong>序号:</strong> ${item.tf_number || 0}</p>`;
+            }
+            
+            // 添加其他可能存在的属性
+            for (const key in item) {
+                if (typeof item[key] !== 'object' && !['FUNCTION_INDEX', 'FUNCTION_NAME', 'position', 'tf_functions', 'tf_number', 'mf_count'].includes(key)) {
+                    tooltipContent += `<p><strong>${key}:</strong> ${item[key]}</p>`;
+                }
+            }
+            
+            tooltip.innerHTML = tooltipContent;
+            // 将悬浮框直接添加到body中，确保它完全不受卡片限制
+            document.body.appendChild(tooltip);
+            
+            // 添加鼠标事件监听器
+            card.addEventListener('mouseenter', (e) => {
+                // 确保悬浮框在最上层
+                tooltip.style.zIndex = '9999';
+                
+                // 计算悬浮框位置 - 放在卡片右侧
+                const rect = card.getBoundingClientRect();
+                
+                // 设置悬浮框位置：卡片右侧，垂直居中对齐
+                tooltip.style.left = `${rect.right + 12}px`; // 右侧偏移12px
+                tooltip.style.top = `${rect.top + rect.height / 2 - tooltip.offsetHeight / 2}px`;
+                
+                // 确保悬浮框在视口内
+                if (tooltip.offsetTop < 0) {
+                    tooltip.style.top = '10px';
+                } else if (tooltip.offsetTop + tooltip.offsetHeight > window.innerHeight) {
+                    tooltip.style.top = `${window.innerHeight - tooltip.offsetHeight - 10}px`;
+                }
+                
+                // 显示悬浮框
+                tooltip.style.opacity = '1';
+                tooltip.style.visibility = 'visible';
+            });
+            
+            card.addEventListener('mouseleave', (e) => {
+                // 隐藏悬浮框
+                tooltip.style.opacity = '0';
+                tooltip.style.visibility = 'hidden';
+            });
+            
+            // 添加点击事件用于调试
+            card.addEventListener('click', (e) => {
+                e.stopPropagation();
+                
+                // 计算悬浮框位置 - 放在卡片右侧
+                const rect = card.getBoundingClientRect();
+                
+                // 设置悬浮框位置：卡片右侧，垂直居中对齐
+                tooltip.style.left = `${rect.right + 12}px`; // 右侧偏移12px
+                tooltip.style.top = `${rect.top + rect.height / 2 - tooltip.offsetHeight / 2}px`;
+                
+                // 确保悬浮框在视口内
+                if (tooltip.offsetTop < 0) {
+                    tooltip.style.top = '10px';
+                } else if (tooltip.offsetTop + tooltip.offsetHeight > window.innerHeight) {
+                    tooltip.style.top = `${window.innerHeight - tooltip.offsetHeight - 10}px`;
+                }
+                
+                // 强制显示悬浮框以便调试
+                tooltip.style.opacity = '1';
+                tooltip.style.visibility = 'visible';
+            });
             
             return card;
         }
@@ -586,9 +730,9 @@
 
         // 节点尺寸配置
         const nodeSizeConfig = {
-            top: { radius: 60, fontSize: '16px', titleFontSize: '12px' },
-            mid: { radius: 50, fontSize: '14px', titleFontSize: '10px' },
-            bottom: { radius: 40, fontSize: '12px', titleFontSize: '9px' }
+            top: { radius: 60, fontSize: '24px', titleFontSize: '12px' },
+            mid: { radius: 50, fontSize: '21px', titleFontSize: '10px' },
+            bottom: { radius: 40, fontSize: '18px', titleFontSize: '8px' }
         };
 
         const cardPositions = {};
@@ -619,7 +763,6 @@
         function updateConnectionInfoPanel() {
             const selectedCardEl = document.getElementById('current-selected-card');
             const connectionListEl = document.getElementById('connection-list');
-    
             if (!isSelectionMode || !selectedCardId) {
                 selectedCardEl.textContent = '-';
                 connectionListEl.innerHTML = '<div class="text-gray-400 italic">未选中任何卡片</div>';
@@ -645,7 +788,7 @@
                 });
                 }
             });
-    
+
             if (highlightedConnections.length === 0) {
                 connectionListEl.innerHTML = '<div class="text-yellow-400 italic">没有找到相关功能拆解</div>';
                 return;
@@ -681,7 +824,7 @@
         function getRandomPosition(type) {
             const container = document.getElementById('visualization-container');
             const containerRect = container.getBoundingClientRect();
-            // console.log(containerRect)
+
         let minX, maxX, minY, maxY;
         const padding = 100;
         
@@ -718,11 +861,11 @@
         function createcircle(card, type) {
             const cardElement = document.createElement('div');
             const position = getRandomPosition(type);
-            // console.log(position,type)
+
             const delay = Math.random() * 3;
             const sizeConfig = nodeSizeConfig[type];
         
-            cardPositions[card.id] = {
+            cardPositions[card.name] = {
                 x: position.x,
                 y: position.y,
                 element: cardElement,
@@ -730,22 +873,23 @@
             };
         
             // 保存原始位置
-            originalPositions[card.id] = {
+            originalPositions[card.name] = {
                 x: position.x,
                 y: position.y
             };
     
-            cardElement.id = card.id;
-            cardElement.className = `absolute cursor-pointer animate-float transition-all duration-300`;
+            cardElement.id = card.name;
+            cardElement.className = `absolute cursor-pointer transition-all duration-300`;
             cardElement.style.animationDelay = `${delay}s`;
-            cardElement.style.width = `${sizeConfig.radius * 2}px`;
-            cardElement.style.height = `${sizeConfig.radius * 2}px`;
+            // 非选中模式下，卡片直径设置为10px
+            cardElement.style.width = '10px';
+            cardElement.style.height = '10px';
             cardElement.style.borderRadius = '50%';
             cardElement.style.display = 'flex';
             cardElement.style.flexDirection = 'column';
             cardElement.style.justifyContent = 'center';
             cardElement.style.alignItems = 'center';
-            cardElement.style.padding = '1rem';
+            cardElement.style.padding = '0';
             cardElement.style.color = 'white';
             cardElement.style.left = `${position.x}px`;
             cardElement.style.top = `${position.y}px`;
@@ -753,15 +897,15 @@
             let baseStyle, selectedStyle;
             switch(type) {
                 case 'top':
-                baseStyle = 'bg-top/40 border-2 border-top/30 shadow-lg opacity-60 scale-95 z-10';
+                baseStyle = 'bg-black border-2 border-black opacity-100 z-15';
                 selectedStyle = 'selected-top';
                 break;
                 case 'mid':
-                baseStyle = 'bg-mid/40 border-2 border-mid/30 shadow-lg opacity-60 scale-95 z-10';
+                baseStyle = 'bg-black border-2 border-black opacity-100 z-15';
                 selectedStyle = 'selected-mid';
                 break;
                 case 'bottom':
-                baseStyle = 'bg-indigo-900/40 border-2 border-bottom/30 shadow-lg opacity-60 scale-95 z-10';
+                baseStyle = 'bg-black border-2 border-black opacity-100 z-15';
                 selectedStyle = 'selected-bottom';
                 break;
             }
@@ -770,23 +914,104 @@
             cardElement.dataset.selectedClass = selectedStyle;
             cardElement.dataset.type = type;
         
+            // 根据卡片类型设置字体颜色
+            let fontColor;
+            switch(type) {
+                case 'top':
+                    fontColor = '#FFC000'; // 枣红色
+                    break;
+                case 'mid':
+                    fontColor = '#15E2E9'; // 蓝色
+                    break;
+                case 'bottom':
+                    fontColor = '#DE19E5'; // 红色
+                    break;
+                default:
+                    fontColor = '#FFFFFF'; // 默认白色
+            }
+            
+            // 非选中模式下，只显示名称，不显示描述
             cardElement.innerHTML = `
-                <div class="font-bold text-center transition-all" style="font-size: ${sizeConfig.fontSize}">${card.name}</div>
-                <div class="text-xs text-center text-gray-200 transition-all" style="font-size: ${sizeConfig.titleFontSize}">${card.desc}</div>
+                <div class="font-bold text-center transition-all" style="font-size: ${sizeConfig.fontSize}; color: ${fontColor}">${card.name}</div>
+                <div class="text-xs text-center text-gray-200 transition-all" style="font-size: ${sizeConfig.titleFontSize}; display: none">${card.desc}</div>
             `;
+            
+            // 添加鼠标悬停显示悬浮框的功能
+            cardElement.addEventListener('mouseenter', (e) => {
+                showCardTooltip(card, e.clientX, e.clientY);
+            });
+            
+            cardElement.addEventListener('mouseleave', (e) => {
+                hideCardTooltip();
+            });
     
             // 设置拖拽事件
-            setupDragEvents(cardElement, card.id);
+            setupDragEvents(cardElement, card.name);
             
             cardElement.addEventListener('click', (e) => {
                 e.stopPropagation();
-                if (!isDragging) selectCard(card.id,card.desc);
+                if (!isDragging) selectCard(card.name,card.desc);
                 isDragging = false;
             });
         
             return cardElement;
         }
 
+        // 悬浮框元素
+        let tooltipElement = null;
+        
+        // 显示卡片详情悬浮框
+        function showCardTooltip(card, clientX, clientY) {
+            // 如果悬浮框不存在，创建一个
+            if (!tooltipElement) {
+                tooltipElement = document.createElement('div');
+                tooltipElement.id = 'card-tooltip';
+                tooltipElement.className = 'fixed bg-gray-800/90 text-white p-4 rounded-lg shadow-lg z-50 backdrop-blur-sm border border-gray-700';
+                tooltipElement.style.maxWidth = '300px';
+                tooltipElement.style.pointerEvents = 'none';
+                document.body.appendChild(tooltipElement);
+            }
+            
+            // 设置悬浮框内容
+            tooltipElement.innerHTML = `
+                <div class="font-bold text-lg mb-2">${card.name}</div>
+                <div class="text-sm text-gray-300 mb-3">${card.desc}</div>
+                <div class="text-xs text-gray-400">
+                    <span class="font-semibold">ID:</span> ${card.name}
+                </div>
+            `;
+            
+            // 设置悬浮框位置，避免超出屏幕
+            const tooltipRect = tooltipElement.getBoundingClientRect();
+            let left = clientX + 10;
+            let top = clientY + 10;
+            
+            // 检查右侧边界
+            if (left + tooltipRect.width > window.innerWidth) {
+                left = clientX - tooltipRect.width - 10;
+            }
+            
+            // 检查底部边界
+            if (top + tooltipRect.height > window.innerHeight) {
+                top = clientY - tooltipRect.height - 10;
+            }
+            
+            // 确保悬浮框在可视区域内
+            left = Math.max(10, left);
+            top = Math.max(10, top);
+            
+            tooltipElement.style.left = `${left}px`;
+            tooltipElement.style.top = `${top}px`;
+            tooltipElement.style.display = 'block';
+        }
+        
+        // 隐藏卡片详情悬浮框
+        function hideCardTooltip() {
+            if (tooltipElement) {
+                tooltipElement.style.display = 'none';
+            }
+        }
+        
         // 设置拖拽功能
         function setupDragEvents(element, cardId) {
             element.addEventListener('mousedown', startDrag);
@@ -877,10 +1102,17 @@
                 const midPos = cardPositions[midId];
                 if (!midPos) return;
                 
-                const fromX = topPos.x + nodeSizeConfig.top.radius;
-                const fromY = topPos.y + nodeSizeConfig.top.radius;
-                const toX = midPos.x + nodeSizeConfig.mid.radius;
-                const toY = midPos.y + nodeSizeConfig.mid.radius;
+                // 获取当前卡片的实际大小
+                const topElement = topPos.element;
+                const midElement = midPos.element;
+                const topRadius = parseFloat(topElement.style.width) / 2;
+                const midRadius = parseFloat(midElement.style.width) / 2;
+                
+                // 计算中心位置
+                const fromX = topPos.x + topRadius;
+                const fromY = topPos.y + topRadius;
+                const toX = midPos.x + midRadius;
+                const toY = midPos.y + midRadius;
                 
                 drawLine(svg, fromX, fromY, toX, toY, '#38bdf8', topId, midId, 'top-mid');
                 });
@@ -895,10 +1127,17 @@
                 const bottomPos = cardPositions[bottomId];
                 if (!bottomPos) return;
                 
-                const fromX = midPos.x + nodeSizeConfig.mid.radius;
-                const fromY = midPos.y + nodeSizeConfig.mid.radius;
-                const toX = bottomPos.x + nodeSizeConfig.bottom.radius;
-                const toY = bottomPos.y + nodeSizeConfig.bottom.radius;
+                // 获取当前卡片的实际大小
+                const midElement = midPos.element;
+                const bottomElement = bottomPos.element;
+                const midRadius = parseFloat(midElement.style.width) / 2;
+                const bottomRadius = parseFloat(bottomElement.style.width) / 2;
+                
+                // 计算中心位置
+                const fromX = midPos.x + midRadius;
+                const fromY = midPos.y + midRadius;
+                const toX = bottomPos.x + bottomRadius;
+                const toY = bottomPos.y + bottomRadius;
                 
                 drawLine(svg, fromX, fromY, toX, toY, '#22d3ee', midId, bottomId, 'mid-bottom');
                 });
@@ -925,10 +1164,17 @@
                 const midPos = cardPositions[midId];
                 if (!midPos) return;
                 
-                const fromX = topPos.x + nodeSizeConfig.top.radius;
-                const fromY = topPos.y + nodeSizeConfig.top.radius;
-                const toX = midPos.x + nodeSizeConfig.mid.radius;
-                const toY = midPos.y + nodeSizeConfig.mid.radius;
+                // 获取当前卡片的实际大小
+                const topElement = topPos.element;
+                const midElement = midPos.element;
+                const topRadius = parseFloat(topElement.style.width) / 2;
+                const midRadius = parseFloat(midElement.style.width) / 2;
+                
+                // 计算中心位置
+                const fromX = topPos.x + topRadius;
+                const fromY = topPos.y + topRadius;
+                const toX = midPos.x + midRadius;
+                const toY = midPos.y + midRadius;
                 
                 drawLineinselection(svg, fromX, fromY, toX, toY, '#38bdf8', topId, midId, 'top-mid');
                 });
@@ -943,10 +1189,17 @@
                 const bottomPos = cardPositions[bottomId];
                 if (!bottomPos) return;
                 
-                const fromX = midPos.x + nodeSizeConfig.mid.radius;
-                const fromY = midPos.y + nodeSizeConfig.mid.radius;
-                const toX = bottomPos.x + nodeSizeConfig.bottom.radius;
-                const toY = bottomPos.y + nodeSizeConfig.bottom.radius;
+                // 获取当前卡片的实际大小
+                const midElement = midPos.element;
+                const bottomElement = bottomPos.element;
+                const midRadius = parseFloat(midElement.style.width) / 2;
+                const bottomRadius = parseFloat(bottomElement.style.width) / 2;
+                
+                // 计算中心位置
+                const fromX = midPos.x + midRadius;
+                const fromY = midPos.y + midRadius;
+                const toX = bottomPos.x + bottomRadius;
+                const toY = bottomPos.y + bottomRadius;
                 
                 drawLineinselection(svg, fromX, fromY, toX, toY, '#22d3ee', midId, bottomId, 'mid-bottom');
                 });
@@ -968,24 +1221,29 @@
             lineGroup.style.opacity = '0.2';
             lineGroup.style.zIndex = '10';
 
+            // 非选中模式下使用白色实线
+            const whiteColor = '#FFFFFF';
             const baseLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
             baseLine.setAttribute('x1', x1);
             baseLine.setAttribute('y1', y1);
             baseLine.setAttribute('x2', x2);
             baseLine.setAttribute('y2', y2);
-            baseLine.setAttribute('stroke', color);
+            baseLine.setAttribute('stroke', whiteColor);
             baseLine.setAttribute('stroke-width', '1');
             baseLine.setAttribute('stroke-opacity', '0.5');
+            baseLine.setAttribute('stroke-dasharray', 'none'); // 实线
             
+            // 移除电流效果，使用白色实线
             const currentLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
             currentLine.setAttribute('x1', x1);
             currentLine.setAttribute('y1', y1);
             currentLine.setAttribute('x2', x2);
             currentLine.setAttribute('y2', y2);
-            currentLine.setAttribute('stroke', color);
+            currentLine.setAttribute('stroke', whiteColor);
             currentLine.setAttribute('stroke-width', '2');
             currentLine.setAttribute('stroke-opacity', '0.7');
-            currentLine.setAttribute('class', 'current-path line-pulse'); // 直接添加电流效果类
+            currentLine.setAttribute('stroke-dasharray', 'none'); // 实线
+            // 移除电流效果类
             
             lineGroup.appendChild(baseLine);
             lineGroup.appendChild(currentLine);
@@ -1008,10 +1266,10 @@
                 lineGroup.style.opacity = '1';
                 lineGroup.style.zIndex = '25';
                         
-                baseLine.setAttribute('stroke-width', '4');
+                baseLine.setAttribute('stroke-width', '2');
                 baseLine.setAttribute('stroke-opacity', '0.9');
                 
-                currentLine.setAttribute('stroke-width', '5');
+                currentLine.setAttribute('stroke-width', '3');
                 currentLine.setAttribute('stroke-opacity', '1');
                 
             }else{
@@ -1047,89 +1305,91 @@
 
         // 选中卡片处理
         function selectCard(cardId,cardesc) {
-            
-            resetAllCardsAndLines();
-            
+
             if (selectedCardId === cardId) {
-                selectedCardId = null;
-                relatedCardIds.clear();
-                isSelectionMode = false;
-                // updateModeIndicator();
-                updateConnectionInfoPanel();
-            return;
+                // 退出选中模式，调用普通模式排布
+                resetToNormalMode();
+                return;
             }
 
-            selectedCardId = cardId;
-            selectedCardName = cardesc;
-            const relatedIds = getRelatedCardIds(cardId);
-            relatedIds.add(cardId);
-            relatedCardIds = relatedIds;
-            const relatedArray = Array.from(relatedIds);
-
-            // 进入选中模式
-            isSelectionMode = true;
-            // updateModeIndicator();
-
-
-            // 高亮相关卡片
-            relatedArray.forEach(id => {
-                const isSelected = id === cardId;
-                highlightCard(id, true, isSelected);
-            });
+            // 每次进入新的选中模式前，先重置到普通模式并重新排布
+            // 这样可以确保每次进入选中模式时都是从干净的状态开始
+            resetToNormalMode();
             
-            // 强化相关线条
-            highlightAllRelatedLines(relatedArray);
-            const mem = document.querySelectorAll('.connection-line')
-            //updateConnectionInfoPanel();
-            // 弱化不相关元素
-            dimUnrelatedElements(relatedArray);
-            // 使用requestAnimationFrame确保DOM更新完成后再排列
-            requestAnimationFrame(() => {
-            arrangeRelatedCards(relatedArray);
-            // 确保连接线正确更新
-            requestAnimationFrame(drawConnectionsinselection);
-            });
+            // 短暂延迟后再进入选中模式，确保DOM更新完成
+            setTimeout(() => {
+                // 进入选中模式，先重置为初始状态
+                resetToSelectionMode();
+
+                selectedCardId = cardId;
+                selectedCardName = cardesc;
+                const relatedIds = getRelatedCardIds(cardId);
+                relatedIds.add(cardId);
+                relatedCardIds = relatedIds;
+                const relatedArray = Array.from(relatedIds);
+                
+                // 进入选中模式
+                isSelectionMode = true;
+                // updateModeIndicator();
+
+                // 高亮相关卡片
+                relatedArray.forEach(id => {
+                    const isSelected = id === cardId;
+                    highlightCard(id, true, isSelected);
+                });
+                
+                // 强化相关线条
+                highlightAllRelatedLines(relatedArray);
+                const mem = document.querySelectorAll('.connection-line')
+                // 弱化不相关元素
+                dimUnrelatedElements(relatedArray);
+                // 使用requestAnimationFrame确保DOM更新完成后再排列
+                requestAnimationFrame(() => {
+                    arrangeRelatedCards(relatedArray);
+                    // 确保连接线正确更新
+                    requestAnimationFrame(drawConnectionsinselection);
+                });
+            }, 10); // 10毫秒延迟，确保resetToNormalMode完成
         }
 
         // 获取所有相关卡片ID
         function getRelatedCardIds(cardId) {
-        const relatedIds = new Set();
-        const cardType = cardId.startsWith('E') ? 'top' : 
-                        cardId.startsWith('M') ? 'mid' : 'bottom';
+            const relatedIds = new Set();
+            const cardType = cardId.startsWith('FFS') ? 'top' : 
+                            cardId.startsWith('MF') ? 'mid' : 'bottom';
 
-        switch(cardType) {
-            
-            case 'top':
-            (topToMid[cardId] || []).forEach(midId => {
-                relatedIds.add(midId);
-                (midToBottom[midId] || []).forEach(bottomId => relatedIds.add(bottomId));
-            });
-            break;
+            switch(cardType) {
+                case 'top':
+                    (topToMid[cardId] || []).forEach(midId => {
+                        relatedIds.add(midId);
+                        (midToBottom[midId] || []).forEach(bottomId => relatedIds.add(bottomId));
+                    });
+                    break;
 
-            case 'mid':
-                Object.entries(topToMid).forEach(([topId, midIds]) => {
-                    if (midIds.includes(cardId)){ 
-                        relatedIds.add(topId)
-                    };
+                case 'mid':
+                        Object.entries(topToMid).forEach(([topId, midIds]) => {
+                            if (midIds.includes(cardId)){ 
+                                relatedIds.add(topId)
+                            };
+                            
+                        });
+                        (midToBottom[cardId] || []).forEach(bottomId => relatedIds.add(bottomId));
+                    break;
+
+                case 'bottom':
                     
-                });
-                (midToBottom[cardId] || []).forEach(bottomId => relatedIds.add(bottomId));
-            break;
-
-            case 'bottom':
-                
-            Object.entries(midToBottom).forEach(([midId, bottomIds]) => {
-                if (bottomIds.includes(cardId)) {
-                relatedIds.add(midId);
-                Object.entries(topToMid).forEach(([topId, mIds]) => {
-                    if (mIds.includes(midId)) relatedIds.add(topId);
-                });
-                }
-            });
-            break;
-        }
-        
-        return relatedIds;
+                    Object.entries(midToBottom).forEach(([midId, bottomIds]) => {
+                        if (bottomIds.includes(cardId)) {
+                        relatedIds.add(midId);
+                        Object.entries(topToMid).forEach(([topId, mIds]) => {
+                            if (mIds.includes(midId)) relatedIds.add(topId);
+                        });
+                        }
+                    });
+                    break;
+            }
+            
+            return relatedIds;
         }
 
         // 强化所有相关线条
@@ -1144,10 +1404,10 @@
                 line.style.opacity = '1';
                 line.style.zIndex = '25';
                 const baseLine = line.querySelector('line:first-child');
-                baseLine.setAttribute('stroke-width', '4');
+                baseLine.setAttribute('stroke-width', '2');
                 baseLine.setAttribute('stroke-opacity', '0.9');
 
-                currentLine.setAttribute('stroke-width', '5');
+                currentLine.setAttribute('stroke-width', '3');
                 currentLine.setAttribute('stroke-opacity', '1');
                 // 确保电流效果类被添加
                 currentLine.classList.add('current-path', 'line-pulse');
@@ -1192,141 +1452,301 @@
         function highlightCard(cardId, highlight, isSelected = false) {
             const card = document.getElementById(cardId);
             if (!card) return;
+            const titleEl = card.querySelector('div:first-child');
+            const descEl = card.querySelector('div:last-child');
             
             if (highlight) {
-                card.classList.remove('opacity-60', 'scale-95', 'z-10', 'unrelated-dim', 'opacity-30', 'scale-90');
+                // 移除非选中模式样式
+                card.classList.remove('opacity-60', 'scale-95', 'z-10', 'unrelated-dim', 'opacity-30', 'scale-90', 'bg-transparent', 'border-transparent');
                 
+                // 选中模式下设置字体颜色为白色
+                titleEl.style.color = '#FFFFFF';
+                descEl.style.color = '#FFFFFF';
+                // 选中模式下隐藏描述内容
+                descEl.style.display = 'none';
+                
+                // 设置选中状态样式，移除缩放效果以确保尺寸可控
                 if (isSelected) {
-                card.classList.add(
-                    'opacity-100', 'scale-120', 'z-30', 'ring-4', 'ring-highlight2', 
-                    'ring-pulse', 'font-bold'
-                );
-                const titleEl = card.querySelector('div:first-child');
-                titleEl.classList.add('text-glow');
-                titleEl.style.fontSize = `${parseInt(titleEl.style.fontSize) + 2}px`;
+                    card.classList.add(
+                        'opacity-100', 'z-30', 'ring-4', 'ring-highlight2', 
+                        'ring-pulse', 'font-bold'
+                    );
                 } else {
-                card.classList.add('opacity-100', 'scale-105', 'z-20', 'ring-2', 'ring-highlight2/70');
-                card.querySelector('div:first-child').classList.add('text-glow');
+                    card.classList.add('opacity-100', 'z-20', 'ring-2', 'ring-highlight2/70');
                 }
                 
+                // 根据卡片类型设置具体背景和边框样式
+                // 使用Tailwind内置颜色，避免自定义颜色未定义的问题
                 switch(card.dataset.selectedClass) {
-                case 'selected-top':
-                    card.classList.remove('bg-top/40', 'border-top/30');
-                    card.classList.add('bg-top/90', 'border-top/100', 'shadow-blue-500/30');
-                    break;
-                case 'selected-mid':
-                    card.classList.remove('bg-mid/40', 'border-mid/30');
-                    card.classList.add('bg-mid/90', 'border-mid/100', 'shadow-cyan-500/30');
-                    break;
-                case 'selected-bottom':
-                    card.classList.remove('bg-indigo-900/40', 'border-bottom/30');
-                    card.classList.add('bg-indigo-900/90', 'border-bottom/100', 'shadow-indigo-500/30');
-                    break;
+                    case 'selected-top':
+                        // 移除其他类型的背景和边框类
+                        card.classList.remove('bg-cyan-500/90', 'border-cyan-500/100', 
+                                           'bg-indigo-500/90', 'border-indigo-500/100',
+                                           'bg-blue-500/40', 'border-blue-500/30');
+                        // 添加顶层卡片样式 - 使用蓝色系
+                        card.classList.add('bg-blue-500/90', 'border-blue-500/100', 'shadow-blue-500/30');
+                        break;
+                    case 'selected-mid':
+                        // 移除其他类型的背景和边框类
+                        card.classList.remove('bg-blue-500/90', 'border-blue-500/100',
+                                           'bg-indigo-500/90', 'border-indigo-500/100',
+                                           'bg-cyan-500/40', 'border-cyan-500/30');
+                        // 添加中层卡片样式 - 使用青色系
+                        card.classList.add('bg-cyan-500/90', 'border-cyan-500/100', 'shadow-cyan-500/30');
+                        break;
+                    case 'selected-bottom':
+                        // 移除其他类型的背景和边框类
+                        card.classList.remove('bg-blue-500/90', 'border-blue-500/100',
+                                           'bg-cyan-500/90', 'border-cyan-500/100',
+                                           'bg-indigo-500/40', 'border-indigo-500/30');
+                        // 添加底层卡片样式 - 使用靛蓝色系
+                        card.classList.add('bg-indigo-500/90', 'border-indigo-500/100', 'shadow-indigo-500/30');
+                        break;
                 }
+                
+                // 移除所有直接样式设置，避免冲突
+                card.style.backgroundColor = '';
+                card.style.borderColor = '';
+                card.style.borderWidth = '';
+                card.style.borderStyle = '';
             } else {
-                card.classList.add('opacity-60', 'scale-95', 'z-10');
-                card.querySelector('div:first-child').classList.remove('text-glow');
+                // 非选中模式，恢复透明背景和边框
+                card.classList.add('scale-95', 'z-10');
+                titleEl.classList.remove('text-glow');
+                
+                // 移除所有选中模式样式
+                card.classList.remove('bg-blue-500/90', 'border-blue-500/100', 'shadow-blue-500/30',
+                                   'bg-cyan-500/90', 'border-cyan-500/100', 'shadow-cyan-500/30',
+                                   'bg-indigo-500/90', 'border-indigo-500/100', 'shadow-indigo-500/30',
+                                   'shadow-lg', 'opacity-60', 'opacity-100', 'scale-105', 'scale-120', 'z-20', 'z-30',
+                                   'ring-2', 'ring-4', 'ring-highlight2', 'ring-pulse', 'font-bold');
+                // 设置透明背景和边框，但保持文字不透明
+                card.classList.add('bg-transparent/60', 'border-transparent/60');
+                
+                // 恢复描述内容显示
+                descEl.style.display = 'block';
+                
+                // 恢复原始字体颜色和大小
+                const cardType = card.dataset.type;
+                const sizeConfig = nodeSizeConfig[cardType];
+                let fontColor;
+                switch(cardType) {
+                    case 'top':
+                        fontColor = '#FFC000'; // 枣红色
+                        break;
+                    case 'mid':
+                        fontColor = '#15E2E9'; // 蓝色
+                        break;
+                    case 'bottom':
+                        fontColor = '#DE19E5'; // 红色
+                        break;
+                    default:
+                        fontColor = '#FFFFFF'; // 默认白色
+                }
+                
+                titleEl.style.color = fontColor;
+                titleEl.style.fontSize = sizeConfig.fontSize;
+                descEl.style.color = '#FFFFFF';
             }
         }
 
-        // 重置所有元素状态
-        function resetAllCardsAndLines() {
+        // 重置到普通模式 - 随机排布卡片
+        function resetToNormalMode() {
             document.querySelectorAll('#buble-container > div').forEach(card => {
+                // 移除所有特殊样式，包括背景和边框类
                 card.classList.remove(
-                'opacity-100', 'scale-105', 'scale-120', 'z-20', 'z-30', 
-                'ring-2', 'ring-4', 'ring-highlight2', 'ring-pulse', 'font-bold',
-                'unrelated-dim', 'opacity-30', 'scale-90', 'dragging'
+                    'opacity-100', 'scale-105', 'scale-120', 'z-20', 'z-30', 
+                    'ring-2', 'ring-4', 'ring-highlight2', 'ring-pulse', 'font-bold',
+                    'unrelated-dim', 'opacity-30', 'opacity-60', 'scale-90', 'dragging',
+                    'shadow-blue-500/30', 'shadow-cyan-500/30', 'shadow-indigo-500/30',
+                    'shadow-lg',
+                    // 移除所有背景和边框类 - 使用Tailwind内置颜色类
+                    'bg-blue-500/90', 'border-blue-500/100',
+                    'bg-cyan-500/90', 'border-cyan-500/100',
+                    'bg-indigo-500/90', 'border-indigo-500/100',
+                    // 移除旧的自定义颜色类
+                    'bg-top/90', 'border-top/100',
+                    'bg-mid/90', 'border-mid/100',
+                    'bg-indigo-900/90', 'border-bottom/100'
                 );
-                card.classList.add('opacity-60', 'scale-95', 'z-10');
                 
-                const textEl = card.querySelector('div:first-child');
-                textEl.classList.remove('text-glow');
+                // 设置普通模式基础样式 - 直径10px，纯黑色背景，不透明
+                card.classList.add('bg-black', 'border-black', 'opacity-100', 'z-15');
                 
-                // 恢复原始字体大小
+                // 移除所有直接样式设置，避免冲突
+                card.style.backgroundColor = '';
+                card.style.borderColor = '';
+                card.style.borderWidth = '';
+                card.style.borderStyle = '';
+                
+                // 设置固定尺寸为10px
+                card.style.width = '10px';
+                card.style.height = '10px';
+                
+                // 设置字体样式
+                const titleEl = card.querySelector('div:first-child');
+                const descEl = card.querySelector('div:last-child');
+                titleEl.classList.remove('text-glow');
+                
                 const cardType = card.dataset.type;
                 const sizeConfig = nodeSizeConfig[cardType];
-                textEl.style.fontSize = sizeConfig.fontSize;
                 
-                // 恢复原始位置
-                const id = card.id;
-                if (originalPositions[id]) {
-                card.style.left = `${originalPositions[id].x}px`;
-                card.style.top = `${originalPositions[id].y}px`;
-                cardPositions[id].x = originalPositions[id].x;
-                cardPositions[id].y = originalPositions[id].y;
+                // 根据层级设置字体颜色和大小
+                let fontColor;
+                switch(cardType) {
+                    case 'top':
+                        fontColor = '#FFC000'; // 枣红色
+                        break;
+                    case 'mid':
+                        fontColor = '#15E2E9'; // 蓝色
+                        break;
+                    case 'bottom':
+                        fontColor = '#DE19E5'; // 红色
+                        break;
+                    default:
+                        fontColor = '#FFFFFF'; // 默认白色
+                }
+                titleEl.style.color = fontColor;
+                titleEl.style.fontSize = sizeConfig.fontSize;
+                descEl.style.color = '#FFFFFF';
+                descEl.style.fontSize = sizeConfig.titleFontSize;
+                
+                // 重新生成随机位置，就像初始化时一样
+                const id = card.id; // 使用card.id而不是card.name
+                const newPosition = getRandomPosition(cardType);
+                card.style.left = `${newPosition.x}px`;
+                card.style.top = `${newPosition.y}px`;
+                
+                // 更新位置数据
+                if (cardPositions[id]) {
+                    cardPositions[id].x = newPosition.x;
+                    cardPositions[id].y = newPosition.y;
                 }
                 
-                switch(card.dataset.selectedClass) {
-                case 'selected-top':
-                    card.classList.remove('bg-top/90', 'border-top/100', 'shadow-blue-500/30');
-                    card.classList.add('bg-top/40', 'border-top/30');
-                    break;
-                case 'selected-mid':
-                    card.classList.remove('bg-mid/90', 'border-mid/100', 'shadow-cyan-500/30');
-                    card.classList.add('bg-mid/40', 'border-mid/30');
-                    break;
-                case 'selected-bottom':
-                    card.classList.remove('bg-indigo-900/90', 'border-bottom/100', 'shadow-indigo-500/30');
-                    card.classList.add('bg-indigo-900/40', 'border-bottom/30');
-                    break;
-                }
+                // 更新原始位置，以便下次使用
+                originalPositions[id] = {
+                    x: newPosition.x,
+                    y: newPosition.y
+                };
             });
             
             // 确保连接线也重置
             requestAnimationFrame(drawConnections);
             
+            // 更新状态
             selectedCardId = null;
             relatedCardIds.clear();
             isDragging = false;
             currentCard = null;
             isSelectionMode = false;
-            // updateModeIndicator();
             updateConnectionInfoPanel();
+        }
+
+        // 重置到选中模式准备状态 - 保持原始位置
+        function resetToSelectionMode() {
+            document.querySelectorAll('#buble-container > div').forEach(card => {
+                // 移除所有特殊样式
+                card.classList.remove(
+                    'opacity-100', 'scale-105', 'scale-120', 'z-20', 'z-30', 
+                    'ring-2', 'ring-4', 'ring-highlight2', 'ring-pulse', 'font-bold',
+                    'unrelated-dim', 'opacity-30', 'opacity-60', 'scale-90', 'dragging',
+                    'shadow-blue-500/30', 'shadow-cyan-500/30', 'shadow-indigo-500/30',
+                    'shadow-lg'
+                );
+                
+                // 设置基础样式 - 直径10px，纯黑色背景，不透明
+                card.classList.add('bg-black', 'border-black', 'opacity-100', 'z-15');
+                
+                // 设置固定尺寸为10px
+                card.style.width = '10px';
+                card.style.height = '10px';
+                
+                // 恢复字体样式
+                const titleEl = card.querySelector('div:first-child');
+                const descEl = card.querySelector('div:last-child');
+                titleEl.classList.remove('text-glow');
+                
+                const cardType = card.dataset.type;
+                const sizeConfig = nodeSizeConfig[cardType];
+                
+                // 恢复层级颜色和大小
+                let fontColor;
+                switch(cardType) {
+                    case 'top':
+                        fontColor = '#8B0000'; // 枣红色
+                        break;
+                    case 'mid':
+                        fontColor = '#0000FF'; // 蓝色
+                        break;
+                    case 'bottom':
+                        fontColor = '#FF0000'; // 红色
+                        break;
+                    default:
+                        fontColor = '#FFFFFF'; // 默认白色
+                }
+                titleEl.style.color = fontColor;
+                titleEl.style.fontSize = sizeConfig.fontSize;
+                descEl.style.color = '#FFFFFF';
+                descEl.style.fontSize = sizeConfig.titleFontSize;
+                
+                // 恢复原始位置
+                const id = card.id; // 使用card.id而不是card.name
+                if (originalPositions[id]) {
+                    card.style.left = `${originalPositions[id].x}px`;
+                    card.style.top = `${originalPositions[id].y}px`;
+                    if (cardPositions[id]) {
+                        cardPositions[id].x = originalPositions[id].x;
+                        cardPositions[id].y = originalPositions[id].y;
+                    }
+                }
+            });
+            
+            // 确保连接线重置
+            requestAnimationFrame(drawConnections);
         }
 
         // 有序排列相关卡片
         function arrangeRelatedCards(relatedIds) {
-        // 分离不同层级的卡片
-        const topCards = [];
-        const midCards = [];
-        const bottomCards = [];
-        
-        relatedIds.forEach(id => {
-            const card = cardPositions[id];
-            if (!card) return;
+            // 分离不同层级的卡片
+            const topCards = [];
+            const midCards = [];
+            const bottomCards = [];
             
-            switch(card.type) {
-            case 'top':
-                topCards.push(card);
-                break;
-            case 'mid':
-                midCards.push(card);
-                break;
-            case 'bottom':
-                bottomCards.push(card);
-                break;
-            }
+            relatedIds.forEach(id => {
+                const card = cardPositions[id];
+                if (!card) return;
+                
+                switch(card.type) {
+                case 'top':
+                    topCards.push(card);
+                    break;
+                case 'mid':
+                    midCards.push(card);
+                    break;
+                case 'bottom':
+                    bottomCards.push(card);
+                    break;
+                }
         });
         
-        const container = document.getElementById('visualization-container');
+        const container = document.getElementById('buble-container');
         const containerRect = container.getBoundingClientRect();
         
         // 计算每一层的高度范围
         const layerPadding = 80;
         const layerHeight = (containerRect.height - layerPadding * 2) / 3;
-        const topY = layerPadding + layerHeight / 2;
-        const midY = layerPadding + layerHeight + layerHeight / 2;
+        const topY =    layerPadding + layerHeight / 2;
+        const midY =    layerPadding + layerHeight + layerHeight / 2;
         const bottomY = layerPadding + layerHeight * 2 + layerHeight / 2;
-        
-        // 排列顶层卡片
-        arrangeCardsInRow(topCards, topY, containerRect.width*2/3,containerRect.width*1/3);
-        
+        // 排列所有层级卡片，使用相同的横向最大区间（父容器宽度）
+        arrangeCardsInRow(topCards, topY, containerRect.width, 0);
+
         // 排列中层卡片
-        arrangeCardsInRow(midCards, midY, containerRect.width*4/5,containerRect.width*1/5);
-        
+        arrangeCardsInRow(midCards, midY, containerRect.width, 0);
+
         // 排列底层卡片
-        arrangeCardsInRow(bottomCards, bottomY, containerRect.width,0);
-        
+        arrangeCardsInRow(bottomCards, bottomY, containerRect.width, 0);
+
         // 确保选中的卡片居中显示
         if (selectedCardId && cardPositions[selectedCardId]) {
             const selectedCard = cardPositions[selectedCardId];
@@ -1347,7 +1767,7 @@
             
             // 边界检查
             const cardSize = nodeSizeConfig[card.type].radius * 2;
-            card.x = Math.max(0, Math.min(containerRect.width - cardSize, card.x));
+            card.x = card.x
             
             card.element.style.left = `${card.x}px`;
             });
@@ -1355,74 +1775,122 @@
         }
         
         // 在一行中排列卡片，确保不重叠且在可视区域内
-        function arrangeCardsInRow(cards, yPos, containerWidth,gap) {
-        if (cards.length === 0) return;
-        
-        // 计算所有卡片的总宽度（考虑半径）
-        let totalCardWidth = 0;
-        cards.forEach(card => {
-            totalCardWidth += nodeSizeConfig[card.type].radius * 2;
-        });
-        
-        // 计算卡片间的间距
-        let spacing;
-        if (cards.length > 1) {
-            spacing = (containerWidth - totalCardWidth) / (cards.length - 1);
-            // 确保间距至少为最小间距
-            spacing = Math.max(spacing, 20);
-        } else {
-            spacing = 0;
-        }
-        
-        // 计算起始位置（居中）
-        let startX = (containerWidth - totalCardWidth - spacing * (cards.length - 1)) / 2+gap/2;
-        // 确保起始位置不超出边界
-        startX = Math.max(0, startX);
-        
-        // 排列卡片
-        cards.forEach(card => {
-            const cardSize = nodeSizeConfig[card.type].radius * 2;
+        function arrangeCardsInRow(cards, yPos, containerWidth, gap) {
+            if (cards.length === 0) return;
             
-            // 计算卡片位置
-            const cardX = startX;
-            const cardY = yPos - cardSize / 2;
+            // 使用正确的父容器
+            const container = document.getElementById('visualization-container');
+            const containerRect = container.getBoundingClientRect();
             
-            // 设置卡片位置
-            card.x = cardX;
-            card.y = cardY;
+            // 获取当前层级
+            const cardType = cards[0].type;
             
-            card.element.style.left = `${cardX}px`;
-            card.element.style.top = `${cardY}px`;
+            // 基础卡片尺寸配置
+            const baseSizeConfig = nodeSizeConfig[cardType];
+            const defaultDiameter = baseSizeConfig.radius * 2;
             
-            // 更新下一个卡片的起始位置
-            startX += cardSize + spacing;
-        });
+            // 计算卡片数量
+            const cardCount = cards.length;
+            
+            // 直接使用容器宽度作为最大可用宽度，不减去两侧gap
+            const maxAvailableWidth = containerRect.width;
+            
+            // 确保卡片不重叠是最高优先级，设置最小间距
+            const minSpacing = 5; // 最小间距，确保不重叠
+            
+            // 计算使用默认大小所需的总宽度
+            const defaultTotalWidth = cardCount * defaultDiameter + (cardCount - 1) * minSpacing;
+            
+            // 计算每个卡片的实际直径
+            let cardDiameter;
+            
+            // 首先检查使用默认大小是否会导致重叠
+            if (defaultTotalWidth <= maxAvailableWidth) {
+                // 使用默认大小，不会重叠
+                cardDiameter = defaultDiameter;
+            } else {
+                // 卡片数量较多，需要计算适合的大小以避免重叠
+                // 总宽度 = 卡片总宽度 + 间距总宽度
+                // 总宽度 = cardCount * diameter + (cardCount - 1) * minSpacing
+                // 解这个方程求diameter
+                cardDiameter = Math.max(5, (maxAvailableWidth - (cardCount - 1) * minSpacing) / cardCount);
+            }
+
+            const cardRadius = cardDiameter / 2;
+            
+            // 计算实际间距
+            let actualSpacing;
+            if (cardCount > 1) {
+                // 确保卡片均匀分布，完全利用容器宽度
+                // 总宽度 = 卡片总宽度 + 间距总宽度
+                // 间距总宽度 = 容器宽度 - 卡片总宽度
+                // 每个间距 = 间距总宽度 / (卡片数量 - 1)
+                const totalCardWidth = cardCount * cardDiameter;
+                const totalSpacingWidth = containerRect.width - totalCardWidth;
+                actualSpacing = Math.max(minSpacing, totalSpacingWidth / (cardCount - 1));
+            } else {
+                actualSpacing = 0;
+            }
+            
+            // 计算总占用宽度
+            const totalOccupiedWidth = cardCount * cardDiameter + (cardCount - 1) * actualSpacing;
+            
+            // 计算起始位置，确保卡片从左侧边缘开始，完全利用容器宽度
+            let startX;
+            if (cardCount === 1) {
+                // 单个卡片居中显示
+                startX = (containerRect.width - cardDiameter) / 2;
+            } else {
+                // 多个卡片从左侧开始排列，确保均匀分布
+                startX = 0;
+            }
+            
+            // 排列卡片
+            cards.forEach(card => {
+                // 计算卡片左上角位置
+                const cardLeft = startX;
+                const cardTop = yPos - cardRadius;
+                
+                // 更新卡片大小
+                card.element.style.width = `${cardDiameter}px`;
+                card.element.style.height = `${cardDiameter}px`;
+                
+                // 设置卡片左上角位置
+                card.x = cardLeft;
+                card.y = cardTop;
+                
+                card.element.style.left = `${cardLeft}px`;
+                card.element.style.top = `${cardTop}px`;
+                
+                // 更新下一个卡片的起始位置
+                startX += cardDiameter + actualSpacing;
+            });
         }
 
         // 初始化，架构网络页面加载后开始执行，
         function initnetwork() {
             const container = document.getElementById('buble-container'); //获取卡片容器
-            topCards = window.apiReponse["EUF_LIST"]
+            topCards = window.apiReponse["FFS_LIST"]
             midCards = window.apiReponse["MF_LIST"]
             bottomCards = window.apiReponse["TF_LIST"]
-            topToMid = window.apiReponse["EUF2MF"]
+            topToMid = window.apiReponse["FFS2MF"]
             midToBottom = window.apiReponse["MF2TF"]
 
             
             //生成三层卡片
             topCards.forEach(card => {  
             container.appendChild(createcircle(card, 'top'));
-            allCardIds.push(card.id);
+            allCardIds.push(card.name);
             });
 
             midCards.forEach(card => {
             container.appendChild(createcircle(card, 'mid'));
-            allCardIds.push(card.id);
+            allCardIds.push(card.name);
             });
 
             bottomCards.forEach(card => {
             container.appendChild(createcircle(card, 'bottom'));
-            allCardIds.push(card.id);
+            allCardIds.push(card.name);
             });
             
             //生成线条
@@ -1433,7 +1901,7 @@
             document.getElementById('visualization-container').addEventListener('click', (e) => {
 
                 if (!isDragging) {
-                    resetAllCardsAndLines();
+                    resetToNormalMode();
                 }
                 isDragging = false;
             });
@@ -1451,6 +1919,7 @@
             });
         }
         // window.addEventListener('load', initnetwork);
+    showPage('架构网络查看');   
     </script>
     <script src="../js/load-components.js"></script>
     <script src="../js/function-link-manager.js"></script>

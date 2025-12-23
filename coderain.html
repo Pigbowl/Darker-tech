@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>科技风数据流数字雨背景</title>
+    <style>
+        * { margin: 0; padding: 0; }
+        body {
+            background: #000;
+            overflow: hidden;
+            font-family: monospace;
+        }
+        #digital-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="digital-rain"></canvas>
+
+    <script>
+        const canvas = document.getElementById('digital-rain');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // 字符集（数字+中文+符号，增强科技感）
+        const chars = '0123456789abcdefghijklmnopqrstuvwxyzあいうえおかきくけこ★■●◆';
+        const fontSize = 16;
+        const columns = Math.floor(canvas.width / fontSize); // 列数
+        const drops = []; // 每列的下落位置
+
+        // 初始化每列的起始位置
+        for (let i = 0; i < columns; i++) {
+            drops[i] = Math.random() * -100;
+        }
+
+        function draw() {
+            // 半透明黑色背景，实现拖影效果
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#00ff41'; // 荧光绿
+            ctx.font = `${fontSize}px monospace`;
+
+            // 逐列绘制字符
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                // 随机重置下落位置，形成循环
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        // 控制帧率（30帧/秒）
+        setInterval(draw, 35);
+        // 窗口大小适配
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>

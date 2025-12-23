@@ -5,7 +5,7 @@
                 <!-- <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-logoup to-logobuttom flex items-center justify-center"> -->
                     <!-- <span class="text-primary font-bold text-lg">DT</span> -->
                 <!-- </div> -->
-                <img src="../PIC/logo.png" alt="logo" class="w-10 h-10 rounded-lg">
+                <img src="../PIC/LOGOs/logo.png" alt="logo" class="w-10 h-10 rounded-lg">
                 
                 <div>
                     <h1 class="text-white font-bold text-xl">达客科技</h1>
@@ -76,10 +76,44 @@
                     </div>
                 </div>
                 
-                <a href="../Pages/sitedashboard.html" class="text-white hover:text-logobuttom transition-colors duration-300" title="站点管理">
+                <!-- <a href="../Pages/sitedashboard.html" class="text-white hover:text-logobuttom transition-colors duration-300" title="站点管理">
                     <i class="fa fa-wrench text-xl"></i>
-                </a>
-                <a href="../../index.html#about" class="tech-button bg-transparent border border-logoup text-logoup px-4 py-1 rounded hover:bg-logoup/10">关于我们</a>
+                </a> -->
+                <!-- <a href="../../index.html#about" class="tech-button bg-transparent border border-logoup text-logoup px-4 py-1 rounded hover:bg-logoup/10">关于我们</a> -->
+                <a id="auth-button" href="../Pages/login.html" class="tech-button bg-transparent border border-logoup text-logoup px-4 py-1 rounded hover:bg-logoup/10">登录/注册</a>
+                
+                <script>
+                    // 检查用户认证状态并更新导航栏按钮
+                    window.updateAuthButton = function() {
+                        const authButton = document.getElementById('auth-button');
+                        const username = sessionStorage.getItem('username');
+                        const userType = sessionStorage.getItem('userType');
+                        const authStatus = sessionStorage.getItem('authenticated');
+                        const expiryTime = sessionStorage.getItem('auth_expiry');
+                        const currentTime = new Date().getTime();
+                        
+                        const isAuthenticated = authStatus === 'true' && 
+                                          expiryTime && 
+                                          currentTime < parseInt(expiryTime);
+                                           
+                        if (isAuthenticated && username) {
+                            // 用户已登录，显示用户名和对应的链接
+                            authButton.textContent = username;
+                            if (userType && userType.startsWith('Manager')) {
+                                authButton.href = '../Pages/sitedashboard.html';
+                            } else {
+                                authButton.href = '../Pages/userdashboard.html';
+                            }
+                        } else {
+                            // 用户未登录，显示登录/注册按钮
+                            authButton.textContent = '登录/注册';
+                            authButton.href = '../Pages/login.html';
+                        }
+                    }
+                    
+                    // 页面加载时更新按钮状态
+                    document.addEventListener('DOMContentLoaded', window.updateAuthButton);
+                </script>
             </nav>
             
             <!-- 移动端菜单按钮 -->

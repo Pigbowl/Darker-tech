@@ -753,11 +753,15 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body:JSON.stringify({
+                        "datatype":"product",
                         "type": "get_regulation",
                         "continents": selectedContinents,
                         "countries": window.selectedCountries,
                     })
-                }).then(response => response.json()).then(data => {
+                }).then(response => {
+                    return response.json();
+                }).then(data => {
+                    console.log(data.output)
                     regulationgroup = JSON.parse(data.output)
 
                     // 遍历所有法规组
