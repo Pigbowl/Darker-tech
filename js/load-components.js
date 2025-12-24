@@ -110,6 +110,66 @@ async function loadComponent(elementId, componentPath) {
 
 
 
+// 判断设备类型
+function isMobileDevice() {
+    // 使用与Tailwind CSS md断点一致的768px作为区分标准
+    return window.innerWidth < 768;
+}
+
+// 创建移动端鸭子助手iframe
+function createMobileDuckIframe() {
+    // 检查登录状态
+    const isAuthenticated = sessionStorage.getItem('authenticated') === 'true';
+    
+    // 打印登录模式和iframe添加信息
+    console.log('=== 移动端鸭子助手iframe ===');
+    console.log('当前登录模式:', isAuthenticated ? '已登录' : '未登录');
+    
+    // 取消登录状态限制，让所有用户都能看到初始介绍
+    console.log('开始创建iframe...');
+    
+    // 检查是否已经存在iframe
+    const existingIframe = document.getElementById('mobileDuckIframe');
+    if (existingIframe) {
+        console.log('iframe已存在，不再重复创建');
+        return;
+    }
+    
+    // 创建iframe元素
+    const duckIframe = document.createElement('iframe');
+    duckIframe.id = 'mobileDuckIframe';
+    duckIframe.style.position = 'fixed';
+    duckIframe.style.border = 'none';
+    duckIframe.style.zIndex = '9999';
+    duckIframe.style.overflow = 'visible';
+    duckIframe.frameBorder = '0';
+    duckIframe.scrolling = 'no';
+    
+    // 设置iframe样式，默认隐藏
+    duckIframe.style.width = '100%';
+    duckIframe.style.height = '100%';
+    duckIframe.style.left = '0';
+    duckIframe.style.top = '0';
+    duckIframe.style.background = 'rgba(20, 20, 20, 0.9)'; // 提升背景透明度为0.7
+    duckIframe.style.display = 'block'; // 默认显示，方便调试
+    
+    console.log('已添加iframe，显示状态:', duckIframe.style.display);
+    
+
+    // 直接引用新创建的mobile_assistance.html文件
+    duckIframe.src = '../Pages/mobile_assistance.html';
+    
+    // 将iframe添加到页面
+    document.body.appendChild(duckIframe);
+    
+    // 检查是否为首次加载
+    const hasSeenInitialMode = sessionStorage.getItem('hasSeenMobileDuckInitialMode') === 'true';
+    if (hasSeenInitialMode) {
+        // 非首次加载，隐藏iframe
+        duckIframe.style.display = 'none';
+    }
+}
+
 async function initComponents() {
     // await loadComponent('header-container', '../components/header.html');
     await loadComponent('navbar-container', '../components/navbar.html');
@@ -125,6 +185,11 @@ async function initComponents() {
     // 确保导航栏加载完成后更新认证按钮状态
     if (window.updateAuthButton) {
         window.updateAuthButton();
+    }
+    
+    // 如果是移动端，添加鸭子助手iframe
+    if (isMobileDevice()) {
+        createMobileDuckIframe();
     }
 }
 
@@ -153,7 +218,7 @@ function setActiveNavLink() {
         }
     });
 }
-// 监听子页面发送的高度更新消息
+// 监听子页面发送的消息
 window.addEventListener('message', function(event) {
 // 验证消息来源（可选，增强安全性）
 // if (event.origin !== 'http://你的子页面域名') return;
@@ -164,6 +229,13 @@ if (event.data.type === 'updateDuckSize') {
     // 增加缓冲值（避免内容紧贴边框，可根据实际样式调整）
     duckIframe.style.height = (event.data.height + 150) + 'px';
     duckIframe.style.width = (event.data.width + 80) + 'px'; // 新增宽度设置
+}
+// 如果是移动端鸭子助手的隐藏消息，则隐藏iframe
+else if (event.data.type === 'hideMobileDuckIframe') {
+    const mobileDuckIframe = document.getElementById('mobileDuckIframe');
+    if (mobileDuckIframe) {
+        mobileDuckIframe.style.display = 'none';
+    }
 }
 });
 

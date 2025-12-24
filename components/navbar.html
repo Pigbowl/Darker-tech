@@ -116,10 +116,44 @@
                 </script>
             </nav>
             
+            <!-- 移动端鸭子按钮 -->
+            <button id="mobile-duck-button" class="md:hidden  text-white focus:outline-none z-10 cursor-pointer mr-2">
+                <img src="../PIC/Duck/duck_action_3.png" alt="duck assistant" class="w-8 h-8 rounded-full object-cover">
+            </button>
             <!-- 移动端菜单按钮 -->
             <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none z-10 cursor-pointer mr-5">
                 <i class="fa fa-bars text-2xl"></i>
             </button>
+        </div>
+        
+        <!-- 移动端鸭子助手下拉菜单 -->
+        <div id="mobile-duck-menu" class="hidden md:hidden fixed top-16 right-10 z-50 bg-logoup backdrop-blur-lg border border-logoup/50 rounded-lg shadow-lg w-48">
+            <div class="py-2">
+                <div class="option-item flex items-center px-4 py-3 cursor-pointer hover:bg-logoup/90 transition-colors" data-action="report">
+                    <span class="text-white mr-3"><i class="fa fa-bug"></i></span>
+                    <span class="text-white">问题提报</span>
+                </div>
+                <div class="option-item flex items-center px-4 py-3 cursor-pointer hover:bg-logoup/90 transition-colors" data-action="about">
+                    <span class="text-white mr-3"><i class="fa fa-user"></i></span>
+                    <span class="text-white">认识达客</span>
+                </div>
+                <div class="option-item flex items-center px-4 py-3 cursor-pointer hover:bg-logoup/90 transition-colors" data-action="start">
+                    <span class="text-white mr-3"><i class="fa fa-road"></i></span>
+                    <span class="text-white">开始旅程</span>
+                </div>
+                <div class="option-item flex items-center px-4 py-3 cursor-pointer hover:bg-logoup/90 transition-colors" data-action="question">
+                    <span class="text-white mr-3"><i class="fa fa-question-circle"></i></span>
+                    <span class="text-white">达客问答</span>
+                </div>
+                <div class="option-item flex items-center px-4 py-3 cursor-pointer hover:bg-logoup/90 transition-colors" data-action="subscribe">
+                    <span class="text-white mr-3"><i class="fa fa-eye"></i></span>
+                    <span class="text-white">订阅达客</span>
+                </div>
+                <div class="option-item flex items-center px-4 py-3 cursor-pointer hover:bg-logoup/90 transition-colors" data-action="register">
+                    <span class="text-white mr-3"><i class="fa fa-user-plus"></i></span>
+                    <span class="text-white">用户注册</span>
+                </div>
+            </div>
         </div>
         
         <!-- 移动端导航菜单 -->
@@ -234,6 +268,76 @@
             
             // 页面加载时更新移动端认证按钮
             document.addEventListener('DOMContentLoaded', window.updateMobileAuthButton);
+            
+            // 移动端鸭子按钮交互
+            document.getElementById('mobile-duck-button').addEventListener('click', function() {
+                const mobileDuckMenu = document.getElementById('mobile-duck-menu');
+                mobileDuckMenu.classList.toggle('hidden');
+            });
+            
+            // 点击页面其他地方关闭鸭子菜单
+            document.addEventListener('click', function(event) {
+                const duckButton = document.getElementById('mobile-duck-button');
+                const duckMenu = document.getElementById('mobile-duck-menu');
+                
+                if (!duckButton.contains(event.target) && !duckMenu.contains(event.target)) {
+                    duckMenu.classList.add('hidden');
+                }
+            });
+            
+            // 显示移动端鸭子助手iframe
+            function showMobileDuckIframe(modalId) {
+                const duckIframe = document.getElementById('mobileDuckIframe');
+                if (duckIframe) {
+                    duckIframe.style.display = 'block';
+                    
+                    // 发送消息给iframe，显示指定模态框
+                    if (modalId) {
+                        duckIframe.contentWindow.postMessage({ type: 'showModal', modalId: modalId }, '*');
+                    }
+                }
+            }
+            
+            // 移动端鸭子菜单选项点击事件
+            document.querySelectorAll('.option-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const action = this.getAttribute('data-action');
+                    const duckMenu = document.getElementById('mobile-duck-menu');
+                    duckMenu.classList.add('hidden');
+                    
+                    // 调用对应的功能
+                    switch(action) {
+                        case 'report':
+                            // 显示问题提报模态框
+                            showMobileDuckIframe('reportModal');
+                            break;
+                        case 'about':
+                            // 跳转到关于页面
+                            window.location.href = '../../index.html#about';
+                            break;
+                        case 'start':
+                            // 跳转到开始旅程页面
+                            window.location.href = '../Pages/ADAS_JOURNEY.html';
+                            break;
+                        case 'question':
+                            // 显示达客问答模态框
+                            showMobileDuckIframe('chatInputBox');
+                            break;
+                        case 'subscribe':
+                            // 显示订阅模态框
+                            showMobileDuckIframe('subscribeModal');
+                            break;
+                        case 'register':
+                            // 跳转到登录页面
+                            window.location.href = '../Pages/login.html';
+                            break;
+                        case 'mute':
+                            // 静音功能（可以通过本地存储标记）
+                            localStorage.setItem('duckMuted', 'true');
+                            break;
+                    }
+                });
+            });
         </script>
 
     </header>

@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Darker Assistant</title>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="../js/ipcontroller.js"></script>
+    <script src="../js/product_configure.js"></script>
+    <style>
+            /* 添加CSS变量定义 */
+            :root {
+                --logoup: #00f0ff;
+                --logobuttom: #0a9396;
+            }
+            
+            html, body {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                position: relative;
+                background: transparent; /* 设为透明，继承iframe的背景色 */
+            }
+            
+            /* 添加text-gradient类定义 */
+            .text-gradient {
+                background-clip: text;
+                -webkit-background-clip: text;
+                color: transparent;
+            }
+            
+            /* 添加animate-glow动画 */
+            @keyframes animate-glow {
+                0%, 100% {
+                    filter: drop-shadow(0 0 5px rgba(0, 240, 255, 0.7));
+                }
+                50% {
+                    filter: drop-shadow(0 0 15px rgba(0, 240, 255, 1));
+                }
+            }
+            
+            .animate-glow {
+                animation: animate-glow 2s ease-in-out infinite;
+            }
+        
+        /* 统一容器，包含所有元素 */
+        #duckAssistantContainer {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: transparent; /* 设为透明，继承iframe的背景色 */
+        }
+        
+        /* 动态虚拟助手 - 初始状态 */
+        #duckAssistant {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            margin: 0 auto;
+            background: transparent; /* 设为透明 */
+            width: 100%;
+            max-width: 450px;
+            padding-left: 40px;
+        }
+        
+        /* 白色框容器 */
+        #whiteBoxContainer {
+            display: block;
+            margin-right: -150px;
+            margin-left: 0;
+            background: transparent; /* 设为透明 */
+            align-self: center;
+            z-index: 1;
+        }
+        
+        /* 鸭子视频 */
+        #duckIcon {
+            z-index: 2;
+        }
+        
+        #whiteBoxContainer > div {
+            width: 280px;
+            height: 180px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 0px 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+        
+        /* 聊天气泡 */
+        .bubble-item {
+            background: #007bff;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 7px;
+            color: white;
+            align-self: flex-end;
+            white-space: nowrap;
+            display: inline-block;
+            opacity: 0;
+            transform: scale(0) translateY(20px);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        /* 鸭子图片 */
+        #duckStatic {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: inline-block;
+            z-index: 999;
+        }
+        
+        /* 回去吧达克鸭按钮 */
+        #returnDuckButton {
+            position: absolute;
+            left: 50%;
+            top: auto;
+            bottom: 200px;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            background: rgba(30, 30, 30, 0.95);
+            color: white;
+            border: 2px solid #007bff;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 10000;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        #returnDuckButton:hover {
+            background: #007bff;
+            transform: translateX(-50%) scale(1.05);
+        }
+        
+        /* 模态框容器 */
+        .modal-container {
+            position: fixed;
+            top: 0;
+            left: 10px;
+            right: 10px;
+            bottom: 0;
+            width: calc(100% - 20px); /* iframe宽度，左右各留10px */
+            display: none; /* 默认隐藏 */
+            align-items: center;
+            justify-content: center;
+            z-index: 10001;
+            background: transparent; /* 设为透明，继承iframe的背景色 */
+            transform: none; /* 移除居中变换 */
+        }
+        
+        /* 模态框通用样式 */
+        #chatInputBox, #subscribeModal, #reportModal {
+            display:none;
+            width: calc(100% - 0px); /* 两侧各留出20px */
+            max-width: none;
+            background:rgba(26, 219, 245, 0.95);
+            border-radius:15px;
+            padding:12px;
+            margin-bottom:10px;
+            box-shadow:0 2px 10px rgba(0,0,0,0.1);
+            position:relative;
+            box-sizing:border-box;
+        }
+        
+        /* 聊天输入框 */
+        #chatInputBox {
+            height: 80vh;
+        }
+        #closeChatBtn {
+            position:absolute;top:5px;right:5px;width:24px;height:24px;border:none;border-radius:50%;background:#ff6b6b;color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,0.2);
+        }
+        #chatContent {
+            height:calc(80vh - 120px);overflow-y:auto;padding:10px;background:#222222; /* 改为深灰色，不再是纯黑 */
+        }
+        #chatContent div {
+            margin:10px 0;
+        }
+        #chatContent div:nth-child(odd) {
+            text-align:left;
+        }
+        #chatContent div:nth-child(even) {
+            text-align:right;
+        }
+        #chatContent span {
+            background:#007bff;color:white;padding:5px 10px;border-radius:10px;
+        }
+        #chatContent div:nth-child(odd) span {
+            background:#eee;color:black;
+        }
+        #chatInputBox .input-container {
+            display:flex;padding:10px;border-top:1px solid #eee;
+        }
+        #userInput {
+            flex:1;padding:8px;border:1px solid #ddd;border-radius:4px;box-sizing:border-box;
+        }
+        #sendBtn {
+            margin-left:10px;padding:8px 15px;border:none;border-radius:4px;background:#007bff;color:white;cursor:pointer;
+        }
+        
+        /* 订阅悬浮框 */
+        #subscribeModal h3 {
+            margin-top:0;color:#000000;font-size:16px;text-align:center;
+        }
+        #subscribeModal .form-group {
+            margin-bottom:15px;
+        }
+        #subscribeModal label {
+            display:block;margin-bottom:5px;color:#000000;
+        }
+        #subscribeModal input {
+            width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;box-sizing:border-box;
+        }
+        #subscribeModal .button-group {
+            display:flex;gap:10px;
+        }
+        #subscribeSubmitBtn, #subscribeCancelBtn {
+            flex:1;padding:10px;border:none;border-radius:4px;color:white;cursor:pointer;
+        }
+        #subscribeSubmitBtn {
+            background:#007bff;
+        }
+        #subscribeCancelBtn {
+            background:#6c757d;
+        }
+        
+        /* 问题提报悬浮框 */
+        #reportModal h3 {
+            margin-top:0;color:#000000;font-size:16px;text-align:center;
+        }
+        #reportModal .form-group {
+            margin-bottom:10px;
+        }
+        #reportModal label {
+            display:block;margin-bottom:3px;color:#000000;
+        }
+        #reportModal input, #reportModal select, #reportModal textarea {
+            width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;box-sizing:border-box;
+        }
+        #reportModal textarea {
+            height:80px;
+        }
+        #reportModal .button-group {
+            display:flex;gap:10px;
+        }
+        #reportSubmitBtn, #reportCancelBtn {
+            flex:1;padding:10px;border:none;border-radius:4px;color:white;cursor:pointer;
+        }
+        #reportSubmitBtn {
+            background:#007bff;
+        }
+        #reportCancelBtn {
+            background:#6c757d;
+        }
+        
+        /* 提交成功提示 */
+        #successMessage {
+            display:none;
+            position:fixed;
+            top:25%;
+            left:50%;
+            transform:translate(-50%, -50%);
+            background:rgba(30, 30, 30, 0.95);
+            padding:24px;
+            border-radius:15px;
+            box-shadow:0 2px 10px rgba(0,0,0,0.3);
+            z-index:10002;
+            text-align:center;
+            color:white;
+        }
+        #successMessage h3 {
+            font-size:20px;font-weight:bold;margin-bottom:8px;
+        }
+        #successMessage p {
+            color:#999;margin-bottom:20px;
+        }
+        #closeMessage {
+            background:#007bff;
+            color:white;
+            border:none;
+            border-radius:4px;
+            padding:8px 16px;
+            cursor:pointer;
+            font-weight:medium;
+            transition:background-color 0.3s ease;
+        }
+        
+        /* 关闭按钮 */
+        .close-btn {
+            position:absolute;top:5px;right:5px;width:24px;height:24px;border:none;border-radius:50%;background:#ff6b6b;color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <!-- 统一容器，方便整体隐藏 -->
+    <div id="duckAssistantContainer">
+        <!-- 动态虚拟助手 -->
+        <h1 style="font-size: clamp(3.5rem, 7vw, 5.5rem); font-weight: bold; line-height: 1.2;">
+            <span class="text-gradient" style="background-image: linear-gradient(to right, white, gray);">达客</span>
+            <span class="text-gradient animate-glow ml-2" style="background-image: linear-gradient(to right, var(--logoup), var(--logobuttom));">智驾领航员</span>
+        </h1>
+
+        <div id="duckAssistant">
+            <!-- 白色框容器 -->
+
+            <div id="whiteBoxContainer">
+                <!-- 左侧白色框，高80px、宽160px -->
+                <div>
+                    <!-- 聊天气泡，添加气泡动画类 -->
+                    <div class="bubble-item" style="margin-right: 70px;">你好！欢迎来到达客领航员</div>
+                    <div class="bubble-item" style="margin-right: 90px;">我是达客鸭，您的智能小助手</div>
+                    <div class="bubble-item" style="margin-right: 110px;">我可以帮您介绍达客的产品，让您不白来</div>
+                    <div class="bubble-item" style="margin-right: 110px;">我还可以帮您提醒以及帮您完成和网站的交互</div>
+                    <div class="bubble-item" style="margin-right: 90px;">我平时在导航栏待着哦</div>
+                    <div class="bubble-item" style="margin-right: 70px;">有问题随时找我！随时等待你</div>
+                </div>
+            </div> <!-- 关闭白色框容器 -->
+        
+            <!-- 鸭子图片 -->
+        <video 
+            id="duckIcon" 
+            src="../PIC/Duck/duck_intro.mp4"
+            style="
+              width:180px; 
+              height:180px; 
+              border-radius:50%; 
+              cursor:pointer; 
+              display:block; 
+              margin-left: 60px;
+              margin-right: auto;
+              align-self: center;
+            "
+            autoplay 
+            loop 
+            muted 
+            playsinline
+        >
+        </video>
+        </div>
+        <!-- 返回按钮 -->
+        <button id="returnDuckButton">回去吧达客鸭</button>
+    </div>
+    
+    <!-- 模态框容器 -->
+    <div class="modal-container">
+        <!-- 聊天输入框 -->
+        <div id="chatInputBox">
+            <button id="closeChatBtn" class="close-btn"><i class="fa fa-times"></i></button>
+            <div id="chatContent"></div>
+            <div class="input-container">
+                <input type="text" id="userInput" placeholder="请输入你的问题...">
+                <button id="sendBtn">发送</button>
+            </div>
+        </div>
+        
+        <!-- 订阅悬浮框 -->
+        <div id="subscribeModal">
+            <button id="closeSubscribeBtn" class="close-btn"><i class="fa fa-times"></i></button>
+            <h3>订阅达客科技</h3>
+            <h3 style="font-size:12px;">订阅后将第一时间告知您达客的最近动态，敬请期待</h3>
+            <form id="subscribeForm">
+                <div class="form-group">
+                    <label for="subscribeUsername">用户名</label>
+                    <input type="text" id="subscribeUsername" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="subscribeEmail">邮箱地址</label>
+                    <input type="email" id="subscribeEmail" name="email" required>
+                </div>
+                <div class="button-group">
+                    <button type="submit" id="subscribeSubmitBtn">订阅</button>
+                    <button type="button" id="subscribeCancelBtn">取消</button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- 问题提报悬浮框 -->
+        <div id="reportModal">
+            <button id="closeReportBtn" class="close-btn"><i class="fa fa-times"></i></button>
+            <h3>问题提报</h3>
+            <form id="reportForm">
+                <div class="form-group">
+                    <label for="reportName">姓名</label>
+                    <input type="text" id="reportName" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="reportEmail">邮箱</label>
+                    <input type="email" id="reportEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="reportType">类型</label>
+                    <select id="reportType" name="contactType">
+                        <option value="suggestion">意见建议</option>
+                        <option value="issue">问题提报</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="reportSubject">主题</label>
+                    <select id="reportSubject" name="subject">
+                        <option value="general">通用选项</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="reportMessage">留言内容</label>
+                    <textarea id="reportMessage" name="message" rows="3" required></textarea>
+                </div>
+                <div class="button-group">
+                    <button type="submit" id="reportSubmitBtn">提交信息</button>
+                    <button type="button" id="reportCancelBtn">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 提交成功提示 -->
+    <div id="successMessage">
+        <div>
+            <i class="fa fa-check-circle" style="color:#007bff;font-size:48px;margin-bottom:16px;"></i>
+            <h3>提交成功</h3>
+            <p>感谢您的留言，我们会尽快回复您！</p>
+            <button id="closeMessage">关闭</button>
+        </div>
+    </div>
+    
+    <script>
+        // 状态变量
+        let currentModal = null;
+        
+        // 气泡逐个弹出动画函数
+        function animateBubbles() {
+            const bubbles = document.querySelectorAll('.bubble-item');
+            bubbles.forEach((bubble, index) => {
+                setTimeout(() => {
+                    bubble.style.opacity = '1';
+                    bubble.style.transform = 'scale(1) translateY(0)';
+                }, index * 1000); // 每个气泡间隔1s
+            });
+        }
+        
+        // 显示指定模态框
+        function showModal(modalId) {
+            // 隐藏所有模态框
+            document.querySelectorAll('.modal-container > div').forEach(modal => {
+                modal.style.display = 'none';
+            });
+            
+            // 隐藏初始介绍
+            document.getElementById('duckAssistantContainer').style.display = 'none';
+            
+            // 显示模态框容器
+            document.querySelector('.modal-container').style.display = 'flex';
+            
+            // 显示指定模态框
+            const modal = document.getElementById(modalId);
+            modal.style.display = 'block';
+            currentModal = modalId;
+            
+            // 如果是问题提报模态框，初始化主题选项
+            if (modalId === 'reportModal') {
+                handleReportTypeChange();
+            }
+        }
+        
+        // 隐藏所有模态框
+        function hideAllModals() {
+            document.querySelectorAll('.modal-container > div').forEach(modal => {
+                modal.style.display = 'none';
+            });
+            // 隐藏模态框容器
+            document.querySelector('.modal-container').style.display = 'none';
+            currentModal = null;
+        }
+        
+        // 显示成功消息
+        function showSuccessMessage() {
+            const successMessage = document.getElementById('successMessage');
+            successMessage.style.display = 'block';
+        }
+        
+        // 隐藏成功消息
+        function hideSuccessMessage() {
+            const successMessage = document.getElementById('successMessage');
+            successMessage.style.display = 'none';
+            // 发送消息给父页面，隐藏整个iframe
+            window.parent.postMessage({ type: 'hideMobileDuckIframe' }, '*');
+        }
+        
+        // 发送消息功能
+        function sendMessage() {
+            const question = document.getElementById('userInput').value.trim();
+            if (!question) return;
+            
+            // 添加用户消息到界面
+            const chatContent = document.getElementById('chatContent');
+            chatContent.innerHTML += '<div><span>' + question + '</span></div>';
+            
+            // 清空输入框
+            document.getElementById('userInput').value = '';
+            
+            // 添加助手回复到界面
+            setTimeout(() => {
+                chatContent.innerHTML += '<div style="text-align:left;"><span>感谢您的提问，我们会尽快回复您！</span></div>';
+                chatContent.scrollTop = chatContent.scrollHeight;
+            }, 1000);
+            
+            chatContent.scrollTop = chatContent.scrollHeight;
+        }
+        
+        // 处理问题提报类型变更，动态更新主题选项
+        function handleReportTypeChange() {
+            const subjectSelect = document.getElementById('reportSubject');
+            const contactType = document.getElementById('reportType').value;
+            
+            // 获取当前页面地址
+            const currentPagePath = window.parent.location.pathname;
+            const currentPageFilename = currentPagePath.split('/').pop();
+            
+            // 去掉.html后缀
+            const pageNameWithoutExt = currentPageFilename.replace('.html', '');
+            
+            // 查找匹配的option
+            let matchedOption = null;
+            if (products_config && products_config.productfeatures) {
+                matchedOption = products_config.productfeatures.find(option => {
+                    return option.Function === pageNameWithoutExt;
+                });
+            }
+            
+            // 获取返回值，命名为default
+            const defaultOption = matchedOption ? matchedOption.CN_Name : '通用信息';
+            
+            // 打印结果
+            console.log('默认选项:', defaultOption);
+            
+            // 清空现有选项
+            subjectSelect.innerHTML = '';
+            
+            if (contactType === 'issue') {
+                // 问题提报类型，添加所有页面选项
+                if (products_config && products_config.productfeatures) {
+                    // 先创建选项数组
+                    const options = [...products_config.productfeatures];
+                    
+                    // 查找默认选项的索引
+                    const defaultIndex = options.findIndex(option => option.CN_Name === defaultOption);
+                    
+                    // 如果找到了默认选项，将其移到数组开头
+                    if (defaultIndex > -1) {
+                        const [defaultItem] = options.splice(defaultIndex, 1);
+                        options.unshift(defaultItem);
+                    }
+                    
+                    // 添加所有选项
+                    options.forEach(option => {
+                        const opt = document.createElement('option');
+                        opt.value = option.CN_Name;
+                        opt.textContent = option.CN_Name;
+                        subjectSelect.appendChild(opt);
+                    });
+                }
+            } else {
+                // 意见建议类型，只显示通用选项
+                const opt = document.createElement('option');
+                opt.value = 'general';
+                opt.textContent = '通用选项';
+                subjectSelect.appendChild(opt);
+            }
+        }
+        
+        // 与index.html中相同的addnewissue函数，用于提交问题提报
+        function addnewissue(name, message, subject, email, contactType) {
+            // 调用真实API
+            const command = 'http://localhost:5000/add_issue'; // 使用与darker_assistance相同的API地址
+            fetch(command, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    datatype:'operation',
+                    'issue': {
+                        "id": "ISSUE-",
+                        "type": contactType,
+                        "title": subject,
+                        "description": message,
+                        "submit_time": new Date().toISOString(),
+                        "submit_email": email,
+                        "submit_name": name,
+                    },
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // 根据API返回结果显示相应提示
+                if (data && data.success) {
+                    // 显示成功消息
+                    showSuccessMessage();
+                } else {
+                    // 显示错误提示
+                    alert('提交失败：' + (data ? data.message : '未知错误'));
+                }
+            })
+            .catch(error => {
+                console.error('提交错误:', error);
+                // 显示错误提示
+                alert('提交过程中发生错误，请稍后重试。');
+            })
+            .finally(() => {
+                // 无论成功与否，都隐藏模态框
+                hideAllModals();
+            });
+        }
+        
+        // 问题提报功能
+        function handleReportSubmit(event) {
+            event.preventDefault();
+            
+            // 获取表单数据
+            const name = document.getElementById('reportName').value.trim();
+            const email = document.getElementById('reportEmail').value.trim();
+            const contactType = document.getElementById('reportType').value;
+            const subject = document.getElementById('reportSubject').value;
+            const message = document.getElementById('reportMessage').value.trim();
+            
+            // 简单的表单验证
+            if (!name || !email || !message) {
+                alert('请填写完整的表单信息');
+                return;
+            }
+            
+            // 简单的邮箱验证
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert('请输入有效的邮箱地址');
+                return;
+            }
+            
+            // 调用addnewissue函数提交数据
+            addnewissue(name, message, subject, email, contactType);
+        }
+        
+        // 订阅功能
+        function handleSubscribe(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('subscribeUsername').value.trim();
+            const email = document.getElementById('subscribeEmail').value.trim();
+            
+            // 调用API执行订阅
+            const command = ip + '/add_user';
+            fetch(command, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    datatype: "operation",
+                    'user': {
+                        "id": "USER",
+                        "name": username,
+                        "submit_time": new Date().toISOString(),
+                        "submitter_email": email,
+                    },
+                })
+            }).then(response => response.json()).then(data => {
+                if (data.success) {
+                    const manipresult = data.output;
+                    if (manipresult.status) {
+                        // 显示成功消息
+                        showSuccessMessage();
+                    } else {
+                        // 根据错误类型显示不同的提示
+                        if (manipresult.error == 1) {
+                            alert('订阅失败：该邮箱已订阅过，无需重新订阅~。');
+                        } else if (manipresult.error == 2) {
+                            alert('订阅失败: 该邮箱已经被用户名 ' + manipresult.name + "使用了");
+                        } else if (manipresult.error == 3) {
+                            alert('订阅失败:该用户名' + manipresult.name + '已经存在');
+                        } else {
+                            alert('订阅失败：未知错误');
+                        }
+                    }
+                } else {
+                    alert('订阅失败：' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('订阅错误:', error);
+                alert('订阅过程中发生错误，请稍后重试。');
+            })
+            .finally(() => {
+                // 无论成功与否，都隐藏模态框
+                hideAllModals();
+            });
+        }
+        
+        // 页面加载完成后执行动画
+        window.addEventListener('DOMContentLoaded', function() {
+            // 检查是否为该session首次加载
+            const hasSeenInitialMode = sessionStorage.getItem('hasSeenMobileDuckInitialMode') === 'true';
+            
+            if (!hasSeenInitialMode) {
+                // 延迟执行气泡动画
+                setTimeout(() => {
+                    animateBubbles();
+                }, 500);
+            } else {
+                // 非首次加载，隐藏初始介绍
+                document.getElementById('duckAssistantContainer').style.display = 'none';
+            }
+            
+            // 返回按钮点击事件
+            document.getElementById('returnDuckButton').addEventListener('click', function() {
+                // 隐藏统一容器，包含所有元素
+                document.getElementById('duckAssistantContainer').style.display = 'none';
+                
+                // 向父窗口发送消息，隐藏iframe
+                window.parent.postMessage({ type: 'hideMobileDuckIframe' }, '*');
+                
+                // 设置sessionStorage标记，表示用户已经看过初始模式
+                sessionStorage.setItem('hasSeenMobileDuckInitialMode', 'true');
+            });
+            
+            // 关闭按钮点击事件
+            document.getElementById('closeChatBtn').addEventListener('click', function() {
+                hideAllModals();
+                window.parent.postMessage({ type: 'hideMobileDuckIframe' }, '*');
+            });
+            
+            document.getElementById('closeSubscribeBtn').addEventListener('click', function() {
+                hideAllModals();
+                window.parent.postMessage({ type: 'hideMobileDuckIframe' }, '*');
+            });
+            
+            document.getElementById('closeReportBtn').addEventListener('click', function() {
+                hideAllModals();
+                window.parent.postMessage({ type: 'hideMobileDuckIframe' }, '*');
+            });
+            
+            // 发送按钮点击事件
+            document.getElementById('sendBtn').addEventListener('click', sendMessage);
+            
+            // 回车键发送消息
+            document.getElementById('userInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            // 初始化问题提报相关事件监听
+            function initReportEvents() {
+                const reportType = document.getElementById('reportType');
+                const reportForm = document.getElementById('reportForm');
+                const reportCancelBtn = document.getElementById('reportCancelBtn');
+                
+                // 联系类型变更事件
+                reportType.addEventListener('change', handleReportTypeChange);
+                
+                // 表单提交事件
+                reportForm.addEventListener('submit', handleReportSubmit);
+                
+                // 取消按钮点击事件
+                reportCancelBtn.addEventListener('click', function() {
+                    hideAllModals();
+                    window.parent.postMessage({ type: 'hideMobileDuckIframe' }, '*');
+                });
+            }
+            
+            // 问题提报表单提交事件
+            document.getElementById('reportForm').addEventListener('submit', handleReportSubmit);
+            
+            // 问题提报取消按钮点击事件
+            document.getElementById('reportCancelBtn').addEventListener('click', function() {
+                hideAllModals();
+                window.parent.postMessage({ type: 'hideMobileDuckIframe' }, '*');
+            });
+            
+            // 初始化问题提报事件
+            initReportEvents();
+            
+            // 订阅表单提交事件
+            document.getElementById('subscribeForm').addEventListener('submit', handleSubscribe);
+            
+            // 订阅取消按钮点击事件
+            document.getElementById('subscribeCancelBtn').addEventListener('click', function() {
+                hideAllModals();
+                window.parent.postMessage({ type: 'hideMobileDuckIframe' }, '*');
+            });
+            
+            // 关闭成功消息按钮点击事件
+            document.getElementById('closeMessage').addEventListener('click', hideSuccessMessage);
+            
+            // 消息监听器，处理来自父窗口的消息
+            window.addEventListener('message', function(event) {
+                if (event.data && event.data.type === 'showModal') {
+                    // 显示指定模态框
+                    showModal(event.data.modalId);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

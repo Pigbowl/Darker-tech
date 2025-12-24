@@ -1,4 +1,15 @@
 function loadDuckAssistant() {
+    
+    // 判断设备类型，Mobile模式下不加载duck的iframe
+    function isMobileDevice() {
+        // 使用与Tailwind CSS md断点一致的768px作为区分标准
+        return window.innerWidth < 768;
+    }
+    
+    if (isMobileDevice()) {
+        // Mobile模式，直接返回，不加载duck的iframe
+        return;
+    }
 
     let parenthtml = window.parent.location.pathname;
 
