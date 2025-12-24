@@ -1,6 +1,6 @@
 <footer class="bg-dark-light/80 backdrop-blur-md border-t border-primary/30 fixed bottom-0 left-0 right-0 z-50 m-0 p-2">
     <div class="w-full flex justify-between items-center text-xs text-white">
-        <div>
+        <div id="footer-title">
             <span>达客智能驾驶领航员</span>
         </div>
         <div class="flex items-center space-x-2">
@@ -77,13 +77,108 @@
         }
     }
     
+    // 保存原始的loadVersionInfo函数
+    const originalLoadVersionInfo = loadVersionInfo;
+    
+    // 修改loadVersionInfo函数，在执行完毕后调用adjustFooterLayout
+    function modifiedLoadVersionInfo() {
+        originalLoadVersionInfo();
+        // 在加载版本信息后调用一次adjustFooterLayout，确保版本号和上次更新字样被正确处理
+        adjustFooterLayout();
+    }
+    
+    // 暴露修改后的函数给全局，以便load-components.js调用
+    window.loadVersionInfo = modifiedLoadVersionInfo;
+    
     // 页面加载完成后执行
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', loadVersionInfo);
+        document.addEventListener('DOMContentLoaded', window.loadVersionInfo);
     } else {
-        // 如果DOM已经加载完成，直接执行
-        loadVersionInfo();
+        // 如果DOM已经加载完成，直接执行修改后的函数
+        window.loadVersionInfo();
     }
-    // 暴露给全局，以便load-components.js调用
-    window.loadVersionInfo = loadVersionInfo;
+    
+    // 根据设备类型调整footer布局
+    function adjustFooterLayout() {
+        // 设备类型判断函数，与Tailwind CSS md断点一致
+        function isMobileDevice() {
+            return window.innerWidth < 768;
+        }
+        
+        // 直接从文档中获取元素，使用id选择器
+        const titleElement = document.getElementById('footer-title');
+        const versionElement = document.getElementById('version-number');
+        const lastUpdateElement = document.getElementById('last-update');
+        
+        // 确保所有必要元素都存在
+        if (!versionElement || !lastUpdateElement) {
+            // 如果元素不存在，可能是页面还在加载中，稍后重试
+            console.log('元素尚未加载完成，稍后重试');
+            setTimeout(adjustFooterLayout, 100);
+            return;
+        }
+        
+        const versionContainer = versionElement.parentElement;
+        const lastUpdateContainer = lastUpdateElement.parentElement;
+        
+        if (isMobileDevice()) {
+            // 移动端设备
+            console.log('移动端模式');
+            
+            // 1. 隐藏"达客智能驾驶领航员"文本
+            if (titleElement) {
+                titleElement.style.display = 'none';
+            }
+            
+            // 2. 将版本号和查看详情按钮布局在footer最左侧
+            if (versionContainer) {
+                // 确保版本容器在最左侧
+                versionContainer.style.order = '-1';
+            }
+            
+            // 3. 只去掉"版本号"三个字，保留后面的版本号数值
+            if (versionElement.textContent.includes('版本号: ')) {
+                versionElement.textContent = versionElement.textContent.replace('版本号: ', '');
+            }
+            
+            // 4. 只去掉"上次更新"四个字，保留后面的日期
+            if (lastUpdateElement.textContent.includes('上次更新: ')) {
+                lastUpdateElement.textContent = lastUpdateElement.textContent.replace('上次更新: ', '');
+            }
+        } else {
+            // PC设备：恢复原始样式
+            console.log('PC模式');
+            
+            // 1. 显示"达客智能驾驶领航员"文本
+            if (titleElement) {
+                titleElement.style.display = 'block';
+            }
+            
+            // 3. 恢复版本容器的order
+            if (versionContainer) {
+                versionContainer.style.order = '0';
+            }
+            
+            // 4. 恢复"版本号"字样
+            if (!versionElement.textContent.includes('版本号: ')) {
+                const versionText = versionElement.textContent;
+                versionElement.textContent = '版本号: ' + versionText;
+            }
+            
+            // 5. 恢复"上次更新"字样
+            if (!lastUpdateElement.textContent.includes('上次更新: ')) {
+                const dateText = lastUpdateElement.textContent;
+                lastUpdateElement.textContent = '上次更新: ' + dateText;
+            }
+        }
+    }
+    
+    // 直接执行一次，因为footer.html已经在页面中
+    adjustFooterLayout();
+    
+    // 窗口大小变化时重新调整footer布局
+    window.addEventListener('resize', adjustFooterLayout);
+    
+    // 暴露给全局，以便外部调用
+    window.adjustFooterLayout = adjustFooterLayout;
 </script>

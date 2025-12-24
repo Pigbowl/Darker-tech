@@ -733,6 +733,186 @@
                 }
             });
         });
+        
+        // 根据设备类型修改标题样式
+        function adjustTitleForDeviceType() {
+            // 设备类型判断函数，与Tailwind CSS md断点一致
+            function isMobileDevice() {
+                return window.innerWidth < 768;
+            }
+            
+            // 获取标题元素 - 使用更安全的选择器，避免方括号语法问题
+            const titleElement = document.querySelector('section.relative.min-h-screen.flex.items-center.bg-cover.bg-grid.bg-center.bg-fixed.pt-16 h1');
+            
+            if (titleElement) {
+                if (isMobileDevice()) {
+                    // 移动端设备：调整字体大小和样式
+                    // 标题字体应该占到页面宽度的50%~60%并且不允许换行
+                    // 使用更大的vw比例来确保标题宽度合适
+                    titleElement.style.fontSize = 'clamp(2.5rem, 10vw, 4rem)';
+                    titleElement.style.lineHeight = '1.1';
+                    // 不允许换行
+                    titleElement.style.whiteSpace = 'nowrap';
+                    titleElement.style.textOverflow = 'ellipsis';
+                    titleElement.style.overflow = 'hidden';
+                    // 确保宽度合适
+                    titleElement.style.width = 'auto';
+                    titleElement.style.textAlign = 'left';
+                } else {
+                    // PC设备：恢复原始样式
+                    titleElement.style.fontSize = 'clamp(3.5rem, 7vw, 5.5rem)';
+                    titleElement.style.lineHeight = '1';
+                    titleElement.style.whiteSpace = 'nowrap';
+                    titleElement.style.textOverflow = 'ellipsis';
+                    titleElement.style.overflow = 'hidden';
+                    titleElement.style.width = 'auto';
+                    titleElement.style.textAlign = 'left';
+                }
+            }
+        }
+        
+        // 根据设备类型调整视频容器大小和间隔
+        function adjustVideoContainer() {
+            // 设备类型判断函数，与Tailwind CSS md断点一致
+            function isMobileDevice() {
+                return window.innerWidth < 768;
+            }
+            
+            // 获取视频容器元素
+            const videoContainer = document.querySelector('div.mt-12.flex.flex-wrap');
+            
+            if (videoContainer) {
+                if (isMobileDevice()) {
+                    // 移动端设备：降低视频大小和间隔，使得容器宽度不超过浏览器宽度的90%
+                    // 设置视频容器的最大宽度为浏览器宽度的90%
+                    const maxWidth = window.innerWidth * 0.9;
+                    videoContainer.style.maxWidth = `${maxWidth}px`;
+                    // 减小间隙
+                    videoContainer.style.gap = '20px';
+                    
+                    // 获取所有视频元素并调整大小
+                    const videos = videoContainer.querySelectorAll('video');
+                    videos.forEach(video => {
+                        video.style.width = '60px';
+                        video.style.height = '60px';
+                    });
+                } else {
+                    // PC设备：恢复原始样式
+                    videoContainer.style.maxWidth = 'none';
+                    videoContainer.style.gap = '80px';
+                    
+                    // 获取所有视频元素并恢复原始大小
+                    const videos = videoContainer.querySelectorAll('video');
+                    videos.forEach(video => {
+                        video.style.width = '80px';
+                        video.style.height = '80px';
+                    });
+                }
+            }
+        }
+        
+        // 根据设备类型调整按钮区域大小和间距
+        function adjustButtonContainer() {
+            // 设备类型判断函数，与Tailwind CSS md断点一致
+            function isMobileDevice() {
+                return window.innerWidth < 768;
+            }
+            
+            // 获取按钮容器元素 - 使用更安全的选择器，避免包含冒号的类名
+            const videoContainer = document.querySelector('div.mt-12.flex.flex-wrap');
+            if (videoContainer) {
+                // 按钮容器是视频容器的下一个兄弟元素
+                const buttonContainer = videoContainer.nextElementSibling;
+                
+                if (buttonContainer && buttonContainer.classList.contains('mt-10')) {
+                    if (isMobileDevice()) {
+                        // 移动端设备：调整按钮大小和间距，确保三个按钮在一行，且整个容器宽度不超过页面宽度的90%
+                        // 设置按钮容器的最大宽度为浏览器宽度的90%
+                        const maxWidth = window.innerWidth * 0.9;
+                        buttonContainer.style.maxWidth = `${maxWidth}px`;
+                        // 确保按钮容器始终为flex-row布局
+                        buttonContainer.style.flexDirection = 'row';
+                        // 减小间隙
+                        buttonContainer.style.gap = '8px';
+                        
+                        // 获取所有按钮元素并调整大小
+                        const buttons = buttonContainer.querySelectorAll('a');
+                        buttons.forEach(button => {
+                            // 减小按钮内边距
+                            button.style.padding = '6px 12px';
+                            // 减小按钮字体大小
+                            button.style.fontSize = '12px';
+                            // 确保按钮有固定宽度，方便在一行排列
+                            button.style.flex = '1';
+                            button.style.minWidth = '0';
+                        });
+                    } else {
+                        // PC设备：恢复原始样式
+                        buttonContainer.style.maxWidth = 'none';
+                        // 恢复为响应式布局
+                        buttonContainer.style.flexDirection = '';
+                        // 恢复间隙
+                        buttonContainer.style.gap = '';
+                        
+                        // 获取所有按钮元素并恢复原始大小
+                        const buttons = buttonContainer.querySelectorAll('a');
+                        buttons.forEach(button => {
+                            // 恢复按钮内边距
+                            button.style.padding = '';
+                            // 恢复按钮字体大小
+                            button.style.fontSize = '';
+                            // 恢复按钮宽度
+                            button.style.flex = '';
+                            button.style.minWidth = '';
+                        });
+                    }
+                }
+            }
+        }
+        
+        // 根据设备类型调整段落文本大小
+        function adjustParagraphText() {
+            // 设备类型判断函数，与Tailwind CSS md断点一致
+            function isMobileDevice() {
+                return window.innerWidth < 768;
+            }
+            
+            // 获取标题元素的父容器，然后找到其中的段落元素
+            const titleElement = document.querySelector('section.relative.min-h-screen.flex.items-center.bg-cover.bg-grid.bg-center.bg-fixed.pt-16 h1');
+            if (titleElement) {
+                // 找到标题元素的父容器
+                const parentContainer = titleElement.parentElement;
+                // 获取父容器中的所有段落元素
+                const paragraphs = parentContainer.querySelectorAll('p.text-gray-300');
+                
+                paragraphs.forEach(paragraph => {
+                    if (isMobileDevice()) {
+                        // 移动端设备：将字体设置为当前字体小两号
+                        // 当前字体为text-lg，小两号为text-sm
+                        paragraph.style.fontSize = '0.875rem'; // text-sm对应0.875rem
+                    } else {
+                        // PC设备：恢复原始样式
+                        paragraph.style.fontSize = '';
+                    }
+                });
+            }
+        }
+        
+        // 页面加载时调整标题样式、视频容器、按钮容器和段落文本
+        document.addEventListener('DOMContentLoaded', function() {
+            adjustTitleForDeviceType();
+            adjustVideoContainer();
+            adjustButtonContainer();
+            adjustParagraphText();
+        });
+        
+        // 窗口大小变化时重新调整标题样式、视频容器、按钮容器和段落文本
+        window.addEventListener('resize', function() {
+            adjustTitleForDeviceType();
+            adjustVideoContainer();
+            adjustButtonContainer();
+            adjustParagraphText();
+        });
 
 
         function addnewissue(name,message,subject,email,contactType){

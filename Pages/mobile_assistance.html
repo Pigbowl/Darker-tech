@@ -67,15 +67,15 @@
             margin: 0 auto;
             background: transparent; /* 设为透明 */
             width: 100%;
-            max-width: 450px;
-            padding-left: 40px;
+            /* 移除max-width限制，由JavaScript动态计算 */
+            /* 移除padding-left，由JavaScript动态计算 */
         }
         
         /* 白色框容器 */
         #whiteBoxContainer {
             display: block;
-            margin-right: -150px;
-            margin-left: 0;
+            /* 移除默认的margin-right，由JavaScript动态计算 */
+            /* 移除默认的margin-left，由JavaScript动态计算 */
             background: transparent; /* 设为透明 */
             align-self: center;
             z-index: 1;
@@ -94,9 +94,11 @@
             box-shadow: 0 0px 10px rgba(0,0,0,0.1);
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            padding: 5px;
+            justify-content: flex-start; /* 从顶部开始排列 */
+            align-items: flex-end; /* 所有气泡右对齐 */
+            padding: 10px 5px; /* 顶部和底部内边距为10px，左右内边距为5px */
             box-sizing: border-box;
+            overflow: hidden; /* 防止内容溢出 */
         }
         
         /* 聊天气泡 */
@@ -106,12 +108,12 @@
             padding: 4px 8px;
             font-size: 7px;
             color: white;
-            align-self: flex-end;
             white-space: nowrap;
             display: inline-block;
             opacity: 0;
             transform: scale(0) translateY(20px);
             transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            margin: 0; /* 重置margin，由JavaScript动态计算 */
         }
         
         /* 鸭子图片 */
@@ -129,7 +131,6 @@
             position: absolute;
             left: 50%;
             top: auto;
-            bottom: 200px;
             transform: translateX(-50%);
             padding: 12px 24px;
             background: rgba(30, 30, 30, 0.95);
@@ -141,6 +142,18 @@
             z-index: 10000;
             transition: all 0.3s ease;
             box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        /* 达客智驾领航员标题 */
+        #duckAssistantContainer h1 {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            margin: 0;
+            white-space: nowrap; /* 确保文字处于一行 */
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         #returnDuckButton:hover {
@@ -322,12 +335,12 @@
                 <!-- 左侧白色框，高80px、宽160px -->
                 <div>
                     <!-- 聊天气泡，添加气泡动画类 -->
-                    <div class="bubble-item" style="margin-right: 70px;">你好！欢迎来到达客领航员</div>
-                    <div class="bubble-item" style="margin-right: 90px;">我是达客鸭，您的智能小助手</div>
-                    <div class="bubble-item" style="margin-right: 110px;">我可以帮您介绍达客的产品，让您不白来</div>
-                    <div class="bubble-item" style="margin-right: 110px;">我还可以帮您提醒以及帮您完成和网站的交互</div>
-                    <div class="bubble-item" style="margin-right: 90px;">我平时在导航栏待着哦</div>
-                    <div class="bubble-item" style="margin-right: 70px;">有问题随时找我！随时等待你</div>
+                    <div class="bubble-item" style="margin-right: 80px;">你好！欢迎来到达客领航员</div>
+                    <div class="bubble-item" style="margin-right: 100px;">我是达客鸭，您的智能小助手</div>
+                    <div class="bubble-item" style="margin-right: 120px;">我可以帮您介绍达客的产品，让您不白来</div>
+                    <div class="bubble-item" style="margin-right: 120px;">我还可以帮您提醒以及帮您完成和网站的交互</div>
+                    <div class="bubble-item" style="margin-right: 100px;">我平时在导航栏🟢⬆️待着哦</div>
+                    <div class="bubble-item" style="margin-right: 80px;">有问题随时找我！随时等待你</div>
                 </div>
             </div> <!-- 关闭白色框容器 -->
         
@@ -440,6 +453,165 @@
     <script>
         // 状态变量
         let currentModal = null;
+        
+        // 动态调整duckAssistant及其子元素的大小和位置
+        function adjustDuckAssistantLayout() {
+            // 获取iframe宽度（当前窗口宽度）
+            const iframeWidth = window.innerWidth;
+            
+            // 计算duckAssistant总宽度：iframe宽度两侧各减10px
+            const duckAssistantWidth = iframeWidth - 20;
+            
+            // 将duckAssistant总宽度除以4，得到video半径r
+            const videoRadius = duckAssistantWidth / 4;
+            
+            // 计算video直径
+            const videoDiameter = videoRadius * 2;
+            
+            // 计算whiteBoxContainer尺寸
+            const whiteBoxHeight = videoDiameter; // 高度 = 2r
+            const whiteBoxWidth = videoRadius * 3; // 宽度 = 3r
+            
+            // 计算duckAssistant高度：取whiteBoxHeight和videoDiameter中的最大值
+            const duckAssistantHeight = Math.max(whiteBoxHeight, videoDiameter);
+            
+            // 获取元素
+            const duckAssistant = document.getElementById('duckAssistant');
+            const whiteBoxContainer = document.getElementById('whiteBoxContainer');
+            const duckIcon = document.getElementById('duckIcon');
+            const whiteBox = whiteBoxContainer.querySelector('div');
+            
+            // 调整duckAssistant样式
+            duckAssistant.style.width = `${duckAssistantWidth}px`;
+            duckAssistant.style.height = `${duckAssistantHeight}px`;
+            duckAssistant.style.position = 'relative';
+            duckAssistant.style.margin = '0 auto';
+            duckAssistant.style.display = 'block'; // 改为block布局，方便子元素绝对定位
+            duckAssistant.style.padding = '0'; // 移除内边距，确保贴边摆放
+            duckAssistant.style.boxSizing = 'border-box';
+            
+            // 调整whiteBoxContainer样式 - 左侧贴边摆放
+            whiteBoxContainer.style.width = `${whiteBoxWidth}px`;
+            whiteBoxContainer.style.height = `${whiteBoxHeight}px`;
+            whiteBoxContainer.style.position = 'absolute'; // 绝对定位
+            whiteBoxContainer.style.zIndex = '1';
+            whiteBoxContainer.style.margin = '0';
+            whiteBoxContainer.style.padding = '0';
+            whiteBoxContainer.style.left = '0'; // 左侧贴边
+            whiteBoxContainer.style.top = '50%';
+            whiteBoxContainer.style.transform = 'translateY(-50%)'; // 垂直居中
+            whiteBoxContainer.style.display = 'flex';
+            whiteBoxContainer.style.justifyContent = 'flex-start';
+            whiteBoxContainer.style.alignItems = 'center';
+            
+            // 调整whiteBox样式
+            whiteBox.style.width = `${whiteBoxWidth}px`;
+            whiteBox.style.height = `${whiteBoxHeight}px`;
+            whiteBox.style.margin = '0';
+            whiteBox.style.padding = '10px 5px'; // 顶部和底部内边距为10px，左右内边距为5px
+            whiteBox.style.boxSizing = 'border-box';
+            whiteBox.style.display = 'flex';
+            whiteBox.style.flexDirection = 'column';
+            whiteBox.style.justifyContent = 'flex-start';
+            whiteBox.style.alignItems = 'flex-end';
+            whiteBox.style.overflow = 'hidden';
+            
+            // 动态计算气泡之间的纵向间隔
+            // 计算可用高度：父容器高度 - 上下内边距（20px）
+            const availableHeight = whiteBoxHeight - 20; // 上下内边距各10px，共20px
+            const bubbleCount = 6; // 固定6个气泡
+            const bubbleHeight = 20; // 每个气泡的估计高度（包括padding）
+            
+            // 计算总气泡高度：气泡数量 * 每个气泡高度
+            const totalBubblesHeight = bubbleCount * bubbleHeight;
+            
+            // 计算总间隔空间：可用高度 - 总气泡高度
+            const totalGapSpace = availableHeight - totalBubblesHeight;
+            
+            // 计算每两个气泡之间的间隔：总间隔空间 / (气泡数量 - 1)
+            const gapBetweenBubbles = totalGapSpace / (bubbleCount - 1);
+            
+            // 获取所有气泡元素
+            const bubbles = whiteBox.querySelectorAll('.bubble-item');
+            
+            // 设置气泡样式
+            bubbles.forEach((bubble, index) => {
+                // 设置每个气泡的margin-bottom，最后一个气泡不需要margin-bottom
+                if (index < bubbles.length - 1) {
+                    bubble.style.marginBottom = `${gapBetweenBubbles}px`;
+                } else {
+                    bubble.style.marginBottom = '0';
+                }
+                bubble.style.height = `${bubbleHeight}px`;
+                bubble.style.display = 'flex';
+                bubble.style.alignItems = 'center';
+            });
+            
+            // 调整video样式 - 右侧贴边摆放
+            duckIcon.style.width = `${videoDiameter}px`;
+            duckIcon.style.height = `${videoDiameter}px`;
+            duckIcon.style.position = 'absolute'; // 绝对定位
+            duckIcon.style.zIndex = '2';
+            duckIcon.style.margin = '0';
+            duckIcon.style.padding = '0';
+            duckIcon.style.right = '0'; // 右侧贴边
+            duckIcon.style.top = '50%';
+            duckIcon.style.transform = 'translateY(-50%)'; // 垂直居中
+            
+            // 调整标题位置和大小 - 确保文字底部到duckAssistant顶部的距离为30px，且宽度与duckAssistant一致
+            const h1 = duckAssistant.previousElementSibling; // 获取h1标题元素
+            if (h1 && h1.tagName === 'H1') {
+                // 设置标题宽度与duckAssistant一致
+                h1.style.width = `${duckAssistantWidth}px`;
+                
+                // 计算标题的字体大小，确保文字在一行显示
+                // 使用相对字体大小，确保响应式
+                h1.style.fontSize = 'clamp(1.5rem, 3vw, 2.5rem)';
+                
+                // 简单直接的定位方式：设置标题top位置
+                // 标题底部到duckAssistant顶部的距离为30px
+                // 所以标题top = duckAssistant的top位置 - 标题高度 - 30px
+                
+                // 获取标题的高度
+                const h1Height = h1.offsetHeight || 40; // 假设默认高度为40px
+                
+                // 设置标题位置：标题底部到duckAssistant顶部的距离为30px
+                // 计算duckAssistant的中心位置
+                const containerHeight = duckAssistant.parentElement.offsetHeight;
+                const duckAssistantTop = (containerHeight - duckAssistantHeight) / 2;
+                
+                // 计算标题top位置：文字底部到duckAssistant顶部距离为30px
+                // 标题底部位置 = duckAssistant顶部位置 + 30px
+                // 标题顶部位置 = 标题底部位置 - 标题高度
+                // 向上提高30px + 再提高40px，总共向上提高70px
+                const h1Bottom = duckAssistantTop + 30 - 30 - 40; // 再向上提高40px
+                const h1Top = h1Bottom - h1Height;
+                
+                // 设置标题位置
+                h1.style.position = 'absolute';
+                h1.style.left = '50%';
+                h1.style.top = `${h1Top}px`;
+                h1.style.bottom = 'auto'; // 移除bottom属性，使用top定位
+                h1.style.transform = 'translateX(-50%)';
+                h1.style.textAlign = 'center';
+                h1.style.whiteSpace = 'nowrap';
+                h1.style.overflow = 'hidden';
+                h1.style.textOverflow = 'ellipsis';
+                h1.style.margin = '0';
+                
+                // 调整字体大小，进一步增大clamp范围，使字体更大
+                // 增加基础大小、vw比例和最大大小，确保文字充分利用横向空间
+                h1.style.fontSize = 'clamp(2.5rem, 7vw, 5rem)';
+                h1.style.lineHeight = '1.2'; // 调整行高，确保文字居中美观
+            }
+            
+            // 调整返回按钮位置 - 基于duckAssistant位置下方30px
+            const returnButton = document.getElementById('returnDuckButton');
+            returnButton.style.top = `calc(50% + ${duckAssistantHeight / 2 + 30}px)`;
+        }
+        
+        // 监听窗口大小变化，重新调整布局
+        window.addEventListener('resize', adjustDuckAssistantLayout);
         
         // 气泡逐个弹出动画函数
         function animateBubbles() {
@@ -709,6 +881,9 @@
         
         // 页面加载完成后执行动画
         window.addEventListener('DOMContentLoaded', function() {
+            // 动态调整布局
+            adjustDuckAssistantLayout();
+            
             // 检查是否为该session首次加载
             const hasSeenInitialMode = sessionStorage.getItem('hasSeenMobileDuckInitialMode') === 'true';
             
