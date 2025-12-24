@@ -163,19 +163,19 @@
                     <i class="fa fa-bar-chart text-neon mr-2"></i>站点统计
                 </h2>
                 
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+                <div class="grid grid-cols-3 gap-4 sm:gap-6">
                     <!-- 站点访问情况卡片 -->
-                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02] flex flex-col min-h-[180px] cursor-pointer card" data-card="visits">
+                    <div class="glass-effect rounded-lg p-4 sm:p-6 neon-border transform transition-all duration-300 hover:scale-[1.02] flex flex-col min-h-[150px] sm:min-h-[180px] cursor-pointer card" data-card="visits">
                         <div class="flex justify-between items-start">
                             <div>
-                                <p class="text-gray-400 text-sm">总访问次数</p>
-                                <h3 id="visit-count" class="text-3xl font-bold mt-2 text-neon">--</h3>
+                                <p class="text-gray-400 text-xs sm:text-sm">总访问次数</p>
+                                <h3 id="visit-count" class="text-2xl sm:text-3xl font-bold mt-1 sm:mt-2 text-neon">--</h3>
                             </div>
-                            <div class="p-3 bg-neon/10 rounded-full">
-                                <i class="fa fa-line-chart text-neon text-xl"></i>
+                            <div class="p-2 sm:p-3 bg-neon/10 rounded-full">
+                                <i class="fa fa-line-chart text-neon text-lg sm:text-xl"></i>
                             </div>
                         </div>
-                        <div class="mt-auto flex items-center text-sm">
+                        <div class="mt-auto flex items-center text-xs sm:text-sm">
                             <span class="text-green-400 flex items-center">
                                 <i class="fa fa-arrow-up mr-1"></i> 12%
                             </span>
@@ -184,17 +184,17 @@
                     </div>
                     
                     <!-- 用户情况卡片 -->
-                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02] flex flex-col min-h-[180px] cursor-pointer card" data-card="users">
+                    <div class="glass-effect rounded-lg p-4 sm:p-6 neon-border transform transition-all duration-300 hover:scale-[1.02] flex flex-col min-h-[150px] sm:min-h-[180px] cursor-pointer card" data-card="users">
                         <div class="flex justify-between items-start">
                             <div>
-                                <p class="text-gray-400 text-sm">用户总数</p>
-                                <h3 id="total-user" class="text-3xl font-bold mt-2 text-primary">--</h3>
+                                <p class="text-gray-400 text-xs sm:text-sm">用户总数</p>
+                                <h3 id="total-user" class="text-2xl sm:text-3xl font-bold mt-1 sm:mt-2 text-primary">--</h3>
                             </div>
-                            <div class="p-3 bg-primary/10 rounded-full">
-                                <i class="fa fa-users text-primary text-xl"></i>
+                            <div class="p-2 sm:p-3 bg-primary/10 rounded-full">
+                                <i class="fa fa-users text-primary text-lg sm:text-xl"></i>
                             </div>
                         </div>
-                        <div class="mt-auto flex items-center text-sm">
+                        <div class="mt-auto flex items-center text-xs sm:text-sm">
                             <span class="text-blue-400 flex items-center">
                                 <i class="fa fa-info-circle mr-1"></i> 查看详情
                             </span>
@@ -202,17 +202,17 @@
                     </div>
                     
                     <!-- 问题管理卡片 -->
-                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02] flex flex-col min-h-[180px] cursor-pointer card" data-card="issues">
+                    <div class="glass-effect rounded-lg p-4 sm:p-6 neon-border transform transition-all duration-300 hover:scale-[1.02] flex flex-col min-h-[150px] sm:min-h-[180px] cursor-pointer card" data-card="issues">
                         <div class="flex justify-between items-start">
                             <div>
-                                <p class="text-gray-400 text-sm">待处理的问题</p>
-                                <h3 id="pending-issues" class="text-3xl font-bold mt-2 text-red-400">--</h3>
+                                <p class="text-gray-400 text-xs sm:text-sm">待处理的问题</p>
+                                <h3 id="pending-issues" class="text-2xl sm:text-3xl font-bold mt-1 sm:mt-2 text-red-400">--</h3>
                             </div>
-                            <div class="p-3 bg-red-400/10 rounded-full">
-                                <i class="fa fa-bug text-red-400 text-xl"></i>
+                            <div class="p-2 sm:p-3 bg-red-400/10 rounded-full">
+                                <i class="fa fa-bug text-red-400 text-lg sm:text-xl"></i>
                             </div>
                         </div>
-                        <div class="mt-auto flex items-center text-sm">
+                        <div class="mt-auto flex items-center text-xs sm:text-sm">
                             <span class="text-red-400 flex items-center">
                                 <i class="fa fa-exclamation-triangle mr-1"></i> 需要处理
                             </span>
@@ -220,17 +220,17 @@
                     </div>
                     
                     <!-- 建议管理卡片 -->
-                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02] flex flex-col min-h-[180px] cursor-pointer card" data-card="advice">
+                    <div class="glass-effect rounded-lg p-4 sm:p-6 neon-border transform transition-all duration-300 hover:scale-[1.02] flex flex-col min-h-[150px] sm:min-h-[180px] cursor-pointer card" data-card="advice">
                         <div class="flex justify-between items-start">
                             <div>
-                                <p class="text-gray-400 text-sm">待处理的建议</p>
-                                <h3 id="pending-advice" class="text-3xl font-bold mt-2 text-green-400">--</h3>
+                                <p class="text-gray-400 text-xs sm:text-sm">待处理的建议</p>
+                                <h3 id="pending-advice" class="text-2xl sm:text-3xl font-bold mt-1 sm:mt-2 text-green-400">--</h3>
                             </div>
-                            <div class="p-3 bg-green-400/10 rounded-full">
-                                <i class="fa fa-lightbulb-o text-green-400 text-xl"></i>
+                            <div class="p-2 sm:p-3 bg-green-400/10 rounded-full">
+                                <i class="fa fa-lightbulb-o text-green-400 text-lg sm:text-xl"></i>
                             </div>
                         </div>
-                        <div class="mt-auto flex items-center text-sm">
+                        <div class="mt-auto flex items-center text-xs sm:text-sm">
                             <span class="text-green-400 flex items-center">
                                 <i class="fa fa-exclamation-triangle mr-1"></i> 需要处理
                             </span>
@@ -238,17 +238,17 @@
                     </div>
                     
                     <!-- 站点产品管理卡片 -->
-                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02] flex flex-col min-h-[180px] cursor-pointer card" data-card="products">
+                    <div class="glass-effect rounded-lg p-4 sm:p-6 neon-border transform transition-all duration-300 hover:scale-[1.02] flex flex-col min-h-[150px] sm:min-h-[180px] cursor-pointer card" data-card="products">
                         <div class="flex justify-between items-start">
                             <div>
-                                <p class="text-gray-400 text-sm">上线产品数量</p>
-                                <h3 id="product-count" class="text-3xl font-bold mt-2 text-purple-400">--</h3>
+                                <p class="text-gray-400 text-xs sm:text-sm">上线产品数量</p>
+                                <h3 id="product-count" class="text-2xl sm:text-3xl font-bold mt-1 sm:mt-2 text-purple-400">--</h3>
                             </div>
-                            <div class="p-3 bg-purple-400/10 rounded-full">
-                                <i class="fa fa-cubes text-purple-400 text-xl"></i>
+                            <div class="p-2 sm:p-3 bg-purple-400/10 rounded-full">
+                                <i class="fa fa-cubes text-purple-400 text-lg sm:text-xl"></i>
                             </div>
                         </div>
-                        <div class="mt-auto flex items-center text-sm">
+                        <div class="mt-auto flex items-center text-xs sm:text-sm">
                             <span class="text-purple-400 flex items-center">
                                 <i class="fa fa-info-circle mr-1"></i> 查看详情
                             </span>
@@ -256,17 +256,17 @@
                     </div>
                     
                     <!-- 待上线点卡片 -->
-                    <div class="glass-effect rounded-lg p-6 neon-border transform transition-all duration-300 hover:scale-[1.02] flex flex-col min-h-[180px] cursor-pointer card" data-card="tobepub">
+                    <div class="glass-effect rounded-lg p-4 sm:p-6 neon-border transform transition-all duration-300 hover:scale-[1.02] flex flex-col min-h-[150px] sm:min-h-[180px] cursor-pointer card" data-card="tobepub">
                         <div class="flex justify-between items-start">
                             <div>
-                                <p class="text-gray-400 text-sm">待上线点</p>
-                                <h3 id="tobepub-count" class="text-3xl font-bold mt-2 text-blue-400">--</h3>
+                                <p class="text-gray-400 text-xs sm:text-sm">待上线点</p>
+                                <h3 id="tobepub-count" class="text-2xl sm:text-3xl font-bold mt-1 sm:mt-2 text-blue-400">--</h3>
                             </div>
-                            <div class="p-3 bg-blue-400/10 rounded-full">
-                                <i class="fa fa-rocket text-blue-400 text-xl"></i>
+                            <div class="p-2 sm:p-3 bg-blue-400/10 rounded-full">
+                                <i class="fa fa-rocket text-blue-400 text-lg sm:text-xl"></i>
                             </div>
                         </div>
-                        <div class="mt-auto flex items-center text-sm">
+                        <div class="mt-auto flex items-center text-xs sm:text-sm">
                             <span class="text-blue-400 flex items-center">
                                 <i class="fa fa-info-circle mr-1"></i> 待上线功能列表
                             </span>
@@ -460,19 +460,19 @@
                             <thead>
                                 <tr>
                                     <th scope="col" class="px-6 py-3 text-left text-s font-medium text-gray-400 uppercase tracking-wider">
-                                        问题编号
+                                        编号
                                     </th>
                                     <th scope="col" class="px-6 py-3 text-left text-s font-medium text-gray-400 uppercase tracking-wider">
-                                        问题功能
+                                        功能
                                     </th>
                                     <th scope="col" class="px-6 py-3 text-left text-s font-medium text-gray-400 uppercase tracking-wider">
-                                        问题名称
+                                        名称
                                     </th>
                                     <th scope="col" class="px-6 py-3 text-left text-s font-medium text-gray-400 uppercase tracking-wider">
-                                        提交时间
+                                        时间
                                     </th>
                                     <th scope="col" class="px-6 py-3 text-left text-s font-medium text-gray-400 uppercase tracking-wider">
-                                        问题状态
+                                        状态
                                     </th>
                                     <th scope="col" class="px-6 py-3 text-right text-s font-medium text-gray-400 uppercase tracking-wider">
                                         操作

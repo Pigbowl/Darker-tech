@@ -42,9 +42,18 @@ function loadDuckAssistant() {
         right: '150px'
     };
     
+    // debug参数：true - 每次加载都进入初始模式；false - 保持当前逻辑
+    const debug = true;
+    
     // 检查sessionStorage，判断是否是第一次访问
-    const hasSeenInitialMode = sessionStorage.getItem('hasSeenDuckInitialMode') === 'true';
-    // const hasSeenInitialMode = false;
+    // 使用let声明，以便后续可以修改
+    let hasSeenInitialMode = sessionStorage.getItem('hasSeenDuckInitialMode') === 'true';
+    
+    // // 如果debug为true，强制进入初始模式
+    // if (debug) {
+    //     hasSeenInitialMode = false;
+    // }
+    // const hasSeenInitialMode = "false";
     // 创建iframe元素
     const duckIframe = document.createElement('iframe');
     duckIframe.id = 'duckIframe';
@@ -142,8 +151,24 @@ function loadDuckAssistant() {
         document.body.appendChild(returnButton);
     }
     
+    // 添加设备类型判断函数
+    function isMobileDevice() {
+        // 使用与Tailwind CSS md断点一致的768px作为区分标准
+        return window.innerWidth < 768;
+    }
+    
     // 将iframe添加到页面
     document.body.appendChild(duckIframe);
+    
+    // iframe加载完成后，发送设备类型信息
+    duckIframe.onload = function() {
+        const deviceType = isMobileDevice() ? 'mobile' : 'pc';
+        duckIframe.contentWindow.postMessage({
+            type: 'setDeviceType',
+            deviceType: deviceType,
+            screenWidth: window.innerWidth
+        }, '*');
+    };
     
     // 添加消息监听器来处理高度和宽度更新以及位置移动
     window.addEventListener('message', function(event) {

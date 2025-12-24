@@ -1,7 +1,7 @@
 <header class="fixed top-0 w-full z-50 glass-effect border-b border-logoup/20">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="mx-0 w-full px-0 sm:px-0 py-3 flex justify-between items-center box-border">
             <!-- Logo -->
-            <a href="#" class="flex items-center space-x-2">
+            <a href="../../index.html" class="flex items-center space-x-2 ml-10 whitespace-nowrap">
                 <!-- <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-logoup to-logobuttom flex items-center justify-center"> -->
                     <!-- <span class="text-primary font-bold text-lg">DT</span> -->
                 <!-- </div> -->
@@ -14,7 +14,7 @@
             </a>
             
             <!-- 桌面导航 -->
-            <nav class="hidden md:flex items-center space-x-6">
+            <nav class="hidden md:flex items-center space-x-6 mr-10 ml-25 ml-[100px] min-w-max">
                 <a href="../../index.html" class="text-white hover:text-logobuttom transition-colors duration-300">首页</a>
                 <a href="../Pages/KnowledgeNet.html" id="知识网络" class="func_link hover:text-logobuttom transition-colors duration-300">知识网络</a>
                 
@@ -117,21 +117,123 @@
             </nav>
             
             <!-- 移动端菜单按钮 -->
-            <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+            <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none z-10 cursor-pointer mr-5">
                 <i class="fa fa-bars text-2xl"></i>
             </button>
         </div>
         
         <!-- 移动端导航菜单 -->
-        <!-- <div id="mobile-menu" class="hidden md:hidden glass-effect">
+        <div id="mobile-menu" class="hidden md:hidden fixed top-16 left-0 right-0 z-50 border-t border-logoup/20" style="backdrop-filter: blur(10px); background-color: rgba(17, 24, 39, 0.95);">
             <div class="container mx-auto px-4 py-3 flex flex-col space-y-4">
-                <a href="#" class="text-white hover:text-tech transition-colors duration-300 py-2 border-b border-accent/20">首页</a>
-                <a href="#knowledge" class="text-white hover:text-tech transition-colors duration-300 py-2 border-b border-accent/20">ADAS知识库</a>
-                <a href="#benchmark" class="text-white hover:text-tech transition-colors duration-300 py-2 border-b border-accent/20">ADAS对标库</a>
-                <a href="#configurator" class="text-white hover:text-tech transition-colors duration-300 py-2 border-b border-accent/20">配置工具</a>
-                <a href="#simulation" class="text-white hover:text-tech transition-colors duration-300 py-2 border-b border-accent/20">仿真平台</a>
-                <a href="#about" class="tech-button bg-transparent border border-accent text-accent px-4 py-2 rounded hover:bg-accent/10 text-center">关于我们</a>
+                <a href="../../index.html" class="text-white hover:text-logobuttom transition-colors duration-300 py-2 border-b border-logoup/20">首页</a>
+                <a href="../Pages/KnowledgeNet.html" id="知识网络" class="func_link hover:text-logobuttom transition-colors duration-300 py-2 border-b border-logoup/20">知识网络</a>
+                
+                <!-- 知识宇宙 - 移动端 -->
+                <div class="border-b border-logoup/20 pb-2">
+                    <button id="mobile-knowledge-universe-btn" class="text-white hover:text-logobuttom transition-colors duration-300 flex items-center justify-between w-full py-2">
+                        <span>知识宇宙</span>
+                        <i class="fa fa-chevron-down ml-1 text-xs"></i>
+                    </button>
+                    <div id="mobile-knowledge-universe-menu" class="hidden pl-4 space-y-2 mt-2" style="backdrop-filter: blur(10px); background-color: rgba(17, 24, 39, 0.95); padding: 0.5rem; border-radius: 0.375rem; border: 1px solid rgba(10, 147, 150, 0.2);">
+                        <a href="../Pages/FunctionHall.html" id="功能星球" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20 rounded">功能星球</a>
+                        <a href="../Pages/HardWareHall.html" id="硬件星球" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20 rounded">硬件星球</a>
+                        <a href="../Pages/SensorHall.html" id="传感器星球" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20 rounded">传感器星球</a>
+                        <a href="../Pages/RegulationMap.html" id="法规/标准星球" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20 rounded">法规/标准星球</a>
+                        <a href="../Pages/ArchitectureBuild.html" id="架构星球" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20 rounded">架构星球</a>
+                    </div>
+                </div>
+                
+                <a href="../Pages/Forum.html" id="智驾论坛" class="func_link text-white hover:text-logobuttom transition-colors duration-300 py-2 border-b border-logoup/20">智驾论坛</a>
+                
+                <!-- 行业纵横 - 移动端 -->
+                <div class="border-b border-logoup/20 pb-2">
+                    <button id="mobile-industry-btn" class="text-white hover:text-logobuttom transition-colors duration-300 flex items-center justify-between w-full py-2">
+                        <span>行业纵横</span>
+                        <i class="fa fa-chevron-down ml-1 text-xs"></i>
+                    </button>
+                    <div id="mobile-industry-menu" class="hidden pl-4 space-y-2 mt-2" style="backdrop-filter: blur(10px); background-color: rgba(17, 24, 39, 0.95); padding: 0.5rem; border-radius: 0.375rem; border: 1px solid rgba(10, 147, 150, 0.2);">
+                        <a href="../Pages/AdasBenchmark.html" id="车型矩阵" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20 rounded">车型矩阵</a>
+                        <a href="#" id="方案矩阵" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20 rounded">方案矩阵</a>
+                        <a href="#" id="方案角斗场" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20 rounded">方案角斗场</a>
+                        <a href="#" id="市场通" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20 rounded">市场通</a>
+                        <a href="#" id="生态网络" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20 rounded">生态网络</a>
+                    </div>
+                </div>
+                
+                <!-- 智驾军火库 - 移动端 -->
+                <div class="border-b border-logoup/20 pb-2">
+                    <button id="mobile-arsenal-btn" class="text-white hover:text-logobuttom transition-colors duration-300 flex items-center justify-between w-full py-2">
+                        <span>智驾军火库</span>
+                        <i class="fa fa-chevron-down ml-1 text-xs"></i>
+                    </button>
+                    <div id="mobile-arsenal-menu" class="hidden pl-4 space-y-2 mt-2" style="backdrop-filter: blur(10px); background-color: rgba(17, 24, 39, 0.95); padding: 0.5rem; border-radius: 0.375rem; border: 1px solid rgba(10, 147, 150, 0.2);">
+                        <a href="../Pages/Configurator.html" id="产品配置器" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20 rounded">产品配置器</a>
+                        <a href="../Pages/RoadBuilder.html" id="环境生成器" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20 rounded">环境生成器</a>
+                        <a href="../Pages/FoV_build.html" id="传感器配置器" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20 rounded">传感器配置器</a>
+                        <a href="../Pages/SensorInspector.html" id="传感器仿真" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20 rounded">传感器仿真</a>
+                        <a href="../Pages/SimulationPlatform.html" id="仿真平台" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20 rounded">仿真平台</a>
+                        <a href="../Pages/PhyArchiTool.html" id="物理架构工具" class="func_link block px-4 py-2 text-sm text-white hover:bg-logoup/20 rounded">物理架构工具</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-logoup/20 rounded">其它工具...</a>
+                    </div>
+                </div>
+                
+                <a id="mobile-auth-button" href="../Pages/login.html" class="tech-button bg-transparent border border-logoup text-logoup px-4 py-1 rounded hover:bg-logoup/10 text-center">登录/注册</a>
             </div>
-        </div> -->
+        </div>
+        
+        <script>
+            // 移动端菜单交互
+            document.getElementById('mobile-menu-button').addEventListener('click', function() {
+                const mobileMenu = document.getElementById('mobile-menu');
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            // 移动端下拉菜单交互
+            document.getElementById('mobile-knowledge-universe-btn').addEventListener('click', function() {
+                const menu = document.getElementById('mobile-knowledge-universe-menu');
+                menu.classList.toggle('hidden');
+            });
+            
+            document.getElementById('mobile-industry-btn').addEventListener('click', function() {
+                const menu = document.getElementById('mobile-industry-menu');
+                menu.classList.toggle('hidden');
+            });
+            
+            document.getElementById('mobile-arsenal-btn').addEventListener('click', function() {
+                const menu = document.getElementById('mobile-arsenal-menu');
+                menu.classList.toggle('hidden');
+            });
+            
+            // 同步移动端认证按钮状态
+            window.updateMobileAuthButton = function() {
+                const authButton = document.getElementById('mobile-auth-button');
+                const username = sessionStorage.getItem('username');
+                const userType = sessionStorage.getItem('userType');
+                const authStatus = sessionStorage.getItem('authenticated');
+                const expiryTime = sessionStorage.getItem('auth_expiry');
+                const currentTime = new Date().getTime();
+                
+                const isAuthenticated = authStatus === 'true' && 
+                                  expiryTime && 
+                                  currentTime < parseInt(expiryTime);
+                                    
+                if (isAuthenticated && username) {
+                    // 用户已登录，显示用户名和对应的链接
+                    authButton.textContent = username;
+                    if (userType && userType.startsWith('Manager')) {
+                        authButton.href = '../Pages/sitedashboard.html';
+                    } else {
+                        authButton.href = '../Pages/userdashboard.html';
+                    }
+                } else {
+                    // 用户未登录，显示登录/注册按钮
+                    authButton.textContent = '登录/注册';
+                    authButton.href = '../Pages/login.html';
+                }
+            }
+            
+            // 页面加载时更新移动端认证按钮
+            document.addEventListener('DOMContentLoaded', window.updateMobileAuthButton);
+        </script>
 
     </header>
