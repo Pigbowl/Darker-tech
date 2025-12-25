@@ -23,6 +23,37 @@
             width: 100%;
             min-height: 100vh;
             background: #121212;
+            margin: 0;
+            padding: 0;
+            flex-grow: 1;
+            box-sizing: border-box;
+            position: relative;
+        }
+        
+        /* 确保body内的所有直接子元素都没有默认margin/padding */
+        body > * {
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* particles-js 样式调整 */
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* 确保content元素填充整个mainContent */
+        .content {
+            position: relative;
+            z-index: 1;
+            margin: 0;
+            padding: 0;
         }
         
         /* 页面容器通用样式 */

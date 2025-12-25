@@ -3,12 +3,10 @@
 <head>
   <meta charset="utf-8">
   <title>知识网络-达客智驾领航员</title>
-  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="../js/d3/d3.v7.min.js"></script>
   <!-- <script src="https://cdn.tailwindcss.com"></script> -->
   <script src="../js/ipcontroller.js"></script>
-  <!-- <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>     -->
   <script src="../js/load-duck-assistant.js"></script>
-  <script src="../js/elementdata_loader.js"></script>
   <script src="../css/components.css"></script>
   <script src="../css/style.css"></script>
   <script src="../css/tailwind.css"></script>
@@ -28,8 +26,8 @@
       z-index: 10; 
     }
     .label { 
-      fill: #fff; 
-      font-size: 8px;
+      fill: #e6e3e3; 
+      font-size: 10px;
       pointer-events: none; 
       text-shadow: 0 1px 3px rgba(0,0,0,0.8);
     }
@@ -85,7 +83,7 @@
         bottom: 0; /* 贴在底部 */
         left: 0; /* 从左侧开始 */
         overflow: hidden; /* 防止内容溢出 */
-        z-index: 100; /* 确保在其他内容下方但在背景上方 */
+        z-index: 10; /* 确保在导航栏下拉菜单下方 */
         background: #000;
         display: flex;
         justify-content: center;
@@ -559,27 +557,73 @@
     `);
 
 
-    // 3. 从elementdata中获取节点数据
-    // 等待elementdata加载完成后再执行代码
-    console.log('检查elementdata是否存在:', !!window.elementdata);
-    if (window.elementdata) {
-        // elementdata已存在，直接执行
-        console.log('直接执行initializeKnowledgeNet');
-        initializeKnowledgeNet();
-    } else {
-        console.log('elementdata不存在，等待elementDataLoaded事件');
-        // 监听elementDataLoaded事件，当数据加载完成时执行（注意：事件是在window上触发的）
-        window.addEventListener('elementDataLoaded', function(event) {
-            console.log('接收到elementDataLoaded事件，现在执行initializeKnowledgeNet');
-            initializeKnowledgeNet();
+    // 数据加载函数
+    function loadElementData() {
+        // 显示加载动画
+        const hidder = document.getElementById('canvas-container-hidder');
+        const loadingContainer = hidder.querySelector('.loading-container');
+        hidder.style.display = 'flex';
+        loadingContainer.classList.remove('hidden');
+        
+        // 这里是你的后端API地址
+        command = ip + '/extract_Know_net'    
+        // 使用fetch API获取数据（采用与Hardwarehall.html中类似的模式）
+        fetch(command, {
+            method: 'POST',  // 使用POST方法
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                // 这里可以根据实际API需求添加请求参数
+                // 示例参数，实际使用时请根据API要求修改
+                datatype:"product",
+                item_cate: 'elementdata',
+                action: 'work'
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP错误: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // 检查API返回是否成功
+            if (data.success) {
+                // 假设API返回的数据格式是 {success: true, output: "{...}"} 或 {success: true, data: {...}}
+                // 根据实际返回格式调整
+                const elementData = typeof data.output === 'string' ? JSON.parse(data.output) : data.data || data;
+                // 设置全局变量
+                console.log(elementData)
+                window.elementdata = elementData;
+                
+                console.log('数据已成功加载并设置为全局变量elementdata');
+                // 数据加载成功后，初始化知识网络
+                initializeKnowledgeNet();
+            } else {
+                console.log("请求失败: API返回失败状态");
+                throw new Error("API返回失败");
+            }
+        })
+        .catch(error => {
+            console.error('加载数据时出错:', error);
+            
+            // 隐藏加载动画
+            document.getElementById('canvas-container-hidder').style.display = 'none';
+            
+            // 获取失败后弹窗提醒
+            alert('数据加载失败！\n' + error.message);
         });
     }
+    
+    // 直接调用loadElementData函数加载数据并初始化
+    loadElementData();
     let nodes = [];
     function initializeKnowledgeNet() {
         // 创建一个映射表，方便通过name查找节点
         const elementMap = {};
         // 从elementdata.Element数组中创建节点数据
-        console.log(elementdata.Element)
+        // console.log(elementdata.Element)
         nodes = elementdata.Element.map((element, index) => {
       // 默认位置计算（尽量分散布局）
       const angle = (index / elementdata.Element.length) * Math.PI * 2;
@@ -631,7 +675,7 @@
         const targetNode = elementMap[targetName];
         // 如果找到目标节点，则创建连接
         if (targetNode) {
-          console.log(sourceNode,targetNode.id)
+          // console.log(sourceNode,targetNode.id)
           links.push({
             source: sourceNode.id,
             target: targetNode.id
@@ -671,12 +715,12 @@
           primartSwitch = false;
           // 更新D3缩放行为的内部状态，使其与当前viewState同步
           svg.call(zoom.transform, d3.zoomIdentity.translate(viewState.x, viewState.y).scale(viewState.scale));
-          
-          // 隐藏遮挡层，显示知识网络
-          setTimeout(() => {
-            document.getElementById('canvas-container-hidder').style.display = 'none';
-          }, 100);
         }
+        
+        // 无论是否存在主要元素，都隐藏遮挡层，显示知识网络
+        setTimeout(() => {
+          document.getElementById('canvas-container-hidder').style.display = 'none';
+        }, 100);
       });
 
     // 6. 绘制连接线
@@ -1153,6 +1197,7 @@
       // 从节点的elementData中获取知识点和交付物数据
       const knowledgePoints = selectedNode.elementData.knowledge;
       const deliverables = selectedNode.elementData.deliverables;
+
       
       // 计算属性元素的位置并显示
       const nodeColor = selectedNode.color || "#1E90FF";
@@ -1188,18 +1233,17 @@
           .attr("x", circleX) // 左端点在圆上
           .attr("y", circleY)
           .attr("text-anchor", "start") // 文本左对齐
-          .text(text.Knowledge)
+          .text(text.Knowledge.Name)
           .attr("opacity", 0) // 初始透明，用于动画
           .style("fill", knowledgecolor); // 紫色文字
-          
         // 检查是否为"ADAS通用知识"，如果是则添加链接图标
-        if (text.Knowledge === "ADAS功能介绍") {
+        if (text.Knowledge.link) {
           // 获取文本宽度，用于定位链接图标
           const textWidth = textElement.node().getComputedTextLength();
           
           // 创建链接图标（使用SVG的a元素包装）
           const linkGroup = knowledgeTextsGroup.append("a")
-            .attr("xlink:href", "/Pages/FunctionHall.html")
+            .attr("xlink:href", "/Pages/"+text.Knowledge.link)
             .attr("target", "_blank") // 可选：在新窗口打开
             .attr("opacity", 0); // 初始透明，用于动画
           
@@ -1287,7 +1331,6 @@
   
   deliverables.forEach((text, index) => {
     // 计算当前元素的角度
-    console.log(text,index)
     const angle = deliverableStartAngle + index * angleBetweenItems;
     
     // 计算圆上点的位置（交付物：右端点在圆上）
@@ -1300,7 +1343,7 @@
           .attr("x", circleX) // 右端点在圆上
           .attr("y", circleY)
           .attr("text-anchor", "end") // 文本右对齐
-          .text(text.Deliverable)
+          .text(text.Deliverable.Name)
           .attr("opacity", 0) // 初始透明，用于动画
           .style("fill", "#FFD700"); // 黄色文字
         

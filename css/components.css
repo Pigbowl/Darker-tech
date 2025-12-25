@@ -139,7 +139,7 @@
 }
 body {
     background-color: #000000;
-    padding: 15px;
+    padding: 0;
     color: #e6e8eb;
 }  
 /* 卡片容器 - 使用CSS Grid实现多列布局 */
