@@ -1,6 +1,6 @@
 
 // 产品配置信息 - 自动生成
-// 生成时间: 2025-12-23 23:58:32
+// 生成时间: 2025-12-25 15:34:51
 
 // 全局产品配置变量
 let products_config = {
@@ -156,6 +156,14 @@ let products_config = {
       "Description": "辅助网站工作",
       "CN_Name": "通用信息",
       "Status": "规划中"
+    },
+    {
+      "ID": 20,
+      "Function": "PhyArchiHall",
+      "Category": "知识宇宙",
+      "Description": "提供如何定义物理架构的知识",
+      "CN_Name": "物理架构星球",
+      "Status": "规划中"
     }
   ],
   "categorized_features": {
@@ -199,6 +207,14 @@ let products_config = {
         "Description": "提供架构开发的相关知识",
         "CN_Name": "架构星球",
         "Status": "测试版本上线"
+      },
+      {
+        "ID": 20,
+        "Function": "PhyArchiHall",
+        "Category": "知识宇宙",
+        "Description": "提供如何定义物理架构的知识",
+        "CN_Name": "物理架构星球",
+        "Status": "规划中"
       }
     ],
     "知识网络": [
@@ -324,6 +340,6 @@ let products_config = {
       }
     ]
   },
-  "version": "trial_release_for_folder_gerneration test-Quick_Fix",
+  "version": "pre-test-1225-Quick_Fix",
   "status": []
 };
