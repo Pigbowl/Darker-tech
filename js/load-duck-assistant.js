@@ -14,18 +14,20 @@ function loadDuckAssistant() {
     let parenthtml = window.parent.location.pathname;
 
     if (deploy_mode != 'full'){
-        mainpageaddress = ['/index.html','/index.html#contact','/index.html#about']
+        mainpageaddress = ['/','/index.html','/index.html#contact','/index.html#about']
     }else{
-        mainpageaddress = ['/','/index.html#contact','/index.html#about']
-        darkurl = './Pages/darker_assistance.html';
+        mainpageaddress = ['/','/index.html#contact','/index.html#about','/index.html']
+        // darkurl = './Pages/darker_assistance.html';
     }
-
-    if (parenthtml == mainpageaddress[0] || parenthtml == mainpageaddress[1] || parenthtml == mainpageaddress[2]){
+    
+    if (parenthtml == mainpageaddress[0] || parenthtml == mainpageaddress[1] || parenthtml == mainpageaddress[2] || parenthtml == mainpageaddress[3]){
         darkurl = './Pages/darker_assistance.html';
+
     }else{
         darkurl = 'darker_assistance.html';
     }
     
+    console.log(darkurl,parenthtml,mainpageaddress);
     // 创建启动样式
     const startStyle = document.createElement('style');
     startStyle.innerHTML = `
@@ -59,12 +61,7 @@ function loadDuckAssistant() {
     // 检查sessionStorage，判断是否是第一次访问
     // 使用let声明，以便后续可以修改
     let hasSeenInitialMode = sessionStorage.getItem('hasSeenDuckInitialMode') === 'true';
-    
-    // // 如果debug为true，强制进入初始模式
-    // if (debug) {
-    //     hasSeenInitialMode = false;
-    // }
-    // const hasSeenInitialMode = "false";
+    console.log(hasSeenInitialMode);
     // 创建iframe元素
     const duckIframe = document.createElement('iframe');
     duckIframe.id = 'duckIframe';

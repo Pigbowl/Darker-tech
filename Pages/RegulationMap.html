@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>法规/标准领域-达客智驾领航员</title>
     <script src="../css/tailwind.css"></script>
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>    
+    <script src="../js/particles/particles.min.js"></script>    
+    <!-- <script src="../css/style.css"></script> -->
+    <!-- <script src="../css/components.css"></script> -->
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/components.css">
     <link href="../css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
@@ -761,7 +763,6 @@
                 }).then(response => {
                     return response.json();
                 }).then(data => {
-                    console.log(data.output)
                     regulationgroup = JSON.parse(data.output)
 
                     // 遍历所有法规组

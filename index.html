@@ -590,7 +590,7 @@
                         专注于智能驾驶技术研发与应用，提供全方位ADAS解决方案。
                     </p>
                     <div class="flex space-x-4">
-                        <a href=https://mp.weixin.qq.com/s/XggfcmwA31jLNjMnuVh2Qg class="text-gray-400 hover:text-logobuttom transition duration-300">
+                        <a href=https://mp.weixin.qq.com/s/XggfcmwA31jLNjMnuVh2Qg class="text-gray-400 hover:text-logobuttom transition duration-300 mb-5">
                             <i class="fa fa-weixin"></i>
                         </a>
                         <a href="#" class="text-gray-400 hover:text-logobuttom transition duration-300">
@@ -603,6 +603,8 @@
                             <i class="fa fa-github"></i>
                         </a>
                     </div>
+                    <img src="PIC/LOGOs/beian.png" alt="备案图标" class="inline-block mr-2 h-5 w-auto">
+                    <a href="https://beian.mps.gov.cn/#/query/webSearch?code=31011702891175" rel="noreferrer" target="_blank" class="text-gray-400 mt-10 hover:text-logobuttom transition duration-300">沪公网安备31011702891175号</a>
                 </div>
                 
                 <script>
@@ -751,10 +753,6 @@
                     // 使用更大的vw比例来确保标题宽度合适
                     titleElement.style.fontSize = 'clamp(2.5rem, 10vw, 4rem)';
                     titleElement.style.lineHeight = '1.1';
-                    // 不允许换行
-                    titleElement.style.whiteSpace = 'nowrap';
-                    titleElement.style.textOverflow = 'ellipsis';
-                    titleElement.style.overflow = 'hidden';
                     // 确保宽度合适
                     titleElement.style.width = 'auto';
                     titleElement.style.textAlign = 'left';
@@ -762,9 +760,6 @@
                     // PC设备：恢复原始样式
                     titleElement.style.fontSize = 'clamp(3.5rem, 7vw, 5.5rem)';
                     titleElement.style.lineHeight = '1';
-                    titleElement.style.whiteSpace = 'nowrap';
-                    titleElement.style.textOverflow = 'ellipsis';
-                    titleElement.style.overflow = 'hidden';
                     titleElement.style.width = 'auto';
                     titleElement.style.textAlign = 'left';
                 }
@@ -923,7 +918,8 @@
                     'Content-Type':'application/json'
                 },
                 body:JSON.stringify({
-                    'issue':     {
+                    datatype:"operation",
+                    'issue':{
                         "id": "ISSUE-",
                         "type": contactType,
                         "title": subject,

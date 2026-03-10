@@ -69,8 +69,8 @@
                     <div class="flex justify-between items-center mb-1">
                         <label for="username" class="block text-sm font-medium text-gray-300">用户名</label>
                         <button type="button" id="mode-toggle" 
-                                class="text-sm text-neon hover:text-logobuttom transition-colors duration-300">
-                            邮件登录
+                                class="text-sm text-neon hover:text-logobuttom transition-colors duration-300 flex items-center">
+                            <i class="fa fa-exchange mr-1"></i>切换至邮件登陆
                         </button>
                     </div>
                     <div class="relative">
@@ -560,7 +560,7 @@
                 currentMode = 'email';
                 usernameLabel.textContent = '邮箱';
                 usernameInput.placeholder = '输入邮箱地址';
-                modeToggle.textContent = '用户名登录';
+                modeToggle.innerHTML = '<i class="fa fa-exchange mr-1"></i>切换至用户名登陆';
                 inputIcon.className = 'fa fa-envelope';
                 usernameInput.setAttribute('data-mode', 'email');
             } else {
@@ -568,7 +568,7 @@
                 currentMode = 'username';
                 usernameLabel.textContent = '用户名';
                 usernameInput.placeholder = '输入用户名';
-                modeToggle.textContent = '邮件登录';
+                modeToggle.innerHTML = '<i class="fa fa-exchange mr-1"></i>切换至邮件登陆';
                 inputIcon.className = 'fa fa-user';
                 usernameInput.setAttribute('data-mode', 'username');
             }

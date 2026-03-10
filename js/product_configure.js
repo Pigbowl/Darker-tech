@@ -1,6 +1,6 @@
 
 // 产品配置信息 - 自动生成
-// 生成时间: 2025-12-25 17:00:45
+// 生成时间: 2026-03-10 16:19:59
 
 // 全局产品配置变量
 let products_config = {
@@ -340,6 +340,6 @@ let products_config = {
       }
     ]
   },
-  "version": "Beta-25-12-9-Official_Release",
+  "version": "7th-Quick_Fix",
   "status": []
 };

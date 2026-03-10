@@ -1,21 +1,21 @@
 homepage = deploy_mode != 'full' ? '/index.html':'/'
-knowledge_page = deploy_mode != 'full' ? '/Pages/KnowledgeNet.html':'/pages/knowledge'
-learning_page = deploy_mode != 'full' ? '/Pages/Learning_Gallary.html':'/pages/learning_gallary'
-function_page = deploy_mode != 'full' ? '/Pages/FunctionHall.html':'/pages/functionhall'
-hardware_page = deploy_mode != 'full' ? '/Pages/HardWareHall.html':'/pages/hardwarehall'
-sensor_page = deploy_mode != 'full' ? '/Pages/SensorHall.html':'/pages/sensorhall'
-regulation_page = deploy_mode != 'full' ? '/Pages/RegulationMap.html':'/pages/regulationmap'
-architecture_page = deploy_mode != 'full' ? '/Pages/architecture_build.html':'/pages/architecture_build'
-benchmark_page = deploy_mode != 'full' ? '/Pages/AdasBenchmark.html':'/pages/adasbenchmark'
-configurator_page = deploy_mode != 'full' ? '/Pages/Configurator.html':'/pages/configurator'
-roadbuilder_page = deploy_mode != 'full' ? '/Pages/RoadBuilder.html':'/pages/roadbuilder'
-fov_build_page = deploy_mode != 'full' ? '/Pages/FoV_build.html':'/pages/fov_build'
-sensor_simulation_page = deploy_mode != 'full' ? '/Pages/SENSOR_SIMU.html':'/pages/sensor_simu'
-simulation_platform_page = deploy_mode != 'full' ? '/Pages/SimulationPlatform.html':'/pages/simulation_platform'
+knowledge_page = deploy_mode == 'full' ? '/Pages/KnowledgeNet.html':'/pages/knowledge'
+learning_page = deploy_mode == 'full' ? '/Pages/Learning_Gallary.html':'/pages/learning_gallary'
+function_page = deploy_mode == 'full' ? '/Pages/FunctionHall.html':'/pages/functionhall'
+hardware_page = deploy_mode == 'full' ? '/Pages/HardWareHall.html':'/pages/hardwarehall'
+sensor_page = deploy_mode == 'full' ? '/Pages/SensorHall.html':'/pages/sensorhall'
+regulation_page = deploy_mode == 'full' ? '/Pages/RegulationMap.html':'/pages/regulationmap'
+architecture_page = deploy_mode == 'full' ? '/Pages/architecture_build.html':'/pages/architecture_build'
+benchmark_page = deploy_mode == 'full' ? '/Pages/AdasBenchmark.html':'/pages/adasbenchmark'
+configurator_page = deploy_mode == 'full' ? '/Pages/Configurator.html':'/pages/configurator'
+roadbuilder_page = deploy_mode == 'full' ? '/Pages/RoadBuilder.html':'/pages/roadbuilder'
+fov_build_page = deploy_mode == 'full' ? '/Pages/FoV_build.html':'/pages/fov_build'
+sensor_simulation_page = deploy_mode == 'full' ? '/Pages/SENSOR_SIMU.html':'/pages/sensor_simu'
+simulation_platform_page = deploy_mode == 'full' ? '/Pages/SimulationPlatform.html':'/pages/simulation_platform'
 
 
 let conversion_blog ={
-    [homepage]: [
+    "homepage": [
       "我是你的智能助手小达~",
       "我能引导您游览《达客科技》",
       "在《达客科技》我们能您提供的ADAS知识框架,让您了解如何开发ADAS",
@@ -120,7 +120,7 @@ let conversion_blog ={
 }
 
 let pagename = {
-    [homepage]:'达客科技主',
+    "homepage":'达客科技主',
     [knowledge_page]:"ADAS知识网络",
     [function_page]:"功能介绍",
     [hardware_page]:"硬件介绍",

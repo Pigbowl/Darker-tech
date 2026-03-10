@@ -113,41 +113,42 @@
                 <div class="glass-effect rounded-lg p-6 neon-border">
                     <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
                         <!-- 用户头像 -->
-                        <div class="w-24 h-24 rounded-full bg-gray-800 flex items-center justify-center neon-border">
-                            <i class="fa fa-user text-4xl text-neon"></i>
+                        <div class="w-24 h-24 rounded-full bg-gray-800 flex items-center justify-center neon-border relative overflow-hidden">
+                            <img id="user-avatar" src="../PIC/LOGOs/ADAS_FUNC.png" alt="用户头像" class="w-full h-full object-cover absolute inset-0">
+                            <i id="avatar-default" class="fa fa-user text-4xl text-neon"></i>
                         </div>
                         
                         <!-- 用户信息 -->
                         <div class="flex-1">
-                            <h2 class="text-2xl font-bold text-white mb-4">欢迎回来，<span id="username-display">用户</span></h2>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-                                <div class="p-3 bg-gray-800/50 rounded-lg flex flex-col">
-                                    <p class="text-gray-400 text-sm mb-1">用户ID</p>
-                                    <p class="text-white text-xl font-bold" id="user-id">USR-0001</p>
+                            <h2 class="text-xl sm:text-xl md:text-2xl font-bold text-white mb-4">欢迎回来，<span id="username-display">用户</span></h2>
+                            <div class="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-7 gap-3">
+                                <div class="p-2 bg-gray-800/50 rounded-lg flex flex-col">
+                                    <p class="text-gray-400 text-xs mb-1">用户ID</p>
+                                    <p class="text-white text-sm font-bold" id="user-id">USR-0001</p>
                                 </div>
-                                <div class="p-3 bg-gray-800/50 rounded-lg flex flex-col">
-                                    <p class="text-gray-400 text-sm mb-1">注册时间</p>
-                                    <p class="text-white text-xl font-bold" id="registration-date">2023-01-01</p>
+                                <div class="p-2 bg-gray-800/50 rounded-lg flex flex-col">
+                                    <p class="text-gray-400 text-xs mb-1">注册时间</p>
+                                    <p class="text-white text-sm font-bold" id="registration-date">2023-01-01</p>
                                 </div>
-                                <div class="p-3 bg-gray-800/50 rounded-lg flex flex-col">
-                                    <p class="text-gray-400 text-sm mb-1">账号状态</p>
-                                    <p class="text-green-400 text-xl font-bold" id="user-level">普通用户</p>
+                                <div class="p-2 bg-gray-800/50 rounded-lg flex flex-col">
+                                    <p class="text-gray-400 text-xs mb-1">账号状态</p>
+                                    <p class="text-green-400 text-sm font-bold" id="user-level">普通用户</p>
                                 </div>
-                                <div class="p-3 bg-gray-800/50 rounded-lg flex flex-col">
-                                    <p class="text-gray-400 text-sm mb-1">我的话题</p>
-                                    <p class="text-white text-xl font-bold" style="color: var(--tw-text-opacity, 1); color: rgb(0 229 255 / var(--tw-text-opacity));">-</p>
+                                <div class="p-2 bg-gray-800/50 rounded-lg flex flex-col">
+                                    <p class="text-gray-400 text-xs mb-1">我的话题</p>
+                                    <p class="text-white text-sm font-bold" style="color: var(--tw-text-opacity, 1); color: rgb(0 229 255 / var(--tw-text-opacity));">-</p>
                                 </div>
-                                <div class="p-3 bg-gray-800/50 rounded-lg flex flex-col">
-                                    <p class="text-gray-400 text-sm mb-1">我的收藏</p>
-                                    <p class="text-white text-xl font-bold" style="color: var(--tw-text-opacity, 1); color: rgb(0 229 255 / var(--tw-text-opacity));">-</p>
+                                <div class="p-2 bg-gray-800/50 rounded-lg flex flex-col">
+                                    <p class="text-gray-400 text-xs mb-1">我的收藏</p>
+                                    <p class="text-white text-sm font-bold" style="color: var(--tw-text-opacity, 1); color: rgb(0 229 255 / var(--tw-text-opacity));">-</p>
                                 </div>
-                                <div class="p-3 bg-gray-800/50 rounded-lg flex flex-col">
-                                    <p class="text-gray-400 text-sm mb-1">我的评论</p>
-                                    <p class="text-white text-xl font-bold" style="color: var(--tw-text-opacity, 1); color: rgb(74 222 128 / var(--tw-text-opacity));">-</p>
+                                <div class="p-2 bg-gray-800/50 rounded-lg flex flex-col">
+                                    <p class="text-gray-400 text-xs mb-1">我的评论</p>
+                                    <p class="text-white text-sm font-bold" style="color: var(--tw-text-opacity, 1); color: rgb(74 222 128 / var(--tw-text-opacity));">-</p>
                                 </div>
-                                <div class="p-3 bg-gray-800/50 rounded-lg flex flex-col">
-                                    <p class="text-gray-400 text-sm mb-1">我的积分</p>
-                                    <p class="text-white text-xl font-bold" style="color: var(--tw-text-opacity, 1); color: rgb(168 85 247 / var(--tw-text-opacity));" id="user-credits">0</p>
+                                <div class="p-2 bg-gray-800/50 rounded-lg flex flex-col">
+                                    <p class="text-gray-400 text-xs mb-1">我的积分</p>
+                                    <p class="text-white text-sm font-bold" style="color: var(--tw-text-opacity, 1); color: rgb(168 85 247 / var(--tw-text-opacity));" id="user-credits">0</p>
                                 </div>
                             </div>
                         </div>
@@ -185,6 +186,55 @@
                 </div>
             </section>
             
+            <!-- 我的作品板块 -->
+            <section class="mb-10">
+                <div class="glass-effect rounded-lg p-6 neon-border">
+                    <h2 class="text-xl font-bold text-white mb-4 flex items-center">
+                        <i class="fa fa-folder-open text-neon mr-2"></i>我的作品
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- 我的传感器 -->
+                        <div class="p-4 bg-gray-800/50 rounded-lg border border-gray-700 hover:border-neon/50 transition-colors">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="font-medium text-white flex items-center">
+                                    <i class="fa fa-radar text-neon mr-2"></i>我的传感器组
+                                </h3>
+                                <span id="fov-count" class="bg-neon/20 text-neon px-2 py-1 rounded text-sm">0</span>
+                            </div>
+                            <div id="fov-list" class="space-y-2 max-h-40 overflow-y-auto">
+                                <p class="text-gray-400 text-sm">加载中...</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 我的地图 -->
+                        <div class="p-4 bg-gray-800/50 rounded-lg border border-gray-700 hover:border-neon/50 transition-colors">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="font-medium text-white flex items-center">
+                                    <i class="fa fa-map text-neon mr-2"></i>我的地图
+                                </h3>
+                                <span id="map-count" class="bg-neon/20 text-neon px-2 py-1 rounded text-sm">0</span>
+                            </div>
+                            <div id="map-list" class="space-y-2 max-h-40 overflow-y-auto">
+                                <p class="text-gray-400 text-sm">加载中...</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 我的方案 -->
+                        <div class="p-4 bg-gray-800/50 rounded-lg border border-gray-700 hover:border-neon/50 transition-colors">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="font-medium text-white flex items-center">
+                                    <i class="fa fa-file-text text-neon mr-2"></i>我的方案
+                                </h3>
+                                <span id="scheme-count" class="bg-neon/20 text-neon px-2 py-1 rounded text-sm">敬请期待</span>
+                            </div>
+                            <div id="scheme-list" class="space-y-2 max-h-40 overflow-y-auto">
+                                <p class="text-gray-400 text-sm">新功能开发中，敬请期待...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
             <!-- 保留个人资料设置 -->
             <section class="mb-10">
                 <div class="glass-effect rounded-lg p-6 neon-border">
@@ -212,18 +262,22 @@
                         
                         <div class="p-4 bg-gray-800/50 rounded-lg">
                             <h3 class="font-medium text-white mb-2">账号设置</h3>
-                            <div class="space-y-3">
-                                <button class="w-full text-left px-3 py-2 bg-gray-700/50 hover:bg-gray-700 rounded transition-colors flex items-center justify-between">
+                            <div class="flex flex-col sm:flex-row sm:space-x-2 sm:space-y-0 space-y-2">
+                                <button id="change-avatar-btn" class="w-full sm:flex-1 text-left px-3 py-2 bg-gray-700/50 hover:bg-gray-700 rounded transition-colors flex items-center justify-between">
+                                    <span class="text-white">设置头像</span>
+                                    <i class="fa fa-camera text-gray-400"></i>
+                                </button>
+                                <button id="change-password-btn" class="w-full sm:flex-1 text-left px-3 py-2 bg-gray-700/50 hover:bg-gray-700 rounded transition-colors flex items-center justify-between">
                                     <span class="text-white">修改密码</span>
-                                    <i class="fa fa-chevron-right text-gray-400"></i>
+                                    <i class="fa fa-key text-gray-400"></i>
                                 </button>
-                                <button class="w-full text-left px-3 py-2 bg-gray-700/50 hover:bg-gray-700 rounded transition-colors flex items-center justify-between">
-                                    <span class="text-white">通知设置</span>
-                                    <i class="fa fa-chevron-right text-gray-400"></i>
+                                <button id="change-username-btn" class="w-full sm:flex-1 text-left px-3 py-2 bg-gray-700/50 hover:bg-gray-700 rounded transition-colors flex items-center justify-between">
+                                    <span class="text-white">修改用户名</span>
+                                    <i class="fa fa-user text-gray-400"></i>
                                 </button>
-                                <button class="w-full text-left px-3 py-2 bg-gray-700/50 hover:bg-gray-700 rounded transition-colors flex items-center justify-between">
-                                    <span class="text-white">隐私设置</span>
-                                    <i class="fa fa-chevron-right text-gray-400"></i>
+                                <button id="change-email-btn" class="w-full sm:flex-1 text-left px-3 py-2 bg-gray-700/50 hover:bg-gray-700 rounded transition-colors flex items-center justify-between">
+                                    <span class="text-white">修改邮箱</span>
+                                    <i class="fa fa-envelope text-gray-400"></i>
                                 </button>
                             </div>
                         </div>
@@ -231,6 +285,50 @@
                 </div>
             </section>
         </main>
+        
+        <!-- 隐藏的文件输入框 -->
+        <input type="file" id="avatar-file-input" accept="image/png" style="display: none;">
+        
+        <!-- 修改用户名模态框 -->
+        <div id="username-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+            <div class="bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
+                <h3 class="text-lg font-medium text-white mb-4">修改用户名</h3>
+                <input type="text" id="new-username-input" placeholder="请输入新的用户名" 
+                    class="w-full px-4 py-2 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-primary focus:outline-none mb-4">
+                <div class="flex justify-end space-x-3">
+                    <button id="username-cancel-btn" class="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors">取消</button>
+                    <button id="username-confirm-btn" class="px-4 py-2 bg-primary hover:bg-primary/80 text-white rounded-lg transition-colors">确认</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 修改邮箱模态框 -->
+        <div id="email-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+            <div class="bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
+                <h3 class="text-lg font-medium text-white mb-4">修改邮箱</h3>
+                <input type="email" id="new-email-input" placeholder="请输入新的邮箱地址" 
+                    class="w-full px-4 py-2 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-primary focus:outline-none mb-4">
+                <div class="flex justify-end space-x-3">
+                    <button id="email-cancel-btn" class="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors">取消</button>
+                    <button id="email-confirm-btn" class="px-4 py-2 bg-primary hover:bg-primary/80 text-white rounded-lg transition-colors">确认</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 修改密码模态框 -->
+        <div id="password-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+            <div class="bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
+                <h3 class="text-lg font-medium text-white mb-4">修改密码</h3>
+                <input type="password" id="new-password-input" placeholder="请输入新密码" 
+                    class="w-full px-4 py-2 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-primary focus:outline-none mb-3">
+                <input type="password" id="confirm-password-input" placeholder="请再次输入新密码" 
+                    class="w-full px-4 py-2 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-primary focus:outline-none mb-4">
+                <div class="flex justify-end space-x-3">
+                    <button id="password-cancel-btn" class="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors">取消</button>
+                    <button id="password-confirm-btn" class="px-4 py-2 bg-primary hover:bg-primary/80 text-white rounded-lg transition-colors">确认</button>
+                </div>
+            </div>
+        </div>
         
         <!-- 页脚 -->
         <footer class="glass-effect border-t border-gray-800 py-6 mt-10">
@@ -329,6 +427,8 @@
             const userLevelElement = document.getElementById('user-level');
             const creditsElement = document.querySelector('[id="user-credits"]');
             const emailElement = document.getElementById('profile-email');
+            const avatarImg = document.getElementById('user-avatar');
+            const avatarDefault = document.getElementById('avatar-default');
             
             if (userIdElement && current_user_info) {
                 userIdElement.textContent = `USR-${current_user_info.ID}`;
@@ -345,6 +445,186 @@
             if (emailElement && current_user_info) {
                 emailElement.textContent = current_user_info.email;
             }
+            
+            // 设置用户头像
+            if (avatarImg && avatarDefault && current_user_info) {
+                const userId = current_user_info.ID;
+                // 构建头像图片路径
+                // 实际部署结构：
+                // - 父文件夹/
+                //   - Darker-tech/ (网站根目录，包含index.html)
+                //   - DarkerUserData/ (用户数据文件夹，包含头像)
+                // Web服务器需配置别名或虚拟目录，将/DarkerUserData映射到实际的DarkerUserData文件夹
+                
+                const avatarPath = `/DarkerUserData/${userId}/profile_photo.png`;
+                console.log(avatarPath)
+                // 设置头像图片
+                avatarImg.src = avatarPath;
+                
+                // 处理图片加载成功的情况
+                avatarImg.onload = function() {
+                    avatarDefault.style.display = 'none';
+                };
+                
+                // 处理图片加载失败的情况
+                avatarImg.onerror = function() {
+                    avatarDefault.style.display = 'block';
+                };
+            }
+            
+            // 加载用户作品列表
+            loadUserWorks();
+        }
+        
+        // 加载用户作品列表
+        function loadUserWorks() {
+            loadFovConfigList();
+            loadMapConfigList();
+            loadSchemeConfigList();
+        }
+        
+        // 获取传感器配置列表
+        function loadFovConfigList() {
+            const userId = current_user_info ? current_user_info.ID : null;
+            if (!userId) return;
+            
+            fetch(ip + '/get_user_product_config_list', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    filetype: 'fovfile',
+                    datatype: 'operation',
+                    userId: userId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                let configList = [];
+                
+                if (data.success === true && data.templates && Array.isArray(data.templates)) {
+                    configList = data.templates;
+                } else if (data.success === true && data.configList) {
+                    configList = data.configList;
+                } else if (data.output && Array.isArray(data.output)) {
+                    configList = data.output;
+                } else if (Array.isArray(data)) {
+                    configList = data;
+                }
+                
+                updateFovList(configList);
+            })
+            .catch(error => {
+                console.error('获取传感器配置列表失败:', error);
+                document.getElementById('fov-list').innerHTML = '<p class="text-gray-400 text-sm">加载失败</p>';
+            });
+        }
+        
+        // 更新传感器列表显示
+        function updateFovList(configList) {
+            const fovList = document.getElementById('fov-list');
+            const fovCount = document.getElementById('fov-count');
+            
+            if (!fovList || !fovCount) return;
+            
+            fovCount.textContent = configList.length;
+            
+            if (configList.length === 0) {
+                fovList.innerHTML = '<p class="text-gray-400 text-sm">暂无传感器配置</p>';
+                return;
+            }
+            
+            fovList.innerHTML = configList.map(name => `
+                <div class="flex items-center justify-between p-2 bg-gray-700/30 rounded text-sm">
+                    <span class="text-white truncate flex-1">${name}</span>
+                    <i class="fa fa-radar text-neon ml-2"></i>
+                </div>
+            `).join('');
+        }
+        
+        // 获取地图配置列表
+        function loadMapConfigList() {
+            const userId = current_user_info ? current_user_info.ID : null;
+            if (!userId) return;
+            
+            fetch(ip + '/get_user_product_config_list', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    filetype: 'mapfile',
+                    datatype: 'operation',
+                    userId: userId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                let configList = [];
+                
+                if (data.success === true && data.templates && Array.isArray(data.templates)) {
+                    configList = data.templates;
+                } else if (data.success === true && data.configList) {
+                    configList = data.configList;
+                } else if (data.output && Array.isArray(data.output)) {
+                    configList = data.output;
+                } else if (Array.isArray(data)) {
+                    configList = data;
+                }
+                
+                updateMapList(configList);
+            })
+            .catch(error => {
+                console.error('获取地图配置列表失败:', error);
+                document.getElementById('map-list').innerHTML = '<p class="text-gray-400 text-sm">加载失败</p>';
+            });
+        }
+        
+        // 更新地图列表显示
+        function updateMapList(configList) {
+            const mapList = document.getElementById('map-list');
+            const mapCount = document.getElementById('map-count');
+            
+            if (!mapList || !mapCount) return;
+            
+            mapCount.textContent = configList.length;
+            
+            if (configList.length === 0) {
+                mapList.innerHTML = '<p class="text-gray-400 text-sm">暂无地图配置</p>';
+                return;
+            }
+            
+            mapList.innerHTML = configList.map(name => `
+                <div class="flex items-center justify-between p-2 bg-gray-700/30 rounded text-sm">
+                    <span class="text-white truncate flex-1">${name}</span>
+                    <i class="fa fa-map text-neon ml-2"></i>
+                </div>
+            `).join('');
+        }
+        
+        // 获取方案配置列表（暂不请求后端）
+        function loadSchemeConfigList() {
+            // 新功能开发中，不请求后端
+            return;
+        }
+        
+        // 更新方案列表显示
+        function updateSchemeList(configList) {
+            const schemeList = document.getElementById('scheme-list');
+            const schemeCount = document.getElementById('scheme-count');
+            
+            if (!schemeList || !schemeCount) return;
+            
+            schemeCount.textContent = configList.length;
+            
+            if (configList.length === 0) {
+                schemeList.innerHTML = '<p class="text-gray-400 text-sm">暂无方案</p>';
+                return;
+            }
+            
+            schemeList.innerHTML = configList.map(name => `
+                <div class="flex items-center justify-between p-2 bg-gray-700/30 rounded text-sm">
+                    <span class="text-white truncate flex-1">${name}</span>
+                    <i class="fa fa-file-text text-neon ml-2"></i>
+                </div>
+            `).join('');
         }
         // ===================== 太阳系3D场景 =====================
         function initSolarSystem() {
@@ -775,7 +1055,295 @@
             
             // 初始化太阳系3D场景
             initSolarSystem();
+            
+            // 初始化头像上传功能
+            initAvatarUpload();
+            
+            // 初始化修改用户数据功能
+            initModifyUserData();
         });
+        
+        // ===================== 头像上传功能 =====================
+        function initAvatarUpload() {
+            const changeAvatarBtn = document.getElementById('change-avatar-btn');
+            const avatarFileInput = document.getElementById('avatar-file-input');
+            
+            if (!changeAvatarBtn || !avatarFileInput) return;
+            
+            // 点击按钮触发文件选择
+            changeAvatarBtn.addEventListener('click', () => {
+                avatarFileInput.click();
+            });
+            
+            // 处理文件选择
+            avatarFileInput.addEventListener('change', handleAvatarSelect);
+        }
+        
+        function handleAvatarSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            // 验证文件格式
+            if (file.type !== 'image/png') {
+                showToast('请选择PNG格式的图片', 'error');
+                event.target.value = '';
+                return;
+            }
+            
+            // 验证文件大小 (1MB = 1024 * 1024 bytes)
+            const maxSize = 1 * 1024 * 1024;
+            if (file.size > maxSize) {
+                showToast('图片大小不能超过1MB', 'error');
+                event.target.value = '';
+                return;
+            }
+            
+            // 上传头像
+            uploadAvatar(file);
+            
+            // 清空input，允许重复选择同一文件
+            event.target.value = '';
+        }
+        
+        function uploadAvatar(file) {
+            if (!current_user_info || !current_user_info.ID) {
+                showToast('用户信息获取失败', 'error');
+                return;
+            }
+            
+            const userId = current_user_info.ID;
+            const formData = new FormData();
+            formData.append('avatar', file);
+            formData.append('userId', userId);
+            
+            showToast('正在上传头像...', 'info');
+            
+            fetch(ip + '/upload_avatar', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('头像上传成功', 'success');
+                    // 更新头像显示
+                    const avatarImg = document.getElementById('user-avatar');
+                    if (avatarImg) {
+                        avatarImg.src = `/DarkerUserData/${userId}/profile_photo.png?t=${Date.now()}`;
+                    }
+                } else {
+                    showToast(data.message || '头像上传失败', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('上传头像失败:', error);
+                showToast('头像上传失败，请稍后重试', 'error');
+            });
+        }
+        
+        // ===================== 修改用户数据功能 =====================
+        function initModifyUserData() {
+            const changeUsernameBtn = document.getElementById('change-username-btn');
+            const changeEmailBtn = document.getElementById('change-email-btn');
+            const changePasswordBtn = document.getElementById('change-password-btn');
+            const usernameModal = document.getElementById('username-modal');
+            const emailModal = document.getElementById('email-modal');
+            const passwordModal = document.getElementById('password-modal');
+            
+            if (!changeUsernameBtn || !changeEmailBtn || !changePasswordBtn) return;
+            
+            // 点击修改用户名按钮
+            changeUsernameBtn.addEventListener('click', () => {
+                if (usernameModal) {
+                    usernameModal.style.display = 'flex';
+                    document.getElementById('new-username-input').value = '';
+                    document.getElementById('new-username-input').focus();
+                }
+            });
+            
+            // 点击修改邮箱按钮
+            changeEmailBtn.addEventListener('click', () => {
+                if (emailModal) {
+                    emailModal.style.display = 'flex';
+                    document.getElementById('new-email-input').value = '';
+                    document.getElementById('new-email-input').focus();
+                }
+            });
+            
+            // 点击修改密码按钮
+            changePasswordBtn.addEventListener('click', () => {
+                if (passwordModal) {
+                    passwordModal.style.display = 'flex';
+                    document.getElementById('new-password-input').value = '';
+                    document.getElementById('confirm-password-input').value = '';
+                    document.getElementById('new-password-input').focus();
+                }
+            });
+            
+            // 点击模态框背景关闭
+            [usernameModal, emailModal, passwordModal].forEach(m => {
+                if (m) {
+                    m.addEventListener('click', (e) => {
+                        if (e.target === m) {
+                            m.style.display = 'none';
+                        }
+                    });
+                }
+            });
+            
+            // 点击取消按钮
+            document.getElementById('username-cancel-btn')?.addEventListener('click', () => {
+                usernameModal.style.display = 'none';
+            });
+            document.getElementById('email-cancel-btn')?.addEventListener('click', () => {
+                emailModal.style.display = 'none';
+            });
+            document.getElementById('password-cancel-btn')?.addEventListener('click', () => {
+                passwordModal.style.display = 'none';
+            });
+            
+            // 点击确认按钮 - 修改用户名
+            document.getElementById('username-confirm-btn')?.addEventListener('click', () => {
+                const newUsername = document.getElementById('new-username-input').value.trim();
+                if (!newUsername) {
+                    showToast('请输入用户名', 'error');
+                    return;
+                }
+                modifyUserData('Name', newUsername);
+                usernameModal.style.display = 'none';
+            });
+            
+            // 点击确认按钮 - 修改邮箱
+            document.getElementById('email-confirm-btn')?.addEventListener('click', () => {
+                const newEmail = document.getElementById('new-email-input').value.trim();
+                if (!newEmail) {
+                    showToast('请输入邮箱地址', 'error');
+                    return;
+                }
+                if (!isValidEmail(newEmail)) {
+                    showToast('请输入有效的邮箱地址', 'error');
+                    return;
+                }
+                modifyUserData('email', newEmail);
+                emailModal.style.display = 'none';
+            });
+            
+            // 点击确认按钮 - 修改密码
+            document.getElementById('password-confirm-btn')?.addEventListener('click', () => {
+                const newPassword = document.getElementById('new-password-input').value;
+                const confirmPassword = document.getElementById('confirm-password-input').value;
+                
+                if (!newPassword) {
+                    showToast('请输入新密码', 'error');
+                    return;
+                }
+                if (newPassword.length < 6) {
+                    showToast('新密码长度至少6位', 'error');
+                    return;
+                }
+                if (newPassword !== confirmPassword) {
+                    showToast('两次输入的密码不一致', 'error');
+                    return;
+                }
+                modifyUserData('Password', newPassword);
+                passwordModal.style.display = 'none';
+            });
+            
+            // 回车键确认
+            document.getElementById('new-username-input')?.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    document.getElementById('username-confirm-btn').click();
+                }
+            });
+            document.getElementById('new-email-input')?.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    document.getElementById('email-confirm-btn').click();
+                }
+            });
+            document.getElementById('confirm-password-input')?.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    document.getElementById('password-confirm-btn').click();
+                }
+            });
+        }
+        
+        function modifyUserData(modifyItem, content) {
+            if (!current_user_info || !current_user_info.ID) {
+                showToast('用户信息获取失败', 'error');
+                return;
+            }
+            
+            const userId = current_user_info.ID;
+            
+            showToast('正在修改...', 'info');
+            console.log(modifyItem)
+            fetch(ip + '/modify_user_data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    datatype: 'operation',
+                    userId: userId,
+                    modifyitem: modifyItem,
+                    content: content
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('修改成功', 'success');
+                    // 更新本地用户信息
+                    if (modifyItem === 'username') {
+                        current_user_info.Username = content;
+                        // 更新页面显示
+                        const usernameDisplay = document.getElementById('user-name');
+                        if (usernameDisplay) {
+                            usernameDisplay.textContent = content;
+                        }
+                    } else if (modifyItem === 'email') {
+                        current_user_info.Email = content;
+                        // 更新页面显示
+                        const emailDisplay = document.getElementById('user-email');
+                        if (emailDisplay) {
+                            emailDisplay.textContent = content;
+                        }
+                    }
+                } else {
+                    showToast(data.message || '修改失败', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('修改用户数据失败:', error);
+                showToast('修改失败，请稍后重试', 'error');
+            });
+        }
+        
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+        
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            if (!toast) return;
+            
+            const styles = {
+                success: 'bg-green-600 border-green-500',
+                error: 'bg-red-600 border-red-500',
+                info: 'bg-blue-600 border-blue-500'
+            };
+            
+            toast.className = `fixed bottom-6 right-6 px-6 py-3 rounded-lg border transform transition-all duration-300 flex items-center space-x-3 max-w-xs ${styles[type] || styles.info}`;
+            toast.innerHTML = `<span class="text-white font-medium">${message}</span>`;
+            toast.style.transform = 'translateY(0)';
+            toast.style.opacity = '1';
+            
+            setTimeout(() => {
+                toast.style.transform = 'translateY(20px)';
+                toast.style.opacity = '0';
+            }, 3000);
+        }
     </script>
 </body>
 </html>

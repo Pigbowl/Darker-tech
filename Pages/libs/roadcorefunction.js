@@ -152,7 +152,7 @@
             // document.getElementById('save-canvas').addEventListener('click', saveCanvas);
             document.getElementById('reset-scale').addEventListener('click', resetScale);
             // 添加保存和加载按钮的事件监听器
-            // document.getElementById('save-map-btn').addEventListener('click', saveMapScene);
+            document.getElementById('save-map-btn').addEventListener('click', saveMapScene);
             document.getElementById('load-map-btn').addEventListener('click', loadMapScene);
             document.getElementById('map-file-input').addEventListener('change', handleMapFileSelect);
             // 添加加载成品模板按钮的事件监听器

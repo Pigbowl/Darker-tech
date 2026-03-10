@@ -308,6 +308,19 @@
   // 获取当前页面URL
 let parenthtml = window.parent.location.pathname;
 let istalking = true;
+
+// let user_number = 0;
+
+if (deploy_mode != 'full'){
+    mainpageaddress = ['/','/index.html','/index.html#contact','/index.html#about']
+}else{
+    mainpageaddress = ['/','/index.html#contact','/index.html#about','/index.html']
+}
+
+if (parenthtml == mainpageaddress[0] || parenthtml == mainpageaddress[1] || parenthtml == mainpageaddress[2] || parenthtml == mainpageaddress[3]){
+    parenthtml = "homepage"}
+
+
 // 根据URL获取页面名称
 if (pagename[parenthtml]){
   starttext = `欢迎来到${pagename[parenthtml]}页面！`
@@ -315,7 +328,7 @@ if (pagename[parenthtml]){
   starttext = '对不起。。。我。。。迷路了';
 }
 let introTexts = [];
-// let user_number = 0;
+
 if (conversion_blog[parenthtml]){
   introTexts = conversion_blog[parenthtml]
 }else{
@@ -912,6 +925,7 @@ function handleSubscribe() {
         })
   }).then(response=>response.json()).then(data=>{
     if (data.success) {
+      console.log("Now is recieved");
       manipresult = data.output;
       if (manipresult.status) {
         alert('订阅成功！感谢您的关注，' + username + '！');

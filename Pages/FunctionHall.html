@@ -29,30 +29,31 @@
 
         <!--功能搜索页面-->
 
-            <main class="flex-grow w-full px-4 py-8 flex flex-col gap-4">
-                <div class="sticky top-20 z-20 bg-dark/90 backdrop-blur-md p-4 rounded-xl mb-6">
+            <main class="flex-grow w-full px-0 pt-0 pb-8 flex flex-col gap-0 mt-[60px]">
+                <!-- 搜索栏，与父容器顶部对齐，取消圆角 -->
+                <div class="z-20 bg-dark/90 backdrop-blur-md p-4 m-0">
                     <!--按钮区域-->
-                    <div class="bg-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl">
-                        <div class="flex flex-col md:flex-row gap-4">
+                    <div class="bg-white shadow-lg p-3 sm:p-6 transition-all duration-300 hover:shadow-xl">
+                        <div class="flex flex-row gap-2 items-center">
                             <input 
                                 type="text" 
                                 id="searchInput" 
-                                class="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-gray-800"
+                                class="flex-1 px-2 py-2 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-gray-800 text-xs sm:text-sm"
                                 placeholder="请输入搜索内容..."
                                 >
                             <button 
                                 id="functionserach" 
-                                class="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                                class="bg-primary hover:bg-primary/90 text-white px-3 py-2 rounded-lg transition-all flex items-center justify-center shadow-md hover:shadow-lg transform hover:-translate-y-0.5 w-12 sm:w-auto"
                                 >
                                 <i class="fa fa-search"></i>
-                                <span>搜索</span>
+                                <span class="hidden sm:inline ml-1">搜索</span>
                             </button>
                             <button 
                                 id="allfunction" 
-                                class="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                                class="bg-primary hover:bg-primary/90 text-white px-3 py-2 rounded-lg transition-all flex items-center justify-center gap-0.5 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 whitespace-nowrap w-12 sm:w-auto"
                                 >
                                 <i class="fa fa-list"></i>
-                                <span>全部功能</span>
+                                <span class="hidden sm:inline ml-1">全部</span>
                             </button>
                         </div>     
                         <!-- 加载指示器 -->
@@ -73,8 +74,8 @@
                 </div>
 
 
-                <!-- 卡片容器 -->
-                <div id="cardContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- 卡片容器，实现内部滚动 -->
+                <div id="cardContainer" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-2.5 py-5 max-h-[calc(100vh-180px)] overflow-y-auto">
                 <!-- 卡片将动态添加到这里 -->
                 </div>
 
@@ -288,7 +289,7 @@
             .then(data => {
                 // 显示执行结果
                 if (data.success) {
-                    console.log(data.output);
+                    // console.log(data.output);
                     data_group = JSON.parse(data.output);
 
                     // 根据结果数量决定显示内容
@@ -312,95 +313,142 @@
             });
         } 
 
+        // 判断是否为移动设备
+        function isMobileDevice() {
+            return window.innerWidth < 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
         // 初始化卡片交互
         function initCardInteractions() {
-            // 鼠标悬停处理
-            cardContainer.addEventListener('mouseover', (e) => {
-                if (!cardContainer.contains(e.target)) return;
-                const card = e.target.closest('.group[data-card-id]');
-                
-
-                if (!card) {
-                // 鼠标进入了容器但不是卡片（如间隙）
-                return;
-                }
-                
-                const cardId = card.getAttribute('data-card-id');
-                const item = data_group["Catalogue"][cardId];
-
-                if (!item){
-                    return;
-                } 
-            
-            // 更新悬浮框内容
+            // 悬浮窗显示函数
+            function showHoverInfo(card, item, event) {
+                // 更新悬浮框内容
                 generateHoverInfoContent(item);
                 hoverInfoTemplate.querySelector('h4').textContent = `${item["Name"]} 详情`;
-            
-            // 显示悬浮框
-                hoverInfoTemplate.classList.remove('hidden');
-            
-            // 定位悬浮框
-                const rect = card.getBoundingClientRect();
-                const x = rect.right + 10;
-                const y = rect.top;
-            
-                // 边界检查
-                if (x + hoverInfoTemplate.offsetWidth > window.innerWidth) {
-                    hoverInfoTemplate.style.left = (rect.left - hoverInfoTemplate.offsetWidth - 10) + 'px';
-                } else {
-                    hoverInfoTemplate.style.left = x + 'px';
-                }
                 
-                hoverInfoTemplate.style.top = y + 'px';
+                // 显示悬浮框
+                hoverInfoTemplate.classList.remove('hidden');
+                
+                // 根据设备类型定位悬浮框
+                if (isMobileDevice()) {
+                    // 手机模式：固定在浏览器中央
+                    hoverInfoTemplate.style.position = 'fixed';
+                    hoverInfoTemplate.style.left = '50%';
+                    hoverInfoTemplate.style.top = '50%';
+                    hoverInfoTemplate.style.transform = 'translate(-50%, -50%)';
+                    hoverInfoTemplate.style.margin = '0';
+                } else {
+                    // PC模式：跟随鼠标位置
+                    hoverInfoTemplate.style.position = 'fixed';
+                    hoverInfoTemplate.style.transform = 'none';
+                    
+                    // 定位悬浮框
+                    const rect = card.getBoundingClientRect();
+                    const x = event ? event.clientX + 10 : rect.right + 10;
+                    const y = event ? event.clientY : rect.top;
+                    
+                    // 边界检查
+                    if (x + hoverInfoTemplate.offsetWidth > window.innerWidth) {
+                        hoverInfoTemplate.style.left = (rect.left - hoverInfoTemplate.offsetWidth - 10) + 'px';
+                    } else {
+                        hoverInfoTemplate.style.left = x + 'px';
+                    }
+                    
+                    hoverInfoTemplate.style.top = y + 'px';
+                }
+            }
+
+            // PC模式：鼠标悬停处理
+            if (!isMobileDevice()) {
+                // 鼠标悬停处理
+                cardContainer.addEventListener('mouseover', (e) => {
+                    if (!cardContainer.contains(e.target)) return;
+                    const card = e.target.closest('.group[data-card-id]');
+                    
+                    if (!card) {
+                        // 鼠标进入了容器但不是卡片（如间隙）
+                        return;
+                    }
+                    
+                    const cardId = card.getAttribute('data-card-id');
+                    const item = data_group["Catalogue"][cardId];
+
+                    if (!item){
+                        return;
+                    }
+                    
+                    showHoverInfo(card, item, e);
                 });
-            
-            cardContainer.addEventListener('mouseleave', () => {
-                hoverInfoTemplate.classList.add('hidden');
-            });
+                
+                cardContainer.addEventListener('mouseleave', () => {
+                    hoverInfoTemplate.classList.add('hidden');
+                });
+            } else {
+                // 手机模式：点击触发
+                cardContainer.addEventListener('click', (e) => {
+                    const card = e.target.closest('.group[data-card-id]');
+                    if (!card) return;
+                    
+                    const cardId = card.getAttribute('data-card-id');
+                    const item = data_group["Catalogue"][cardId];
+                    
+                    if (!item) return;
+                    
+                    // 切换悬浮窗显示状态
+                    if (hoverInfoTemplate.classList.contains('hidden')) {
+                        showHoverInfo(card, item, e);
+                    } else {
+                        hoverInfoTemplate.classList.add('hidden');
+                    }
+                });
+            }
             
             // 查看PDF按钮处理
             cardContainer.addEventListener('click', (e) => {
                 const btn = e.target.closest('.view-details-btn');
-                if (!btn) return;
-            
-                const pdfPath = btn.getAttribute('data-pdf-path');
-                const title = btn.getAttribute('data-title');
-                const btnstat = btn.getAttribute('disabled');
-                if (!btnstat==1){
-                    // 更新模态框内容
-                    pdfModalTitle.textContent = title;
-                    pdfFileName.textContent = title.replace('技术文档', '') + '.pdf';
-                    
-                    // 显示模态框
-                    pdfModal.classList.remove('hidden');
-                    document.body.style.overflow = 'hidden';
-                    
-                    // 使用XMLHttpRequest先检查文件是否存在，避免直接设置src导致的404错误
-                    const xhr = new XMLHttpRequest();
-                    xhr.open('GET', pdfPath, true);
-                    xhr.responseType = 'blob';
-                    
-                    xhr.onload = function() {
-                        if (xhr.status === 200) {
-                            // 文件存在，正常加载
-                            pdfIframe.style.display = 'block';
-                            document.getElementById('pdfError').classList.add('hidden');
-                            pdfIframe.src = pdfPath;
-                        } else {
-                            // 文件不存在，显示错误提示
+                if (btn) {
+                    const pdfPath = btn.getAttribute('data-pdf-path');
+                    const title = btn.getAttribute('data-title');
+                    const btnstat = btn.getAttribute('disabled');
+                    if (btnstat !== '1'){
+                        // 更新模态框内容
+                        pdfModalTitle.textContent = title;
+                        pdfFileName.textContent = title.replace('技术文档', '') + '.pdf';
+                        
+                        // 显示模态框
+                        pdfModal.classList.remove('hidden');
+                        document.body.style.overflow = 'hidden';
+                        
+                        // 使用XMLHttpRequest先检查文件是否存在，避免直接设置src导致的404错误
+                        const xhr = new XMLHttpRequest();
+                        xhr.open('GET', pdfPath, true);
+                        xhr.responseType = 'blob';
+                        
+                        xhr.onload = function() {
+                            if (xhr.status === 200) {
+                                // 文件存在，正常加载
+                                pdfIframe.style.display = 'block';
+                                document.getElementById('pdfError').classList.add('hidden');
+                                pdfIframe.src = pdfPath;
+                            } else {
+                                // 文件不存在，显示错误提示
+                                pdfIframe.style.display = 'none';
+                                document.getElementById('pdfError').classList.remove('hidden');
+                            }
+                        };
+                        
+                        xhr.onerror = function() {
+                            // 网络错误，显示错误提示
                             pdfIframe.style.display = 'none';
                             document.getElementById('pdfError').classList.remove('hidden');
-                        }
-                    };
-                    
-                    xhr.onerror = function() {
-                        // 网络错误，显示错误提示
-                        pdfIframe.style.display = 'none';
-                        document.getElementById('pdfError').classList.remove('hidden');
-                    };
-                    
-                    xhr.send();
-                }});
+                        };
+                        
+                        xhr.send();
+                    }
+                    // 阻止事件冒泡，避免触发卡片的点击事件
+                    e.stopPropagation();
+                }
+            });
         
             // 关闭模态框
             closePDFBtn.addEventListener('click', () => {
@@ -457,15 +505,41 @@
             const valueSpan = document.createElement('span');
             valueSpan.textContent = value;
             
+            // 根据设备类型调整文字大小
+            if (isMobileDevice()) {
+                labelSpan.style.fontSize = '12px';
+                valueSpan.style.fontSize = '12px';
+                row.style.marginBottom = '4px';
+            } else {
+                labelSpan.style.fontSize = '14px';
+                valueSpan.style.fontSize = '14px';
+                row.style.marginBottom = '6px';
+            }
+            
             row.appendChild(labelSpan);
             row.appendChild(valueSpan);
             contentContainer.appendChild(row);
             });
             
             const hoverInfo = document.getElementById('hoverInfoTemplate');
-            hoverInfo.style.width = '600px'; // 调整宽度
+            
+            // 根据设备类型调整浮窗宽度
+            if (isMobileDevice()) {
+                hoverInfo.style.width = '90vw'; // 手机模式下占屏幕宽度的90%
+                hoverInfo.style.maxWidth = '400px'; // 最大宽度限制
+                hoverInfo.style.padding = '10px'; // 减小内边距
+                hoverInfo.style.fontSize = '12px'; // 整体文字大小
+            } else {
+                hoverInfo.style.width = '600px'; // 桌面模式宽度
+                hoverInfo.style.padding = '16px'; // 桌面模式内边距
+                hoverInfo.style.fontSize = '14px'; // 桌面模式文字大小
+            }
+            
             hoverInfo.style.backgroundColor = '#f0f9ff'; // 蓝色背景
             hoverInfo.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
+            hoverInfo.style.borderRadius = '8px'; // 添加圆角
+            hoverInfo.style.overflow = 'auto'; // 允许内容滚动
+            hoverInfo.style.maxHeight = '80vh'; // 最大高度限制
         }
 
         function generatecardhtml(item, isFileAvailable){
@@ -477,40 +551,44 @@
             const buttonText = isFileAvailable ? "查看技术文档" : "准备中，敬请期待";
             const buttonDisabled = isFileAvailable ? "" : "disabled";
             const buttonCursor = isFileAvailable ? "cursor-pointer" : "cursor-not-allowed";
+            
+            // 判断是否为移动设备
+            const isMobile = isMobileDevice();
+            
             return  `
-                <div class="bg-white rounded-2xl shadow-card overflow-hidden hover-scale group flex flex-col" data-card-id="${item["Name"]}">
-                    <div class="relative h-48 overflow-hidden">
+                <div class="bg-white rounded-xl shadow-card overflow-hidden hover-scale group flex flex-col aspect-[3/4]" data-card-id="${item["Name"]}">
+                    <div class="relative h-36 sm:h-48 overflow-hidden">
                         <img src=${functionpicpath+item["Name"]+".gif"} alt="动图" class="w-full h-full object-cover" loading="lazy" onerror="handleImageError(this)">
                         <div class="absolute inset-0 bg-gradient-to-t from-dark/70 to-transparent"></div>
-                        <div class="absolute bottom-4 left-4 text-white">
+                        <div class="absolute bottom-3 left-3 text-white">
                             <span class="bg-primary/90 text-white text-xs font-medium px-2 py-1 rounded-full"> ${item["SAE"]}级</span>
                         </div>
                     </div> 
                     
                     <!-- 卡片内容区域 -->
-                    <div class="p-6 flex flex-col flex-grow">
+                    <div class="p-4 sm:p-6 flex flex-col flex-grow">
                         <!-- 功能简写和全称 -->
-                        <div class="flex justify-between items-start mb-3">
-                            <div>
-                                <h3 class="text-[clamp(1.2rem,3vw,1.5rem)] font-bold text-dark group-hover:text-primary transition-colors">
+                        <div class="flex justify-between items-start mb-2 sm:mb-3">
+                            <div class="flex-1">
+                                <h3 class="text-lg sm:text-xl font-bold text-dark group-hover:text-primary transition-colors m-0 p-0 text-left leading-tight">
                                 ${item["Name"]}
                                 </h3>
-                                <p class="text-gray-500 text-sm">${item["Full_Name"]}</p>
+                                <p class="text-gray-500 ${isMobile ? 'text-[10px]' : 'text-xs sm:text-sm'} m-0 p-0 text-left">${item["Full_Name"]}</p>
                             </div>
-                                <span class="bg-blue-50 text-blue-700 text-xs font-medium px-2 py-1 rounded-full">
+                                <span class="bg-blue-50 text-blue-700 text-xs font-medium px-2 py-1 rounded-full mt-0.5 ml-2">
                                 ${item["SAE"]}
                                 </span>
                         </div>
                         
                         <!-- 功能介绍 -->
-                        <p class="text-gray-600 line-clamp-3 text-xs mb-4">
+                        <p class="text-gray-600 line-clamp-2 sm:line-clamp-3 ${isMobile ? 'text-[10px]' : 'text-xs'} mb-3 sm:mb-4 m-0 p-0 text-left">
                             ${item["Description"]}
                         </p>
                         
                         <!-- 按钮容器 -->
                         <div class="mt-auto">
                             <button 
-                                class="view-details-btn w-full py-3 ${buttonBgClass} ${buttonHoverClass} ${buttonTextColor} ${buttonCursor} font-medium rounded-lg transition-colors duration-300 flex items-center justify-center gap-2"
+                                class="view-details-btn w-full ${isMobile ? 'py-1 text-xs' : 'py-3 text-sm'} ${buttonBgClass} ${buttonHoverClass} ${buttonTextColor} ${buttonCursor} font-medium rounded-lg transition-colors duration-300 flex items-center justify-center gap-1 whitespace-nowrap"
 
                                 <i class="fa ${buttonIcon}"></i>
                                 <span>${buttonText}</span>

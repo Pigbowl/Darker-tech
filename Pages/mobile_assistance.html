@@ -756,8 +756,7 @@
         
         // 与index.html中相同的addnewissue函数，用于提交问题提报
         function addnewissue(name, message, subject, email, contactType) {
-            // 调用真实API
-            const command = 'http://localhost:5000/add_issue'; // 使用与darker_assistance相同的API地址
+            const command = ip + '/add_issue'
             fetch(command, {
                 method: 'POST',
                 headers: {
