@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>架构开发大厅-达客智驾领航员</title>
+    <script src="../css/tailwind.css"></script>
+    <link href="../css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/components.css">
+
+    <script src="../js/xlsx/xlsx.full.min.js"></script>
+    <script src="../js/particles/particles.min.js"></script>    
+    <script src="../js/chartjs/chart.umd.min.js"></script>
+
+    <link href="../css/fonts/local-fonts.css" rel="stylesheet">
+    <script src="../js/ipcontroller.js"></script> 
+    <script src="../js/load-duck-assistant.js"></script>
+    
+    <style>
+        #mainContent {
+            width: 100%;
+            min-height: 100vh;
+            background: #121212;
+            margin: 0;
+            padding: 0;
+            flex-grow: 1;
+            box-sizing: border-box;
+            position: relative;
+        }
+        
+        body > * {
+            margin: 0;
+            padding: 0;
+        }
+        
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .content {
+            position: relative;
+            z-index: 1;
+            margin: 0;
+            padding: 0;
+        }
+        
+        #architectureTypeSelection {
+            width: 100%;
+            min-height: 100vh;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            position: relative;
+        }
+        
+        #architectureTypeSelection.hidden {
+            display: none;
+        }
+        
+        .architecture-type-card {
+            height: 180px;
+            width: 160px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.5s, box-shadow 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        
+        .architecture-type-card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .card-front {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+        }
+        
+        .card-back {
+            background: linear-gradient(135deg, #004e92 0%, #000428 100%);
+            color: white;
+            transform: rotateY(180deg);
+        }
+        
+        .architecture-icon {
+            padding: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 60px;
+            height: 60px;
+            margin-bottom: 8px;
+        }
+        
+        .architecture-icon i {
+            font-size: 36px;
+            transition: transform 0.3s ease;
+        }
+        
+        .architecture-type-card:hover .architecture-icon i {
+            transform: scale(1.1);
+        }
+        
+        .architecture-type-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+            font-weight: bold;
+            line-height: 1.2;
+        }
+        
+        .architecture-type-card p {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            text-align: center;
+            line-height: 1.2;
+        }
+        
+        .card-back p {
+            font-size: 0.8rem;
+            line-height: 1.3;
+        }
+        
+        .architecture-type-card[data-type="LOGIC"] .card-front {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .architecture-type-card[data-type="PHYSICAL"] .card-front {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .architecture-type-card[data-type="SOFTWARE"] .card-front {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .architecture-type-card {
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        .architecture-type-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .architecture-type-card:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+    </style>
+</head>
+
+<body class="bg-dark text-gray-100 font-inter min-h-screen flex flex-col bg-grid">
+    <div id="mainContent">
+        <div id="navbar-container"></div>
+        <div id="particles-js"></div>
+        <div class="content min-h-screen">
+            <div id="architectureTypeSelection" class="min-h-screen p-4 pt-16">
+                <div class="bg-cover bg-center w-full h-[calc(100vh-80px)] rounded-lg p-6">
+                    <div class="absolute inset-0 bg-[url('../PIC/LOGOs/ArchiBack.png')] bg-cover bg-center blur-md"></div>
+                    <!-- 传感器卡片容器和文字容器水平排列 -->
+                    <div class="relative h-full z-10">
+                        <div class="flex w-full h-full">
+                            <div class="flex flex-col space-y-4 w-64">
+                                <div class="architecture-type-card" data-type="LOGIC">
+                                <div class="card-inner">
+                                    <div class="card-front">
+                                        <div class="architecture-icon">
+                                            <i class="fa fa-sitemap"></i>
+                                        </div>
+                                        <h3>逻辑架构</h3>
+                                        <p>逻辑架构开发</p>
+                                    </div>
+                                    <div class="card-back">
+                                        <p>点击查看逻辑架构开发详情</p>
+                                        <a href="../Pages/ArchitectureBuild.html" id="逻辑架构开发" class="func_link mt-4 px-3 py-1 bg-white bg-opacity-20 rounded text-white text-sm hover:bg-opacity-30 transition inline-block text-center">查看详情</a>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                                <div class="architecture-type-card" data-type="PHYSICAL">
+                                    <div class="card-inner">
+                                        <div class="card-front">
+                                            <div class="architecture-icon">
+                                                <i class="fa fa-cubes"></i>
+                                            </div>
+                                            <h3>物理结构</h3>
+                                            <p>物理结构开发</p>
+                                        </div>
+                                        <div class="card-back">
+                                            <p>点击查看物理结构开发详情</p>
+                                            <button class="mt-4 px-3 py-1 bg-white bg-opacity-20 rounded text-white text-sm hover:bg-opacity-30 transition">查看详情</button>
+                                        </div>
+                                    </div>
+                                </div>
+                        
+                                <div class="architecture-type-card" data-type="SOFTWARE">
+                                    <div class="card-inner">
+                                        <div class="card-front">
+                                            <div class="architecture-icon">
+                                                <i class="fa fa-code"></i>
+                                            </div>
+                                            <h3>软件架构</h3>
+                                            <p>软件架构开发</p>
+                                        </div>
+                                        <div class="card-back">
+                                            <p>点击查看软件架构开发详情</p>
+                                            <button class="mt-4 px-3 py-1 bg-white bg-opacity-20 rounded text-white text-sm hover:bg-opacity-30 transition">查看详情</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="ArchitectureIntroContainer" class="flex-1 ml-8 p-6 h-full overflow-hidden">
+                                <h2 class="text-2xl text-black font-bold mb-4">架构开发概览</h2>
+                                <p class="text-black mb-2">选择左侧的架构类型，了解详细信息</p>
+                                <p class="text-black mb-2">不同类型的架构在自动驾驶系统中扮演着不同的角色，共同构建完整的系统架构</p>
+                            </div>
+                            
+                            <script>
+                                const architectureData = {
+                                    LOGIC: {
+                                        title: "ADAS逻辑架构开发",
+                                        icon: "fa-sitemap",
+                                        description: "逻辑架构是ADAS架构的\"大脑中枢\"，聚焦于\"功能层面的逻辑划分与协同\"，不涉及具体的硬件和软件实现，只定义\"做什么\"和\"怎么协同\"，是连接功能需求与物理/软件实现的核心纽带。",
+                                        sections: [
+                                            {
+                                                title: "为什么需要逻辑架构开发？",
+                                                content: "ADAS的核心价值是通过多功能协同实现驾驶辅助，若缺乏逻辑架构，各功能会处于\"各自为战\"的状态：例如AEB（自动紧急制动）与ACC（自适应巡航）的速度控制逻辑冲突、LKA（车道保持）与APA（自动泊车）的转向控制逻辑矛盾，导致系统混乱、功能失效；同时，逻辑架构能明确各功能的优先级和协同规则，避免功能冗余，为后续物理部署和软件开发提供清晰的逻辑依据，降低开发复杂度。"
+                                            },
+                                            {
+                                                title: "逻辑架构开发是干什么的？",
+                                                content: "基于ADAS功能需求（如全速域ACC、自动紧急制动、车道居中控制等），进行功能拆解、模块划分，定义各逻辑模块的职责、输入/输出、协同规则和优先级。简单来说，就是梳理\"谁来做、做什么、和谁配合、按什么顺序做\"，将复杂的ADAS功能拆解为可管理、可协同的逻辑模块，确保各功能逻辑连贯、无冲突。"
+                                            },
+                                            {
+                                                title: "逻辑架构开发关注什么？",
+                                                content: "核心关注三大重点：一是功能拆解的合理性，确保每个逻辑模块职责单一、无交叉、可复用；二是协同逻辑的严谨性，明确各模块之间的交互流程、数据传递规则和异常处理机制（如功能失效时的降级逻辑）；三是需求匹配度，确保逻辑架构完全覆盖ADAS的功能需求，同时预留扩展接口，支持后续功能升级。此外，还需关注功能优先级（如安全类功能优先级高于舒适类功能），确保紧急情况下系统能优先响应安全需求。"
+                                            },
+                                            {
+                                                title: "逻辑架构开发输出什么？",
+                                                content: "输出逻辑架构设计文档，包括逻辑模块划分图、各模块职责说明、模块交互流程图、输入/输出定义、协同规则文档、功能优先级说明、异常降级逻辑文档等，为物理架构的硬件部署和软件架构的模块开发提供直接的逻辑指导。"
+                                            }
+                                        ]
+                                    },
+                                    PHYSICAL: {
+                                        title: "ADAS物理架构开发",
+                                        icon: "fa-cubes",
+                                        description: "物理架构是ADAS架构的\"硬件载体\"，聚焦于\"逻辑模块的物理落地\"，将逻辑架构定义的功能模块，映射到具体的硬件设备上，明确硬件的选型、部署位置和接口连接，是ADAS系统能够物理实现的基础。",
+                                        sections: [
+                                            {
+                                                title: "为什么需要物理架构开发？",
+                                                content: "逻辑架构只定义了\"功能逻辑\"，但无法落地为实际的硬件部署：若缺乏物理架构，会出现硬件选型与逻辑功能不匹配（如传感器精度不足、控制器算力不够）、硬件部署位置不合理（如摄像头被遮挡、雷达信号干扰）、接口不兼容导致数据无法传输等问题；同时，物理架构直接决定了ADAS系统的硬件成本、安装难度、维护便利性和整车适配性，必须通过科学的物理架构设计，实现\"硬件资源最优配置\"与\"功能需求落地\"的平衡。"
+                                            },
+                                            {
+                                                title: "物理架构开发是干什么的？",
+                                                content: "基于逻辑架构的模块划分，进行硬件选型、硬件部署规划和接口设计，将每个逻辑模块映射到具体的硬件设备（如摄像头、雷达、激光雷达、域控制器、ECU等），明确各硬件的型号、参数、安装位置、供电方式、接口类型，以及硬件之间的连接关系和数据传输路径。简单来说，就是\"给逻辑模块找硬件载体，规划硬件怎么装、怎么连、怎么协同工作\"。"
+                                            },
+                                            {
+                                                title: "物理架构开发关注什么？",
+                                                content: "核心关注四大维度：一是硬件选型的合理性，确保硬件的性能（如传感器精度、控制器算力）满足逻辑功能需求，同时兼顾成本、可靠性和供应链稳定性；二是部署位置的科学性，避免硬件之间的信号干扰（如雷达与摄像头的安装距离），确保传感器的探测范围无盲区，同时适配整车的安装空间和外观；三是接口兼容性，明确各硬件之间的接口类型（如以太网、CAN总线），确保数据高效、稳定传输；四是整车适配性，考虑硬件的供电需求、散热设计、防水防尘等级，适配不同车型的安装需求，降低整车集成难度。"
+                                            },
+                                            {
+                                                title: "物理架构开发输出什么？",
+                                                content: "输出物理架构设计文档，包括硬件选型清单及参数说明、硬件部署示意图（整车安装位置）、硬件接口定义文档、硬件连接拓扑图、供电与散热设计方案、硬件成本评估报告、整车适配方案等，为硬件采购、安装调试、整车集成提供直接依据。"
+                                            }
+                                        ]
+                                    },
+                                    SOFTWARE: {
+                                        title: "ADAS软件架构开发",
+                                        icon: "fa-code",
+                                        description: "软件架构是ADAS架构的\"执行核心\"，聚焦于\"物理硬件上的软件实现\"，基于逻辑架构的需求和物理架构的硬件部署，设计软件的分层、模块划分、接口规范和开发标准，是ADAS功能能够正常运行的核心支撑。",
+                                        sections: [
+                                            {
+                                                title: "为什么需要软件架构开发？",
+                                                content: "ADAS的功能最终需要通过软件来实现，若缺乏软件架构，会出现软件模块混乱、代码冗余、兼容性差、后期迭代困难、维护成本高的问题；同时，ADAS软件涉及实时性、安全性要求极高（如AEB功能需要毫秒级响应），必须通过软件架构设计，明确软件的分层逻辑、模块职责和实时性保障机制，确保软件能够稳定、高效、安全地运行，同时满足ISO 26262功能安全标准。此外，软件架构还能提升代码的复用性，降低后续功能迭代的开发成本。"
+                                            },
+                                            {
+                                                title: "软件架构开发是干什么的？",
+                                                content: "基于逻辑架构的功能需求和物理架构的硬件部署，设计软件的分层结构（如感知层、融合层、决策层、执行层），划分软件模块，定义各软件模块的职责、接口、开发规范和交互逻辑，同时设计软件的实时性调度、异常处理、安全机制和升级机制。简单来说，就是\"在硬件上写好软件的'骨架'，确保软件能够实现逻辑架构定义的功能，并且稳定、安全、可扩展\"。"
+                                            },
+                                            {
+                                                title: "软件架构开发关注什么？",
+                                                content: "核心关注五大重点：一是分层与模块化合理性，确保软件分层清晰（如感知-融合-决策-执行），模块职责单一、可复用、可维护；二是实时性，满足ADAS功能的实时响应需求（如决策指令毫秒级下发），优化软件调度机制；三是安全性，符合ISO 26262功能安全标准，设计故障诊断、容错、降级机制，避免软件故障导致的安全风险；四是兼容性与可扩展性，支持硬件升级和功能迭代，确保新增功能无需大规模修改原有软件架构；五是开发效率与可维护性，制定统一的开发规范和接口标准，降低代码冗余，便于后期调试、维护和升级。"
+                                            },
+                                            {
+                                                title: "软件架构开发输出什么？",
+                                                content: "输出软件架构设计文档，包括软件分层架构图、软件模块划分及职责说明、模块接口规范、实时性调度方案、安全机制设计文档、异常处理流程、开发规范文档、软件升级方案等，为软件开发、调试、测试、迭代提供直接的指导依据，同时支撑软件与硬件的协同集成。"
+                                            }
+                                        ]
+                                    }
+                                };
+                                
+                                const introContainer = document.getElementById('ArchitectureIntroContainer');
+                                
+                                document.querySelectorAll('.architecture-type-card').forEach(card => {
+                                    card.addEventListener('click', function() {
+                                        // 先将所有卡片恢复到正面
+                                        document.querySelectorAll('.architecture-type-card').forEach(c => {
+                                            c.classList.remove('flipped');
+                                        });
+                                        
+                                        // 翻转当前卡片
+                                        this.classList.add('flipped');
+                                        
+                                        const architectureType = this.dataset.type;
+                                        if (architectureData[architectureType]) {
+                                            const data = architectureData[architectureType];
+                                            
+                                            let gradientColors, gradientBg, borderColor;
+                                            if (architectureType === 'LOGIC') {
+                                                gradientColors = 'from-[#667eea] to-[#764ba2]';
+                                                gradientBg = 'from-gray-100 to-gray-200';
+                                                borderColor = 'purple';
+                                            } else if (architectureType === 'PHYSICAL') {
+                                                gradientColors = 'from-[#f093fb] to-[#f5576c]';
+                                                gradientBg = 'from-gray-100 to-gray-200';
+                                                borderColor = 'pink';
+                                            } else {
+                                                gradientColors = 'from-[#4facfe] to-[#00f2fe]';
+                                                gradientBg = 'from-gray-100 to-gray-200';
+                                                borderColor = 'blue';
+                                            }
+                                            
+                                            if (data.sections) {
+                                                const videoFile = architectureType === 'LOGIC' ? 'LogiArchiDesign' : 
+                                                                architectureType === 'PHYSICAL' ? 'PhyArchiDesign' : 'SWArchiDesign';
+                                                
+                                                introContainer.innerHTML = `
+                                                    <div class="flex flex-row h-full gap-4">
+                                                        <div class="w-1/2 flex flex-col gap-3 overflow-y-auto">
+                                                            <div class="flex items-center mb-1">
+                                                                <div class="w-12 h-12 bg-gradient-to-br ${gradientColors} rounded-lg flex items-center justify-center mr-3">
+                                                                    <i class="fa ${data.icon} text-white text-xl"></i>
+                                                                </div>
+                                                                <div>
+                                                                    <h2 class="text-lg text-black font-bold">${data.title}</h2>
+                                                                </div>
+                                                            </div>
+                                                            <div class="bg-gradient-to-r ${gradientBg} p-3 rounded-lg border-l-4 border-${borderColor}-500">
+                                                                <p class="text-gray-700 text-sm leading-relaxed">${data.description}</p>
+                                                            </div>
+                                                            ${data.sections.map((section, index) => `
+                                                                <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+                                                                    <div class="flex items-center mb-1">
+                                                                        <div class="w-6 h-6 bg-gradient-to-br ${gradientColors} rounded-full flex items-center justify-center mr-2 flex-shrink-0">
+                                                                            <span class="text-white font-bold text-xs">${index + 1}</span>
+                                                                        </div>
+                                                                        <h3 class="text-base font-bold text-gray-800">${section.title}</h3>
+                                                                    </div>
+                                                                    <p class="text-gray-600 leading-relaxed text-xs pl-8">${section.content}</p>
+                                                                </div>
+                                                            `).join('')}
+                                                        </div>
+                                                        <div class="w-1/2 h-full flex items-center justify-center p-2">
+                                                            <div class="w-full h-full overflow-hidden rounded-lg shadow-md">
+                                                                <video 
+                                                                    class="w-full h-full object-cover"
+                                                                    autoplay 
+                                                                    loop 
+                                                                    muted 
+                                                                    playsinline
+                                                                >
+                                                                    <source src="../PIC/VIDEO/${videoFile}.webm" type="video/webm">
+                                                                </video>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                `;
+                                            } else {
+                                                introContainer.innerHTML = `
+                                                    <div class="flex flex-row h-full gap-6">
+                                                        <div class="w-2/5 flex flex-col">
+                                                            <div class="flex items-center mb-6">
+                                                                <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mr-4">
+                                                                    <i class="fa ${data.icon} text-white text-3xl"></i>
+                                                                </div>
+                                                                <h2 class="text-2xl text-black font-bold">${data.title}</h2>
+                                                            </div>
+                                                            <p class="text-black mb-4 text-lg">${data.description}</p>
+                                                            <div class="mt-4">
+                                                                <h3 class="text-xl font-semibold text-gray-700 mb-2">核心特性：</h3>
+                                                                <ul class="list-disc pl-6 space-y-1 text-black">
+                                                                    ${data.features.map(feature => `<li>${feature}</li>`).join('')}
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                        <div class="w-3/5">
+                                                            <div class="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg shadow-md flex items-center justify-center">
+                                                                <div class="text-center">
+                                                                    <i class="fa ${data.icon} text-8xl text-gray-400 mb-4"></i>
+                                                                    <p class="text-gray-500 text-lg">架构示意图</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                `;
+                                            }
+                                        }
+                                    });
+                                });
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="footer-container"></div>   
+        </div>
+     
+    <script src="../js/load-components.js"></script>
+    <script src="../js/function-link-manager.js"></script>
+    <script src="../js/Visit_Monitor.js"></script>
+</div>
+</body>
+</html>

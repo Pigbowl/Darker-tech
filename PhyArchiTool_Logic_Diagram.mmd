@@ -1,0 +1,57 @@
+graph TD
+    subgraph 初始化与配置
+        A[页面加载] --> B[initMxGraph初始化图形系统]
+        B --> C[getcomponent加载元器件数据]
+        C --> D[generateElementTypesMenu生成元素类型菜单]
+        D --> E[initializeSaveLoad初始化保存加载功能]
+        E --> F[updatePropertyPanel更新属性面板]
+    end
+
+    subgraph 硬件元素管理
+        G[添加硬件元素] --> H[创建硬件图形]
+        H --> I[初始化硬件属性]
+        I --> J[生成接口列表]
+    end
+
+    subgraph 接口管理
+        K[启用/禁用接口] --> L[drawInterfaces绘制接口]
+        L --> M[计算接口位置]
+        M --> N[创建接口图形]
+        N --> O[设置接口贴边属性]
+    end
+
+    subgraph 接口连接
+        P[开始连接模式] --> Q[选择源元素]
+        Q --> R[选择目标元素]
+        R --> S[compareInterfaces比较接口]
+        S --> T[showInterfaceSelectionModal显示接口选择弹窗]
+        T --> U[createConnectionBetweenElements创建连接线]
+        U --> V[getInterfaceCell获取接口单元格]
+        V --> W[getInterfaceConnectionPoint获取连接点]
+        W --> X[graph.insertEdge创建线段]
+    end
+
+    subgraph 事件处理
+        Y[mxGraph事件监听] --> Z[handleElementParentChange处理元素父级变化]
+        Z --> AA[updateConnectionsForInterface更新接口连接]
+        AA --> AB[updateConnectionsForElement更新元素连接]
+    end
+
+    subgraph 数据管理
+        AC[elementsData元素数据] --> AD[connectionsData连接数据]
+        AD --> AE[saveInterfaceConfig保存接口配置]
+        AE --> AF[handleInterfaceDisable处理接口禁用]
+    end
+
+    subgraph 用户界面
+        AG[属性面板更新] --> AH[interface-enabled-checkbox接口启用复选框]
+        AH --> AI[showCustomModal显示自定义弹窗]
+        AI --> AJ[showCustomConfirm显示确认弹窗]
+    end
+
+    B --> G
+    F --> AG
+    J --> K
+    O --> P
+    X --> AD
+    AE --> L

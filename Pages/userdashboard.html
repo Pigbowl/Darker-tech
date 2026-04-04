@@ -192,7 +192,7 @@
                     <h2 class="text-xl font-bold text-white mb-4 flex items-center">
                         <i class="fa fa-folder-open text-neon mr-2"></i>我的作品
                     </h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <!-- 我的传感器 -->
                         <div class="p-4 bg-gray-800/50 rounded-lg border border-gray-700 hover:border-neon/50 transition-colors">
                             <div class="flex items-center justify-between mb-3">
@@ -215,6 +215,19 @@
                                 <span id="map-count" class="bg-neon/20 text-neon px-2 py-1 rounded text-sm">0</span>
                             </div>
                             <div id="map-list" class="space-y-2 max-h-40 overflow-y-auto">
+                                <p class="text-gray-400 text-sm">加载中...</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 我的架构 -->
+                        <div class="p-4 bg-gray-800/50 rounded-lg border border-gray-700 hover:border-neon/50 transition-colors">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="font-medium text-white flex items-center">
+                                    <i class="fa fa-sitemap text-neon mr-2"></i>我的架构
+                                </h3>
+                                <span id="phyarchi-count" class="bg-neon/20 text-neon px-2 py-1 rounded text-sm">0</span>
+                            </div>
+                            <div id="phyarchi-list" class="space-y-2 max-h-40 overflow-y-auto">
                                 <p class="text-gray-400 text-sm">加载中...</p>
                             </div>
                         </div>
@@ -480,6 +493,7 @@
         function loadUserWorks() {
             loadFovConfigList();
             loadMapConfigList();
+            loadPhyArchiConfigList();
             loadSchemeConfigList();
         }
         
@@ -536,7 +550,9 @@
             fovList.innerHTML = configList.map(name => `
                 <div class="flex items-center justify-between p-2 bg-gray-700/30 rounded text-sm">
                     <span class="text-white truncate flex-1">${name}</span>
-                    <i class="fa fa-radar text-neon ml-2"></i>
+                    <button onclick="openFovProject('${name}')" class="ml-2 p-1 hover:bg-gray-600 rounded transition-colors" title="打开">
+                        <i class="fa fa-external-link text-neon"></i>
+                    </button>
                 </div>
             `).join('');
         }
@@ -594,7 +610,9 @@
             mapList.innerHTML = configList.map(name => `
                 <div class="flex items-center justify-between p-2 bg-gray-700/30 rounded text-sm">
                     <span class="text-white truncate flex-1">${name}</span>
-                    <i class="fa fa-map text-neon ml-2"></i>
+                    <button onclick="openMapProject('${name}')" class="ml-2 p-1 hover:bg-gray-600 rounded transition-colors" title="打开">
+                        <i class="fa fa-external-link text-neon"></i>
+                    </button>
                 </div>
             `).join('');
         }
@@ -625,6 +643,90 @@
                     <i class="fa fa-file-text text-neon ml-2"></i>
                 </div>
             `).join('');
+        }
+        
+        // 获取PhyArchi架构配置列表
+        function loadPhyArchiConfigList() {
+            const userId = current_user_info ? current_user_info.ID : null;
+            if (!userId) return;
+            
+            fetch(ip + '/get_user_product_config_list', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    filetype: 'phyarchifile',
+                    datatype: 'operation',
+                    userId: userId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                let configList = [];
+                
+                if (data.success === true && data.templates && Array.isArray(data.templates)) {
+                    configList = data.templates;
+                } else if (data.success === true && data.configList) {
+                    configList = data.configList;
+                } else if (data.output && Array.isArray(data.output)) {
+                    configList = data.output;
+                } else if (Array.isArray(data)) {
+                    configList = data;
+                }
+                
+                updatePhyArchiList(configList);
+            })
+            .catch(error => {
+                console.error('获取架构配置列表失败:', error);
+                document.getElementById('phyarchi-list').innerHTML = '<p class="text-gray-400 text-sm">加载失败</p>';
+            });
+        }
+        
+        // 更新PhyArchi架构列表显示
+        function updatePhyArchiList(configList) {
+            const phyarchiList = document.getElementById('phyarchi-list');
+            const phyarchiCount = document.getElementById('phyarchi-count');
+            
+            if (!phyarchiList || !phyarchiCount) return;
+            
+            phyarchiCount.textContent = configList.length;
+            
+            if (configList.length === 0) {
+                phyarchiList.innerHTML = '<p class="text-gray-400 text-sm">暂无架构配置</p>';
+                return;
+            }
+            
+            phyarchiList.innerHTML = configList.map(name => `
+                <div class="flex items-center justify-between p-2 bg-gray-700/30 rounded text-sm">
+                    <span class="text-white truncate flex-1">${name}</span>
+                    <button onclick="openPhyArchiProject('${name}')" class="ml-2 p-1 hover:bg-gray-600 rounded transition-colors" title="打开">
+                        <i class="fa fa-external-link text-neon"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+        
+        // 打开PhyArchi项目
+        function openPhyArchiProject(projectName) {
+            // 将项目名称存储到sessionStorage，然后在PhyArchiTool页面加载
+            sessionStorage.setItem('phyarchi_project_to_load', projectName);
+            // 跳转到PhyArchiTool页面
+            window.open('./PhyArchiTool.html', '_blank');
+        }
+        
+        // 打开传感器组项目
+        function openFovProject(projectName) {
+            // 将项目名称存储到sessionStorage，然后在FoV_build页面加载
+            sessionStorage.setItem('fov_project_to_load', projectName);
+            // 跳转到FoV_build页面
+            window.open('./FoV_build.html', '_blank');
+        }
+        
+        // 打开地图项目
+        function openMapProject(projectName) {
+            // 将项目名称存储到sessionStorage，然后在MapTool页面加载
+            sessionStorage.setItem('map_project_to_load', projectName);
+            // 跳转到RoadBuilder页面
+            window.open('./RoadBuilder.html', '_blank');
         }
         // ===================== 太阳系3D场景 =====================
         function initSolarSystem() {

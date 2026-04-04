@@ -1,0 +1,39 @@
+{
+  "fovs": [
+    {
+      "id": 5,
+      "direction": "right",
+      "customAngle": 0,
+      "offsetX": 1.7,
+      "offsetY": 0,
+      "offsetZ": 1.25,
+      "anglex": 0,
+      "angley": -90,
+      "anglez": 0,
+      "type": "camera",
+      "subtype": "pinhole_8Mpix_120",
+      "color": "#20dcde",
+      "radius": 40,
+      "angle": 120,
+      "transparency": 0.5
+    },
+    {
+      "id": 6,
+      "direction": "right",
+      "customAngle": 0,
+      "offsetX": 3.3,
+      "offsetY": 0,
+      "offsetZ": 0.35,
+      "anglex": 0,
+      "angley": -90,
+      "anglez": 0,
+      "type": "radar",
+      "subtype": "3d_front",
+      "color": "#ff69b4",
+      "radius": 180,
+      "angle": 75,
+      "transparency": 0.1
+    }
+  ],
+  "timestamp": "2026-03-18T16:21:49.702Z"
+}

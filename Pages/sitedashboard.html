@@ -9,14 +9,7 @@
     <script src="../js/ipcontroller.js"></script>
     <link href="../css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
-    <!-- 本地备用方案 -->
-    <script>
-        if (typeof Chart === 'undefined') {
-            console.warn('CDN 加载失败，尝试使用本地版本');
-            // 这里可以添加本地版本的路径
-        }
-    </script>
+    <script src="../js/chart.umd.min.js"></script>
     <!-- 配置Tailwind自定义颜色和字体 -->
     <script>
         tailwind.config = {
@@ -1759,7 +1752,6 @@
             }).then(response=>response.json()).then(data=>{
                 if(data.success){
                     result = JSON.parse(data.output);
-                    console.log(result);
                     todoItems = result.actions || [];
                     
                     // 计算Status为Ongoing或Open的待办项数量
@@ -4715,6 +4707,7 @@
                     pagedistribution=JSON.parse(data.output).page_count;
                     renderDailyVisitChart(daily_visit);
                     renderPageDistributionChart(pagedistribution);
+                    updateStatistics();
                     // showDashboard();
                 }
             })

@@ -6,9 +6,9 @@
     <title>传感器图配置工具-达客智驾领航员</title>
     <script src="../css/tailwind.css"></script>
     
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>    
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <script src="../js/xlsx/xlsx.full.min.js"></script>
+    <script src="../js/particles/particles.min.js"></script>    
+    <script src="../js/chart.umd.min.js"></script>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/components.css">
     <link href="../css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
@@ -16,6 +16,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script src="../js/ipcontroller.js"></script>
     <script src="../js/load-duck-assistant.js"></script>
+
+    <script src="../js/three/three.min.js"></script>
+    <script src="../js/three/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="../js/three/examples/js/exporters/GLTFExporter.js"></script>
+    <script src="../js/three/examples/js/controls/OrbitControls.js"></script>
 </head>
 
 <body class="bg-dark text-gray-100 font-inter min-h-screen flex flex-col bg-grid overflow-hidden">
@@ -37,11 +42,12 @@
                     <div class="flex flex-col gap-1.5 w-full">
                         <button id="new-fan-btn" class="bg-green-500 text-white px-3 py-1 rounded-lg shadow-lg hover:bg-green-600 transition-colors duration-200 w-full text-sm"><span class="text-base">+</span> 新建传感器</button>
                         <button id="delete-fan-btn" class="bg-red-500 text-white px-3 py-1 rounded-lg shadow-lg hover:bg-red-600 transition-colors duration-200 w-full text-sm"><span class="text-base">-</span> 删除传感器</button>
-                        <button id="3DView-btn" class="bg-blue-500 text-white px-3 py-1 rounded-lg shadow-lg hover:bg-blue-600 transition-colors duration-200 w-full text-sm" onclick="window.location.href='SensorInspector.html'">📦 3D视图</button>
                         <button id="save-config-btn" class="bg-blue-500 text-white px-3 py-1 rounded-lg shadow-lg hover:bg-blue-600 transition-colors duration-200 w-full text-sm"><i class="fa fa-save mr-1"></i>保存配置</button>
                         <button id="load-config-btn" class="bg-blue-500 text-white px-3 py-1 rounded-lg shadow-lg hover:bg-blue-600 transition-colors duration-200 w-full text-sm"><i class="fa fa-folder-open mr-1"></i>加载配置</button>
-                        <button id="stop-anim-btn" class="bg-blue-500 text-white px-3 py-1 rounded-lg shadow-lg hover:bg-blue-600 transition-colors duration-200 w-full text-sm"><i class="fa fa-play mr-1"></i>启动动画</button>
                         <button id="save-image-btn" class="bg-blue-500 text-white px-3 py-1 rounded-lg shadow-lg hover:bg-blue-600 transition-colors duration-200 w-full text-sm"><i class="fa fa-image mr-1"></i>保存图片</button>
+                        <button id="stop-anim-btn" class="bg-blue-500 text-white px-3 py-1 rounded-lg shadow-lg hover:bg-blue-600 transition-colors duration-200 w-full text-sm"><i class="fa fa-play mr-1"></i>开启动画</button>
+                        <button id="screenshot-btn" class="bg-blue-500 text-white px-3 py-1 rounded-lg shadow-lg hover:bg-blue-600 transition-colors duration-200 w-full text-sm"><i class="fa fa-camera mr-1"></i>保存截屏</button>
+                        <button id="export-model-btn" class="bg-blue-500 text-white px-3 py-1 rounded-lg shadow-lg hover:bg-blue-600 transition-colors duration-200 w-full text-sm"><i class="fa fa-cubes mr-1"></i>导出模型</button>
                     </div>
                     <!-- 控制面板 -->
                     <div class="control-panel w-full" style="background: rgba(17, 24, 39, 0.9); backdrop-filter: blur(10px); padding: 12px; border-radius: 0.5rem; border: 1px solid rgba(59, 130, 246, 0.2); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);">
@@ -95,6 +101,11 @@
                     <div class="form-group">
                         <label for="transparency" style="width: 100%; display: block; font-size: 12px;">透明度:{0.1-1.0}</label>
                         <input type="range" id="transparency" min="0.1" max="1" step="0.1" value="0.5" style="width: 100%; display: block;">
+                    </div>
+                    <!-- X轴角度参数 -->
+                    <div class="form-group">
+                        <label for="anglex" style="width: 100%; display: block; font-size: 12px;">X轴角度 (°): {0.1度步长}</label>
+                        <input type="number" id="anglex" min="-180" max="180" value="0" step="0.1" style="width: 100%; display: block;">
                     </div>
                     <div>
 
@@ -150,11 +161,30 @@
                 <div class="car-center"></div>
                 <!-- 画布 - 置于上层 -->
                 <canvas id="fov-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; margin: 0; padding: 0;"></canvas>
-                <!-- 滑动开关 - 示意图/实际比例/介绍模式 -->
+                
+                <!-- 3D视图画布 - 默认隐藏 -->
+                <div id="3d-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; margin: 0; padding: 0; display: none; z-index: 50;">
+                    <canvas id="3d-canvas" style="width: 100%; height: 100%; display: block;"></canvas>
+                    <!-- 加载进度条弹窗 -->
+                    <div id="3d-loading-modal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.8); padding: 20px 40px; border-radius: 10px; display: none; z-index: 100;">
+                        <div style="color: white; margin-bottom: 10px; font-size: 14px;">正在加载车模...</div>
+                        <div style="width: 200px; height: 10px; background: #333; border-radius: 5px; overflow: hidden;">
+                            <div id="3d-loading-progress" style="width: 0%; height: 100%; background: #4CAF50; transition: width 0.3s;"></div>
+                        </div>
+                        <div id="3d-loading-percent" style="color: white; margin-top: 5px; font-size: 12px; text-align: center;">0%</div>
+                    </div>
+                </div>
+                <!-- 传感器选择列表 -->
+                <div id="sensor-list-panel" style="position: absolute; bottom: 85px; left: 20px; z-index: 101; max-height: 200px; overflow-y: auto; background: rgba(17, 24, 39, 0.95); border-radius: 6px; padding: 8px; border: 1px solid rgba(59, 130, 246, 0.5);">
+                    <div style="color: white; font-size: 12px; margin-bottom: 5px; border-bottom: 1px solid rgba(59, 130, 246, 0.3); padding-bottom: 5px;">传感器列表</div>
+                    <div id="sensor-list-items"></div>
+                </div>
+                <!-- 滑动开关 - 示意图/实际比例/介绍模式/3D视图 -->
                 <div class="scale-toggle" style="position: absolute; bottom: 40px; left: 20px; z-index: 100; display: flex; align-items: center; background: rgba(17, 24, 39, 0.9); border-radius: 6px; padding: 3px; border: 1px solid rgba(59, 130, 246, 0.3);">
                     <button id="toggle-schematic" class="toggle-btn active" style="padding: 5px 12px; border: none; border-radius: 4px; background: #3B82F6; color: white; font-size: 11px; cursor: pointer; transition: all 0.3s;">示意图</button>
                     <button id="toggle-actual" class="toggle-btn" style="padding: 5px 12px; border: none; border-radius: 4px; background: transparent; color: #9CA3AF; font-size: 11px; cursor: pointer; transition: all 0.3s;">实际比例</button>
                     <button id="toggle-intro" class="toggle-btn" style="padding: 5px 12px; border: none; border-radius: 4px; background: transparent; color: #9CA3AF; font-size: 11px; cursor: pointer; transition: all 0.3s;">介绍</button>
+                    <button id="toggle-3d" class="toggle-btn" style="padding: 5px 12px; border: none; border-radius: 4px; background: transparent; color: #9CA3AF; font-size: 11px; cursor: pointer; transition: all 0.3s;">3D视图</button>
                 </div>
             </div>
             
@@ -396,6 +426,7 @@
       const toggleSchematic = document.getElementById('toggle-schematic');
       const toggleActual = document.getElementById('toggle-actual');
       const toggleIntro = document.getElementById('toggle-intro');
+      const toggle3DView = document.getElementById('toggle-3d');
 
       // 重置所有按钮
       toggleSchematic.style.background = 'transparent';
@@ -407,6 +438,9 @@
       toggleIntro.style.background = 'transparent';
       toggleIntro.style.color = '#9CA3AF';
       toggleIntro.classList.remove('active');
+      toggle3DView.style.background = 'transparent';
+      toggle3DView.style.color = '#9CA3AF';
+      toggle3DView.classList.remove('active');
 
       // 设置当前模式按钮为激活状态
       switch (currentDisplayMode) {
@@ -424,6 +458,11 @@
           toggleIntro.style.background = '#3B82F6';
           toggleIntro.style.color = 'white';
           toggleIntro.classList.add('active');
+          break;
+        case '3d':
+          toggle3DView.style.background = '#3B82F6';
+          toggle3DView.style.color = 'white';
+          toggle3DView.classList.add('active');
           break;
       }
     }
@@ -2235,6 +2274,20 @@
       return Math.max(...fovs.map(f => f.id)) + 1;
     }
 
+    // 计算angley的辅助函数
+    function calculateAngley(direction, customAngle) {
+      if (direction === 'custom') {
+        return (customAngle || 0) - 90;
+      }
+      const dirMap = {
+        'right': -90,
+        'up': 0,
+        'left': 90,
+        'down': 180
+      };
+      return dirMap[direction] !== undefined ? dirMap[direction] : 0;
+    }
+
     // 创建新扇形
     function createNewFOV() {
       // 显示类型选择弹窗
@@ -2330,6 +2383,10 @@
         customAngle: 0,
         offsetX: currentDisplayMode === 'schematic' ? 10 : 20,
         offsetY: currentDisplayMode === 'schematic' ? 0 : 10,
+        offsetZ: 0,
+        anglex: 0,
+        angley: calculateAngley('right', 0),
+        anglez: 0,
         isSelected: true,
         type: type,
         subtype: subtype,
@@ -2341,6 +2398,10 @@
       fovs.forEach(f => f.isSelected = false);
       // 添加新扇形
       fovs.push(newFov);
+      // 同步3D视图
+      if (typeof create3DFrustums === 'function' && is3DViewActive && scene3D && carModel) {
+        create3DFrustums();
+      }
       // 选中新扇形
       selectFOV(newId);
       // 更新UI
@@ -2349,6 +2410,8 @@
       document.getElementById('type-select-modal').style.display = 'none';
       // 更新类型显示
       updateTypeVisibilityPanel();
+      // 更新传感器选择列表
+      updateSensorList();
     }
 
     // 新增：删除选中扇形
@@ -2361,6 +2424,11 @@
         
         // 移除选中的扇形
         fovs.splice(selectedIndex, 1);
+        
+        // 同步3D视图
+        if (typeof create3DFrustums === 'function' && is3DViewActive && scene3D && carModel) {
+          create3DFrustums();
+        }
         
         // 处理删除后选择状态
         if (fovs.length > 0) {
@@ -2628,10 +2696,12 @@
       document.getElementById('angle').value = displayAngle;
       document.getElementById('offsetX').value = Math.round(selectedFov.offsetX * 20) / 20;
       document.getElementById('offsetY').value = Math.round(selectedFov.offsetY * 20) / 20;
+      document.getElementById('offsetZ').value = selectedFov.offsetZ !== undefined ? Math.round(selectedFov.offsetZ * 20) / 20 : 0;
       document.getElementById('direction').value = selectedFov.direction;
       document.getElementById('custom-angle').value = selectedFov.customAngle;
       document.getElementById('custom-color').value = selectedFov.color;
       document.getElementById('transparency').value = selectedFov.transparency;
+      document.getElementById('anglex').value = selectedFov.anglex !== undefined ? selectedFov.anglex : 0;
 
       // 显示/隐藏自定义角度
       if (selectedFov.direction === 'custom') {
@@ -2655,12 +2725,22 @@
       // 位置和其他参数始终可以更新
       selectedFov.offsetX = parseFloat(document.getElementById('offsetX').value);
       selectedFov.offsetY = parseFloat(document.getElementById('offsetY').value);
+      selectedFov.offsetZ = parseFloat(document.getElementById('offsetZ').value);
       selectedFov.direction = document.getElementById('direction').value;
       selectedFov.customAngle = parseFloat(document.getElementById('custom-angle').value);
       selectedFov.color = document.getElementById('custom-color').value;
       selectedFov.transparency = parseFloat(document.getElementById('transparency').value);
+      selectedFov.anglex = parseFloat(document.getElementById('anglex').value);
+      
+      // 实时更新angley
+      selectedFov.angley = calculateAngley(selectedFov.direction, selectedFov.customAngle);
 
       drawAllFOVs();
+      
+      // 同步3D视图
+      if (typeof update3DFrustums === 'function' && is3DViewActive && scene3D && carModel) {
+        update3DFrustums();
+      }
     }
 
     // 初始化事件监听
@@ -2747,18 +2827,25 @@
 
     // 加载配置按钮
     document.getElementById('load-config-btn').addEventListener('click', loadConfig);
-      // 切换动画状态
-      function toggleAnimation() {
+    
+    // 切换动画状态
+    function toggleAnimation() {
         isAnimationActive = !isAnimationActive;
         const btn = document.getElementById('stop-anim-btn');
-        btn.textContent = isAnimationActive ? '停止动画' : '启动动画';
-      }
+        if (isAnimationActive) {
+            btn.innerHTML = '<i class="fa fa-stop mr-1"></i>停止动画';
+            btn.style.background = '#22c55e';
+        } else {
+            btn.innerHTML = '<i class="fa fa-play mr-1"></i>开启动画';
+            btn.style.background = '#3B82F6';
+        }
+    }
 
-      // 新增：停止/启动动画按钮
-      document.getElementById('stop-anim-btn').addEventListener('click', toggleAnimation);
+    // 新增：停止/启动动画按钮
+    document.getElementById('stop-anim-btn').addEventListener('click', toggleAnimation);
 
       // 实时更新（部分参数）
-      ['radius', 'angle', 'offsetX', 'offsetY', 'custom-angle', 'transparency'].forEach(id => {
+      ['radius', 'angle', 'offsetX', 'offsetY', 'offsetZ', 'custom-angle', 'transparency', 'anglex'].forEach(id => {
         document.getElementById(id).addEventListener('input', function() {
           if (fovs.find(f => f.isSelected)) {
             applyFormToSelected();
@@ -2800,6 +2887,8 @@
         initSubtypeSelect('camera');
         // 初始化类型显示面板
         updateTypeVisibilityPanel();
+        // 初始化传感器选择列表
+        updateSensorList();
         // 初始化控制面板收起/展开功能
         initPanelToggle();
         // 启动动画
@@ -2843,6 +2932,10 @@
         checkbox.addEventListener('change', () => {
           visibleTypes[typeKey] = checkbox.checked;
           drawAllFOVs();
+          // 同步3D视图可见性
+          if (typeof syncVisibilityTo3D === 'function') {
+            syncVisibilityTo3D();
+          }
         });
 
         const colorSwatch = document.createElement('div');
@@ -2869,6 +2962,56 @@
       }
     }
     
+    // 更新传感器选择列表
+    function updateSensorList() {
+      const listPanel = document.getElementById('sensor-list-panel');
+      const listItems = document.getElementById('sensor-list-items');
+      
+      if (fovs.length === 0) {
+        listPanel.style.display = 'none';
+        return;
+      }
+      
+      listPanel.style.display = 'block';
+      listItems.innerHTML = '';
+      
+      fovs.forEach(fov => {
+        const item = document.createElement('div');
+        item.style.cssText = 'padding: 5px 8px; cursor: pointer; border-radius: 4px; margin: 2px 0; font-size: 11px; color: white; transition: background 0.2s;';
+        
+        // 根据选中状态设置样式
+        if (fov.isSelected) {
+          item.style.background = 'rgba(59, 130, 246, 0.5)';
+        } else {
+          item.style.background = 'transparent';
+        }
+        
+        // 鼠标悬停效果
+        item.addEventListener('mouseenter', function() {
+          item.style.background = 'rgba(59, 130, 246, 0.3)';
+        });
+        item.addEventListener('mouseleave', function() {
+          item.style.background = fov.isSelected ? 'rgba(59, 130, 246, 0.5)' : 'transparent';
+        });
+        
+        // 显示类型和ID
+        const typeName = fovTemplates[fov.type]?.name || fov.type;
+        item.textContent = `${typeName} #${fov.id}`;
+        
+        item.addEventListener('click', function() {
+          // 选中该传感器
+          fovs.forEach(f => f.isSelected = false);
+          fov.isSelected = true;
+          selectFOV(fov.id);
+          updateFormFromSelected();
+          updateSensorList();
+          drawAllFOVs();
+        });
+        
+        listItems.appendChild(item);
+      });
+    }
+    
     // Toast提示功能
     function showToast(message, type = 'info') {
       const existingToast = document.getElementById('fov-toast');
@@ -2877,15 +3020,15 @@
       }
       
       const styles = {
-        success: 'bg-green-600 border-green-500',
-        error: 'bg-red-600 border-red-500',
-        info: 'bg-blue-600 border-blue-500'
+        success: 'bg-green-500 text-white',
+        error: 'bg-red-500 text-white',
+        info: 'bg-blue-500 text-white'
       };
       
       const toast = document.createElement('div');
       toast.id = 'fov-toast';
-      toast.className = `fixed bottom-6 right-6 px-6 py-3 rounded-lg border transform transition-all duration-300 flex items-center space-x-3 max-w-xs ${styles[type] || styles.info}`;
-      toast.innerHTML = `<span class="text-white text-sm">${message}</span>`;
+      toast.className = `fixed top-4 right-4 z-50 px-4 py-2 rounded-lg shadow-lg transition-opacity duration-300 ${styles[type] || styles.info}`;
+      toast.textContent = message;
       document.body.appendChild(toast);
       
       setTimeout(() => {
@@ -3311,6 +3454,10 @@
           scale: fov.scale,
           offsetX: fov.offsetX,
           offsetY: fov.offsetY,
+          offsetZ: fov.offsetZ !== undefined ? fov.offsetZ : 0,
+          anglex: fov.anglex !== undefined ? fov.anglex : 0,
+          angley: fov.angley !== undefined ? fov.angley : 0,
+          anglez: fov.anglez !== undefined ? fov.anglez : 0,
           type: fov.type,
           subtype: fov.subtype,
           color: fov.color,
@@ -3883,8 +4030,15 @@
 
       configData.fovs.forEach(fovData => {
         if (fovTemplates[fovData.type] && fovTemplates[fovData.type].subtypes[fovData.subtype.split('_')[0]]) {
+          // 补充缺失的属性
+          const angleyValue = (fovData.angley !== undefined) ? fovData.angley : calculateAngley(fovData.direction, fovData.customAngle);
+          
           const newFov = {
             ...fovData,
+            offsetZ: fovData.offsetZ !== undefined ? fovData.offsetZ : 0,
+            anglex: fovData.anglex !== undefined ? fovData.anglex : 0,
+            angley: angleyValue,
+            anglez: fovData.anglez !== undefined ? fovData.anglez : 0,
             isSelected: false
           };
           fovs.push(newFov);
@@ -4054,9 +4208,16 @@
           configData.fovs.forEach(fovData => {
             // 检查类型和子类型是否有效
             if (fovTemplates[fovData.type] && fovTemplates[fovData.type].subtypes[fovData.subtype.split('_')[0]]) {
+              // 补充缺失的属性
+              const angleyValue = (fovData.angley !== undefined) ? fovData.angley : calculateAngley(fovData.direction, fovData.customAngle);
+              
               // 创建新的fov对象
               const newFov = {
                 ...fovData,
+                offsetZ: fovData.offsetZ !== undefined ? fovData.offsetZ : 0,
+                anglex: fovData.anglex !== undefined ? fovData.anglex : 0,
+                angley: angleyValue,
+                anglez: fovData.anglez !== undefined ? fovData.anglez : 0,
                 isSelected: false
               };
               fovs.push(newFov);
@@ -4075,6 +4236,7 @@
           // 重新绘制
           drawAllFOVs();
           updateTypeVisibilityPanel();
+          updateSensorList();
 
           showNotification('模板配置加载成功', 'success');
         })
@@ -4218,6 +4380,7 @@
 
     // 重置所有按钮样式
     function resetAllToggleButtons() {
+      const toggle3DView = document.getElementById('toggle-3d');
       toggleSchematic.style.background = 'transparent';
       toggleSchematic.style.color = '#9CA3AF';
       toggleSchematic.classList.remove('active');
@@ -4227,10 +4390,28 @@
       toggleIntro.style.background = 'transparent';
       toggleIntro.style.color = '#9CA3AF';
       toggleIntro.classList.remove('active');
+      if (toggle3DView) {
+        toggle3DView.style.background = 'transparent';
+        toggle3DView.style.color = '#9CA3AF';
+        toggle3DView.classList.remove('active');
+      }
     }
 
     toggleSchematic.addEventListener('click', function() {
       if (currentDisplayMode === 'schematic') return;
+      
+      // 切换到2D视图
+      if (currentDisplayMode === '3d') {
+        const fovCanvas = document.getElementById('fov-canvas');
+        const d3Container = document.getElementById('3d-container');
+        is3DViewActive = false;
+        fovCanvas.style.display = 'block';
+        d3Container.style.display = 'none';
+        if (renderer3D) {
+            renderer3D.dispose();
+            renderer3D = null;
+        }
+      }
       
       currentDisplayMode = 'schematic';
       resetAllToggleButtons();
@@ -4246,6 +4427,19 @@
     toggleActual.addEventListener('click', function() {
       if (currentDisplayMode === 'actual') return;
       
+      // 切换到2D视图
+      if (currentDisplayMode === '3d') {
+        const fovCanvas = document.getElementById('fov-canvas');
+        const d3Container = document.getElementById('3d-container');
+        is3DViewActive = false;
+        fovCanvas.style.display = 'block';
+        d3Container.style.display = 'none';
+        if (renderer3D) {
+            renderer3D.dispose();
+            renderer3D = null;
+        }
+      }
+      
       currentDisplayMode = 'actual';
       resetAllToggleButtons();
       toggleActual.style.background = '#3B82F6';
@@ -4260,6 +4454,19 @@
     toggleIntro.addEventListener('click', function() {
       if (currentDisplayMode === 'intro') return;
       
+      // 切换到2D视图
+      if (currentDisplayMode === '3d') {
+        const fovCanvas = document.getElementById('fov-canvas');
+        const d3Container = document.getElementById('3d-container');
+        is3DViewActive = false;
+        fovCanvas.style.display = 'block';
+        d3Container.style.display = 'none';
+        if (renderer3D) {
+            renderer3D.dispose();
+            renderer3D = null;
+        }
+      }
+      
       currentDisplayMode = 'intro';
       resetAllToggleButtons();
       toggleIntro.style.background = '#3B82F6';
@@ -4271,8 +4478,647 @@
       drawAllFOVs();
     });
 
+    // 3D视图切换
+    const toggle3D = document.getElementById('toggle-3d');
+    toggle3D.addEventListener('click', function() {
+      if (currentDisplayMode === '3d') return;
+      
+      const fovCanvas = document.getElementById('fov-canvas');
+      const d3Container = document.getElementById('3d-container');
+      
+      is3DViewActive = true;
+      currentDisplayMode = '3d';
+      resetAllToggleButtons();
+      toggle3D.style.background = '#3B82F6';
+      toggle3D.style.color = 'white';
+      toggle3D.classList.add('active');
+      
+      fovCanvas.style.display = 'none';
+      d3Container.style.display = 'block';
+      
+      init3DScene();
+      update3DFrustums();
+    });
+
     // 页面加载完成后初始化
     document.addEventListener('DOMContentLoaded', init);
+
+    // ==================== 3D视图功能 ====================
+    let scene3D, camera3D, renderer3D, controls3D;
+    let carModel = null;
+    let cameraFrustums3D = [];
+    let is3DViewActive = false;
+    let egoSetup = {
+        "modelcar":{posx:0, posy:0, posz:0, scale:1, rotationx:0, rotationy:0, rotationz:0, wheelsize:0.725}
+    };
+    let frustumScale = 0.5;
+
+    // 截屏功能
+    document.getElementById('screenshot-btn').addEventListener('click', function() {
+        if (!is3DViewActive) {
+            showToast('请先切换到3D视图', 'info');
+            return;
+        }
+        if (!renderer3D || !scene3D || !camera3D) {
+            showToast('3D场景未初始化', 'error');
+            return;
+        }
+        
+        // 先弹出命名对话框
+        createScreenshotNameDialog();
+    });
+
+    // 创建截屏命名对话框
+    function createScreenshotNameDialog() {
+        const existingDialog = document.getElementById('screenshot-dialog');
+        if (existingDialog) {
+            existingDialog.remove();
+        }
+
+        const dialogContainer = document.createElement('div');
+        dialogContainer.id = 'screenshot-dialog';
+        dialogContainer.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center';
+
+        dialogContainer.innerHTML = `
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-md overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900">命名截屏文件</h3>
+                </div>
+                <div class="px-6 py-4">
+                    <p class="text-gray-600 mb-4">请输入文件名称：</p>
+                    <input type="text" id="screenshot-filename-input" value="screenshot" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                        placeholder="请输入文件名">
+                </div>
+                <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 flex justify-end space-x-3">
+                    <button id="cancel-screenshot-filename" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                        取消
+                    </button>
+                    <button id="confirm-screenshot-filename" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-500 hover:bg-blue-600">
+                        确定
+                    </button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(dialogContainer);
+
+        document.getElementById('cancel-screenshot-filename').addEventListener('click', function() {
+            dialogContainer.remove();
+        });
+
+        document.getElementById('confirm-screenshot-filename').addEventListener('click', function() {
+            const fileName = document.getElementById('screenshot-filename-input').value || 'screenshot';
+            performScreenshot(fileName);
+            dialogContainer.remove();
+        });
+
+        document.getElementById('screenshot-filename-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const fileName = document.getElementById('screenshot-filename-input').value || 'screenshot';
+                performScreenshot(fileName);
+                dialogContainer.remove();
+            }
+        });
+    }
+
+    // 执行截屏
+    function performScreenshot(fileName) {
+        renderer3D.render(scene3D, camera3D);
+        const dataURL = renderer3D.domElement.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.download = fileName + '_' + Date.now() + '.png';
+        link.href = dataURL;
+        link.click();
+        showToast('截屏已保存', 'success');
+    }
+
+    // 导出模型功能
+    document.getElementById('export-model-btn').addEventListener('click', function() {
+        if (!is3DViewActive) {
+            showToast('请先切换到3D视图', 'info');
+            return;
+        }
+        if (!carModel) {
+            showToast('模型未加载', 'error');
+            return;
+        }
+        
+        // 创建命名对话框
+        createExportNameDialog();
+    });
+
+    // 创建导出模型命名对话框
+    function createExportNameDialog() {
+        const existingDialog = document.getElementById('export-dialog');
+        if (existingDialog) {
+            existingDialog.remove();
+        }
+
+        const dialogContainer = document.createElement('div');
+        dialogContainer.id = 'export-dialog';
+        dialogContainer.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center';
+
+        dialogContainer.innerHTML = `
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-md overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900">命名模型文件</h3>
+                </div>
+                <div class="px-6 py-4">
+                    <p class="text-gray-600 mb-4">请输入文件名称：</p>
+                    <input type="text" id="export-filename-input" value="exported_model" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                        placeholder="请输入文件名">
+                </div>
+                <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 flex justify-end space-x-3">
+                    <button id="cancel-export-filename" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                        取消
+                    </button>
+                    <button id="confirm-export-filename" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-500 hover:bg-blue-600">
+                        确定
+                    </button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(dialogContainer);
+
+        document.getElementById('cancel-export-filename').addEventListener('click', function() {
+            dialogContainer.remove();
+        });
+
+        document.getElementById('confirm-export-filename').addEventListener('click', function() {
+            const fileName = document.getElementById('export-filename-input').value || 'exported_model';
+            performExportModel(fileName);
+            dialogContainer.remove();
+        });
+
+        document.getElementById('export-filename-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const fileName = document.getElementById('export-filename-input').value || 'exported_model';
+                performExportModel(fileName);
+                dialogContainer.remove();
+            }
+        });
+    }
+
+    // 执行导出模型
+    function performExportModel(fileName) {
+        const exporter = new THREE.GLTFExporter();
+        
+        // 创建一个包含车模和视锥的组
+        const exportGroup = new THREE.Group();
+        
+        // 克隆车模
+        const clonedCarModel = carModel.clone();
+        exportGroup.add(clonedCarModel);
+        
+        // 添加所有视锥
+        cameraFrustums3D.forEach(item => {
+            if (item.frustum) {
+                const clonedFrustum = item.frustum.clone();
+                exportGroup.add(clonedFrustum);
+            }
+        });
+
+        exporter.parse(
+            exportGroup,
+            function(gltf) {
+                const blob = new Blob([gltf], { type: 'application/octet-stream' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = fileName + '.glb';
+                link.click();
+                URL.revokeObjectURL(url);
+                showToast('模型导出成功', 'success');
+            },
+            function(error) {
+                console.error('导出模型失败:', error);
+                showToast('模型导出失败: ' + error.message, 'error');
+            },
+            { binary: true }
+        );
+    }
+
+    // 初始化3D场景
+    function init3DScene() {
+        if (renderer3D) return;
+        
+        const container = document.getElementById('3d-container');
+        const canvas = document.getElementById('3d-canvas');
+        
+        // 创建场景
+        scene3D = new THREE.Scene();
+        scene3D.background = new THREE.Color(0x000000);
+        
+        // 创建相机
+        camera3D = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
+        camera3D.position.set(5, 4, 8);  // 更贴近车辆的位置
+        camera3D.lookAt(0, 0, 0);
+        camera3D.layers.enable(0);  // 默认图层
+        camera3D.layers.enable(1);  // 车辆图层
+        camera3D.layers.enable(2);  // 视锥图层
+        
+        // 创建渲染器
+        renderer3D = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+        renderer3D.setSize(container.clientWidth, container.clientHeight);
+        renderer3D.setPixelRatio(window.devicePixelRatio);
+        
+        // 添加轨道控制器
+        controls3D = new THREE.OrbitControls(camera3D, renderer3D.domElement);
+        controls3D.enableDamping = true;
+        controls3D.dampingFactor = 0.1;
+        
+        // 添加环境光
+        const ambientLight = new THREE.AmbientLight(0xFFFFFF, 2.5);
+        scene3D.add(ambientLight);
+        
+        // 添加方向光 - 放置在Y轴20m处指向原点
+        const directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1);
+        directionalLight.position.set(0, 20, 0);
+        directionalLight.target.position.set(0, 0, 0);
+        scene3D.add(directionalLight);
+        scene3D.add(directionalLight.target);
+        
+        // 添加地台
+        createGroundPlatform();
+        
+        // 加载车模
+        loadCarModel3D();
+        
+        // 开始渲染循环
+        animate3D();
+    }
+
+    // 创建地台和坐标轴
+    function createGroundPlatform() {
+        // 添加圆形地面平台
+        const platformGeometry = new THREE.CircleGeometry(30, 64);
+        const platformMaterial = new THREE.MeshStandardMaterial({ 
+            color: 0x222222,
+            side: THREE.DoubleSide
+        });
+        const platform = new THREE.Mesh(platformGeometry, platformMaterial);
+        platform.rotation.x = -Math.PI / 2;
+        platform.position.y = -0.01;
+        scene3D.add(platform);
+        
+        // 隐藏网格辅助
+        // const gridHelper = new THREE.GridHelper(50, 50, 0x555555, 0x333333);
+        // scene3D.add(gridHelper);
+        
+        // 隐藏坐标轴箭头
+        // 添加坐标轴箭头 (X=红色=前方, Y=绿色=上方, Z=蓝色=右方)
+        // const arrowLength = 15;
+        // const arrowHeadLength = 2;
+        // const arrowHeadWidth = 1;
+        
+        // X轴 - 红色 - 前进方向
+        // const dirX = new THREE.Vector3(1, 0, 0);
+        // const arrowX = new THREE.ArrowHelper(dirX, new THREE.Vector3(0, 0.01, 0), arrowLength, 0xff0000, arrowHeadLength, arrowHeadWidth);
+        // scene3D.add(arrowX);
+        
+        // Y轴 - 绿色 - 上方
+        // const dirY = new THREE.Vector3(0, 1, 0);
+        // const arrowY = new THREE.ArrowHelper(dirY, new THREE.Vector3(0, 0, 0), arrowLength, 0x00ff00, arrowHeadLength, arrowHeadWidth);
+        // scene3D.add(arrowY);
+        
+        // Z轴 - 蓝色 - 右方
+        // const dirZ = new THREE.Vector3(0, 0, 1);
+        // const arrowZ = new THREE.ArrowHelper(dirZ, new THREE.Vector3(0, 0.01, 0), arrowLength, 0x0000ff, arrowHeadLength, arrowHeadWidth);
+        // scene3D.add(arrowZ);
+    }
+
+    // 加载车模
+    function loadCarModel3D() {
+        const loader = new THREE.GLTFLoader();
+        const carPath = 'templates/modelcar.glb';
+        
+        // 显示加载进度条
+        const loadingModal = document.getElementById('3d-loading-modal');
+        const loadingProgress = document.getElementById('3d-loading-progress');
+        const loadingPercent = document.getElementById('3d-loading-percent');
+        loadingModal.style.display = 'block';
+        loadingProgress.style.width = '0%';
+        loadingPercent.textContent = '0%';
+        
+        loader.load(carPath, (gltf) => {
+            // 隐藏加载进度条
+            loadingModal.style.display = 'none';
+            
+            carModel = gltf.scene;
+            carModel.type = 'ego_car';
+            
+            // 应用车模参数
+            const egoname = 'modelcar';
+            const scaleFactor = egoSetup[egoname].scale;
+            carModel.scale.set(scaleFactor, scaleFactor, scaleFactor);
+            carModel.rotation.x = egoSetup[egoname].rotationx * Math.PI / 180;
+            carModel.rotation.y = egoSetup[egoname].rotationy * Math.PI / 180;
+            carModel.rotation.z = egoSetup[egoname].rotationz * Math.PI / 180;
+            carModel.position.set(egoSetup[egoname].posx, egoSetup[egoname].posy, egoSetup[egoname].posz);
+            
+            // 设置材质（移除图层设置，使用默认）
+            carModel.traverse(function(child) {
+                if (child.isMesh) {
+                    // 转换为PBR材质
+                    if (child.material) {
+                        const originalMaterial = child.material;
+                        const pbrMaterial = new THREE.MeshPhysicalMaterial({
+                            color: originalMaterial.color || 0xffffff,
+                            metalness: 0.8,
+                            roughness: 0.3,
+                            clearcoat: 1.0,
+                            clearcoatRoughness: 0.1,
+                            reflectivity: 0.9,
+                            transparent: originalMaterial.transparent || false,
+                            opacity: originalMaterial.opacity !== undefined ? originalMaterial.opacity : 1
+                        });
+                        if (originalMaterial.map) pbrMaterial.map = originalMaterial.map;
+                        if (originalMaterial.normalMap) pbrMaterial.normalMap = originalMaterial.normalMap;
+                        child.material = pbrMaterial;
+                    }
+                }
+            });
+            
+            scene3D.add(carModel);
+            
+            // 设置相机目标
+            const box = new THREE.Box3().setFromObject(carModel);
+            const center = box.getCenter(new THREE.Vector3());
+            controls3D.target.copy(center);
+            camera3D.lookAt(center);
+            
+            // 创建视锥
+            create3DFrustums();
+            
+            // 启动相机环绕动画
+            startCameraOrbitAnimation(center);
+            
+        }, (xhr) => {
+            if (xhr.total > 0) {
+                const percent = Math.round((xhr.loaded / xhr.total) * 100);
+                loadingProgress.style.width = percent + '%';
+                loadingPercent.textContent = percent + '%';
+            }
+        }, (error) => {
+            console.error('车模加载失败:', error);
+            loadingModal.style.display = 'none';
+        });
+    }
+
+    // 将FoV参数映射到视锥参数（直接使用基础参数）
+    function mapFovToCameraParams(fov) {
+        // 直接使用基础参数
+        return {
+            id: fov.id,
+            posx: fov.offsetX || 0,
+            posy: fov.offsetZ || 0,
+            posz: fov.offsetY || 0,
+            anglex: fov.anglex || 0,
+            angley: fov.angley || 0,
+            anglez: fov.anglez || 0,
+            range: fov.radius || 10,
+            hfov: fov.angle || 60,
+            vfov: 60,
+            color: fov.color || '#ffffff',
+            transparency: fov.transparency || 0.5
+        };
+    }
+
+    // 创建3D视锥
+    function create3DFrustums() {
+        // 清除现有视锥
+        cameraFrustums3D.forEach(item => {
+            if (item.frustum && item.frustum.parent === scene3D) {
+                scene3D.remove(item.frustum);
+            }
+        });
+        cameraFrustums3D = [];
+        
+        fovs.forEach(fov => {
+            const params = mapFovToCameraParams(fov);
+            console.log('=== 视锥传感器参数 ===');
+            console.log('fov id:', fov.id);
+            console.log('fov type:', fov.type);
+            console.log('fov subtype:', fov.subtype);
+            console.log('fov direction:', fov.direction);
+            console.log('fov customAngle:', fov.customAngle);
+            console.log('fov offsetX:', fov.offsetX);
+            console.log('fov offsetY:', fov.offsetY);
+            console.log('fov offsetZ:', fov.offsetZ);
+            console.log('fov radius:', fov.radius);
+            console.log('fov angle:', fov.angle);
+            console.log('fov color:', fov.color);
+            console.log('映射后 params:', params);
+            console.log('--------------------');
+            const frustum = createSingleFrustum3D(params);
+            
+            if (frustum) {
+                // 构建visibilityKey：type + subtype的第一部分
+                const subtypeBase = fov.subtype.split('_')[0];
+                const visibilityKey = `${fov.type}_${subtypeBase}`;
+                const isVisible = visibleTypes[visibilityKey] !== false;
+                frustum.visible = isVisible;
+                
+                scene3D.add(frustum);
+                cameraFrustums3D.push({
+                    id: fov.id,
+                    frustum: frustum,
+                    params: params,
+                    fov: fov
+                });
+            }
+        });
+    }
+
+    // 创建单个视锥
+    function createSingleFrustum3D(params) {
+        const fovX = THREE.MathUtils.degToRad(params.hfov);
+        const fovY = THREE.MathUtils.degToRad(params.vfov);
+        const near = 0.05;
+        const far = frustumScale * params.range;
+        
+        const halfHeightNear = Math.tan(fovY / 2) * near;
+        const halfWidthNear = Math.tan(fovX / 2) * near;
+        const halfHeightFar = Math.tan(fovY / 2) * far;
+        const halfWidthFar = Math.tan(fovX / 2) * far;
+        
+        const vertices = [
+            -halfWidthNear, -halfHeightNear, -near,
+            halfWidthNear, -halfHeightNear, -near,
+            halfWidthNear, halfHeightNear, -near,
+            -halfWidthNear, halfHeightNear, -near,
+            -halfWidthFar, -halfHeightFar, -far,
+            halfWidthFar, -halfHeightFar, -far,
+            halfWidthFar, halfHeightFar, -far,
+            -halfWidthFar, halfHeightFar, -far
+        ];
+        
+        const indices = [
+            0, 1, 2, 2, 3, 0,
+            0, 1, 5, 5, 4, 0,
+            1, 2, 6, 6, 5, 1,
+            2, 3, 7, 7, 6, 2,
+            3, 0, 4, 4, 7, 3
+        ];
+        
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+        geometry.setIndex(indices);
+        
+        const color = new THREE.Color(params.color);
+        
+        const wireframeMaterial = new THREE.MeshBasicMaterial({
+            color: color,
+            opacity: params.transparency * 0.8,
+            transparent: true,
+            wireframe: true
+        });
+        
+        const fillMaterial = new THREE.MeshBasicMaterial({
+            color: color,
+            transparent: true,
+            opacity: params.transparency * 0.3,
+            side: THREE.DoubleSide
+        });
+        
+        const wireframeMesh = new THREE.Mesh(geometry, wireframeMaterial);
+        const fillMesh = new THREE.Mesh(geometry, fillMaterial);
+        
+        // 添加顶点球体
+        const sphereGeometry = new THREE.SphereGeometry(0.1, 16, 16);
+        const sphereMaterial = new THREE.MeshBasicMaterial({
+            color: color,
+            transparent: true,
+            opacity: 1
+        });
+        const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+        
+        const frustumGroup = new THREE.Group();
+        frustumGroup.add(wireframeMesh);
+        frustumGroup.add(fillMesh);
+        frustumGroup.add(sphereMesh);
+        
+        // 设置位置和旋转
+        if (carModel) {
+            frustumGroup.position.set(
+                carModel.position.x + params.posx,
+                carModel.position.y + params.posy,
+                carModel.position.z + params.posz
+            );
+            
+            // 应用旋转 - Y轴旋转（angley）和X轴旋转（anglex）
+            frustumGroup.rotation.y = params.angley * Math.PI / 180;
+            frustumGroup.rotation.x = params.anglex * Math.PI / 180;
+        }
+        
+        return frustumGroup;
+    }
+
+    // 更新3D视锥
+    function update3DFrustums() {
+        if (!scene3D || !carModel) return;
+        
+        cameraFrustums3D.forEach(item => {
+            const params = mapFovToCameraParams(item.fov);
+            item.params = params;
+            
+            item.frustum.position.set(
+                carModel.position.x + params.posx,
+                carModel.position.y + params.posy,
+                carModel.position.z + params.posz
+            );
+            item.frustum.rotation.y = params.angley * Math.PI / 180;
+            item.frustum.rotation.x = params.anglex * Math.PI / 180;
+            
+            // 更新可见性
+            const subtypeBase = item.fov.subtype.split('_')[0];
+            const visibilityKey = `${item.fov.type}_${subtypeBase}`;
+            item.frustum.visible = visibleTypes[visibilityKey] !== false;
+        });
+    }
+
+    // 同步可见性
+    function syncVisibilityTo3D() {
+        if (!is3DViewActive) return;
+        
+        cameraFrustums3D.forEach(item => {
+            const subtypeBase = item.fov.subtype.split('_')[0];
+            const visibilityKey = `${item.fov.type}_${subtypeBase}`;
+            item.frustum.visible = visibleTypes[visibilityKey] !== false;
+        });
+    }
+
+    // 相机环绕动画
+    let orbitAnimation = {
+        active: false,
+        startTime: 0,
+        duration: 3000,  // 3秒
+        startPos: new THREE.Vector3(20, 8, -7),
+        endPos: new THREE.Vector3(5, 4, 7),
+        center: new THREE.Vector3()
+    };
+
+    function startCameraOrbitAnimation(center) {
+        orbitAnimation.active = true;
+        orbitAnimation.startTime = Date.now();
+        orbitAnimation.center.copy(center);
+    }
+
+    function updateOrbitAnimation() {
+        if (!orbitAnimation.active) return;
+
+        const elapsed = Date.now() - orbitAnimation.startTime;
+        let t = elapsed / orbitAnimation.duration;
+        
+        if (t >= 1) {
+            t = 1;
+            orbitAnimation.active = false;
+        }
+
+        // 使用缓动函数（ easeOutCubic）
+        const easeT = 1 - Math.pow(1 - t, 3);
+
+        // 线性插值位置
+        const x = orbitAnimation.startPos.x + (orbitAnimation.endPos.x - orbitAnimation.startPos.x) * easeT;
+        const y = orbitAnimation.startPos.y + (orbitAnimation.endPos.y - orbitAnimation.startPos.y) * easeT;
+        const z = orbitAnimation.startPos.z + (orbitAnimation.endPos.z - orbitAnimation.startPos.z) * easeT;
+
+        camera3D.position.set(
+            orbitAnimation.center.x + x,
+            orbitAnimation.center.y + y,
+            orbitAnimation.center.z + z
+        );
+        camera3D.lookAt(orbitAnimation.center);
+    }
+
+    // 3D动画循环
+    function animate3D() {
+        if (!is3DViewActive || !renderer3D) return;
+        
+        requestAnimationFrame(animate3D);
+        
+        // 更新环绕动画
+        updateOrbitAnimation();
+        
+        if (controls3D) controls3D.update();
+        
+        renderer3D.render(scene3D, camera3D);
+    }
+
+    // 窗口大小调整
+    window.addEventListener('resize', function() {
+        if (!is3DViewActive || !renderer3D) return;
+        
+        const container = document.getElementById('3d-container');
+        camera3D.aspect = container.clientWidth / container.clientHeight;
+        camera3D.updateProjectionMatrix();
+        renderer3D.setSize(container.clientWidth, container.clientHeight);
+    });
+
+    // ==================== 3D视图功能结束 ====================
     </script>
     <script src="../js/load-components.js"></script>
     <script src="../js/function-link-manager.js"></script>

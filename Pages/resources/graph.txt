@@ -1,0 +1,113 @@
+mxGraph v4.2.2
+
+# Graph
+graph.noSelection=No selection
+
+# Cells
+cell.tooltip=Tooltip
+cell.value=Value
+cell.style=Style
+
+# Edges
+edge.source=Source
+edge.target=Target
+edge.label=Label
+
+# Validation
+validation.tooManySourceEdges=Too many source edges
+validation.tooManyTargetEdges=Too many target edges
+validation.noEdgeTarget=No edge target
+validation.noEdgeSource=No edge source
+validation.invalidEdgeSource=Invalid edge source
+validation.invalidEdgeTarget=Invalid edge target
+
+# Errors
+errors.noGraph=Graph is not available
+errors.noParent=Parent is not available
+
+# Dialogs
+dialogs.confirmDelete=Delete selected cells?
+dialogs.confirmRemove=Remove selected cells from parent?
+dialogs.confirmDisconnect=Disconnect selected edges?
+dialogs.confirmClone=Clone selected cells?
+dialogs.confirmDuplicate=Duplicate selected cells?
+dialogs.confirmCut=Cut selected cells?
+dialogs.confirmCopy=Copy selected cells?
+dialogs.confirmPaste=Paste cells here?
+dialogs.confirmUndo=Undo last change?
+dialogs.confirmRedo=Redo last change?
+dialogs.confirmClear=Clear graph?
+dialogs.confirmDeleteConnection=Delete selected connections?
+dialogs.confirmDeleteVertex=Delete selected vertices?
+
+# Menus
+menus.edit=Edit
+menus.edit.cut=Cut
+menus.edit.copy=Copy
+menus.edit.paste=Paste
+menus.edit.delete=Delete
+menus.edit.undo=Undo
+menus.edit.redo=Redo
+menus.edit.selectAll=Select All
+menus.edit.selectNone=Select None
+menus.edit.selectInvert=Invert Selection
+menus.edit.selectVertices=Select Vertices
+menus.edit.selectEdges=Select Edges
+menus.edit.selectAllEdges=Select All Edges
+menus.edit.selectAllVertices=Select All Vertices
+menus.edit.selectSame=Select Same
+menus.edit.selectSameSource=Select Same Source
+menus.edit.selectSameTarget=Select Same Target
+menus.edit.selectSameStyle=Select Same Style
+menus.edit.selectSameValue=Select Same Value
+menus.edit.selectSameType=Select Same Type
+menus.edit.selectSameEdgeType=Select Same Edge Type
+menus.edit.selectSameVertexType=Select Same Vertex Type
+menus.edit.selectSameEdgeStyle=Select Same Edge Style
+menus.edit.selectSameVertexStyle=Select Same Vertex Style
+menus.edit.selectSameEdgeValue=Select Same Edge Value
+menus.edit.selectSameVertexValue=Select Same Vertex Value
+menus.edit.selectSameEdgeLabel=Select Same Edge Label
+menus.edit.selectSameVertexLabel=Select Same Vertex Label
+menus.edit.selectSameEdgeSource=Select Same Edge Source
+menus.edit.selectSameEdgeTarget=Select Same Edge Target
+menus.edit.selectSameVertexParent=Select Same Vertex Parent
+menus.edit.selectSameEdgeParent=Select Same Edge Parent
+menus.edit.selectSameVertexChildren=Select Same Vertex Children
+menus.edit.selectSameEdgeChildren=Select Same Edge Children
+menus.edit.selectSameVertexAncestors=Select Same Vertex Ancestors
+menus.edit.selectSameEdgeAncestors=Select Same Edge Ancestors
+menus.edit.selectSameVertexDescendants=Select Same Vertex Descendants
+menus.edit.selectSameEdgeDescendants=Select Same Edge Descendants
+menus.edit.selectSameVertexSiblings=Select Same Vertex Siblings
+menus.edit.selectSameEdgeSiblings=Select Same Edge Siblings
+menus.edit.selectSameVertexNeighbors=Select Same Vertex Neighbors
+menus.edit.selectSameEdgeNeighbors=Select Same Edge Neighbors
+menus.edit.selectSameVertexPredecessors=Select Same Vertex Predecessors
+menus.edit.selectSameEdgePredecessors=Select Same Edge Predecessors
+menus.edit.selectSameVertexSuccessors=Select Same Vertex Successors
+menus.edit.selectSameEdgeSuccessors=Select Same Edge Successors
+menus.edit.selectSameVertexIncoming=Select Same Vertex Incoming
+menus.edit.selectSameEdgeIncoming=Select Same Edge Incoming
+menus.edit.selectSameVertexOutgoing=Select Same Vertex Outgoing
+menus.edit.selectSameEdgeOutgoing=Select Same Edge Outgoing
+menus.edit.selectSameVertexParents=Select Same Vertex Parents
+menus.edit.selectSameEdgeParents=Select Same Edge Parents
+menus.edit.selectSameVertexChildren=Select Same Vertex Children
+menus.edit.selectSameEdgeChildren=Select Same Edge Children
+menus.edit.selectSameVertexAncestors=Select Same Vertex Ancestors
+menus.edit.selectSameEdgeAncestors=Select Same Edge Ancestors
+menus.edit.selectSameVertexDescendants=Select Same Vertex Descendants
+menus.edit.selectSameEdgeDescendants=Select Same Edge Descendants
+menus.edit.selectSameVertexSiblings=Select Same Vertex Siblings
+menus.edit.selectSameEdgeSiblings=Select Same Edge Siblings
+menus.edit.selectSameVertexNeighbors=Select Same Vertex Neighbors
+menus.edit.selectSameEdgeNeighbors=Select Same Edge Neighbors
+menus.edit.selectSameVertexPredecessors=Select Same Vertex Predecessors
+menus.edit.selectSameEdgePredecessors=Select Same Edge Predecessors
+menus.edit.selectSameVertexSuccessors=Select Same Vertex Successors
+menus.edit.selectSameEdgeSuccessors=Select Same Edge Successors
+menus.edit.selectSameVertexIncoming=Select Same Vertex Incoming
+menus.edit.selectSameEdgeIncoming=Select Same Edge Incoming
+menus.edit.selectSameVertexOutgoing=Select Same Vertex Outgoing
+menus.edit.selectSameEdgeOutgoing=Select Same Edge Outgoing

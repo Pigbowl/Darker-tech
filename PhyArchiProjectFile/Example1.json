@@ -1,0 +1,1170 @@
+{
+  "identifier": "PhyArhi",
+  "elements": [
+    {
+      "id": "elem_1",
+      "type": "rectangle",
+      "name": "QC8650P-AAAA",
+      "ItemType": "SoC",
+      "size": 200,
+      "color": "#0066ff",
+      "position": {
+        "x": 750,
+        "y": 310
+      },
+      "width": 320,
+      "height": 330,
+      "rounded": 0,
+      "fontColor": "#ffffff",
+      "fontSize": "10",
+      "strokeColor": "#000000",
+      "labelAlign": "center",
+      "labelVerticalAlign": "middle",
+      "properties": {
+        "ID": 2,
+        "Name": "QC8650P-AAAA",
+        "Description": "[QAM8650P is the next generation Qualcomm® Snapdragon®\nadvanced driver-assistance systems (ADAS) module designed\nfor superior performance and power efficiency.\nIt has been developed as a Safety Element out of\nContext (SEooC). The key components of the QAM8650P\nmodule include the SA8650P SoC, PMM8650AU (×4) power\nmanagement IC, third party power management]",
+        "CyberSecurity": 1,
+        "MAX_TEMP": 105,
+        "MIN_TEMP": -40,
+        "Temperature_Range": "[-40°C~105°C]",
+        "Domain": "ADAS",
+        "Fusa_Level": "ASIL_D",
+        "Type": "SoC",
+        "Supplier_Name": {
+          "Name": "QualComm",
+          "CN_Name": "高通"
+        },
+        "Power_Consumption": 30,
+        "interface": [
+          {
+            "ID": 22,
+            "Interface_Number": 1,
+            "Property": "???",
+            "calculator_ID": 2,
+            "Type": "USB",
+            "SubType": "USB 3.1"
+          },
+          {
+            "ID": 23,
+            "Interface_Number": 1,
+            "Property": "???",
+            "calculator_ID": 2,
+            "Type": "USB",
+            "SubType": "USB 2.0"
+          },
+          {
+            "ID": 24,
+            "Interface_Number": 4,
+            "Property": "???",
+            "calculator_ID": 2,
+            "Type": "VIDEO",
+            "SubType": "MIPI CSI-2(C-PHY)"
+          },
+          {
+            "ID": 25,
+            "Interface_Number": 8,
+            "Property": "CAN FD",
+            "calculator_ID": 2,
+            "Type": "CAN",
+            "SubType": "CAN_FD"
+          },
+          {
+            "ID": 26,
+            "Interface_Number": 1,
+            "Property": "100",
+            "calculator_ID": 2,
+            "Type": "ETHERNET",
+            "SubType": "RGMII"
+          },
+          {
+            "ID": 27,
+            "Interface_Number": 1,
+            "Property": "???",
+            "calculator_ID": 2,
+            "Type": "ETHERNET",
+            "SubType": "SGMII"
+          },
+          {
+            "ID": 28,
+            "Interface_Number": 1,
+            "Property": "SPI",
+            "calculator_ID": 2,
+            "Type": "SPI",
+            "SubType": "Octal-SPI"
+          },
+          {
+            "ID": 29,
+            "Interface_Number": 1,
+            "Property": "???",
+            "calculator_ID": 2,
+            "Type": "GENERAL",
+            "SubType": "I2C"
+          },
+          {
+            "ID": 30,
+            "Interface_Number": 2,
+            "Property": "UFS 3.1 gear 4",
+            "calculator_ID": 2,
+            "Type": "STORAGE",
+            "SubType": "UFS"
+          },
+          {
+            "ID": 31,
+            "Interface_Number": 1,
+            "Property": "eMMC 5.1",
+            "calculator_ID": 2,
+            "Type": "STORAGE",
+            "SubType": "eMMC"
+          },
+          {
+            "ID": 32,
+            "Interface_Number": 1,
+            "Property": "64B FIFO",
+            "calculator_ID": 2,
+            "Type": "GENERAL",
+            "SubType": "UART"
+          }
+        ],
+        "memory_unit": [],
+        "processor": [
+          {
+            "ID": 26,
+            "Number": 2,
+            "Name": "HTP",
+            "Power": 100,
+            "Lockstep": 0,
+            "calculator_ID": 2,
+            "Type": "NPU",
+            "Unit": "TOPS"
+          },
+          {
+            "ID": 27,
+            "Number": 4,
+            "Name": "Cortex-R52",
+            "Power": 18,
+            "Lockstep": 1,
+            "calculator_ID": 2,
+            "Type": "RPU",
+            "Unit": "KDMIPS"
+          },
+          {
+            "ID": 28,
+            "Number": 1,
+            "Name": "ADRENO_663",
+            "Power": 15000,
+            "Lockstep": 0,
+            "calculator_ID": 2,
+            "Type": "GPU",
+            "Unit": "GFLOPS"
+          },
+          {
+            "ID": 29,
+            "Number": 8,
+            "Name": "Hexagon Vector eXtensions",
+            "Power": 100,
+            "Lockstep": 0,
+            "calculator_ID": 2,
+            "Type": "DSP",
+            "Unit": "GFLOPS"
+          },
+          {
+            "ID": 30,
+            "Number": 1,
+            "Name": "Spectra 690 camera ISP",
+            "Power": 2.4,
+            "Lockstep": 0,
+            "calculator_ID": 2,
+            "Type": "ISP",
+            "Unit": "MP/s"
+          },
+          {
+            "ID": 31,
+            "Number": 1,
+            "Name": "Adreno 765 VPU",
+            "Power": 10000,
+            "Lockstep": 0,
+            "calculator_ID": 2,
+            "Type": "CODEC",
+            "Unit": "/"
+          },
+          {
+            "ID": 32,
+            "Number": 1,
+            "Name": "???",
+            "Power": 240,
+            "Lockstep": 0,
+            "calculator_ID": 2,
+            "Type": "DOF",
+            "Unit": "MP/s"
+          },
+          {
+            "ID": 34,
+            "Number": 8,
+            "Name": "Kyro Gen 6",
+            "Power": 245,
+            "Lockstep": 0,
+            "calculator_ID": 2,
+            "Type": "CPU",
+            "Unit": "KDMIPS"
+          }
+        ],
+        "interface_group": {
+          "USB": [
+            {
+              "ID": 22,
+              "Interface_Number": 1,
+              "Property": "???",
+              "calculator_ID": 2,
+              "Type": "USB",
+              "SubType": "USB 3.1"
+            },
+            {
+              "ID": 23,
+              "Interface_Number": 1,
+              "Property": "???",
+              "calculator_ID": 2,
+              "Type": "USB",
+              "SubType": "USB 2.0"
+            }
+          ],
+          "VIDEO": [
+            {
+              "ID": 24,
+              "Interface_Number": 4,
+              "Property": "???",
+              "calculator_ID": 2,
+              "Type": "VIDEO",
+              "SubType": "MIPI CSI-2(C-PHY)"
+            }
+          ],
+          "CAN": [
+            {
+              "ID": 25,
+              "Interface_Number": 8,
+              "Property": "CAN FD",
+              "calculator_ID": 2,
+              "Type": "CAN",
+              "SubType": "CAN_FD"
+            }
+          ],
+          "ETHERNET": [
+            {
+              "ID": 26,
+              "Interface_Number": 1,
+              "Property": "100",
+              "calculator_ID": 2,
+              "Type": "ETHERNET",
+              "SubType": "RGMII"
+            },
+            {
+              "ID": 27,
+              "Interface_Number": 1,
+              "Property": "???",
+              "calculator_ID": 2,
+              "Type": "ETHERNET",
+              "SubType": "SGMII"
+            }
+          ],
+          "SPI": [
+            {
+              "ID": 28,
+              "Interface_Number": 1,
+              "Property": "SPI",
+              "calculator_ID": 2,
+              "Type": "SPI",
+              "SubType": "Octal-SPI"
+            }
+          ],
+          "GENERAL": [
+            {
+              "ID": 29,
+              "Interface_Number": 1,
+              "Property": "???",
+              "calculator_ID": 2,
+              "Type": "GENERAL",
+              "SubType": "I2C"
+            },
+            {
+              "ID": 32,
+              "Interface_Number": 1,
+              "Property": "64B FIFO",
+              "calculator_ID": 2,
+              "Type": "GENERAL",
+              "SubType": "UART"
+            }
+          ],
+          "STORAGE": [
+            {
+              "ID": 30,
+              "Interface_Number": 2,
+              "Property": "UFS 3.1 gear 4",
+              "calculator_ID": 2,
+              "Type": "STORAGE",
+              "SubType": "UFS"
+            },
+            {
+              "ID": 31,
+              "Interface_Number": 1,
+              "Property": "eMMC 5.1",
+              "calculator_ID": 2,
+              "Type": "STORAGE",
+              "SubType": "eMMC"
+            }
+          ]
+        },
+        "processor_group": {
+          "NPU": [
+            {
+              "ID": 26,
+              "Number": 2,
+              "Name": "HTP",
+              "Power": 100,
+              "Lockstep": 0,
+              "calculator_ID": 2,
+              "Type": "NPU",
+              "Unit": "TOPS"
+            }
+          ],
+          "RPU": [
+            {
+              "ID": 27,
+              "Number": 4,
+              "Name": "Cortex-R52",
+              "Power": 18,
+              "Lockstep": 1,
+              "calculator_ID": 2,
+              "Type": "RPU",
+              "Unit": "KDMIPS"
+            }
+          ],
+          "GPU": [
+            {
+              "ID": 28,
+              "Number": 1,
+              "Name": "ADRENO_663",
+              "Power": 15000,
+              "Lockstep": 0,
+              "calculator_ID": 2,
+              "Type": "GPU",
+              "Unit": "GFLOPS"
+            }
+          ],
+          "DSP": [
+            {
+              "ID": 29,
+              "Number": 8,
+              "Name": "Hexagon Vector eXtensions",
+              "Power": 100,
+              "Lockstep": 0,
+              "calculator_ID": 2,
+              "Type": "DSP",
+              "Unit": "GFLOPS"
+            }
+          ],
+          "ISP": [
+            {
+              "ID": 30,
+              "Number": 1,
+              "Name": "Spectra 690 camera ISP",
+              "Power": 2.4,
+              "Lockstep": 0,
+              "calculator_ID": 2,
+              "Type": "ISP",
+              "Unit": "MP/s"
+            }
+          ],
+          "CODEC": [
+            {
+              "ID": 31,
+              "Number": 1,
+              "Name": "Adreno 765 VPU",
+              "Power": 10000,
+              "Lockstep": 0,
+              "calculator_ID": 2,
+              "Type": "CODEC",
+              "Unit": "/"
+            }
+          ],
+          "DOF": [
+            {
+              "ID": 32,
+              "Number": 1,
+              "Name": "???",
+              "Power": 240,
+              "Lockstep": 0,
+              "calculator_ID": 2,
+              "Type": "DOF",
+              "Unit": "MP/s"
+            }
+          ],
+          "CPU": [
+            {
+              "ID": 34,
+              "Number": 8,
+              "Name": "Kyro Gen 6",
+              "Power": 245,
+              "Lockstep": 0,
+              "calculator_ID": 2,
+              "Type": "CPU",
+              "Unit": "KDMIPS"
+            }
+          ]
+        },
+        "interface_list": [
+          {
+            "name": "USB 3.1 - 1",
+            "type": "USB",
+            "subType": "USB 3.1",
+            "enabled": true,
+            "connection": null,
+            "interfaceLeft": 0,
+            "interfaceTop": 100,
+            "interfaceIndex": 0,
+            "size": 100,
+            "height": 20,
+            "color": "#ffffff",
+            "strokeColor": "#000000",
+            "fontColor": "#000000",
+            "rounded": 0,
+            "closestSide": "left",
+            "rotation": 0,
+            "align": "left"
+          },
+          {
+            "name": "USB 2.0 - 1",
+            "type": "USB",
+            "subType": "USB 2.0",
+            "enabled": true,
+            "connection": "RH850-U2A16 - USB 2.0 - 2",
+            "interfaceLeft": 100,
+            "interfaceTop": 270,
+            "interfaceIndex": 1,
+            "size": 100,
+            "height": 20,
+            "color": "#ffffff",
+            "strokeColor": "#000000",
+            "fontColor": "#000000",
+            "rounded": 0,
+            "closestSide": "bottom",
+            "rotation": -90,
+            "align": "left",
+            "parentId": "elem_1",
+            "isInterface": true
+          },
+          {
+            "name": "MIPI CSI-2(C-PHY) - 1",
+            "type": "VIDEO",
+            "subType": "MIPI CSI-2(C-PHY)",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "MIPI CSI-2(C-PHY) - 2",
+            "type": "VIDEO",
+            "subType": "MIPI CSI-2(C-PHY)",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "MIPI CSI-2(C-PHY) - 3",
+            "type": "VIDEO",
+            "subType": "MIPI CSI-2(C-PHY)",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "MIPI CSI-2(C-PHY) - 4",
+            "type": "VIDEO",
+            "subType": "MIPI CSI-2(C-PHY)",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "CAN_FD - 1",
+            "type": "CAN",
+            "subType": "CAN_FD",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "CAN_FD - 2",
+            "type": "CAN",
+            "subType": "CAN_FD",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "CAN_FD - 3",
+            "type": "CAN",
+            "subType": "CAN_FD",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "CAN_FD - 4",
+            "type": "CAN",
+            "subType": "CAN_FD",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "CAN_FD - 5",
+            "type": "CAN",
+            "subType": "CAN_FD",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "CAN_FD - 6",
+            "type": "CAN",
+            "subType": "CAN_FD",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "CAN_FD - 7",
+            "type": "CAN",
+            "subType": "CAN_FD",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "CAN_FD - 8",
+            "type": "CAN",
+            "subType": "CAN_FD",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "RGMII - 1",
+            "type": "ETHERNET",
+            "subType": "RGMII",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "SGMII - 1",
+            "type": "ETHERNET",
+            "subType": "SGMII",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "Octal-SPI - 1",
+            "type": "SPI",
+            "subType": "Octal-SPI",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "I2C - 1",
+            "type": "GENERAL",
+            "subType": "I2C",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "UART - 1",
+            "type": "GENERAL",
+            "subType": "UART",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "UFS - 1",
+            "type": "STORAGE",
+            "subType": "UFS",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "UFS - 2",
+            "type": "STORAGE",
+            "subType": "UFS",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "eMMC - 1",
+            "type": "STORAGE",
+            "subType": "eMMC",
+            "enabled": false,
+            "connection": null
+          }
+        ]
+      },
+      "parent": "/",
+      "children": []
+    },
+    {
+      "id": "elem_2",
+      "type": "rectangle",
+      "name": "RH850-U2A16",
+      "ItemType": "MCU",
+      "size": 200,
+      "color": "#018f30ff",
+      "position": {
+        "x": 140,
+        "y": 430
+      },
+      "width": 320,
+      "height": 230,
+      "rounded": 0,
+      "fontColor": "#ffffff",
+      "fontSize": "10",
+      "strokeColor": "#000000",
+      "labelAlign": "center",
+      "labelVerticalAlign": "middle",
+      "properties": {
+        "ID": 3,
+        "Name": "RH850-U2A16",
+        "Description": "The RH850/U2A MCU is the first member of Renesas’ cross-domain MCUs, a new generation of automotive-control devices, designed to address the growing need to integrate multiple applications into a single chip to realize unified electronic control units (ECUs) for the evolving electrical/electronic architecture (E/E architecture). Based on 28 nanometer (nm) process technology, the 32-bit RH850/U2A automotive MCU builds on key functions from Renesas’ RH850/Px Series for chassis control and RH850/Fx Series for body control to deliver improved performance.",
+        "CyberSecurity": 1,
+        "MAX_TEMP": 105,
+        "MIN_TEMP": -40,
+        "Temperature_Range": "[-40°C~105°C]",
+        "Domain": "ADAS",
+        "Fusa_Level": "ASIL_B",
+        "Type": "MCU",
+        "Supplier_Name": {
+          "Name": "Renesas",
+          "CN_Name": "瑞萨"
+        },
+        "Power_Consumption": null,
+        "interface": [
+          {
+            "ID": 33,
+            "Interface_Number": 16,
+            "Property": "//",
+            "calculator_ID": 3,
+            "Type": "USB",
+            "SubType": "USB 2.0"
+          },
+          {
+            "ID": 34,
+            "Interface_Number": 1,
+            "Property": "1000Mbps",
+            "calculator_ID": 3,
+            "Type": "ETHERNET",
+            "SubType": "SGMII"
+          },
+          {
+            "ID": 35,
+            "Interface_Number": 1,
+            "Property": "100Mbps",
+            "calculator_ID": 3,
+            "Type": "ETHERNET",
+            "SubType": "HSGMII"
+          },
+          {
+            "ID": 36,
+            "Interface_Number": 2,
+            "Property": "//",
+            "calculator_ID": 3,
+            "Type": "FLEXRAY",
+            "SubType": "FLEXRAY"
+          },
+          {
+            "ID": 37,
+            "Interface_Number": 12,
+            "Property": "/",
+            "calculator_ID": 3,
+            "Type": "LIN",
+            "SubType": "LIN2.1"
+          },
+          {
+            "ID": 38,
+            "Interface_Number": 1,
+            "Property": "/",
+            "calculator_ID": 3,
+            "Type": "SPI",
+            "SubType": "Dual-SPI"
+          },
+          {
+            "ID": 39,
+            "Interface_Number": 6,
+            "Property": "MSPI",
+            "calculator_ID": 3,
+            "Type": "SPI",
+            "SubType": "Multi-Master SPI"
+          },
+          {
+            "ID": 40,
+            "Interface_Number": 1,
+            "Property": "YES",
+            "calculator_ID": 3,
+            "Type": "GENERAL",
+            "SubType": "I2C"
+          },
+          {
+            "ID": 41,
+            "Interface_Number": 1,
+            "Property": "32ch DMA",
+            "calculator_ID": 3,
+            "Type": "STORAGE",
+            "SubType": "DMA"
+          }
+        ],
+        "memory_unit": [],
+        "processor": [
+          {
+            "ID": 35,
+            "Number": 4,
+            "Name": "RH850G4MH@400MHz",
+            "Power": 6.32,
+            "Lockstep": 1,
+            "calculator_ID": 3,
+            "Type": "CPU",
+            "Unit": "KDMIPS"
+          }
+        ],
+        "interface_group": {
+          "USB": [
+            {
+              "ID": 33,
+              "Interface_Number": 16,
+              "Property": "//",
+              "calculator_ID": 3,
+              "Type": "USB",
+              "SubType": "USB 2.0"
+            }
+          ],
+          "ETHERNET": [
+            {
+              "ID": 34,
+              "Interface_Number": 1,
+              "Property": "1000Mbps",
+              "calculator_ID": 3,
+              "Type": "ETHERNET",
+              "SubType": "SGMII"
+            },
+            {
+              "ID": 35,
+              "Interface_Number": 1,
+              "Property": "100Mbps",
+              "calculator_ID": 3,
+              "Type": "ETHERNET",
+              "SubType": "HSGMII"
+            }
+          ],
+          "FLEXRAY": [
+            {
+              "ID": 36,
+              "Interface_Number": 2,
+              "Property": "//",
+              "calculator_ID": 3,
+              "Type": "FLEXRAY",
+              "SubType": "FLEXRAY"
+            }
+          ],
+          "LIN": [
+            {
+              "ID": 37,
+              "Interface_Number": 12,
+              "Property": "/",
+              "calculator_ID": 3,
+              "Type": "LIN",
+              "SubType": "LIN2.1"
+            }
+          ],
+          "SPI": [
+            {
+              "ID": 38,
+              "Interface_Number": 1,
+              "Property": "/",
+              "calculator_ID": 3,
+              "Type": "SPI",
+              "SubType": "Dual-SPI"
+            },
+            {
+              "ID": 39,
+              "Interface_Number": 6,
+              "Property": "MSPI",
+              "calculator_ID": 3,
+              "Type": "SPI",
+              "SubType": "Multi-Master SPI"
+            }
+          ],
+          "GENERAL": [
+            {
+              "ID": 40,
+              "Interface_Number": 1,
+              "Property": "YES",
+              "calculator_ID": 3,
+              "Type": "GENERAL",
+              "SubType": "I2C"
+            }
+          ],
+          "STORAGE": [
+            {
+              "ID": 41,
+              "Interface_Number": 1,
+              "Property": "32ch DMA",
+              "calculator_ID": 3,
+              "Type": "STORAGE",
+              "SubType": "DMA"
+            }
+          ]
+        },
+        "processor_group": {
+          "CPU": [
+            {
+              "ID": 35,
+              "Number": 4,
+              "Name": "RH850G4MH@400MHz",
+              "Power": 6.32,
+              "Lockstep": 1,
+              "calculator_ID": 3,
+              "Type": "CPU",
+              "Unit": "KDMIPS"
+            }
+          ]
+        },
+        "interface_list": [
+          {
+            "name": "USB 2.0 - 1",
+            "type": "USB",
+            "subType": "USB 2.0",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "USB 2.0 - 2",
+            "type": "USB",
+            "subType": "USB 2.0",
+            "enabled": true,
+            "connection": "QC8650P-AAAA - USB 2.0 - 1",
+            "interfaceLeft": 220,
+            "interfaceTop": 110,
+            "interfaceIndex": 1,
+            "size": 100,
+            "height": 20,
+            "color": "#ffffff",
+            "strokeColor": "#000000",
+            "fontColor": "#000000",
+            "rounded": 0,
+            "closestSide": "right",
+            "rotation": 0,
+            "align": "right",
+            "parentId": "elem_2",
+            "isInterface": true
+          },
+          {
+            "name": "USB 2.0 - 3",
+            "type": "USB",
+            "subType": "USB 2.0",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "USB 2.0 - 4",
+            "type": "USB",
+            "subType": "USB 2.0",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "USB 2.0 - 5",
+            "type": "USB",
+            "subType": "USB 2.0",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "USB 2.0 - 6",
+            "type": "USB",
+            "subType": "USB 2.0",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "USB 2.0 - 7",
+            "type": "USB",
+            "subType": "USB 2.0",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "USB 2.0 - 8",
+            "type": "USB",
+            "subType": "USB 2.0",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "USB 2.0 - 9",
+            "type": "USB",
+            "subType": "USB 2.0",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "USB 2.0 - 10",
+            "type": "USB",
+            "subType": "USB 2.0",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "USB 2.0 - 11",
+            "type": "USB",
+            "subType": "USB 2.0",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "USB 2.0 - 12",
+            "type": "USB",
+            "subType": "USB 2.0",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "USB 2.0 - 13",
+            "type": "USB",
+            "subType": "USB 2.0",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "USB 2.0 - 14",
+            "type": "USB",
+            "subType": "USB 2.0",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "USB 2.0 - 15",
+            "type": "USB",
+            "subType": "USB 2.0",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "USB 2.0 - 16",
+            "type": "USB",
+            "subType": "USB 2.0",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "SGMII - 1",
+            "type": "ETHERNET",
+            "subType": "SGMII",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "HSGMII - 1",
+            "type": "ETHERNET",
+            "subType": "HSGMII",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "FLEXRAY - 1",
+            "type": "FLEXRAY",
+            "subType": "FLEXRAY",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "FLEXRAY - 2",
+            "type": "FLEXRAY",
+            "subType": "FLEXRAY",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "LIN2.1 - 1",
+            "type": "LIN",
+            "subType": "LIN2.1",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "LIN2.1 - 2",
+            "type": "LIN",
+            "subType": "LIN2.1",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "LIN2.1 - 3",
+            "type": "LIN",
+            "subType": "LIN2.1",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "LIN2.1 - 4",
+            "type": "LIN",
+            "subType": "LIN2.1",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "LIN2.1 - 5",
+            "type": "LIN",
+            "subType": "LIN2.1",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "LIN2.1 - 6",
+            "type": "LIN",
+            "subType": "LIN2.1",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "LIN2.1 - 7",
+            "type": "LIN",
+            "subType": "LIN2.1",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "LIN2.1 - 8",
+            "type": "LIN",
+            "subType": "LIN2.1",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "LIN2.1 - 9",
+            "type": "LIN",
+            "subType": "LIN2.1",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "LIN2.1 - 10",
+            "type": "LIN",
+            "subType": "LIN2.1",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "LIN2.1 - 11",
+            "type": "LIN",
+            "subType": "LIN2.1",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "LIN2.1 - 12",
+            "type": "LIN",
+            "subType": "LIN2.1",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "Dual-SPI - 1",
+            "type": "SPI",
+            "subType": "Dual-SPI",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "Multi-Master SPI - 1",
+            "type": "SPI",
+            "subType": "Multi-Master SPI",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "Multi-Master SPI - 2",
+            "type": "SPI",
+            "subType": "Multi-Master SPI",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "Multi-Master SPI - 3",
+            "type": "SPI",
+            "subType": "Multi-Master SPI",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "Multi-Master SPI - 4",
+            "type": "SPI",
+            "subType": "Multi-Master SPI",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "Multi-Master SPI - 5",
+            "type": "SPI",
+            "subType": "Multi-Master SPI",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "Multi-Master SPI - 6",
+            "type": "SPI",
+            "subType": "Multi-Master SPI",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "I2C - 1",
+            "type": "GENERAL",
+            "subType": "I2C",
+            "enabled": false,
+            "connection": null
+          },
+          {
+            "name": "DMA - 1",
+            "type": "STORAGE",
+            "subType": "DMA",
+            "enabled": false,
+            "connection": null
+          }
+        ]
+      },
+      "parent": "/",
+      "children": []
+    }
+  ],
+  "connections": [
+    {
+      "id": "edge_1774973859211",
+      "sourceId": "elem_2",
+      "targetId": "elem_1",
+      "direction": "单向",
+      "color": "#6366f1",
+      "type": "USB 2.0",
+      "sourceInterfaceIndex": 1,
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "exitDx": 1,
+      "exitDy": 0,
+      "entryDx": -1,
+      "entryDy": 0,
+      "targetInterfaceIndex": 1,
+      "sourceInterfaceName": "USB 2.0 - 2",
+      "targetInterfaceName": "USB 2.0 - 1",
+      "sourceConnectionPoint": {
+        "x": 1,
+        "y": 0.5,
+        "dx": 1,
+        "dy": 0,
+        "direction": "right"
+      },
+      "targetConnectionPoint": {
+        "x": 0,
+        "y": 0.5,
+        "dx": -1,
+        "dy": 0,
+        "direction": "left"
+      },
+      "lineType": "auto-orthogonal"
+    }
+  ],
+  "timestamp": "2026-03-31T16:17:44.979Z"
+}

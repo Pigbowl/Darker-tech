@@ -1,0 +1,2095 @@
+/* mxGraph common styles */
+
+/* Default styles for graph elements */
+.mxGraph {
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Styles for graph cells */
+.mxCell {
+  position: absolute;
+  overflow: visible;
+  clip: rect(0px, 0px, 0px, 0px);
+  user-select: none;
+}
+
+/* Styles for graph vertices */
+.mxVertex {
+  position: absolute;
+  overflow: visible;
+  clip: rect(0px, 0px, 0px, 0px);
+  user-select: none;
+}
+
+/* Styles for graph edges */
+.mxEdge {
+  position: absolute;
+  overflow: visible;
+  clip: rect(0px, 0px, 0px, 0px);
+  user-select: none;
+}
+
+/* Styles for graph labels */
+.mxLabel {
+  position: absolute;
+  overflow: visible;
+  clip: rect(0px, 0px, 0px, 0px);
+  white-space: nowrap;
+  user-select: none;
+  cursor: text;
+}
+
+/* Styles for graph handles */
+.mxHandle {
+  position: absolute;
+  overflow: visible;
+  clip: rect(0px, 0px, 0px, 0px);
+  cursor: pointer;
+}
+
+/* Styles for graph guides */
+.mxGuide {
+  position: absolute;
+  overflow: visible;
+  clip: rect(0px, 0px, 0px, 0px);
+  pointer-events: none;
+}
+
+/* Styles for graph selection */
+.mxSelection {
+  position: absolute;
+  overflow: visible;
+  clip: rect(0px, 0px, 0px, 0px);
+  pointer-events: none;
+}
+
+/* Styles for graph overlays */
+.mxOverlay {
+  position: absolute;
+  overflow: visible;
+  clip: rect(0px, 0px, 0px, 0px);
+  pointer-events: none;
+}
+
+/* Styles for graph tooltips */
+.mxTooltip {
+  position: absolute;
+  overflow: hidden;
+  padding: 4px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #000000;
+  background-color: #ffffcc;
+  border: 1px solid #ffcc00;
+  border-radius: 3px;
+  box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  z-index: 10000;
+}
+
+/* Styles for graph popup menus */
+.mxPopupMenu {
+  position: absolute;
+  overflow: hidden;
+  padding: 4px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #000000;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.3);
+  z-index: 10000;
+}
+
+/* Styles for graph popup menu items */
+.mxPopupMenuItem {
+  padding: 4px 8px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* Styles for graph popup menu items on hover */
+.mxPopupMenuItem:hover {
+  background-color: #eeeeee;
+}
+
+/* Styles for graph popup menu items with separators */
+.mxPopupMenuSeparator {
+  height: 1px;
+  margin: 4px 0;
+  background-color: #cccccc;
+}
+
+/* Styles for graph handles */
+.mxHandle {
+  position: absolute;
+  overflow: visible;
+  clip: rect(0px, 0px, 0px, 0px);
+  cursor: pointer;
+  z-index: 100;
+}
+
+/* Styles for graph resize handles */
+.mxResizeHandle {
+  position: absolute;
+  overflow: visible;
+  clip: rect(0px, 0px, 0px, 0px);
+  cursor: pointer;
+  z-index: 100;
+}
+
+/* Styles for graph connect handles */
+.mxConnectHandle {
+  position: absolute;
+  overflow: visible;
+  clip: rect(0px, 0px, 0px, 0px);
+  cursor: pointer;
+  z-index: 100;
+}
+
+/* Styles for graph bend handles */
+.mxBendHandle {
+  position: absolute;
+  overflow: visible;
+  clip: rect(0px, 0px, 0px, 0px);
+  cursor: pointer;
+  z-index: 100;
+}
+
+/* Styles for graph label handles */
+.mxLabelHandle {
+  position: absolute;
+  overflow: visible;
+  clip: rect(0px, 0px, 0px, 0px);
+  cursor: pointer;
+  z-index: 100;
+}
+
+/* Styles for graph outline */
+.mxOutline {
+  position: absolute;
+  overflow: visible;
+  clip: rect(0px, 0px, 0px, 0px);
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* Styles for graph highlight */
+.mxHighlight {
+  position: absolute;
+  overflow: visible;
+  clip: rect(0px, 0px, 0px, 0px);
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* Styles for graph drag and drop */
+.mxDragSource {
+  position: absolute;
+  overflow: visible;
+  clip: rect(0px, 0px, 0px, 0px);
+  pointer-events: none;
+  z-index: 10000;
+}
+
+/* Styles for graph rubberband */
+.mxRubberband {
+  position: absolute;
+  overflow: visible;
+  clip: rect(0px, 0px, 0px, 0px);
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* Styles for graph panning */
+.mxPanningHandler {
+  position: absolute;
+  overflow: visible;
+  clip: rect(0px, 0px, 0px, 0px);
+  cursor: move;
+  z-index: 100;
+}
+
+/* Styles for graph zoom */
+.mxZoomHandler {
+  position: absolute;
+  overflow: visible;
+  clip: rect(0px, 0px, 0px, 0px);
+  cursor: zoom-in;
+  z-index: 100;
+}
+
+/* Styles for graph scrollbars */
+.mxScrollbar {
+  position: absolute;
+  overflow: hidden;
+  background-color: #f0f0f0;
+  border: 1px solid #cccccc;
+  z-index: 100;
+}
+
+/* Styles for graph scrollbar thumb */
+.mxScrollbarThumb {
+  position: absolute;
+  overflow: hidden;
+  background-color: #cccccc;
+  border: 1px solid #999999;
+  cursor: pointer;
+}
+
+/* Styles for graph scrollbar thumb on hover */
+.mxScrollbarThumb:hover {
+  background-color: #aaaaaa;
+}
+
+/* Styles for graph scrollbar button */
+.mxScrollbarButton {
+  position: absolute;
+  overflow: hidden;
+  background-color: #f0f0f0;
+  border: 1px solid #cccccc;
+  cursor: pointer;
+}
+
+/* Styles for graph scrollbar button on hover */
+.mxScrollbarButton:hover {
+  background-color: #e0e0e0;
+}
+
+/* Styles for graph scrollbar button on active */
+.mxScrollbarButton:active {
+  background-color: #d0d0d0;
+}
+
+/* Styles for graph split pane */
+.mxSplitPane {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #cccccc;
+}
+
+/* Styles for graph split pane divider */
+.mxSplitPaneDivider {
+  position: absolute;
+  overflow: hidden;
+  background-color: #f0f0f0;
+  border: 1px solid #cccccc;
+  cursor: col-resize;
+  z-index: 100;
+}
+
+/* Styles for graph split pane divider on hover */
+.mxSplitPaneDivider:hover {
+  background-color: #e0e0e0;
+}
+
+/* Styles for graph window */
+.mxWindow {
+  position: absolute;
+  overflow: hidden;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.3);
+  z-index: 10000;
+}
+
+/* Styles for graph window title bar */
+.mxWindowTitle {
+  padding: 4px 8px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  color: #000000;
+  background-color: #f0f0f0;
+  border-bottom: 1px solid #cccccc;
+  cursor: move;
+}
+
+/* Styles for graph window content */
+.mxWindowContent {
+  padding: 8px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #000000;
+  background-color: #ffffff;
+}
+
+/* Styles for graph window close button */
+.mxWindowClose {
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  width: 16px;
+  height: 16px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  color: #000000;
+  background-color: #f0f0f0;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  cursor: pointer;
+  text-align: center;
+  line-height: 16px;
+}
+
+/* Styles for graph window close button on hover */
+.mxWindowClose:hover {
+  background-color: #e0e0e0;
+}
+
+/* Styles for graph window close button on active */
+.mxWindowClose:active {
+  background-color: #d0d0d0;
+}
+
+/* Styles for graph window maximize button */
+.mxWindowMaximize {
+  position: absolute;
+  top: 4px;
+  right: 28px;
+  width: 16px;
+  height: 16px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  color: #000000;
+  background-color: #f0f0f0;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  cursor: pointer;
+  text-align: center;
+  line-height: 16px;
+}
+
+/* Styles for graph window maximize button on hover */
+.mxWindowMaximize:hover {
+  background-color: #e0e0e0;
+}
+
+/* Styles for graph window maximize button on active */
+.mxWindowMaximize:active {
+  background-color: #d0d0d0;
+}
+
+/* Styles for graph window minimize button */
+.mxWindowMinimize {
+  position: absolute;
+  top: 4px;
+  right: 48px;
+  width: 16px;
+  height: 16px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  color: #000000;
+  background-color: #f0f0f0;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  cursor: pointer;
+  text-align: center;
+  line-height: 16px;
+}
+
+/* Styles for graph window minimize button on hover */
+.mxWindowMinimize:hover {
+  background-color: #e0e0e0;
+}
+
+/* Styles for graph window minimize button on active */
+.mxWindowMinimize:active {
+  background-color: #d0d0d0;
+}
+
+/* Styles for graph toolbar */
+.mxToolbar {
+  position: relative;
+  overflow: hidden;
+  padding: 4px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #000000;
+  background-color: #f0f0f0;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+}
+
+/* Styles for graph toolbar item */
+.mxToolbarItem {
+  display: inline-block;
+  padding: 4px 8px;
+  margin-right: 4px;
+  cursor: pointer;
+  border: 1px solid #f0f0f0;
+  border-radius: 3px;
+}
+
+/* Styles for graph toolbar item on hover */
+.mxToolbarItem:hover {
+  background-color: #e0e0e0;
+  border: 1px solid #cccccc;
+}
+
+/* Styles for graph toolbar item on active */
+.mxToolbarItem:active {
+  background-color: #d0d0d0;
+  border: 1px solid #999999;
+}
+
+/* Styles for graph toolbar separator */
+.mxToolbarSeparator {
+  display: inline-block;
+  width: 1px;
+  height: 20px;
+  margin: 0 4px;
+  background-color: #cccccc;
+}
+
+/* Styles for graph status bar */
+.mxStatusBar {
+  position: relative;
+  overflow: hidden;
+  padding: 4px 8px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #000000;
+  background-color: #f0f0f0;
+  border: 1px solid #cccccc;
+  border-top: none;
+  border-radius: 0 0 3px 3px;
+}
+
+/* Styles for graph status bar label */
+.mxStatusBarLabel {
+  display: inline-block;
+  margin-right: 16px;
+}
+
+/* Styles for graph status bar value */
+.mxStatusBarValue {
+  display: inline-block;
+  font-weight: bold;
+}
+
+/* Styles for graph progress bar */
+.mxProgressBar {
+  position: relative;
+  overflow: hidden;
+  width: 100px;
+  height: 16px;
+  background-color: #f0f0f0;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+}
+
+/* Styles for graph progress bar value */
+.mxProgressBarValue {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: #4caf50;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+/* Styles for graph progress bar text */
+.mxProgressBarText {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #000000;
+  text-align: center;
+  line-height: 16px;
+}
+
+/* Styles for graph dialog */
+.mxDialog {
+  position: absolute;
+  overflow: hidden;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.3);
+  z-index: 10000;
+}
+
+/* Styles for graph dialog title bar */
+.mxDialogTitle {
+  padding: 4px 8px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  color: #000000;
+  background-color: #f0f0f0;
+  border-bottom: 1px solid #cccccc;
+}
+
+/* Styles for graph dialog content */
+.mxDialogContent {
+  padding: 8px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #000000;
+  background-color: #ffffff;
+}
+
+/* Styles for graph dialog buttons */
+.mxDialogButtons {
+  padding: 8px;
+  text-align: right;
+  background-color: #f0f0f0;
+  border-top: 1px solid #cccccc;
+}
+
+/* Styles for graph dialog button */
+.mxDialogButton {
+  padding: 4px 8px;
+  margin-left: 4px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #000000;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+/* Styles for graph dialog button on hover */
+.mxDialogButton:hover {
+  background-color: #f0f0f0;
+}
+
+/* Styles for graph dialog button on active */
+.mxDialogButton:active {
+  background-color: #e0e0e0;
+}
+
+/* Styles for graph dialog button primary */
+.mxDialogButtonPrimary {
+  background-color: #4caf50;
+  color: #ffffff;
+  border: 1px solid #45a049;
+}
+
+/* Styles for graph dialog button primary on hover */
+.mxDialogButtonPrimary:hover {
+  background-color: #45a049;
+}
+
+/* Styles for graph dialog button primary on active */
+.mxDialogButtonPrimary:active {
+  background-color: #3d8b40;
+}
+
+/* Styles for graph dialog button danger */
+.mxDialogButtonDanger {
+  background-color: #f44336;
+  color: #ffffff;
+  border: 1px solid #d32f2f;
+}
+
+/* Styles for graph dialog button danger on hover */
+.mxDialogButtonDanger:hover {
+  background-color: #d32f2f;
+}
+
+/* Styles for graph dialog button danger on active */
+.mxDialogButtonDanger:active {
+  background-color: #b71c1c;
+}
+
+/* Styles for graph dialog button warning */
+.mxDialogButtonWarning {
+  background-color: #ff9800;
+  color: #ffffff;
+  border: 1px solid #f57c00;
+}
+
+/* Styles for graph dialog button warning on hover */
+.mxDialogButtonWarning:hover {
+  background-color: #f57c00;
+}
+
+/* Styles for graph dialog button warning on active */
+.mxDialogButtonWarning:active {
+  background-color: #ef6c00;
+}
+
+/* Styles for graph dialog button info */
+.mxDialogButtonInfo {
+  background-color: #2196f3;
+  color: #ffffff;
+  border: 1px solid #1976d2;
+}
+
+/* Styles for graph dialog button info on hover */
+.mxDialogButtonInfo:hover {
+  background-color: #1976d2;
+}
+
+/* Styles for graph dialog button info on active */
+.mxDialogButtonInfo:active {
+  background-color: #1565c0;
+}
+
+/* Styles for graph dialog button success */
+.mxDialogButtonSuccess {
+  background-color: #4caf50;
+  color: #ffffff;
+  border: 1px solid #45a049;
+}
+
+/* Styles for graph dialog button success on hover */
+.mxDialogButtonSuccess:hover {
+  background-color: #45a049;
+}
+
+/* Styles for graph dialog button success on active */
+.mxDialogButtonSuccess:active {
+  background-color: #3d8b40;
+}
+
+/* Styles for graph dialog button link */
+.mxDialogButtonLink {
+  background-color: transparent;
+  color: #2196f3;
+  border: 1px solid transparent;
+}
+
+/* Styles for graph dialog button link on hover */
+.mxDialogButtonLink:hover {
+  text-decoration: underline;
+}
+
+/* Styles for graph dialog button link on active */
+.mxDialogButtonLink:active {
+  color: #1976d2;
+}
+
+/* Styles for graph form */
+.mxForm {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #000000;
+  background-color: #ffffff;
+}
+
+/* Styles for graph form label */
+.mxFormLabel {
+  display: inline-block;
+  width: 100px;
+  margin-right: 8px;
+  text-align: right;
+  vertical-align: top;
+}
+
+/* Styles for graph form input */
+.mxFormInput {
+  display: inline-block;
+  width: 200px;
+  padding: 4px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #000000;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+}
+
+/* Styles for graph form input on focus */
+.mxFormInput:focus {
+  outline: none;
+  border: 1px solid #4caf50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+/* Styles for graph form select */
+.mxFormSelect {
+  display: inline-block;
+  width: 200px;
+  padding: 4px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #000000;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+}
+
+/* Styles for graph form select on focus */
+.mxFormSelect:focus {
+  outline: none;
+  border: 1px solid #4caf50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+/* Styles for graph form textarea */
+.mxFormTextarea {
+  display: inline-block;
+  width: 200px;
+  height: 100px;
+  padding: 4px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #000000;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  resize: vertical;
+}
+
+/* Styles for graph form textarea on focus */
+.mxFormTextarea:focus {
+  outline: none;
+  border: 1px solid #4caf50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+/* Styles for graph form checkbox */
+.mxFormCheckbox {
+  display: inline-block;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+/* Styles for graph form checkbox label */
+.mxFormCheckboxLabel {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Styles for graph form radio */
+.mxFormRadio {
+  display: inline-block;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+/* Styles for graph form radio label */
+.mxFormRadioLabel {
+  display: inline-block;
+  margin-right: 16px;
+  vertical-align: middle;
+}
+
+/* Styles for graph form button */
+.mxFormButton {
+  padding: 4px 8px;
+  margin-right: 8px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #000000;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+/* Styles for graph form button on hover */
+.mxFormButton:hover {
+  background-color: #f0f0f0;
+}
+
+/* Styles for graph form button on active */
+.mxFormButton:active {
+  background-color: #e0e0e0;
+}
+
+/* Styles for graph form button primary */
+.mxFormButtonPrimary {
+  background-color: #4caf50;
+  color: #ffffff;
+  border: 1px solid #45a049;
+}
+
+/* Styles for graph form button primary on hover */
+.mxFormButtonPrimary:hover {
+  background-color: #45a049;
+}
+
+/* Styles for graph form button primary on active */
+.mxFormButtonPrimary:active {
+  background-color: #3d8b40;
+}
+
+/* Styles for graph form button danger */
+.mxFormButtonDanger {
+  background-color: #f44336;
+  color: #ffffff;
+  border: 1px solid #d32f2f;
+}
+
+/* Styles for graph form button danger on hover */
+.mxFormButtonDanger:hover {
+  background-color: #d32f2f;
+}
+
+/* Styles for graph form button danger on active */
+.mxFormButtonDanger:active {
+  background-color: #b71c1c;
+}
+
+/* Styles for graph form button warning */
+.mxFormButtonWarning {
+  background-color: #ff9800;
+  color: #ffffff;
+  border: 1px solid #f57c00;
+}
+
+/* Styles for graph form button warning on hover */
+.mxFormButtonWarning:hover {
+  background-color: #f57c00;
+}
+
+/* Styles for graph form button warning on active */
+.mxFormButtonWarning:active {
+  background-color: #ef6c00;
+}
+
+/* Styles for graph form button info */
+.mxFormButtonInfo {
+  background-color: #2196f3;
+  color: #ffffff;
+  border: 1px solid #1976d2;
+}
+
+/* Styles for graph form button info on hover */
+.mxFormButtonInfo:hover {
+  background-color: #1976d2;
+}
+
+/* Styles for graph form button info on active */
+.mxFormButtonInfo:active {
+  background-color: #1565c0;
+}
+
+/* Styles for graph form button success */
+.mxFormButtonSuccess {
+  background-color: #4caf50;
+  color: #ffffff;
+  border: 1px solid #45a049;
+}
+
+/* Styles for graph form button success on hover */
+.mxFormButtonSuccess:hover {
+  background-color: #45a049;
+}
+
+/* Styles for graph form button success on active */
+.mxFormButtonSuccess:active {
+  background-color: #3d8b40;
+}
+
+/* Styles for graph form button link */
+.mxFormButtonLink {
+  background-color: transparent;
+  color: #2196f3;
+  border: 1px solid transparent;
+}
+
+/* Styles for graph form button link on hover */
+.mxFormButtonLink:hover {
+  text-decoration: underline;
+}
+
+/* Styles for graph form button link on active */
+.mxFormButtonLink:active {
+  color: #1976d2;
+}
+
+/* Styles for graph form fieldset */
+.mxFormFieldset {
+  margin: 8px 0;
+  padding: 8px;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+}
+
+/* Styles for graph form fieldset legend */
+.mxFormFieldsetLegend {
+  padding: 0 8px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  color: #000000;
+}
+
+/* Styles for graph form fieldset content */
+.mxFormFieldsetContent {
+  margin-top: 8px;
+}
+
+/* Styles for graph form fieldset row */
+.mxFormFieldsetRow {
+  margin-bottom: 8px;
+}
+
+/* Styles for graph form fieldset label */
+.mxFormFieldsetLabel {
+  display: inline-block;
+  width: 100px;
+  margin-right: 8px;
+  text-align: right;
+  vertical-align: top;
+}
+
+/* Styles for graph form fieldset input */
+.mxFormFieldsetInput {
+  display: inline-block;
+  width: 200px;
+  padding: 4px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #000000;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+}
+
+/* Styles for graph form fieldset input on focus */
+.mxFormFieldsetInput:focus {
+  outline: none;
+  border: 1px solid #4caf50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+/* Styles for graph form fieldset select */
+.mxFormFieldsetSelect {
+  display: inline-block;
+  width: 200px;
+  padding: 4px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #000000;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+}
+
+/* Styles for graph form fieldset select on focus */
+.mxFormFieldsetSelect:focus {
+  outline: none;
+  border: 1px solid #4caf50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+/* Styles for graph form fieldset textarea */
+.mxFormFieldsetTextarea {
+  display: inline-block;
+  width: 200px;
+  height: 100px;
+  padding: 4px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #000000;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  resize: vertical;
+}
+
+/* Styles for graph form fieldset textarea on focus */
+.mxFormFieldsetTextarea:focus {
+  outline: none;
+  border: 1px solid #4caf50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+/* Styles for graph form fieldset checkbox */
+.mxFormFieldsetCheckbox {
+  display: inline-block;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+/* Styles for graph form fieldset checkbox label */
+.mxFormFieldsetCheckboxLabel {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Styles for graph form fieldset radio */
+.mxFormFieldsetRadio {
+  display: inline-block;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+/* Styles for graph form fieldset radio label */
+.mxFormFieldsetRadioLabel {
+  display: inline-block;
+  margin-right: 16px;
+  vertical-align: middle;
+}
+
+/* Styles for graph form fieldset button */
+.mxFormFieldsetButton {
+  padding: 4px 8px;
+  margin-right: 8px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #000000;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+/* Styles for graph form fieldset button on hover */
+.mxFormFieldsetButton:hover {
+  background-color: #f0f0f0;
+}
+
+/* Styles for graph form fieldset button on active */
+.mxFormFieldsetButton:active {
+  background-color: #e0e0e0;
+}
+
+/* Styles for graph form fieldset button primary */
+.mxFormFieldsetButtonPrimary {
+  background-color: #4caf50;
+  color: #ffffff;
+  border: 1px solid #45a049;
+}
+
+/* Styles for graph form fieldset button primary on hover */
+.mxFormFieldsetButtonPrimary:hover {
+  background-color: #45a049;
+}
+
+/* Styles for graph form fieldset button primary on active */
+.mxFormFieldsetButtonPrimary:active {
+  background-color: #3d8b40;
+}
+
+/* Styles for graph form fieldset button danger */
+.mxFormFieldsetButtonDanger {
+  background-color: #f44336;
+  color: #ffffff;
+  border: 1px solid #d32f2f;
+}
+
+/* Styles for graph form fieldset button danger on hover */
+.mxFormFieldsetButtonDanger:hover {
+  background-color: #d32f2f;
+}
+
+/* Styles for graph form fieldset button danger on active */
+.mxFormFieldsetButtonDanger:active {
+  background-color: #b71c1c;
+}
+
+/* Styles for graph form fieldset button warning */
+.mxFormFieldsetButtonWarning {
+  background-color: #ff9800;
+  color: #ffffff;
+  border: 1px solid #f57c00;
+}
+
+/* Styles for graph form fieldset button warning on hover */
+.mxFormFieldsetButtonWarning:hover {
+  background-color: #f57c00;
+}
+
+/* Styles for graph form fieldset button warning on active */
+.mxFormFieldsetButtonWarning:active {
+  background-color: #ef6c00;
+}
+
+/* Styles for graph form fieldset button info */
+.mxFormFieldsetButtonInfo {
+  background-color: #2196f3;
+  color: #ffffff;
+  border: 1px solid #1976d2;
+}
+
+/* Styles for graph form fieldset button info on hover */
+.mxFormFieldsetButtonInfo:hover {
+  background-color: #1976d2;
+}
+
+/* Styles for graph form fieldset button info on active */
+.mxFormFieldsetButtonInfo:active {
+  background-color: #1565c0;
+}
+
+/* Styles for graph form fieldset button success */
+.mxFormFieldsetButtonSuccess {
+  background-color: #4caf50;
+  color: #ffffff;
+  border: 1px solid #45a049;
+}
+
+/* Styles for graph form fieldset button success on hover */
+.mxFormFieldsetButtonSuccess:hover {
+  background-color: #45a049;
+}
+
+/* Styles for graph form fieldset button success on active */
+.mxFormFieldsetButtonSuccess:active {
+  background-color: #3d8b40;
+}
+
+/* Styles for graph form fieldset button link */
+.mxFormFieldsetButtonLink {
+  background-color: transparent;
+  color: #2196f3;
+  border: 1px solid transparent;
+}
+
+/* Styles for graph form fieldset button link on hover */
+.mxFormFieldsetButtonLink:hover {
+  text-decoration: underline;
+}
+
+/* Styles for graph form fieldset button link on active */
+.mxFormFieldsetButtonLink:active {
+  color: #1976d2;
+}
+
+/* Styles for graph form fieldset separator */
+.mxFormFieldsetSeparator {
+  height: 1px;
+  margin: 8px 0;
+  background-color: #cccccc;
+}
+
+/* Styles for graph form fieldset error */
+.mxFormFieldsetError {
+  color: #f44336;
+  font-size: 10px;
+  margin-top: 4px;
+}
+
+/* Styles for graph form fieldset success */
+.mxFormFieldsetSuccess {
+  color: #4caf50;
+  font-size: 10px;
+  margin-top: 4px;
+}
+
+/* Styles for graph form fieldset info */
+.mxFormFieldsetInfo {
+  color: #2196f3;
+  font-size: 10px;
+  margin-top: 4px;
+}
+
+/* Styles for graph form fieldset warning */
+.mxFormFieldsetWarning {
+  color: #ff9800;
+  font-size: 10px;
+  margin-top: 4px;
+}
+
+/* Styles for graph form fieldset help */
+.mxFormFieldsetHelp {
+  color: #666666;
+  font-size: 10px;
+  margin-top: 4px;
+}
+
+/* Styles for graph form fieldset hint */
+.mxFormFieldsetHint {
+  color: #999999;
+  font-size: 10px;
+  margin-top: 4px;
+}
+
+/* Styles for graph form fieldset note */
+.mxFormFieldsetNote {
+  color: #666666;
+  font-size: 10px;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+/* Styles for graph form fieldset tip */
+.mxFormFieldsetTip {
+  color: #666666;
+  font-size: 10px;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+/* Styles for graph form fieldset alert */
+.mxFormFieldsetAlert {
+  color: #ff9800;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset danger */
+.mxFormFieldsetDanger {
+  color: #f44336;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset success */
+.mxFormFieldsetSuccess {
+  color: #4caf50;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset info */
+.mxFormFieldsetInfo {
+  color: #2196f3;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset warning */
+.mxFormFieldsetWarning {
+  color: #ff9800;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset error */
+.mxFormFieldsetError {
+  color: #f44336;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset success */
+.mxFormFieldsetSuccess {
+  color: #4caf50;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset info */
+.mxFormFieldsetInfo {
+  color: #2196f3;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset warning */
+.mxFormFieldsetWarning {
+  color: #ff9800;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset error */
+.mxFormFieldsetError {
+  color: #f44336;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset success */
+.mxFormFieldsetSuccess {
+  color: #4caf50;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset info */
+.mxFormFieldsetInfo {
+  color: #2196f3;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset warning */
+.mxFormFieldsetWarning {
+  color: #ff9800;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset error */
+.mxFormFieldsetError {
+  color: #f44336;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset success */
+.mxFormFieldsetSuccess {
+  color: #4caf50;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset info */
+.mxFormFieldsetInfo {
+  color: #2196f3;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset warning */
+.mxFormFieldsetWarning {
+  color: #ff9800;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset error */
+.mxFormFieldsetError {
+  color: #f44336;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset success */
+.mxFormFieldsetSuccess {
+  color: #4caf50;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset info */
+.mxFormFieldsetInfo {
+  color: #2196f3;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset warning */
+.mxFormFieldsetWarning {
+  color: #ff9800;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset error */
+.mxFormFieldsetError {
+  color: #f44336;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset success */
+.mxFormFieldsetSuccess {
+  color: #4caf50;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset info */
+.mxFormFieldsetInfo {
+  color: #2196f3;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset warning */
+.mxFormFieldsetWarning {
+  color: #ff9800;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset error */
+.mxFormFieldsetError {
+  color: #f44336;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset success */
+.mxFormFieldsetSuccess {
+  color: #4caf50;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset info */
+.mxFormFieldsetInfo {
+  color: #2196f3;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset warning */
+.mxFormFieldsetWarning {
+  color: #ff9800;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset error */
+.mxFormFieldsetError {
+  color: #f44336;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset success */
+.mxFormFieldsetSuccess {
+  color: #4caf50;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset info */
+.mxFormFieldsetInfo {
+  color: #2196f3;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset warning */
+.mxFormFieldsetWarning {
+  color: #ff9800;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset error */
+.mxFormFieldsetError {
+  color: #f44336;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset success */
+.mxFormFieldsetSuccess {
+  color: #4caf50;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset info */
+.mxFormFieldsetInfo {
+  color: #2196f3;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset warning */
+.mxFormFieldsetWarning {
+  color: #ff9800;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset error */
+.mxFormFieldsetError {
+  color: #f44336;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset success */
+.mxFormFieldsetSuccess {
+  color: #4caf50;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset info */
+.mxFormFieldsetInfo {
+  color: #2196f3;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset warning */
+.mxFormFieldsetWarning {
+  color: #ff9800;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset error */
+.mxFormFieldsetError {
+  color: #f44336;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset success */
+.mxFormFieldsetSuccess {
+  color: #4caf50;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset info */
+.mxFormFieldsetInfo {
+  color: #2196f3;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset warning */
+.mxFormFieldsetWarning {
+  color: #ff9800;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset error */
+.mxFormFieldsetError {
+  color: #f44336;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset success */
+.mxFormFieldsetSuccess {
+  color: #4caf50;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset info */
+.mxFormFieldsetInfo {
+  color: #2196f3;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset warning */
+.mxFormFieldsetWarning {
+  color: #ff9800;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset error */
+.mxFormFieldsetError {
+  color: #f44336;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset success */
+.mxFormFieldsetSuccess {
+  color: #4caf50;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset info */
+.mxFormFieldsetInfo {
+  color: #2196f3;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset warning */
+.mxFormFieldsetWarning {
+  color: #ff9800;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset error */
+.mxFormFieldsetError {
+  color: #f44336;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset success */
+.mxFormFieldsetSuccess {
+  color: #4caf50;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset info */
+.mxFormFieldsetInfo {
+  color: #2196f3;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset warning */
+.mxFormFieldsetWarning {
+  color: #ff9800;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset error */
+.mxFormFieldsetError {
+  color: #f44336;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset success */
+.mxFormFieldsetSuccess {
+  color: #4caf50;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset info */
+.mxFormFieldsetInfo {
+  color: #2196f3;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset warning */
+.mxFormFieldsetWarning {
+  color: #ff9800;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset error */
+.mxFormFieldsetError {
+  color: #f44336;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset success */
+.mxFormFieldsetSuccess {
+  color: #4caf50;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset info */
+.mxFormFieldsetInfo {
+  color: #2196f3;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset warning */
+.mxFormFieldsetWarning {
+  color: #ff9800;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset error */
+.mxFormFieldsetError {
+  color: #f44336;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset success */
+.mxFormFieldsetSuccess {
+  color: #4caf50;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset info */
+.mxFormFieldsetInfo {
+  color: #2196f3;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset warning */
+.mxFormFieldsetWarning {
+  color: #ff9800;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset error */
+.mxFormFieldsetError {
+  color: #f44336;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset success */
+.mxFormFieldsetSuccess {
+  color: #4caf50;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset info */
+.mxFormFieldsetInfo {
+  color: #2196f3;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset warning */
+.mxFormFieldsetWarning {
+  color: #ff9800;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset error */
+.mxFormFieldsetError {
+  color: #f44336;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset success */
+.mxFormFieldsetSuccess {
+  color: #4caf50;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset info */
+.mxFormFieldsetInfo {
+  color: #2196f3;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset warning */
+.mxFormFieldsetWarning {
+  color: #ff9800;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset error */
+.mxFormFieldsetError {
+  color: #f44336;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset success */
+.mxFormFieldsetSuccess {
+  color: #4caf50;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset info */
+.mxFormFieldsetInfo {
+  color: #2196f3;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset warning */
+.mxFormFieldsetWarning {
+  color: #ff9800;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset error */
+.mxFormFieldsetError {
+  color: #f44336;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset success */
+.mxFormFieldsetSuccess {
+  color: #4caf50;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset info */
+.mxFormFieldsetInfo {
+  color: #2196f3;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset warning */
+.mxFormFieldsetWarning {
+  color: #ff9800;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset error */
+.mxFormFieldsetError {
+  color: #f44336;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset success */
+.mxFormFieldsetSuccess {
+  color: #4caf50;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset info */
+.mxFormFieldsetInfo {
+  color: #2196f3;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset warning */
+.mxFormFieldsetWarning {
+  color: #ff9800;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset error */
+.mxFormFieldsetError {
+  color: #f44336;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset success */
+.mxFormFieldsetSuccess {
+  color: #4caf50;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset info */
+.mxFormFieldsetInfo {
+  color: #2196f3;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset warning */
+.mxFormFieldsetWarning {
+  color: #ff9800;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset error */
+.mxFormFieldsetError {
+  color: #f44336;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset success */
+.mxFormFieldsetSuccess {
+  color: #4caf50;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset info */
+.mxFormFieldsetInfo {
+  color: #2196f3;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset warning */
+.mxFormFieldsetWarning {
+  color: #ff9800;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset error */
+.mxFormFieldsetError {
+  color: #f44336;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset success */
+.mxFormFieldsetSuccess {
+  color: #4caf50;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset info */
+.mxFormFieldsetInfo {
+  color: #2196f3;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset warning */
+.mxFormFieldsetWarning {
+  color: #ff9800;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset error */
+.mxFormFieldsetError {
+  color: #f44336;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset success */
+.mxFormFieldsetSuccess {
+  color: #4caf50;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset info */
+.mxFormFieldsetInfo {
+  color: #2196f3;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset warning */
+.mxFormFieldsetWarning {
+  color: #ff9800;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset error */
+.mxFormFieldsetError {
+  color: #f44336;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset success */
+.mxFormFieldsetSuccess {
+  color: #4caf50;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset info */
+.mxFormFieldsetInfo {
+  color: #2196f3;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+/* Styles for graph form fieldset warning */
+.mxFormFieldsetWarning {
+  color: #ff9800;
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: bold;
+}

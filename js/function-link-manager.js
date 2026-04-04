@@ -24,10 +24,12 @@ class FunctionLinkManager {
             // if (typeof deploy_mode !== 'undefined' && deploy_mode === 'test') {
             //     return;
             // }
-            
             // 检查用户是否已登录，如果已登录则不进行任何禁用操作
-            const isLoggedIn = sessionStorage.getItem('admin_authenticated') === 'true';
-            if (isLoggedIn) {
+            const isAuthenticated = sessionStorage.getItem('authenticated') === 'true';
+            const userType = sessionStorage.getItem('userType');
+            const isManagerLoggedIn = isAuthenticated && userType && userType.startsWith('Manager');
+            // console.log('isManagerLoggedIn:', isManagerLoggedIn);
+            if (isManagerLoggedIn) {
                 return;
             }
             
@@ -247,7 +249,13 @@ document.addEventListener('DOMContentLoaded', () => {
     functionLinkManager.init();
 });
 
-// // 添加一个全局方法，允许其他脚本（如load-components.js）在组件加载完成后调用
-// window.updateFunctionLinks = () => {
-//     functionLinkManager.processLinks();
-// };
+// 添加一个全局方法，允许其他脚本（如load-components.js）在组件加载完成后调用
+window.updateFunctionLinks = () => {
+    functionLinkManager.processLinks();
+};
+
+// 添加清除缓存的方法
+window.clearFunctionCache = () => {
+    sessionStorage.removeItem('function_online_management');
+    functionLinkManager.processLinks();
+};

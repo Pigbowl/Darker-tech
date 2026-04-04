@@ -52,7 +52,8 @@
 
 
             // 判断当前页面路径是否包含 sitedashboard 或 login
-            if (deploy_mode != 'test' && getUserId()[1] != 'Admin'){
+            if (deploy_mode != 'test' && getUserId()[0] != 'Admin'&& getUserId()[0] != 'testman'){
+                console.log("sneding visit data to server")
                 command = ip + '/add_visit'
                 fetch(command,{
                     method:'POST',

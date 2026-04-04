@@ -30,8 +30,8 @@
 
             <!--硬件智库页面-->
             <main class="sticky mt-16 top-20 z-20 container mx-auto px-4 py-8 flex flex-col gap-4">
-                <!-- 状态指示器 -->
-                <div class="flex items-center gap-3">
+                <!-- 状态指示器 - 手机端隐藏 -->
+                <div class="hidden sm:flex items-center gap-3">
                     <i class="fa fa-microchip text-tech-accent text-3xl"></i>
                     <h1 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-white">
                         <span class="text-tech-accent text-shadow-glow">芯片</span>产品目录
@@ -39,60 +39,51 @@
                 </div>
                 
                 <!-- 搜索和筛选区域 -->
-                <div class="container mx-auto px-6 py-5">
-                    <div class="bg-white rounded-xl p-4 border border-gray-700/50">
-                        <div class="flex flex-col md:flex-row gap-4">
-                            <!-- 搜索框 -->
+                <div class="container mx-auto px-2 sm:px-6 py-2 sm:py-5">
+                    <div class="bg-white rounded-xl p-2 sm:p-4 border border-gray-700/50">
+                        <!-- 手机端：搜索栏单独一行，按钮在第二行 -->
+                        <div class="flex flex-col sm:flex-row gap-2 sm:gap-4">
                             <div class="relative flex-grow">
                                 <input
                                     type="text" id="hwsearch-input"
                                     placeholder="搜索芯片型号、系列或厂商..."
-                                    class="w-full bg-tech-dark border border-gray-600 rounded-lg py-2.5 px-4 pl-10 focus:outline-none focus:border-tech-accent transition-all"
+                                    class="w-full bg-tech-dark border border-gray-600 rounded-lg py-2 sm:py-2.5 px-3 sm:px-4 pl-8 sm:pl-10 focus:outline-none focus:border-tech-accent transition-all text-sm sm:text-base"
                                 >
-                                <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                                <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
                             </div>
-
-                            <!-- 筛选下拉菜单 -->
-                            <div class="flex flex-wrap gap-3">
-                                <div class="relative w-full md:w-auto flex-grow md:flex-grow-0">
-                                    <button id="manufacturer-filter-btn" class="w-full bg-tech-dark border border-gray-600 rounded-lg py-2.5 px-4 flex items-center justify-between hover:border-tech-accent transition-all">
+                            <!-- 手机端：按钮在第二行，PC端：按钮在搜索框右侧同一行 -->
+                            <div class="flex flex-wrap gap-2 sm:gap-3">
+                                <div class="relative flex-1 sm:flex-none sm:flex-grow-0">
+                                    <button id="manufacturer-filter-btn" class="w-full bg-tech-dark border border-gray-600 rounded-lg py-1.5 sm:py-2.5 px-2 sm:px-4 flex items-center justify-between hover:border-tech-accent transition-all text-xs sm:text-sm">
                                         <span>厂商</span>
-                                        <i class="fa fa-chevron-down ml-2 text-xs"></i>
+                                        <i class="fa fa-chevron-down ml-1 sm:ml-2 text-xs"></i>
                                     </button>
                                     <div id="manufacturer-dropdown" class="absolute left-0 mt-2 w-64 bg-tech-medium border border-gray-600 rounded-lg shadow-xl z-20 hidden">
                                         <div class="p-3 max-h-60 overflow-y-auto scrollbar-thin" id="manufacturer-options">
-                                            <!-- 动态生成的厂商选项将在这里插入 -->
                                         </div>
                                     </div>
                                 </div>
-                                <!-- 产品类型筛选 -->
-                                <div class="relative w-full md:w-auto flex-grow md:flex-grow-0">
-                                    <button id="type-filter-btn" class="w-full bg-tech-dark border border-gray-600 rounded-lg py-2.5 px-4 flex items-center justify-between hover:border-tech-accent transition-all">
-                                        <span>产品类型</span>
-                                        <i class="fa fa-chevron-down ml-2 text-xs"></i>
+                                <div class="relative flex-1 sm:flex-none sm:flex-grow-0">
+                                    <button id="type-filter-btn" class="w-full bg-tech-dark border border-gray-600 rounded-lg py-1.5 sm:py-2.5 px-2 sm:px-4 flex items-center justify-between hover:border-tech-accent transition-all text-xs sm:text-sm">
+                                        <span class="sm:hidden">类型</span><span class="hidden sm:inline">产品类型</span>
+                                        <i class="fa fa-chevron-down ml-1 sm:ml-2 text-xs"></i>
                                     </button>
                                     <div id="type-dropdown" class="absolute left-0 mt-2 w-64 bg-tech-medium border border-gray-600 rounded-lg shadow-xl z-20 hidden">
                                         <div class="p-3" id="type-options">
-                                            <!-- 动态生成的产品类型选项将在这里插入 -->
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- 应用领域筛选 -->
-                                <div class="relative w-full md:w-auto flex-grow md:flex-grow-0">
-                                    <button id="application-filter-btn" class="w-full bg-tech-dark border border-gray-600 rounded-lg py-2.5 px-4 flex items-center justify-between hover:border-tech-accent transition-all">
-                                        <span>应用领域</span>
-                                        <i class="fa fa-chevron-down ml-2 text-xs"></i>
+                                <div class="relative flex-1 sm:flex-none sm:flex-grow-0">
+                                    <button id="application-filter-btn" class="w-full bg-tech-dark border border-gray-600 rounded-lg py-1.5 sm:py-2.5 px-2 sm:px-4 flex items-center justify-between hover:border-tech-accent transition-all text-xs sm:text-sm">
+                                        <span class="sm:hidden">领域</span><span class="hidden sm:inline">应用领域</span>
+                                        <i class="fa fa-chevron-down ml-1 sm:ml-2 text-xs"></i>
                                     </button>
                                     <div id="application-dropdown" class="absolute left-0 mt-2 w-64 bg-tech-medium border border-gray-600 rounded-lg shadow-xl z-20 hidden">
                                         <div class="p-3" id="application-options">
-                                            <!-- 动态生成的应用领域选项将在这里插入 -->
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- 重置按钮 -->
-                                <button id="reset-btn-component" class="w-full md:w-auto bg-tech-dark border border-gray-600 rounded-lg py-2.5 px-4 hover:border-tech-accent transition-all">
+                                <button id="reset-btn-component" class="flex-1 sm:flex-none bg-tech-dark border border-gray-600 rounded-lg py-1.5 sm:py-2.5 px-2 sm:px-4 hover:border-tech-accent transition-all text-xs sm:text-sm">
                                     <i class="fa fa-refresh mr-1"></i> 重置
                                 </button>
                             </div>
@@ -101,19 +92,18 @@
                 </div>
 
                 <!-- 主内容区域 -->
-                <div class="container mx-auto px-6 py-2 flex-grow flex flex-col lg:flex-row gap-6">
+                <div class="container mx-auto px-2 sm:px-6 py-2 flex-grow flex flex-col lg:flex-row gap-2 sm:gap-6">
                     <!-- 产品列表区域 -->
-                    <div class="w-full lg:w-2/3 bg-tech-medium/40 rounded-xl border border-gray-700/50 p-4 overflow-hidden">
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold flex items-center">
+                    <div class="w-full lg:w-2/3 bg-tech-medium/40 rounded-xl border border-gray-700/50 p-2 sm:p-4 overflow-hidden">
+                        <div class="flex justify-between items-center mb-2 sm:mb-4">
+                            <h2 class="text-base sm:text-xl font-bold flex items-center">
                                 <i class="fa fa-th-large text-tech-accent mr-2"></i>产品列表
                             </h2>
-                            <div id="result-count" class="text-sm text-gray-400">显示 0 个产品</div>
+                            <div id="result-count" class="text-xs sm:text-sm text-gray-400">显示 0 个产品</div>
                         </div>
 
-                        <!-- 修改后 -->
-                        <div id="product-list-container" class="max-h-[calc(100vh-300px)] overflow-y-auto scrollbar-thin pr-2">
-                            <!-- 动态内容将在这里生成 -->
+                        <!-- 手机端：每行两张卡片，PC端：原有布局 -->
+                        <div id="product-list-container" class="max-h-[calc(100vh-280px)] sm:max-h-[calc(100vh-300px)] overflow-y-auto scrollbar-thin pr-1 sm:pr-2">
                             <div class="loading-indicator text-center py-10">
                                 <i class="fa fa-spinner fa-spin text-tech-accent text-2xl mb-2"></i>
                                 <p>加载产品数据中...</p>
@@ -121,8 +111,8 @@
                         </div>
                     </div>
 
-                    <!-- 产品详情区域 -->
-                    <div class="w-full lg:w-1/3 bg-tech-medium/40 rounded-xl border border-gray-700/50 p-4 flex flex-col">
+                    <!-- 产品详情区域 - PC端显示 -->
+                    <div id="product-detail-panel" class="hidden lg:flex w-full lg:w-1/3 bg-tech-medium/40 rounded-xl border border-gray-700/50 p-4 flex-col">
                         <h2 class="text-xl font-bold flex items-center mb-4">
                             <i class="fa fa-info-circle text-tech-accent mr-2"></i>产品详情
                         </h2>
@@ -141,7 +131,6 @@
                                     <img id="product-image" src="" alt="产品图片" class="w-full h-48 object-cover">
                                 </div>
                                 <h3 id="product-title" class="text-xl font-bold text-white mb-1"></h3>
-                                <!-- <p id="product-manufacturer" class="text-tech-accent mb-3"></p> -->
                                 <div id="product-tags" class="flex flex-wrap gap-2 mb-4"></div>
                             </div>
 
@@ -161,14 +150,12 @@
                                     </button>
                                 </div>
                                     <ul class="space-y-2 text-sm" id="product-specs">
-                                        <!-- 动态填充规格 -->
                                     </ul>
                                 </div>
 
                                 <div class="bg-tech-dark/50 rounded-lg p-3">
                                     <h4 class="font-medium text-tech-accent mb-2 flex items-center"><i class="fa fa-line-chart mr-2"></i>性能参数</h4>
                                     <div class="grid grid-cols-2 gap-2 text-sm" id="product-performance">
-                                        <!-- 动态填充性能参数 -->
                                     </div>
                                 </div>
                             </div>
@@ -177,6 +164,58 @@
                 </div>
 
             </main>
+
+            <!-- 手机端产品详情浮窗 -->
+            <div id="mobile-product-modal" class="fixed inset-0 z-50 hidden">
+                <div class="absolute inset-0 bg-black/70" onclick="closeMobileProductModal()"></div>
+                <div class="absolute inset-x-2 top-16 bottom-4 sm:inset-x-4 sm:top-20 sm:bottom-8 bg-tech-medium rounded-xl border border-gray-700/50 overflow-hidden flex flex-col transition-transform duration-300 ease-out" id="mobile-modal-content">
+                    <div class="flex justify-between items-center p-3 sm:p-4 border-b border-gray-700/50">
+                        <h2 class="text-base sm:text-xl font-bold flex items-center">
+                            <i class="fa fa-info-circle text-tech-accent mr-2"></i>产品详情
+                        </h2>
+                        <button onclick="closeMobileProductModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-tech-dark hover:bg-gray-700 transition-colors">
+                            <i class="fa fa-times text-gray-400"></i>
+                        </button>
+                    </div>
+                    <div class="flex-grow overflow-y-auto p-3 sm:p-4">
+                        <div id="mobile-product-detail-content">
+                            <div class="mb-4">
+                                <div class="bg-tech-dark rounded-lg overflow-hidden mb-4">
+                                    <img id="mobile-product-image" src="" alt="产品图片" class="w-full h-40 sm:h-48 object-cover">
+                                </div>
+                                <h3 id="mobile-product-title" class="text-lg sm:text-xl font-bold text-white mb-1"></h3>
+                                <div id="mobile-product-tags" class="flex flex-wrap gap-2 mb-4"></div>
+                            </div>
+
+                            <div class="space-y-4 text-sm">
+                                <div class="bg-tech-dark/50 rounded-lg p-3">
+                                    <div class="flex flex-wrap gap-2 mb-2">
+                                        <button onclick="showSpecsMobile('spec-view-keyspec-mobile')" id="spec-view-keyspec-btn-mobile" class="spec-view-btn font-medium text-white flex items-center hover:text-tech-accent/80 transition-colors text-xs sm:text-sm">
+                                            <i class="fa fa-cogs mr-1"></i>技术规格
+                                        </button>
+                                        <span class="text-gray-500">|</span>
+                                        <button onclick="showSpecsMobile('spec-view-interface-mobile')" id="spec-view-interface-btn-mobile" class="spec-view-btn font-medium text-white flex items-center hover:text-tech-accent/80 transition-colors text-xs sm:text-sm">
+                                            <i class="fa fa-plug mr-1"></i>接口信息
+                                        </button>
+                                        <span class="text-gray-500">|</span>
+                                        <button onclick="showSpecsMobile('spec-view-processor-mobile')" id="spec-view-processor-btn-mobile" class="spec-view-btn font-medium text-white flex items-center hover:text-tech-accent/80 transition-colors text-xs sm:text-sm">
+                                            <i class="fa fa-microchip mr-1"></i>处理器信息
+                                        </button>
+                                    </div>
+                                    <ul class="space-y-2 text-xs sm:text-sm" id="mobile-product-specs">
+                                    </ul>
+                                </div>
+
+                                <div class="bg-tech-dark/50 rounded-lg p-3">
+                                    <h4 class="font-medium text-tech-accent mb-2 flex items-center text-xs sm:text-sm"><i class="fa fa-line-chart mr-2"></i>性能参数</h4>
+                                    <div class="grid grid-cols-2 gap-2 text-xs sm:text-sm" id="mobile-product-performance">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         <!-- 页脚容器 -->
         <div id="footer-container"></div>   
     </div>
@@ -283,15 +322,15 @@
                     
                     // 厂商头部
                     manufacturerGroup.innerHTML = `
-                        <div class="manufacturer-header flex items-center justify-between mb-4 cursor-pointer">
-                            <h3 class="text-lg font-semibold flex items-center">
+                        <div class="manufacturer-header flex items-center justify-between mb-2 sm:mb-4 cursor-pointer">
+                            <h3 class="text-sm sm:text-lg font-semibold flex items-center">
                                 <i class="fa fa-chevron-down text-tech-accent mr-2 transition-transform duration-300"></i>
-                                <img src=${supplierpicpath+manufacturer+".png"} alt="${manufacturer} Logo" class="w-16 h-6 mr-2">
+                                <img src=${supplierpicpath+manufacturer+".png"} alt="${manufacturer} Logo" class="w-12 h-5 sm:w-16 sm:h-6 mr-2">
                                 ${manufacturer}
                             </h3>
-                            <span class="supplier-count text-sm bg-tech-light/50 px-2 py-1 rounded-full">${products.length} 个产品</span>
+                            <span class="supplier-count text-xs sm:text-sm bg-tech-light/50 px-2 py-1 rounded-full">${products.length} 个产品</span>
                         </div>
-                        <div class="manufacturer-products grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+                        <div class="manufacturer-products grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3"></div>
                     `;
                     
                     // 获取产品容器
@@ -316,7 +355,7 @@
                 const card = document.createElement('div');
                 const productId = product.Name;
                 
-                card.className = 'chip-card bg-tech-dark border border-gray-700 rounded-lg p-3';
+                card.className = 'chip-card bg-tech-dark border border-gray-700 rounded-lg p-2 sm:p-3 cursor-pointer hover:border-tech-accent transition-all';
                 card.dataset.id = productId;
                 card.dataset.manufacturer = product.Supplier_Name.Name.toLowerCase();
                 card.dataset.type = product.Type || 'unknown';
@@ -336,13 +375,13 @@
 
                     
                 card.innerHTML = `
-                    <div class="flex justify-between items-start mb-2">
-                        <h4 class="font-semibold text-white">${product.Name}</h4>
-                        <span class="text-xs bg-tech-accent/20 text-tech-accent px-2 py-0.5 rounded-full">${product.Type || '标准级'}</span>
+                    <div class="flex justify-between items-start mb-1 sm:mb-2">
+                        <h4 class="font-semibold text-white text-xs sm:text-sm truncate max-w-[60%]">${product.Name}</h4>
+                        <span class="text-[10px] sm:text-xs bg-tech-accent/20 text-tech-accent px-1.5 sm:px-2 py-0.5 rounded-full whitespace-nowrap">${product.Type || '标准级'}</span>
                     </div>
-                    <p class="text-sm text-gray-400 mb-2">${product.AI_RESOURCE || '未知算力'} | ${product.CPU_RESOURCE || '未知核心数'} | ${product.Fusa_Level|| '未知核心数'}</p>
-                    <div class="flex flex-wrap gap-1 mt-3">
-                        ${tags ? tags.map(tag => `<span class="text-xs bg-tech-light/30 px-2 py-0.5 rounded">${tag}</span>`).join('') : ''}
+                    <p class="text-[10px] sm:text-sm text-gray-400 mb-1 sm:mb-2 truncate">${product.AI_RESOURCE || '未知算力'} | ${product.CPU_RESOURCE || '未知核心数'}</p>
+                    <div class="flex flex-wrap gap-0.5 sm:gap-1 mt-1 sm:mt-2">
+                        ${tags ? tags.map(tag => `<span class="text-[9px] sm:text-xs bg-tech-light/30 px-1 sm:px-2 py-0.5 rounded">${tag}</span>`).join('') : ''}
                     </div>
                 `;
                 
@@ -410,11 +449,25 @@
                 componentsearchInput.addEventListener('input',filterProducts);
             }
 
+            // 检测是否为手机端
+            function isMobile() {
+                return window.innerWidth < 1024;
+            }
+
             // 显示产品详情
             function showProductDetail(productId) {
                 const product = productData.Catalogue[productId];
                 if (!product) return;
 
+                if (isMobile()) {
+                    showMobileProductDetail(product);
+                } else {
+                    showDesktopProductDetail(product);
+                }
+            }
+
+            // PC端显示产品详情
+            function showDesktopProductDetail(product) {
                 productDetailEmpty.classList.add('hidden');
                 productDetailContent.classList.remove('hidden');
 
@@ -422,7 +475,6 @@
                 productTitle.textContent = product.Name;
 
             // 渲染规格
-                // 清空旧内容并准备 3 个同级容器
                 productSpecs.innerHTML = `
                     <div id="spec-view-keyspec" class="spec-view hidden"></div>
                     <div id="spec-view-interface" class="spec-view hidden"></div>
@@ -430,22 +482,18 @@
                 `;
                 
                 document.querySelectorAll('.spec-view').forEach(v => v.classList.add('hidden'));
-                // 根据 processor 类型填充对应容器
                 const processorView = document.getElementById(`spec-view-processor`);
-                // console.log(product.processor_group)
                 Object.keys(product.processor_group).forEach(processorType => {
-                    if (!processorView) return; // 防止意外类型 
+                    if (!processorView) return;
                     product.processor_group[processorType].forEach(element => {
                         const elementDiv = document.createElement('div');
                         elementDiv.className = 'element-info-container bg-tech-dark/30 border border-gray-600 rounded-lg p-3 mb-2';
 
-                        // 添加 Type 标题
                         const typeTitle = document.createElement('h5');
                         typeTitle.className = 'text-tech-accent font-semibold mb-2';
                         typeTitle.textContent = element.Type || '未知类型';
                         elementDiv.appendChild(typeTitle);
 
-                        // 仅渲染 Power、Name
                         ['Power', 'Name'].forEach(key => {
                             if (element.hasOwnProperty(key)) {
                                 if (key === 'Name') {
@@ -466,25 +514,22 @@
                     });
                 });
 
-                            // 根据 interface 类型填充对应容器
                 const interfaceView = document.getElementById(`spec-view-interface`);
                 Object.keys(product.interface_group).forEach(interfaceType => {
-                    if (!interfaceView) return; // 防止意外类型
+                    if (!interfaceView) return;
                     const elementDiv = document.createElement('div');
                     elementDiv.className = 'element-info-container bg-tech-dark/30 border border-gray-600 rounded-lg p-3 mb-2';
-                    // 添加 Type 标题
                     const typeTitle = document.createElement('h5');
                     typeTitle.className = 'text-tech-accent font-semibold mb-2';
                     typeTitle.textContent = interfaceType || '未知类型';
                     elementDiv.appendChild(typeTitle);
                     product.interface_group[interfaceType].forEach(element => {
-                        // 仅渲染 Power、Name
                         ['Power', 'SubType'].forEach(key => {
                             if (element.hasOwnProperty(key)) {
                                 if (key === 'SubType') {
                                     const infoItem = document.createElement('div');
                                     infoItem.className = 'flex justify-between text-sm';
-                                    infoItem.innerHTML = `<span class="text-white font-medium">${element[key]} * ${element.Number}</span>`;
+                                    infoItem.innerHTML = `<span class="text-white font-medium">${element[key]} * ${element.Interface_Number}</span>`;
                                     elementDiv.appendChild(infoItem);
                                 } else if (key === 'Power') {
                                     const infoItem = document.createElement('div');
@@ -501,17 +546,14 @@
                 const defaultView = document.querySelector('#spec-view-keyspec');
                 Object.keys(product).forEach(key => {
                     if (key && typeof(product[key])!=='object' && chipsetkeyattribute.includes(key)){
-                    // 为 element 创建一个 div 容器，用于放置其内部信息
                         elementDiv = document.createElement('div');
                         elementDiv.className = 'element-info-container bg-tech-dark/30 border border-gray-600 rounded-lg p-3 mb-2';
                     
-                        // 添加 Type 标题
                         const typeTitle = document.createElement('h5');
                         typeTitle.className = 'text-tech-accent font-semibold mb-2';
                         typeTitle.textContent = key || '未知类型';
                         elementDiv.appendChild(typeTitle);
 
-                        // console.log(key,product[key])
                         const infoItem = document.createElement('div');
                         infoItem.className = 'flex justify-between text-sm';
                         infoItem.innerHTML = `
@@ -519,7 +561,6 @@
                     `;
                     elementDiv.appendChild(infoItem);
 
-                    // 将生成的 div 添加到需要显示的父容器中
                     defaultView.appendChild(elementDiv);}
                 });
 
@@ -527,6 +568,169 @@
                 document.getElementById("spec-view-keyspec-btn").classList.remove('text-white');
                 document.getElementById("spec-view-keyspec-btn").classList.add('text-tech-accent');
             }
+
+            // 手机端显示产品详情浮窗
+            function showMobileProductDetail(product) {
+                const modal = document.getElementById('mobile-product-modal');
+                const mobileProductImage = document.getElementById('mobile-product-image');
+                const mobileProductTitle = document.getElementById('mobile-product-title');
+                const mobileProductTags = document.getElementById('mobile-product-tags');
+                const mobileProductSpecs = document.getElementById('mobile-product-specs');
+
+                mobileProductImage.src = componentpicpath + product.Name + ".png";
+                mobileProductTitle.textContent = product.Name;
+
+                // 渲染标签
+                const tags = [product.Fusa_Level];
+                if (typeof product.Domain == 'string') {
+                    tags.push(product.Domain);
+                } else {
+                    Object.keys(product.Domain).forEach(key => {
+                        tags.push(key);
+                    });
+                }
+                mobileProductTags.innerHTML = tags ? tags.map(tag => `<span class="text-xs bg-tech-light/30 px-2 py-0.5 rounded">${tag}</span>`).join('') : '';
+
+                // 渲染规格
+                mobileProductSpecs.innerHTML = `
+                    <div id="spec-view-keyspec-mobile" class="spec-view-mobile hidden"></div>
+                    <div id="spec-view-interface-mobile" class="spec-view-mobile hidden"></div>
+                    <div id="spec-view-processor-mobile" class="spec-view-mobile hidden"></div>
+                `;
+
+                document.querySelectorAll('.spec-view-mobile').forEach(v => v.classList.add('hidden'));
+
+                // 处理器信息
+                const processorViewMobile = document.getElementById('spec-view-processor-mobile');
+                if (product.processor_group) {
+                    Object.keys(product.processor_group).forEach(processorType => {
+                        if (!processorViewMobile) return;
+                        product.processor_group[processorType].forEach(element => {
+                            const elementDiv = document.createElement('div');
+                            elementDiv.className = 'element-info-container bg-tech-dark/30 border border-gray-600 rounded-lg p-2 mb-2';
+
+                            const typeTitle = document.createElement('h5');
+                            typeTitle.className = 'text-tech-accent font-semibold mb-1 text-xs sm:text-sm';
+                            typeTitle.textContent = element.Type || '未知类型';
+                            elementDiv.appendChild(typeTitle);
+
+                            ['Power', 'Name'].forEach(key => {
+                                if (element.hasOwnProperty(key)) {
+                                    if (key === 'Name') {
+                                        const infoItem = document.createElement('div');
+                                        infoItem.className = 'flex justify-between text-xs sm:text-sm';
+                                        infoItem.innerHTML = `<span class="text-white font-medium">${element[key]} * ${element.Number}</span>`;
+                                        elementDiv.appendChild(infoItem);
+                                    } else if (key === 'Power') {
+                                        const infoItem = document.createElement('div');
+                                        infoItem.className = 'flex justify-between text-xs sm:text-sm';
+                                        infoItem.innerHTML = `<span class="text-white font-medium">${element[key]} ${element.Unit}</span>`;
+                                        elementDiv.appendChild(infoItem);
+                                    }
+                                }
+                            });
+
+                            processorViewMobile.appendChild(elementDiv);
+                        });
+                    });
+                }
+
+                // 接口信息
+                const interfaceViewMobile = document.getElementById('spec-view-interface-mobile');
+                if (product.interface_group) {
+                    Object.keys(product.interface_group).forEach(interfaceType => {
+                        if (!interfaceViewMobile) return;
+                        const elementDiv = document.createElement('div');
+                        elementDiv.className = 'element-info-container bg-tech-dark/30 border border-gray-600 rounded-lg p-2 mb-2';
+                        const typeTitle = document.createElement('h5');
+                        typeTitle.className = 'text-tech-accent font-semibold mb-1 text-xs sm:text-sm';
+                        typeTitle.textContent = interfaceType || '未知类型';
+                        elementDiv.appendChild(typeTitle);
+                        product.interface_group[interfaceType].forEach(element => {
+                            ['Power', 'SubType'].forEach(key => {
+                                if (element.hasOwnProperty(key)) {
+                                    if (key === 'SubType') {
+                                        const infoItem = document.createElement('div');
+                                        infoItem.className = 'flex justify-between text-xs sm:text-sm';
+                                        infoItem.innerHTML = `<span class="text-white font-medium">${element[key]} * ${element.Interface_Number}</span>`;
+                                        elementDiv.appendChild(infoItem);
+                                    } else if (key === 'Power') {
+                                        const infoItem = document.createElement('div');
+                                        infoItem.className = 'flex justify-between text-xs sm:text-sm';
+                                        infoItem.innerHTML = `<span class="text-white font-medium">${element[key]}</span>`;
+                                        elementDiv.appendChild(infoItem);
+                                    }
+                                }
+                            });
+                            interfaceViewMobile.appendChild(elementDiv);
+                        });
+                    });
+                }
+
+                // 关键规格
+                const defaultViewMobile = document.getElementById('spec-view-keyspec-mobile');
+                Object.keys(product).forEach(key => {
+                    if (key && typeof(product[key]) !== 'object' && chipsetkeyattribute.includes(key)) {
+                        const elementDiv = document.createElement('div');
+                        elementDiv.className = 'element-info-container bg-tech-dark/30 border border-gray-600 rounded-lg p-2 mb-2';
+
+                        const typeTitle = document.createElement('h5');
+                        typeTitle.className = 'text-tech-accent font-semibold mb-1 text-xs sm:text-sm';
+                        typeTitle.textContent = key || '未知类型';
+                        elementDiv.appendChild(typeTitle);
+
+                        const infoItem = document.createElement('div');
+                        infoItem.className = 'flex justify-between text-xs sm:text-sm';
+                        infoItem.innerHTML = `<span class="text-white font-medium">${product[key]}</span>`;
+                        elementDiv.appendChild(infoItem);
+
+                        defaultViewMobile.appendChild(elementDiv);
+                    }
+                });
+
+                defaultViewMobile.classList.remove('hidden');
+                document.getElementById("spec-view-keyspec-btn-mobile").classList.remove('text-white');
+                document.getElementById("spec-view-keyspec-btn-mobile").classList.add('text-tech-accent');
+
+                modal.classList.remove('hidden');
+                const modalContent = document.getElementById('mobile-modal-content');
+                modalContent.style.transform = 'translateY(100%)';
+                requestAnimationFrame(() => {
+                    modalContent.style.transform = 'translateY(0)';
+                });
+                document.body.style.overflow = 'hidden';
+            }
+
+            // 关闭手机端产品详情浮窗
+            window.closeMobileProductModal = function() {
+                const modal = document.getElementById('mobile-product-modal');
+                const modalContent = document.getElementById('mobile-modal-content');
+                modalContent.style.transform = 'translateY(100%)';
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    document.body.style.overflow = '';
+                }, 300);
+            };
+
+            // 手机端切换规格视图
+            window.showSpecsMobile = function(viewId) {
+                const specViews = document.querySelectorAll('.spec-view-mobile');
+                specViews.forEach(view => {
+                    view.classList.add('hidden');
+                });
+                
+                document.getElementById(viewId).classList.remove('hidden');
+                document.querySelectorAll('[id$="-btn-mobile"]').forEach(btn => {
+                    btn.classList.add('text-white');
+                    btn.classList.remove('text-tech-accent');
+                });
+                const btnId = viewId.replace('-mobile', '') + '-btn-mobile';
+                const activeBtn = document.getElementById(btnId);
+                if (activeBtn) {
+                    activeBtn.classList.remove('text-white');
+                    activeBtn.classList.add('text-tech-accent');
+                }
+            };
 
             // 将showSpecs函数暴露到全局作用域，使HTML按钮可以访问
             window.showSpecs = function(viewId){
@@ -571,6 +775,7 @@
                         productData = JSON.parse(data.output); 
                         console.log(productData)
                         manufacturerData = groupProductsByManufacturer(productData.Catalogue);
+                        console.log(manufacturerData)
                         manufacturerData_init = manufacturerData;
                         initFilters(productData)
                         renderProductList(manufacturerData);

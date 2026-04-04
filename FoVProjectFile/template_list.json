@@ -1,7 +1,6 @@
 {
     "templates": [
-        "Example-4-SVS.json",
-        "Template-4_SVS-1V-1R.json",
-        "Template_4_SVS_1V_1R.json"
+        "1FV+1FR.json",
+        "4SVS+1FV+1FR.json"
     ]
 }

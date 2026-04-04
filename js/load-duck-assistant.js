@@ -27,7 +27,7 @@ function loadDuckAssistant() {
         darkurl = 'darker_assistance.html';
     }
     
-    console.log(darkurl,parenthtml,mainpageaddress);
+    // console.log(darkurl,parenthtml,mainpageaddress);
     // 创建启动样式
     const startStyle = document.createElement('style');
     startStyle.innerHTML = `
@@ -51,8 +51,8 @@ function loadDuckAssistant() {
     
     // 记录标准位置
     const standardPosition = {
-        bottom: '150px',
-        right: '150px'
+        bottom: '35px',
+        right: '0'
     };
     
     // debug参数：true - 每次加载都进入初始模式；false - 保持当前逻辑
@@ -61,7 +61,6 @@ function loadDuckAssistant() {
     // 检查sessionStorage，判断是否是第一次访问
     // 使用let声明，以便后续可以修改
     let hasSeenInitialMode = sessionStorage.getItem('hasSeenDuckInitialMode') === 'true';
-    console.log(hasSeenInitialMode);
     // 创建iframe元素
     const duckIframe = document.createElement('iframe');
     duckIframe.id = 'duckIframe';

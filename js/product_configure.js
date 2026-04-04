@@ -1,6 +1,6 @@
 
 // 产品配置信息 - 自动生成
-// 生成时间: 2026-03-10 16:44:16
+// 生成时间: 2026-03-26 11:10:12
 
 // 全局产品配置变量
 let products_config = {
@@ -19,7 +19,7 @@ let products_config = {
       "Category": "知识宇宙",
       "Description": "提供传感器知识和数据库",
       "CN_Name": "传感器星球",
-      "Status": "测试版本上线"
+      "Status": "正式版本上线"
     },
     {
       "ID": 3,
@@ -43,11 +43,11 @@ let products_config = {
       "Category": "知识宇宙",
       "Description": "提供法规相关知识",
       "CN_Name": "法规/标准星球",
-      "Status": "测试版本上线"
+      "Status": "未上线"
     },
     {
       "ID": 6,
-      "Function": "ArchitectureBuild",
+      "Function": "ArchitectureHall",
       "Category": "知识宇宙",
       "Description": "提供架构开发的相关知识",
       "CN_Name": "架构星球",
@@ -59,7 +59,7 @@ let products_config = {
       "Category": "行业纵横",
       "Description": "提供ADAS对标库",
       "CN_Name": "车型矩阵",
-      "Status": "测试版本上线"
+      "Status": "未上线"
     },
     {
       "ID": 8,
@@ -99,7 +99,7 @@ let products_config = {
       "Category": "智驾军火库",
       "Description": "完整的仿真平台",
       "CN_Name": "仿真平台",
-      "Status": "规划中"
+      "Status": "新产品上线"
     },
     {
       "ID": 13,
@@ -158,12 +158,12 @@ let products_config = {
       "Status": "规划中"
     },
     {
-      "ID": 20,
-      "Function": "PhyArchiHall",
+      "ID": 22,
+      "Function": "ArchitectureBuild",
       "Category": "知识宇宙",
-      "Description": "提供如何定义物理架构的知识",
-      "CN_Name": "物理架构星球",
-      "Status": "规划中"
+      "Description": "提供逻辑架构相关知识",
+      "CN_Name": "逻辑架构开发",
+      "Status": "测试版本上线"
     }
   ],
   "categorized_features": {
@@ -182,7 +182,7 @@ let products_config = {
         "Category": "知识宇宙",
         "Description": "提供传感器知识和数据库",
         "CN_Name": "传感器星球",
-        "Status": "测试版本上线"
+        "Status": "正式版本上线"
       },
       {
         "ID": 3,
@@ -198,23 +198,23 @@ let products_config = {
         "Category": "知识宇宙",
         "Description": "提供法规相关知识",
         "CN_Name": "法规/标准星球",
-        "Status": "测试版本上线"
+        "Status": "未上线"
       },
       {
         "ID": 6,
-        "Function": "ArchitectureBuild",
+        "Function": "ArchitectureHall",
         "Category": "知识宇宙",
         "Description": "提供架构开发的相关知识",
         "CN_Name": "架构星球",
         "Status": "测试版本上线"
       },
       {
-        "ID": 20,
-        "Function": "PhyArchiHall",
+        "ID": 22,
+        "Function": "ArchitectureBuild",
         "Category": "知识宇宙",
-        "Description": "提供如何定义物理架构的知识",
-        "CN_Name": "物理架构星球",
-        "Status": "规划中"
+        "Description": "提供逻辑架构相关知识",
+        "CN_Name": "逻辑架构开发",
+        "Status": "测试版本上线"
       }
     ],
     "知识网络": [
@@ -234,7 +234,7 @@ let products_config = {
         "Category": "行业纵横",
         "Description": "提供ADAS对标库",
         "CN_Name": "车型矩阵",
-        "Status": "测试版本上线"
+        "Status": "未上线"
       },
       {
         "ID": 14,
@@ -308,7 +308,7 @@ let products_config = {
         "Category": "智驾军火库",
         "Description": "完整的仿真平台",
         "CN_Name": "仿真平台",
-        "Status": "规划中"
+        "Status": "新产品上线"
       },
       {
         "ID": 13,
@@ -340,6 +340,6 @@ let products_config = {
       }
     ]
   },
-  "version": "10th-Quick_Fix",
+  "version": "20260326111012",
   "status": []
 };
