@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>15 Cyberpunk Dynamic Backgrounds</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cyan: #00f0ff;
+    --magenta: #ff00de;
+    --yellow: #ffe600;
+    --green: #39ff14;
+    --red: #ff003c;
+    --purple: #b000ff;
+    --orange: #ff6a00;
+    --bg: #0a0a0f;
+    --panel-bg: rgba(10, 10, 20, 0.88);
+  }
+
+  body {
+    font-family: 'Share Tech Mono', monospace;
+    background: var(--bg);
+    color: #c0c0d0;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  /* ── Navigation Bar ── */
+  .nav-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    background: var(--panel-bg);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav-bar::-webkit-scrollbar { display: none; }
+
+  .nav-bar .logo {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 0.85rem;
+    color: var(--cyan);
+    text-shadow: 0 0 10px var(--cyan);
+    white-space: nowrap;
+    margin-right: 0.8rem;
+    letter-spacing: 2px;
+  }
+
+  .nav-btn {
+    padding: 0.4rem 0.8rem;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #888;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem;
+    cursor: pointer;
+    white-space: nowrap;
+    border-radius: 2px;
+    transition: all 0.25s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .nav-btn:hover {
+    border-color: var(--cyan);
+    color: var(--cyan);
+    box-shadow: 0 0 8px rgba(0,240,255,0.2);
+  }
+  .nav-btn.active {
+    background: var(--cyan);
+    color: #000;
+    border-color: var(--cyan);
+    font-weight: 700;
+    box-shadow: 0 0 15px rgba(0,240,255,0.4);
+  }
+
+  /* ── Background Container ── */
+  .bg-stage {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .bg-layer {
+    position: absolute;
+    inset: 0;
+    display: none;
+  }
+  .bg-layer.active { display: block; }
+  .bg-layer canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ── Label Overlay ── */
+  .bg-label {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #fff;
+    text-shadow: 0 0 20px var(--cyan), 0 0 40px var(--cyan);
+    pointer-events: none;
+    opacity: 0.9;
+    transition: opacity 0.4s;
+  }
+  .bg-label .sub {
+    display: block;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 400;
+    letter-spacing: 2px;
+    color: var(--magenta);
+    text-shadow: 0 0 10px var(--magenta);
+    margin-top: 0.3rem;
+    text-align: center;
+  }
+
+  /* ═══════════════════════════════════════════
+     BG 9 — Holographic Shimmer (CSS)
+     ═══════════════════════════════════════════ */
+  #bg9 {
+    background: #0a0a12;
+    overflow: hidden;
+  }
+  #bg9 .holo-base {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(135deg, #0a0a12 0%, #1a0030 25%, #001a2e 50%, #0a1a00 75%, #0a0a12 100%);
+    background-size: 400% 400%;
+    animation: holoShift 8s ease infinite;
+  }
+  #bg9 .holo-sweep {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 20%,
+      rgba(0, 240, 255, 0.03) 30%,
+      rgba(176, 0, 255, 0.05) 40%,
+      rgba(255, 0, 222, 0.03) 50%,
+      rgba(57, 255, 20, 0.04) 60%,
+      rgba(255, 230, 0, 0.03) 70%,
+      transparent 80%
+    );
+    background-size: 200% 100%;
+    animation: holoSweep 4s ease-in-out infinite;
+  }
+  #bg9 .holo-grain {
+    position: absolute;
+    inset: 0;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+    animation: noiseMove 1s steps(4) infinite;
+    pointer-events: none;
+  }
+  #bg9 .holo-lines {
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,240,255,0.015) 3px, rgba(0,240,255,0.015) 4px),
+      repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(255,0,222,0.01) 3px, rgba(255,0,222,0.01) 4px);
+    animation: holoLines 2s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes holoShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  @keyframes holoSweep {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+  @keyframes holoLines {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(4px, 4px); }
+  }
+  @keyframes noiseMove {
+    0% { transform: translate(0,0); }
+    20% { transform: translate(-5%,5%); }
+    40% { transform: translate(5%,-5%); }
+    60% { transform: translate(-3%,-3%); }
+    80% { transform: translate(3%,3%); }
+    100% { transform: translate(0,0); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<div class="nav-bar">
+  <div class="logo">CYBER::BG</div>
+  <button class="nav-btn active" data-bg="bg1">01 Constellation</button>
+  <button class="nav-btn" data-bg="bg2">02 DNA</button>
+  <button class="nav-btn" data-bg="bg3">03 Radar</button>
+  <button class="nav-btn" data-bg="bg4">04 Topo</button>
+  <button class="nav-btn" data-bg="bg5">05 Arc</button>
+  <button class="nav-btn" data-bg="bg6">06 Hex</button>
+  <button class="nav-btn" data-bg="bg7">07 Circuit</button>
+  <button class="nav-btn" data-bg="bg8">08 Kaleidoscope</button>
+  <button class="nav-btn" data-bg="bg9">09 Holo</button>
+  <button class="nav-btn" data-bg="bg10">10 Tunnel</button>
+  <button class="nav-btn" data-bg="bg11">11 Spectrum</button>
+  <button class="nav-btn" data-bg="bg12">12 Warp</button>
+  <button class="nav-btn" data-bg="bg13">13 Lissajous</button>
+  <button class="nav-btn" data-bg="bg14">14 Dots</button>
+  <button class="nav-btn" data-bg="bg15">15 Morse</button>
+</div>
+
+<!-- Background Stage -->
+<div class="bg-stage">
+
+  <!-- BG 1: Neon Constellation (Canvas) -->
+  <div class="bg-layer active" id="bg1">
+    <canvas id="constellationCanvas"></canvas>
+  </div>
+
+  <!-- BG 2: DNA Helix (Canvas) -->
+  <div class="bg-layer" id="bg2">
+    <canvas id="dnaCanvas"></canvas>
+  </div>
+
+  <!-- BG 3: Radar Sweep (Canvas) -->
+  <div class="bg-layer" id="bg3">
+    <canvas id="radarCanvas"></canvas>
+  </div>
+
+  <!-- BG 4: Topographic Lines (Canvas) -->
+  <div class="bg-layer" id="bg4">
+    <canvas id="topoCanvas"></canvas>
+  </div>
+
+  <!-- BG 5: Electric Arc (Canvas) -->
+  <div class="bg-layer" id="bg5">
+    <canvas id="arcCanvas"></canvas>
+  </div>
+
+  <!-- BG 6: Hex Grid Pulse (Canvas) -->
+  <div class="bg-layer" id="bg6">
+    <canvas id="hexCanvas"></canvas>
+  </div>
+
+  <!-- BG 7: Circuit Board Flow (Canvas) -->
+  <div class="bg-layer" id="bg7">
+    <canvas id="circuitCanvas"></canvas>
+  </div>
+
+  <!-- BG 8: Kaleidoscope (Canvas) -->
+  <div class="bg-layer" id="bg8">
+    <canvas id="kaleidoCanvas"></canvas>
+  </div>
+
+  <!-- BG 9: Holographic Shimmer (CSS) -->
+  <div class="bg-layer" id="bg9">
+    <div class="holo-base"></div>
+    <div class="holo-sweep"></div>
+    <div class="holo-grain"></div>
+    <div class="holo-lines"></div>
+  </div>
+
+  <!-- BG 10: Neon Tunnel (Canvas) -->
+  <div class="bg-layer" id="bg10">
+    <canvas id="tunnelCanvas"></canvas>
+  </div>
+
+  <!-- BG 11: Spectrum Bars (Canvas) -->
+  <div class="bg-layer" id="bg11">
+    <canvas id="spectrumCanvas"></canvas>
+  </div>
+
+  <!-- BG 12: Starfield Warp (Canvas) -->
+  <div class="bg-layer" id="bg12">
+    <canvas id="warpCanvas"></canvas>
+  </div>
+
+  <!-- BG 13: Lissajous Curves (Canvas) -->
+  <div class="bg-layer" id="bg13">
+    <canvas id="lissajousCanvas"></canvas>
+  </div>
+
+  <!-- BG 14: Dot Matrix Wave (Canvas) -->
+  <div class="bg-layer" id="bg14">
+    <canvas id="dotsCanvas"></canvas>
+  </div>
+
+  <!-- BG 15: Morse Pulse (Canvas) -->
+  <div class="bg-layer" id="bg15">
+    <canvas id="morseCanvas"></canvas>
+  </div>
+</div>
+
+<!-- Label -->
+<div class="bg-label" id="bgLabel">
+  Neon Constellation
+  <span class="sub">Canvas — Connected Star Patterns with Drift</span>
+</div>
+
+<script>
+// ── Navigation ──
+const labels = {
+  bg1:  ['Neon Constellation', 'Canvas — Connected Star Patterns with Drift'],
+  bg2:  ['DNA Helix',          'Canvas — Rotating Double Helix Structure'],
+  bg3:  ['Radar Sweep',        'Canvas — Rotating Radar with Blips'],
+  bg4:  ['Topographic Lines',  'Canvas — Animated Contour Map'],
+  bg5:  ['Electric Arc',       'Canvas — Lightning Bolt Generation'],
+  bg6:  ['Hex Grid Pulse',     'Canvas — Hexagonal Wave Propagation'],
+  bg7:  ['Circuit Board Flow', 'Canvas — Animated Trace Paths + Pulses'],
+  bg8:  ['Kaleidoscope',       'Canvas — Symmetric Rotating Patterns'],
+  bg9:  ['Holographic Shimmer','CSS — Animated Gradient Sweep + Grain + Grid'],
+  bg10: ['Neon Tunnel',        'Canvas — Flying Through Neon Ring Tunnel'],
+  bg11: ['Spectrum Bars',      'Canvas — Audio Analyzer Frequency Bars'],
+  bg12: ['Starfield Warp',     'Canvas — 3D Flying-Through-Space Star Trails'],
+  bg13: ['Lissajous Curves',   'Canvas — Parametric Neon Drawing'],
+  bg14: ['Dot Matrix Wave',    'Canvas — Dot Grid Reacting to Sine Waves'],
+  bg15: ['Morse Pulse',        'Canvas — Neon Dot / Dash Signal Transmission'],
+};
+
+let activeBg = 'bg1';
+let activeAnimId = null;
+
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.dataset.bg;
+    if (target === activeBg) return;
+    if (activeAnimId) { cancelAnimationFrame(activeAnimId); activeAnimId = null; }
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.bg-layer').forEach(l => l.classList.remove('active'));
+    document.getElementById(target).classList.add('active');
+    activeBg = target;
+    document.getElementById('bgLabel').innerHTML =
+      labels[target][0] + '<span class="sub">' + labels[target][1] + '</span>';
+    if (canvasInits[target]) canvasInits[target]();
+  });
+});
+
+function resizeCanvas(canvas) {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', () => {
+  if (activeBg && canvasInits[activeBg]) canvasInits[activeBg]();
+});
+
+const canvasInits = {};
+
+// ═══════════════════════════════════════════
+// BG 1 — Neon Constellation
+// ═══════════════════════════════════════════
+canvasInits.bg1 = function () {
+  const c = document.getElementById('constellationCanvas');
+  const ctx = c.getContext('2d');
+  resizeCanvas(c);
+
+  const stars = [];
+  const count = 120;
+  const colors = ['#00f0ff','#ff00de','#39ff14','#ffe600','#b000ff'];
+
+  for (let i = 0; i < count; i++) {
+    stars.push({
+      x: Math.random() * c.width,
+      y: Math.random() * c.height,
+      vx: (Math.random() - 0.5) * 0.15,
+      vy: (Math.random() - 0.5) * 0.15,
+      r: Math.random() * 2 + 0.5,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      pulse: Math.random() * Math.PI * 2
+    });
+  }
+
+  function draw() {
+    ctx.fillStyle = 'rgba(8, 8, 18, 0.08)';
+    ctx.fillRect(0, 0, c.width, c.height);
+
+    stars.forEach(s => {
+      s.x += s.vx;
+      s.y += s.vy;
+      s.pulse += 0.02;
+      if (s.x < 0) s.x = c.width;
+      if (s.x > c.width) s.x = 0;
+      if (s.y < 0) s.y = c.height;
+      if (s.y > c.height) s.y = 0;
+
+      const glow = Math.sin(s.pulse) * 0.4 + 0.6;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r * glow, 0, Math.PI * 2);
+      ctx.fillStyle = s.color;
+      ctx.shadowColor = s.color;
+      ctx.shadowBlur = 6;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    });
+
+    // Connect nearby stars
+    for (let i = 0; i < count; i++) {
+      for (let j = i + 1; j < count; j++) {
+        const d = Math.hypot(stars[i].x - stars[j].x, stars[i].y - stars[j].y);
+        if (d < 130) {
+          ctx.beginPath();
+          ctx.moveTo(stars[i].x, stars[i].y);
+          ctx.lineTo(stars[j].x, stars[j].y);
+          ctx.strokeStyle = stars[i].color;
+          ctx.globalAlpha = (1 - d / 130) * 0.25;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+        }
+      }
+    }
+    activeAnimId = requestAnimationFrame(draw);
+  }
+  draw();
+};
+
+// ═══════════════════════════════════════════
+// BG 2 — DNA Helix
+// ═══════════════════════════════════════════
+canvasInits.bg2 = function () {
+  const c = document.getElementById('dnaCanvas');
+  const ctx = c.getContext('2d');
+  resizeCanvas(c);
+  let time = 0;
+
+  function draw() {
+    ctx.fillStyle = 'rgba(8, 8, 18, 0.1)';
+    ctx.fillRect(0, 0, c.width, c.height);
+    time += 0.025;
+
+    const cx = c.width / 2;
+    const numPoints = 60;
+    const spacing = c.height / numPoints;
+    const radius = 120;
+
+    for (let i = 0; i < numPoints; i++) {
+      const y = i * spacing + (time * 30) % spacing;
+      const angle = i * 0.2 + time * 2;
+      const x1 = cx + Math.cos(angle) * radius;
+      const x2 = cx + Math.cos(angle + Math.PI) * radius;
+      const z1 = Math.sin(angle);
+      const z2 = Math.sin(angle + Math.PI);
+
+      // Strand 1
+      ctx.beginPath();
+      ctx.arc(x1, y, 3 + z1 * 2, 0, Math.PI * 2);
+      ctx.fillStyle = '#00f0ff';
+      ctx.globalAlpha = 0.4 + z1 * 0.4;
+      ctx.shadowColor = '#00f0ff';
+      ctx.shadowBlur = 8;
+      ctx.fill();
+
+      // Strand 2
+      ctx.beginPath();
+      ctx.arc(x2, y, 3 + z2 * 2, 0, Math.PI * 2);
+      ctx.fillStyle = '#ff00de';
+      ctx.globalAlpha = 0.4 + z2 * 0.4;
+      ctx.shadowColor = '#ff00de';
+      ctx.fill();
+
+      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1;
+
+      // Rungs every 4th point
+      if (i % 4 === 0) {
+        ctx.beginPath();
+        ctx.moveTo(x1, y);
+        ctx.lineTo(x2, y);
+        ctx.strokeStyle = '#39ff14';
+        ctx.globalAlpha = 0.15 + Math.abs(z1) * 0.15;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+    }
+    activeAnimId = requestAnimationFrame(draw);
+  }
+  draw();
+};
+
+// ═══════════════════════════════════════════
+// BG 3 — Radar Sweep
+// ═══════════════════════════════════════════
+canvasInits.bg3 = function () {
+  const c = document.getElementById('radarCanvas');
+  const ctx = c.getContext('2d');
+  resizeCanvas(c);
+  let angle = 0;
+
+  const blips = [];
+  for (let i = 0; i < 20; i++) {
+    blips.push({
+      dist: Math.random() * 0.85 + 0.1,
+      angle: Math.random() * Math.PI * 2,
+      size: Math.random() * 3 + 1,
+      alpha: 0
+    });
+  }
+
+  function draw() {
+    ctx.fillStyle = 'rgba(5, 10, 15, 0.06)';
+    ctx.fillRect(0, 0, c.width, c.height);
+
+    const cx = c.width / 2, cy = c.height / 2;
+    const maxR = Math.min(cx, cy) * 0.85;
+
+    // Grid circles
+    for (let i = 1; i <= 5; i++) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, maxR * (i / 5), 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(0, 240, 255, 0.08)';
+      ctx.lineWidth = 0.5;
+      ctx.stroke();
+    }
+
+    // Cross lines
+    ctx.beginPath();
+    ctx.moveTo(cx - maxR, cy); ctx.lineTo(cx + maxR, cy);
+    ctx.moveTo(cx, cy - maxR); ctx.lineTo(cx, cy + maxR);
+    ctx.strokeStyle = 'rgba(0, 240, 255, 0.06)';
+    ctx.stroke();
+
+    // Sweep cone
+    const sweepGrad = ctx.createConicalGradient
+      ? null : null; // fallback
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, maxR, angle - 0.5, angle);
+    ctx.closePath();
+    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, maxR);
+    grad.addColorStop(0, 'rgba(0, 240, 255, 0.15)');
+    grad.addColorStop(1, 'rgba(0, 240, 255, 0.02)');
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // Sweep line
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(angle) * maxR, cy + Math.sin(angle) * maxR);
+    ctx.strokeStyle = '#00f0ff';
+    ctx.lineWidth = 1.5;
+    ctx.shadowColor = '#00f0ff';
+    ctx.shadowBlur = 10;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Blips
+    blips.forEach(b => {
+      let diff = angle - b.angle;
+      if (diff < 0) diff += Math.PI * 2;
+      if (diff < 0.5) {
+        b.alpha = 1 - diff / 0.5;
+      } else {
+        b.alpha *= 0.97;
+      }
+
+      const bx = cx + Math.cos(b.angle) * maxR * b.dist;
+      const by = cy + Math.sin(b.angle) * maxR * b.dist;
+      ctx.beginPath();
+      ctx.arc(bx, by, b.size, 0, Math.PI * 2);
+      ctx.fillStyle = '#39ff14';
+      ctx.globalAlpha = b.alpha * 0.9;
+      ctx.shadowColor = '#39ff14';
+      ctx.shadowBlur = 8;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1;
+    });
+
+    // Center dot
+    ctx.beginPath();
+    ctx.arc(cx, cy, 3, 0, Math.PI * 2);
+    ctx.fillStyle = '#00f0ff';
+    ctx.shadowColor = '#00f0ff';
+    ctx.shadowBlur = 12;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    angle += 0.02;
+    activeAnimId = requestAnimationFrame(draw);
+  }
+  draw();
+};
+
+// ═══════════════════════════════════════════
+// BG 4 — Topographic Lines
+// ═══════════════════════════════════════════
+canvasInits.bg4 = function () {
+  const c = document.getElementById('topoCanvas');
+  const ctx = c.getContext('2d');
+  resizeCanvas(c);
+  let time = 0;
+
+  const peaks = [];
+  for (let i = 0; i < 5; i++) {
+    peaks.push({
+      x: Math.random() * c.width,
+      y: Math.random() * c.height,
+      strength: Math.random() * 200 + 100,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3
+    });
+  }
+
+  function getHeight(x, y) {
+    let h = 0;
+    peaks.forEach(p => {
+      h += p.strength / (1 + Math.hypot(x - p.x, y - p.y) * 0.008);
+    });
+    return h;
+  }
+
+  function draw() {
+    ctx.fillStyle = '#0a0a12';
+    ctx.fillRect(0, 0, c.width, c.height);
+    time += 0.01;
+
+    peaks.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0 || p.x > c.width) p.vx *= -1;
+      if (p.y < 0 || p.y > c.height) p.vy *= -1;
+    });
+
+    const step = 6;
+    const levels = 18;
+    const colors = ['#00f0ff','#00c8dd','#0099bb','#006699','#004477'];
+
+    for (let level = 1; level <= levels; level++) {
+      const threshold = level * 12;
+      ctx.beginPath();
+      let started = false;
+
+      for (let x = 0; x < c.width; x += step) {
+        for (let y = 0; y < c.height; y += step) {
+          const h = getHeight(x, y);
+          if (Math.abs(h - threshold) < 2) {
+            if (!started) { ctx.moveTo(x, y); started = true; }
+            else ctx.lineTo(x, y);
+          }
+        }
+      }
+
+      const ci = Math.min(level - 1, colors.length - 1);
+      ctx.strokeStyle = colors[ci];
+      ctx.globalAlpha = 0.15 + (level / levels) * 0.2;
+      ctx.lineWidth = 0.6;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+
+    activeAnimId = requestAnimationFrame(draw);
+  }
+  draw();
+};
+
+// ═══════════════════════════════════════════
+// BG 5 — Electric Arc
+// ═══════════════════════════════════════════
+canvasInits.bg5 = function () {
+  const c = document.getElementById('arcCanvas');
+  const ctx = c.getContext('2d');
+  resizeCanvas(c);
+  let time = 0;
+
+  function createBolt(x1, y1, x2, y2, depth) {
+    const segments = [];
+    const points = [{ x: x1, y: y1 }];
+    const steps = 12 + depth * 4;
+
+    for (let i = 1; i < steps; i++) {
+      const t = i / steps;
+      const mx = x1 + (x2 - x1) * t + (Math.random() - 0.5) * (80 / depth);
+      const my = y1 + (y2 - y1) * t + (Math.random() - 0.5) * (80 / depth);
+      points.push({ x: mx, y: my });
+    }
+    points.push({ x: x2, y: y2 });
+    return points;
+  }
+
+  const bolts = [];
+  for (let i = 0; i < 4; i++) {
+    bolts.push({
+      x1: Math.random() * c.width,
+      y1: 0,
+      x2: Math.random() * c.width,
+      y2: c.height,
+      timer: Math.random() * 100,
+      interval: 60 + Math.random() * 80,
+      color: ['#00f0ff','#b000ff','#ff00de','#39ff14'][i]
+    });
+  }
+
+  function draw() {
+    ctx.fillStyle = 'rgba(5, 5, 15, 0.15)';
+    ctx.fillRect(0, 0, c.width, c.height);
+    time++;
+
+    bolts.forEach(b => {
+      b.timer++;
+      if (b.timer > b.interval) {
+        b.timer = 0;
+        b.x1 = Math.random() * c.width;
+        b.x2 = Math.random() * c.width;
+        b.interval = 60 + Math.random() * 80;
+
+        // Draw main bolt
+        const pts = createBolt(b.x1, b.y1, b.x2, b.y2, 1);
+        ctx.beginPath();
+        ctx.moveTo(pts[0].x, pts[0].y);
+        pts.forEach(p => ctx.lineTo(p.x, p.y));
+        ctx.strokeStyle = b.color;
+        ctx.lineWidth = 2;
+        ctx.shadowColor = b.color;
+        ctx.shadowBlur = 20;
+        ctx.globalAlpha = 0.9;
+        ctx.stroke();
+
+        // Glow
+        ctx.lineWidth = 6;
+        ctx.globalAlpha = 0.2;
+        ctx.stroke();
+
+        ctx.shadowBlur = 0;
+        ctx.globalAlpha = 1;
+
+        // Branches
+        for (let i = 2; i < pts.length - 2; i += 3) {
+          if (Math.random() > 0.5) {
+            const branch = createBolt(
+              pts[i].x, pts[i].y,
+              pts[i].x + (Math.random() - 0.5) * 120,
+              pts[i].y + Math.random() * 80,
+              3
+            );
+            ctx.beginPath();
+            ctx.moveTo(branch[0].x, branch[0].y);
+            branch.forEach(p => ctx.lineTo(p.x, p.y));
+            ctx.strokeStyle = b.color;
+            ctx.lineWidth = 0.8;
+            ctx.globalAlpha = 0.5;
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+          }
+        }
+      }
+    });
+
+    activeAnimId = requestAnimationFrame(draw);
+  }
+  draw();
+};
+
+// ═══════════════════════════════════════════
+// BG 6 — Hex Grid Pulse (KEPT)
+// ═══════════════════════════════════════════
+canvasInits.bg6 = function () {
+  const c = document.getElementById('hexCanvas');
+  const ctx = c.getContext('2d');
+  resizeCanvas(c);
+  const hexSize = 30;
+  const hexes = [];
+  let time = 0;
+
+  function buildGrid() {
+    hexes.length = 0;
+    const h = hexSize * Math.sqrt(3);
+    const cols = Math.ceil(c.width / (h * 1.5)) + 2;
+    const rows = Math.ceil(c.height / (hexSize * 2)) + 2;
+    for (let row = -1; row < rows; row++) {
+      for (let col = -1; col < cols; col++) {
+        hexes.push({ x: col * h * 1.5, y: row * hexSize * 2 + (col % 2 ? hexSize : 0) });
+      }
+    }
+  }
+  buildGrid();
+
+  function drawHex(cx, cy, size, alpha) {
+    ctx.beginPath();
+    for (let i = 0; i < 6; i++) {
+      const a = Math.PI / 3 * i - Math.PI / 6;
+      const px = cx + size * Math.cos(a);
+      const py = cy + size * Math.sin(a);
+      i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = `rgba(0, 240, 255, ${alpha})`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  function draw() {
+    ctx.fillStyle = '#0a0a12';
+    ctx.fillRect(0, 0, c.width, c.height);
+    time += 0.02;
+    const cx = c.width / 2, cy = c.height / 2;
+    hexes.forEach(hex => {
+      const dist = Math.hypot(hex.x - cx, hex.y - cy);
+      const wave = Math.sin(dist * 0.008 - time * 2) * 0.5 + 0.5;
+      drawHex(hex.x, hex.y, hexSize - 2 + wave * 2, wave * 0.6);
+      if (wave > 0.8) {
+        ctx.fillStyle = `rgba(0, 240, 255, ${(wave - 0.8) * 2})`;
+        ctx.beginPath();
+        ctx.arc(hex.x, hex.y, 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+    activeAnimId = requestAnimationFrame(draw);
+  }
+  draw();
+};
+
+// ═══════════════════════════════════════════
+// BG 7 — Circuit Board Flow (KEPT)
+// ═══════════════════════════════════════════
+canvasInits.bg7 = function () {
+  const c = document.getElementById('circuitCanvas');
+  const ctx = c.getContext('2d');
+  resizeCanvas(c);
+  const traces = [];
+
+  function createTrace() {
+    const x = Math.random() * c.width, y = Math.random() * c.height;
+    const segments = [{ x, y }];
+    let cx = x, cy = y;
+    const segCount = Math.floor(Math.random() * 6) + 3;
+    for (let i = 0; i < segCount; i++) {
+      const len = Math.random() * 80 + 30;
+      if (i % 2 === 0) cx += (Math.random() > 0.5 ? 1 : -1) * len;
+      else cy += (Math.random() > 0.5 ? 1 : -1) * len;
+      segments.push({ x: cx, y: cy });
+    }
+    return {
+      segments,
+      pulsePos: Math.random(),
+      pulseSpeed: Math.random() * 0.005 + 0.002,
+      alpha: Math.random() * 0.3 + 0.1
+    };
+  }
+
+  for (let i = 0; i < 30; i++) traces.push(createTrace());
+
+  function draw() {
+    ctx.fillStyle = 'rgba(8, 10, 15, 0.08)';
+    ctx.fillRect(0, 0, c.width, c.height);
+
+    traces.forEach(t => {
+      ctx.beginPath();
+      ctx.moveTo(t.segments[0].x, t.segments[0].y);
+      for (let i = 1; i < t.segments.length; i++) ctx.lineTo(t.segments[i].x, t.segments[i].y);
+      ctx.strokeStyle = '#00f0ff';
+      ctx.globalAlpha = t.alpha;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+
+      t.segments.forEach(s => {
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = '#00f0ff';
+        ctx.globalAlpha = t.alpha * 1.5;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      });
+
+      t.pulsePos += t.pulseSpeed;
+      if (t.pulsePos > 1) t.pulsePos = 0;
+      const total = t.segments.length - 1;
+      const sf = t.pulsePos * total;
+      const si = Math.floor(sf), st = sf - si;
+      if (si < total) {
+        const a = t.segments[si], b = t.segments[si + 1];
+        ctx.beginPath();
+        ctx.arc(a.x + (b.x - a.x) * st, a.y + (b.y - a.y) * st, 3, 0, Math.PI * 2);
+        ctx.fillStyle = '#fff';
+        ctx.shadowColor = '#00f0ff';
+        ctx.shadowBlur = 15;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+    });
+    activeAnimId = requestAnimationFrame(draw);
+  }
+  draw();
+};
+
+// ═══════════════════════════════════════════
+// BG 8 — Kaleidoscope
+// ═══════════════════════════════════════════
+canvasInits.bg8 = function () {
+  const c = document.getElementById('kaleidoCanvas');
+  const ctx = c.getContext('2d');
+  resizeCanvas(c);
+  let time = 0;
+
+  const segments = 8;
+  const colors = ['#00f0ff','#ff00de','#39ff14','#ffe600','#b000ff','#ff6a00'];
+  const shapes = [];
+
+  for (let i = 0; i < 15; i++) {
+    shapes.push({
+      dist: Math.random() * 150 + 30,
+      angle: Math.random() * Math.PI * 2 / segments,
+      size: Math.random() * 15 + 5,
+      speed: (Math.random() - 0.5) * 0.02,
+      rotSpeed: (Math.random() - 0.5) * 0.03,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      type: Math.floor(Math.random() * 3)
+    });
+  }
+
+  function draw() {
+    ctx.fillStyle = 'rgba(8, 8, 18, 0.06)';
+    ctx.fillRect(0, 0, c.width, c.height);
+    time += 0.01;
+
+    const cx = c.width / 2, cy = c.height / 2;
+
+    for (let seg = 0; seg < segments; seg++) {
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate((Math.PI * 2 / segments) * seg);
+      if (seg % 2 === 1) ctx.scale(1, -1);
+
+      shapes.forEach(s => {
+        s.angle += s.speed;
+        const x = Math.cos(s.angle) * s.dist;
+        const y = Math.sin(s.angle) * s.dist;
+        const sz = s.size + Math.sin(time * 3 + s.dist) * 4;
+
+        ctx.beginPath();
+        if (s.type === 0) {
+          ctx.arc(x, y, sz, 0, Math.PI * 2);
+        } else if (s.type === 1) {
+          ctx.rect(x - sz / 2, y - sz / 2, sz, sz);
+        } else {
+          for (let v = 0; v < 3; v++) {
+            const a = (Math.PI * 2 / 3) * v + time * s.rotSpeed * 10;
+            const px = x + sz * Math.cos(a);
+            const py = y + sz * Math.sin(a);
+            v === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+          }
+          ctx.closePath();
+        }
+
+        ctx.fillStyle = s.color;
+        ctx.globalAlpha = 0.12;
+        ctx.fill();
+        ctx.strokeStyle = s.color;
+        ctx.globalAlpha = 0.4;
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      });
+
+      ctx.restore();
+    }
+
+    activeAnimId = requestAnimationFrame(draw);
+  }
+  draw();
+};
+
+// ═══════════════════════════════════════════
+// BG 10 — Neon Tunnel
+// ═══════════════════════════════════════════
+canvasInits.bg10 = function () {
+  const c = document.getElementById('tunnelCanvas');
+  const ctx = c.getContext('2d');
+  resizeCanvas(c);
+  let time = 0;
+
+  const ringCount = 30;
+  const colors = ['#00f0ff','#ff00de','#b000ff','#39ff14','#ffe600'];
+
+  function draw() {
+    ctx.fillStyle = 'rgba(5, 5, 15, 0.15)';
+    ctx.fillRect(0, 0, c.width, c.height);
+    time += 0.03;
+
+    const cx = c.width / 2, cy = c.height / 2;
+
+    for (let i = 0; i < ringCount; i++) {
+      const t = ((i / ringCount) + time * 0.5) % 1;
+      const radius = t * Math.max(c.width, c.height) * 0.8;
+      const alpha = (1 - t) * 0.6;
+      const sides = 6;
+      const rotation = time * 0.5 + i * 0.15;
+      const colorIdx = i % colors.length;
+
+      ctx.beginPath();
+      for (let s = 0; s <= sides; s++) {
+        const a = (Math.PI * 2 / sides) * s + rotation;
+        const px = cx + radius * Math.cos(a);
+        const py = cy + radius * Math.sin(a);
+        s === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.strokeStyle = colors[colorIdx];
+      ctx.globalAlpha = alpha;
+      ctx.lineWidth = 1 + (1 - t) * 2;
+      ctx.shadowColor = colors[colorIdx];
+      ctx.shadowBlur = (1 - t) * 15;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1;
+    }
+
+    activeAnimId = requestAnimationFrame(draw);
+  }
+  draw();
+};
+
+// ═══════════════════════════════════════════
+// BG 11 — Spectrum Bars
+// ═══════════════════════════════════════════
+canvasInits.bg11 = function () {
+  const c = document.getElementById('spectrumCanvas');
+  const ctx = c.getContext('2d');
+  resizeCanvas(c);
+  let time = 0;
+
+  const barCount = 64;
+  const barWidth = c.width / barCount;
+  const colors = ['#00f0ff','#00d4ff','#00b8ff','#009cff','#0080ff','#3964ff','#6e48ff','#b000ff','#ff00de','#ff00a0','#ff0066','#ff003c'];
+
+  function draw() {
+    ctx.fillStyle = 'rgba(8, 8, 18, 0.2)';
+    ctx.fillRect(0, 0, c.width, c.height);
+    time += 0.04;
+
+    for (let i = 0; i < barCount; i++) {
+      const freq1 = Math.sin(i * 0.15 + time * 2) * 0.5 + 0.5;
+      const freq2 = Math.sin(i * 0.08 + time * 1.3) * 0.3 + 0.3;
+      const freq3 = Math.cos(i * 0.22 + time * 3) * 0.2 + 0.2;
+      const h = (freq1 + freq2 + freq3) * c.height * 0.6;
+
+      const x = i * barWidth;
+      const ci = Math.floor((i / barCount) * colors.length);
+      const color = colors[Math.min(ci, colors.length - 1)];
+
+      // Bar
+      const grad = ctx.createLinearGradient(x, c.height, x, c.height - h);
+      grad.addColorStop(0, color + '10');
+      grad.addColorStop(0.5, color + '60');
+      grad.addColorStop(1, color);
+      ctx.fillStyle = grad;
+      ctx.fillRect(x + 1, c.height - h, barWidth - 2, h);
+
+      // Top cap glow
+      ctx.fillStyle = '#fff';
+      ctx.globalAlpha = 0.8;
+      ctx.fillRect(x + 1, c.height - h, barWidth - 2, 2);
+      ctx.globalAlpha = 1;
+
+      // Reflection
+      ctx.fillStyle = color + '08';
+      ctx.fillRect(x + 1, c.height, barWidth - 2, h * 0.3);
+    }
+
+    activeAnimId = requestAnimationFrame(draw);
+  }
+  draw();
+};
+
+// ═══════════════════════════════════════════
+// BG 12 — Starfield Warp (KEPT)
+// ═══════════════════════════════════════════
+canvasInits.bg12 = function () {
+  const c = document.getElementById('warpCanvas');
+  const ctx = c.getContext('2d');
+  resizeCanvas(c);
+  const stars = [];
+
+  for (let i = 0; i < 400; i++) {
+    stars.push({
+      x: (Math.random() - 0.5) * c.width * 2,
+      y: (Math.random() - 0.5) * c.height * 2,
+      z: Math.random() * 1000 + 1,
+      pz: 0,
+      color: ['#00f0ff','#ffffff','#ff00de','#ffe600'][Math.floor(Math.random() * 4)]
+    });
+  }
+
+  function draw() {
+    ctx.fillStyle = 'rgba(5, 5, 15, 0.2)';
+    ctx.fillRect(0, 0, c.width, c.height);
+    const cx = c.width / 2, cy = c.height / 2;
+
+    stars.forEach(s => {
+      s.pz = s.z;
+      s.z -= 8;
+      if (s.z <= 0) {
+        s.x = (Math.random() - 0.5) * c.width * 2;
+        s.y = (Math.random() - 0.5) * c.height * 2;
+        s.z = 1000; s.pz = 1000;
+      }
+      const sx = (s.x / s.z) * 300 + cx;
+      const sy = (s.y / s.z) * 300 + cy;
+      const px = (s.x / s.pz) * 300 + cx;
+      const py = (s.y / s.pz) * 300 + cy;
+      const size = Math.max(0.5, (1 - s.z / 1000) * 3);
+
+      ctx.beginPath();
+      ctx.moveTo(px, py);
+      ctx.lineTo(sx, sy);
+      ctx.strokeStyle = s.color;
+      ctx.globalAlpha = (1 - s.z / 1000) * 0.8;
+      ctx.lineWidth = size;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+
+      ctx.beginPath();
+      ctx.arc(sx, sy, size * 0.8, 0, Math.PI * 2);
+      ctx.fillStyle = '#fff';
+      ctx.fill();
+    });
+    activeAnimId = requestAnimationFrame(draw);
+  }
+  draw();
+};
+
+// ═══════════════════════════════════════════
+// BG 13 — Lissajous Curves
+// ═══════════════════════════════════════════
+canvasInits.bg13 = function () {
+  const c = document.getElementById('lissajousCanvas');
+  const ctx = c.getContext('2d');
+  resizeCanvas(c);
+  let time = 0;
+
+  const curves = [
+    { a: 3, b: 2, color: '#00f0ff', phase: 0 },
+    { a: 5, b: 4, color: '#ff00de', phase: 1 },
+    { a: 7, b: 6, color: '#39ff14', phase: 2 },
+    { a: 3, b: 4, color: '#ffe600', phase: 0.5 },
+    { a: 5, b: 3, color: '#b000ff', phase: 1.5 },
+  ];
+
+  function draw() {
+    ctx.fillStyle = 'rgba(8, 8, 18, 0.04)';
+    ctx.fillRect(0, 0, c.width, c.height);
+    time += 0.008;
+
+    const cx = c.width / 2, cy = c.height / 2;
+    const rx = Math.min(cx, cy) * 0.75;
+    const ry = rx;
+
+    curves.forEach((curve, ci) => {
+      ctx.beginPath();
+      const points = 600;
+      for (let i = 0; i <= points; i++) {
+        const t = (i / points) * Math.PI * 2;
+        const x = cx + Math.sin(curve.a * t + time + curve.phase) * rx;
+        const y = cy + Math.sin(curve.b * t + time * 1.3) * ry;
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = curve.color;
+      ctx.lineWidth = 1.2;
+      ctx.globalAlpha = 0.5;
+      ctx.shadowColor = curve.color;
+      ctx.shadowBlur = 10;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1;
+
+      // Moving dot on curve
+      const dotT = (time * 2 + ci) % (Math.PI * 2);
+      const dx = cx + Math.sin(curve.a * dotT + time + curve.phase) * rx;
+      const dy = cy + Math.sin(curve.b * dotT + time * 1.3) * ry;
+      ctx.beginPath();
+      ctx.arc(dx, dy, 4, 0, Math.PI * 2);
+      ctx.fillStyle = '#fff';
+      ctx.shadowColor = curve.color;
+      ctx.shadowBlur = 15;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    });
+
+    activeAnimId = requestAnimationFrame(draw);
+  }
+  draw();
+};
+
+// ═══════════════════════════════════════════
+// BG 14 — Dot Matrix Wave (KEPT)
+// ═══════════════════════════════════════════
+canvasInits.bg14 = function () {
+  const c = document.getElementById('dotsCanvas');
+  const ctx = c.getContext('2d');
+  resizeCanvas(c);
+  let time = 0;
+  const spacing = 25;
+  const colors = ['#00f0ff','#ff00de','#39ff14'];
+
+  function draw() {
+    ctx.fillStyle = '#0a0a12';
+    ctx.fillRect(0, 0, c.width, c.height);
+    time += 0.03;
+    const cols = Math.ceil(c.width / spacing) + 1;
+    const rows = Math.ceil(c.height / spacing) + 1;
+
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < cols; col++) {
+        const x = col * spacing;
+        const y = row * spacing;
+        const wave1 = Math.sin(col * 0.15 + time * 2) * 8;
+        const wave2 = Math.cos(row * 0.12 + time * 1.5) * 6;
+        const wave3 = Math.sin((col + row) * 0.1 + time) * 5;
+        const offset = wave1 + wave2 + wave3;
+        const size = Math.max(0.5, 2 + Math.sin(col * 0.1 + row * 0.1 + time * 2) * 2);
+        const colorIdx = Math.floor((Math.sin(col * 0.05 + row * 0.05 + time) + 1) * 0.5 * colors.length) % colors.length;
+        const alpha = 0.3 + (Math.sin(col * 0.08 + row * 0.08 + time * 1.5) + 1) * 0.35;
+
+        ctx.beginPath();
+        ctx.arc(x, y + offset, size, 0, Math.PI * 2);
+        ctx.fillStyle = colors[colorIdx];
+        ctx.globalAlpha = alpha;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+    }
+    activeAnimId = requestAnimationFrame(draw);
+  }
+  draw();
+};
+
+// ═══════════════════════════════════════════
+// BG 15 — Morse Pulse
+// ═══════════════════════════════════════════
+canvasInits.bg15 = function () {
+  const c = document.getElementById('morseCanvas');
+  const ctx = c.getContext('2d');
+  resizeCanvas(c);
+  let time = 0;
+
+  const morseMsg = 'CYBER NEON PULSE SIGNAL TRANSMITTING --- ';
+  const morseMap = {
+    'A':'.-','B':'-...','C':'-.-.','D':'-..','E':'.','F':'..-.','G':'--.','H':'....',
+    'I':'..','J':'.---','K':'-.-','L':'.-..','M':'--','N':'-.','O':'---','P':'.--.',
+    'Q':'--.-','R':'.-.','S':'...','T':'-','U':'..-','V':'...-','W':'.--','X':'-..-',
+    'Y':'-.--','Z':'--..','0':'-----','1':'.----','2':'..---','3':'...--','4':'....-',
+    '5':'.....','6':'-....','7':'--...','8':'---..','9':'----.', ' ':' / ', '-':'-....-'
+  };
+
+  let morseStr = '';
+  morseMsg.split('').forEach(ch => { morseStr += (morseMap[ch.toUpperCase()] || '') + ' '; });
+
+  const streams = [];
+  for (let i = 0; i < 8; i++) {
+    streams.push({
+      y: c.height * 0.15 + (c.height * 0.7 / 7) * i,
+      x: -50,
+      speed: Math.random() * 2 + 1.5,
+      color: ['#00f0ff','#ff00de','#39ff14','#ffe600','#b000ff','#ff6a00'][i % 6],
+      charIdx: Math.floor(Math.random() * morseStr.length),
+      dotSize: Math.random() * 3 + 3,
+      unitLen: Math.random() * 10 + 15
+    });
+  }
+
+  function draw() {
+    ctx.fillStyle = 'rgba(5, 5, 15, 0.1)';
+    ctx.fillRect(0, 0, c.width, c.height);
+    time++;
+
+    streams.forEach(s => {
+      s.x += s.speed;
+
+      // Draw baseline
+      ctx.beginPath();
+      ctx.moveTo(0, s.y);
+      ctx.lineTo(c.width, s.y);
+      ctx.strokeStyle = s.color + '08';
+      ctx.lineWidth = 0.5;
+      ctx.stroke();
+
+      // Draw morse symbols
+      let drawX = s.x;
+      let ci = s.charIdx;
+      while (drawX < c.width + 100 && ci < morseStr.length) {
+        const ch = morseStr[ci];
+        if (ch === '.') {
+          ctx.beginPath();
+          ctx.arc(drawX, s.y, s.dotSize, 0, Math.PI * 2);
+          ctx.fillStyle = s.color;
+          ctx.shadowColor = s.color;
+          ctx.shadowBlur = 10;
+          ctx.globalAlpha = 0.9;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+          ctx.globalAlpha = 1;
+          drawX += s.unitLen * 2;
+        } else if (ch === '-') {
+          ctx.beginPath();
+          ctx.moveTo(drawX, s.y);
+          ctx.lineTo(drawX + s.unitLen * 3, s.y);
+          ctx.strokeStyle = s.color;
+          ctx.lineWidth = s.dotSize * 1.5;
+          ctx.shadowColor = s.color;
+          ctx.shadowBlur = 10;
+          ctx.globalAlpha = 0.9;
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+          ctx.globalAlpha = 1;
+          drawX += s.unitLen * 4;
+        } else if (ch === ' ') {
+          drawX += s.unitLen * 2;
+        }
+        ci++;
+      }
+
+      // Reset when off screen
+      if (s.x > c.width + 200) {
+        s.x = -300;
+        s.charIdx = Math.floor(Math.random() * morseStr.length);
+      }
+    });
+
+    activeAnimId = requestAnimationFrame(draw);
+  }
+  draw();
+};
+</script>
+
+</body>
+</html>

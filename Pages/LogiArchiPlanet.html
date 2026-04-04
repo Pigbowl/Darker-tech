@@ -12,8 +12,8 @@
     <link rel="stylesheet" href="../css/components.css">
     
     <style>
-        /* 数字雨背景样式 */
-        #digital-rain {
+        /* 星场扭曲背景样式 */
+        #warpCanvas {
             position: fixed;
             top: 0;
             left: 0;
@@ -39,8 +39,8 @@
 
 
 <body class="bg-primary text-gray-100 font-inter min-h-screen flex flex-col bg-grid">
-    <!-- 数字雨背景 -->
-    <canvas id="digital-rain"></canvas>
+    <!-- 星场扭曲背景 -->
+    <canvas id="warpCanvas"></canvas>
     <div class="content min-h-screen">
         <!-- 导航栏容器 --> 
         <div id="navbar-container"></div>       
@@ -140,53 +140,68 @@
         <div id="footer-container"></div>   
     </div>
             
+    <!-- Warp Background -->
     <script>
-        const canvas = document.getElementById('digital-rain');
-        if (canvas) {
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-
-            // 字符集（数字+中文+符号，增强科技感）
-            const chars = '0123456789abcdefghijklmnopqrstuvwxyzあいうえおかきくけこ★■●◆';
-            const fontSize = 16;
-            const columns = Math.floor(canvas.width / fontSize); // 列数
-            const drops = []; // 每列的下落位置
-
-            // 初始化每列的起始位置
-            for (let i = 0; i < columns; i++) {
-                drops[i] = Math.random() * -100;
-            }
-
-            function drawDigitalRain() {
-                // 半透明黑色背景，实现拖影效果
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                ctx.fillStyle = '#009933'; // 暗绿色，降低亮度
-                ctx.font = `${fontSize}px monospace`;
-
-                // 逐列绘制字符
-                for (let i = 0; i < drops.length; i++) {
-                    const text = chars[Math.floor(Math.random() * chars.length)];
-                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-                    // 随机重置下落位置，形成循环
-                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                        drops[i] = 0;
-                    }
-                    drops[i]++;
-                }
-            }
-
-            // 控制帧率（30帧/秒）
-            setInterval(drawDigitalRain, 35);
-            // 窗口大小适配
-            window.addEventListener('resize', () => {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
+        const warpCanvas = document.getElementById('warpCanvas');
+        const warpCtx = warpCanvas.getContext('2d');
+        
+        function resizeWarpCanvas() {
+            warpCanvas.width = window.innerWidth;
+            warpCanvas.height = window.innerHeight;
+        }
+        
+        resizeWarpCanvas();
+        window.addEventListener('resize', resizeWarpCanvas);
+        
+        const warpStars = [];
+        
+        for (let i = 0; i < 400; i++) {
+            warpStars.push({
+                x: (Math.random() - 0.5) * warpCanvas.width * 2,
+                y: (Math.random() - 0.5) * warpCanvas.height * 2,
+                z: Math.random() * 1000 + 1,
+                pz: 0,
+                color: ['#00f0ff','#ffffff','#ff00de','#ffe600'][Math.floor(Math.random() * 4)]
             });
         }
+        
+        function drawWarp() {
+            warpCtx.fillStyle = 'rgba(5, 5, 15, 0.2)';
+            warpCtx.fillRect(0, 0, warpCanvas.width, warpCanvas.height);
+            const cx = warpCanvas.width / 2, cy = warpCanvas.height / 2;
+
+            warpStars.forEach(s => {
+                s.pz = s.z;
+                s.z -= 8;
+                if (s.z <= 0) {
+                    s.x = (Math.random() - 0.5) * warpCanvas.width * 2;
+                    s.y = (Math.random() - 0.5) * warpCanvas.height * 2;
+                    s.z = 1000; s.pz = 1000;
+                }
+                const sx = (s.x / s.z) * 300 + cx;
+                const sy = (s.y / s.z) * 300 + cy;
+                const px = (s.x / s.pz) * 300 + cx;
+                const py = (s.y / s.pz) * 300 + cy;
+                const size = Math.max(0.5, (1 - s.z / 1000) * 3);
+
+                warpCtx.beginPath();
+                warpCtx.moveTo(px, py);
+                warpCtx.lineTo(sx, sy);
+                warpCtx.strokeStyle = s.color;
+                warpCtx.globalAlpha = (1 - s.z / 1000) * 0.8;
+                warpCtx.lineWidth = size;
+                warpCtx.stroke();
+                warpCtx.globalAlpha = 1;
+
+                warpCtx.beginPath();
+                warpCtx.arc(sx, sy, size * 0.8, 0, Math.PI * 2);
+                warpCtx.fillStyle = '#fff';
+                warpCtx.fill();
+            });
+            requestAnimationFrame(drawWarp);
+        }
+        
+        drawWarp();
     </script>
     <script>    
         

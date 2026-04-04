@@ -211,13 +211,13 @@
     <!-- 主内容区域 -->
     <div id="mainContent">
         <div id="navbar-container"></div>
-        <div id="particles-js"></div>
+        <canvas id="dotsCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;"></canvas>
         <div class="content min-h-screen">
             <!-- 初始化页面 - 传感器类型选择 -->
             <div id="sensorTypeSelection" class="min-h-screen p-4 pt-16 flex justify-center">
                 <!-- 添加浅灰色半透明背景容器 -->
                 <div class="bg-cover bg-center w-full h-[calc(100vh-80px)] rounded-lg p-6">
-                    <div class="absolute inset-0 bg-[url('../PIC/LOGOs/SensorBack.png')] bg-cover bg-center blur-md"></div>
+                    <div class="absolute inset-0 bg-[url('../PIC/LOGOs/SensorBack.png')] bg-cover bg-center blur-lg"></div>
                     <!-- 传感器卡片容器和文字容器水平排列 -->
                     <div class="relative h-full z-10">
                         <div class="flex w-full h-full">
@@ -1256,6 +1256,56 @@
     <script src="../js/load-components.js"></script>
     <script src="../js/function-link-manager.js"></script>
     <script src="../js/Visit_Monitor.js"></script>
+    
+    <!-- Dots Background -->
+    <script>
+        const dotsCanvas = document.getElementById('dotsCanvas');
+        const dotsCtx = dotsCanvas.getContext('2d');
+        
+        function resizeDotsCanvas() {
+            dotsCanvas.width = window.innerWidth;
+            dotsCanvas.height = window.innerHeight;
+        }
+        
+        resizeDotsCanvas();
+        window.addEventListener('resize', resizeDotsCanvas);
+        
+        let dotsTime = 0;
+        const dotsSpacing = 25;
+        const dotsColors = ['#00f0ff','#ff00de','#39ff14'];
+        
+        function drawDots() {
+            dotsCtx.fillStyle = '#0a0a12';
+            dotsCtx.fillRect(0, 0, dotsCanvas.width, dotsCanvas.height);
+            dotsTime += 0.03;
+            const cols = Math.ceil(dotsCanvas.width / dotsSpacing) + 1;
+            const rows = Math.ceil(dotsCanvas.height / dotsSpacing) + 1;
+
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    const x = col * dotsSpacing;
+                    const y = row * dotsSpacing;
+                    const wave1 = Math.sin(col * 0.15 + dotsTime * 2) * 8;
+                    const wave2 = Math.cos(row * 0.12 + dotsTime * 1.5) * 6;
+                    const wave3 = Math.sin((col + row) * 0.1 + dotsTime) * 5;
+                    const offset = wave1 + wave2 + wave3;
+                    const size = Math.max(0.5, 2 + Math.sin(col * 0.1 + row * 0.1 + dotsTime * 2) * 2);
+                    const colorIdx = Math.floor((Math.sin(col * 0.05 + row * 0.05 + dotsTime) + 1) * 0.5 * dotsColors.length) % dotsColors.length;
+                    const alpha = 0.3 + (Math.sin(col * 0.08 + row * 0.08 + dotsTime * 1.5) + 1) * 0.35;
+
+                    dotsCtx.beginPath();
+                    dotsCtx.arc(x, y + offset, size, 0, Math.PI * 2);
+                    dotsCtx.fillStyle = dotsColors[colorIdx];
+                    dotsCtx.globalAlpha = alpha;
+                    dotsCtx.fill();
+                    dotsCtx.globalAlpha = 1;
+                }
+            }
+            requestAnimationFrame(drawDots);
+        }
+        
+        drawDots();
+    </script>
 </div><!-- 关闭主内容区域 -->
 </body>
 </html>

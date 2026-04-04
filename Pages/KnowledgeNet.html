@@ -64,10 +64,107 @@
       font-size: 12px;
       margin-right: 5px;
     }
+    /* HOLO 背景容器 */
+    .holo-bg-container {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background: #050508;
+      overflow: hidden;
+    }
+    
+    /* 确保 SVG 在 HOLO 背景上方 */
+    #canvas-container svg {
+      position: relative;
+      z-index: 1;
+    }
+    
+    /* HOLO 基础渐变 */
+    .holo-base {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, #050508 0%, #0d0018 25%, #000d18 50%, #050d00 75%, #050508 100%);
+      background-size: 400% 400%;
+      animation: holoShift 20s ease infinite;
+    }
+    
+    /* HOLO 扫光效果 */
+    .holo-sweep {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        105deg,
+        transparent 20%,
+        rgba(0, 180, 200, 0.015) 30%,
+        rgba(120, 0, 180, 0.025) 40%,
+        rgba(180, 0, 150, 0.015) 50%,
+        rgba(40, 180, 15, 0.02) 60%,
+        rgba(180, 160, 0, 0.015) 70%,
+        transparent 80%
+      );
+      background-size: 200% 100%;
+      animation: holoSweep 10s ease-in-out infinite;
+    }
+    
+    /* HOLO 颗粒效果 */
+    .holo-grain {
+      position: absolute;
+      inset: 0;
+      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+      animation: noiseMove 3s steps(4) infinite;
+      pointer-events: none;
+    }
+    
+    /* HOLO 网格线 */
+    .holo-lines {
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,180,200,0.008) 3px, rgba(0,180,200,0.008) 4px),
+        repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(180,0,150,0.005) 3px, rgba(180,0,150,0.005) 4px);
+      animation: holoLines 5s linear infinite;
+      pointer-events: none;
+    }
+    
+    /* HOLO 动画关键帧 */
+    @keyframes holoShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    @keyframes holoSweep {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    
+    @keyframes holoLines {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(4px, 4px); }
+    }
+    
+    @keyframes noiseMove {
+      0% { transform: translate(0,0); }
+      20% { transform: translate(-5%,5%); }
+      40% { transform: translate(5%,-5%); }
+      60% { transform: translate(-3%,-3%); }
+      80% { transform: translate(3%,3%); }
+      100% { transform: translate(0,0); }
+    }
+    
+    /* 确保导航栏层级最高 */
+    #navbar-container {
+      position: relative;
+      z-index: 9999;
+    }
+    
     /* 画布容器样式 - 修改为贴在页面底部 */
     #canvas-container {
       width: 100%;
-      height: calc(100vh - 80px); /* 假设navbar高度为80px，可以根据实际情况调整 */
+      height: calc(100vh - 52px); /* 假设navbar高度为80px，可以根据实际情况调整 */
       cursor: grab;
       position: fixed; /* 固定定位在页面底部 */
       bottom: 0; /* 贴在底部 */
@@ -77,7 +174,7 @@
     }
     #canvas-container-hidder{
         width: 100%;
-        height: calc(100vh - 80px); /* 假设navbar高度为80px，可以根据实际情况调整 */
+        height: calc(100vh - 52px); /* 假设navbar高度为60px，可以根据实际情况调整 */
         cursor: grab;
         position: fixed; /* 固定定位在页面底部 */
         bottom: 0; /* 贴在底部 */
@@ -231,13 +328,20 @@
             </div>
           </div>
         <div id="canvas-container">
+    <!-- HOLO 背景 -->
+    <div class="holo-bg-container">
+        <div class="holo-base"></div>
+        <div class="holo-sweep"></div>
+        <div class="holo-grain"></div>
+        <div class="holo-lines"></div>
+    </div>
+  </div>
     <!-- 搜索组件 -->
     <div class="search-container">
       <input type="text" id="search-input" class="search-input" placeholder="搜索元素...">
       <button id="search-button" class="search-button">搜索</button>
       <div id="search-results" class="search-results"></div>
     </div>
-  </div>
   <div id="scale-indicator">缩放比例: 100%</div>
   
   <script>

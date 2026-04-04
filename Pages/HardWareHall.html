@@ -21,8 +21,8 @@
 </head>
 
 
-<body class="bg-dark text-gray-100 font-inter min-h-screen flex flex-col bg-grid">
-    <div id="particles-js"></div>
+<body class="bg-dark text-gray-100 font-inter min-h-screen flex flex-col">
+    <canvas id="circuitCanvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;"></canvas>
     <div class="content min-h-screen">
 
         <!-- 导航栏容器 --> 
@@ -853,5 +853,86 @@
     <script src="../js/load-components.js"></script>
     <script src="../js/function-link-manager.js"></script>
     <script src="../js/Visit_Monitor.js"></script>
+    
+    <!-- Circuit Background -->
+    <script>
+        const c = document.getElementById('circuitCanvas');
+        const ctx = c.getContext('2d');
+        
+        function resizeCanvas() {
+            c.width = window.innerWidth;
+            c.height = window.innerHeight;
+        }
+        
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        
+        const traces = [];
+        
+        function createTrace() {
+            const x = Math.random() * c.width, y = Math.random() * c.height;
+            const segments = [{ x, y }];
+            let cx = x, cy = y;
+            const segCount = Math.floor(Math.random() * 6) + 3;
+            for (let i = 0; i < segCount; i++) {
+                const len = Math.random() * 80 + 30;
+                if (i % 2 === 0) cx += (Math.random() > 0.5 ? 1 : -1) * len;
+                else cy += (Math.random() > 0.5 ? 1 : -1) * len;
+                segments.push({ x: cx, y: cy });
+            }
+            return {
+                segments,
+                pulsePos: Math.random(),
+                pulseSpeed: Math.random() * 0.005 + 0.002,
+                alpha: Math.random() * 0.3 + 0.1
+            };
+        }
+        
+        for (let i = 0; i < 30; i++) traces.push(createTrace());
+        
+        function draw() {
+            ctx.fillStyle = 'rgba(8, 10, 15, 0.08)';
+            ctx.fillRect(0, 0, c.width, c.height);
+            
+            traces.forEach(t => {
+                ctx.beginPath();
+                ctx.moveTo(t.segments[0].x, t.segments[0].y);
+                for (let i = 1; i < t.segments.length; i++) ctx.lineTo(t.segments[i].x, t.segments[i].y);
+                ctx.strokeStyle = '#00f0ff';
+                ctx.globalAlpha = t.alpha;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.globalAlpha = 1;
+                
+                t.segments.forEach(s => {
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, 2, 0, Math.PI * 2);
+                    ctx.fillStyle = '#00f0ff';
+                    ctx.globalAlpha = t.alpha * 1.5;
+                    ctx.fill();
+                    ctx.globalAlpha = 1;
+                });
+                
+                t.pulsePos += t.pulseSpeed;
+                if (t.pulsePos > 1) t.pulsePos = 0;
+                const total = t.segments.length - 1;
+                const sf = t.pulsePos * total;
+                const si = Math.floor(sf), st = sf - si;
+                if (si < total) {
+                    const a = t.segments[si], b = t.segments[si + 1];
+                    ctx.beginPath();
+                    ctx.arc(a.x + (b.x - a.x) * st, a.y + (b.y - a.y) * st, 3, 0, Math.PI * 2);
+                    ctx.fillStyle = '#fff';
+                    ctx.shadowColor = '#00f0ff';
+                    ctx.shadowBlur = 15;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+            });
+            requestAnimationFrame(draw);
+        }
+        
+        draw();
+    </script>
 </body>
 </html>

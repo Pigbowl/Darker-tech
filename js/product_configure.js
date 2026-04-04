@@ -1,6 +1,6 @@
 
 // 产品配置信息 - 自动生成
-// 生成时间: 2026-03-26 11:10:12
+// 生成时间: 2026-04-04 00:04:54
 
 // 全局产品配置变量
 let products_config = {
@@ -43,7 +43,7 @@ let products_config = {
       "Category": "知识宇宙",
       "Description": "提供法规相关知识",
       "CN_Name": "法规/标准星球",
-      "Status": "未上线"
+      "Status": "测试版本上线"
     },
     {
       "ID": 6,
@@ -198,7 +198,7 @@ let products_config = {
         "Category": "知识宇宙",
         "Description": "提供法规相关知识",
         "CN_Name": "法规/标准星球",
-        "Status": "未上线"
+        "Status": "测试版本上线"
       },
       {
         "ID": 6,
@@ -340,6 +340,6 @@ let products_config = {
       }
     ]
   },
-  "version": "20260326111012",
+  "version": "20260404000454",
   "status": []
 };
